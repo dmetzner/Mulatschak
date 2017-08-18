@@ -1,0 +1,152 @@
+package heroiceraser.mulatschak.game;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+
+import heroiceraser.mulatschak.game.Animations.GameAnimation;
+
+
+/**
+ * Created by Daniel Metzner on 10.08.2017.
+ */
+
+public class GameController{
+
+    //----------------------------------------------------------------------------------------------
+    //  Member Variables
+    //
+    //----------------------------------------------------------------------------------------------
+    //  Member Variables
+    //
+    private GameView view_;
+    private GameLayout layout_;
+    private GameAnimation animation_;
+    private TouchEvents touch_events_;
+    private GameLogic logic_;
+
+    private List<Player> player_list_;
+    private MulatschakDeck deck_;
+    private DiscardPile discardPile_;
+    private CardStack trash_;
+
+    //----------------------------------------------------------------------------------------------
+    //  Constructor
+    //
+    public GameController(GameView view, int players) {
+        view_ = view;
+        new InvalidateViewThread(view); // a new thread, which is updating the view
+
+        logic_ = new GameLogic();
+        layout_ = new GameLayout();
+        animation_ = new GameAnimation(view);
+        touch_events_ = new TouchEvents();
+
+        deck_ = new MulatschakDeck();
+        discardPile_ = new DiscardPile();
+        player_list_ = new ArrayList<Player>();
+        for (int i = 0; i < players; i++) {
+            player_list_.add(new Player(i));
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------
+    //  start
+    //
+    public void start() {
+        init();
+        setPlayerLives();
+        startRound();
+    }
+
+    //----------------------------------------------------------------------------------------------
+    //  init:
+    //         initialises the game
+    //
+    private void init() {
+        layout_.calculateDimensions(view_);
+        deck_.initDeck(view_);
+        layout_.initDeckPosition(deck_);
+        discardPile_.init(view_);
+        layout_.initDiscardPilePositions(deck_.getCoordinate(), discardPile_);
+        layout_.initHandPositions(deck_);
+    }
+
+    //----------------------------------------------------------------------------------------------
+    //  setPlayerLives
+    //
+    public void setPlayerLives() {
+        for (int i = 0; i < getAmountOfPlayers(); i++) {
+            getPlayerById(i).setLives(logic_.getStartLives());
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------
+    //  startRound
+    //
+    public void startRound() {
+        Collections.shuffle(deck_.getStack(), new Random());
+        dealCards(getAmountOfPlayers());
+        if (getAnimation().getTurnedOn()) {
+            getAnimation().getDealingAnimation().start();
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------
+    //  dealCards
+    //
+    public void dealCards(int players) {
+        for (int hand_card = 0; hand_card < logic_.getMaxCardsPerHand(); hand_card++) {
+            for (int player_id = 0; player_id < players; player_id++) {
+                drawCard(player_id, deck_);
+            }
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------
+    //  drawCard
+    //
+    public void drawCard(int player_id, MulatschakDeck deck){
+        if (deck.getStack().isEmpty()) {
+////////////////////////////////////////////////////////////////////////////DO WHAT WHEN DECK EMPTY
+        }
+        else
+        {
+            CardStack player_hand =  getPlayerById(player_id).getHand();
+            player_hand.addCard(deck_.getCardAt(0));
+            deck.getStack().remove(0);
+        }
+
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    //  Getter & Setter
+    //
+    public GameView getView() { return view_; }
+
+    public GameLayout getLayout() { return layout_; }
+
+    public GameAnimation getAnimation() { return  animation_; }
+
+    public GameLogic getLogic() { return logic_; }
+
+    public TouchEvents getTouchEvents() { return touch_events_; }
+
+    public MulatschakDeck getDeck() {
+        return deck_;
+    }
+
+    public DiscardPile getDiscardPile() {
+        return discardPile_;
+    }
+
+    public List<Player> getPlayerList() { return player_list_; }
+
+    public Player getPlayerById(int id) { return player_list_.get(id); }
+
+    public int getAmountOfPlayers() { return player_list_.size(); }
+
+
+}
