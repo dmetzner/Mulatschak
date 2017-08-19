@@ -22,7 +22,7 @@ public class GameController{
     //
     private GameView view_;
     private GameLayout layout_;
-    private GameAnimation animation_;
+    private GameAnimation animations_;
     private TouchEvents touch_events_;
     private GameLogic logic_;
 
@@ -40,7 +40,7 @@ public class GameController{
 
         logic_ = new GameLogic();
         layout_ = new GameLayout();
-        animation_ = new GameAnimation(view);
+        animations_ = new GameAnimation(view);
         touch_events_ = new TouchEvents();
 
         deck_ = new MulatschakDeck();
@@ -56,7 +56,7 @@ public class GameController{
     //
     public void start() {
         init();
-        setPlayerLives();
+        setPlayer();
         startRound();
     }
 
@@ -71,14 +71,16 @@ public class GameController{
         discardPile_.init(view_);
         layout_.initDiscardPilePositions(deck_.getCoordinate(), discardPile_);
         layout_.initHandPositions(deck_);
+        animations_.init(view_);
     }
 
     //----------------------------------------------------------------------------------------------
-    //  setPlayerLives
+    //  setPlayer Lives &
     //
-    public void setPlayerLives() {
+    public void setPlayer() {
         for (int i = 0; i < getAmountOfPlayers(); i++) {
             getPlayerById(i).setLives(logic_.getStartLives());
+            getPlayerById(i).setTrumphsToMake(0);
         }
     }
 
@@ -128,7 +130,7 @@ public class GameController{
 
     public GameLayout getLayout() { return layout_; }
 
-    public GameAnimation getAnimation() { return  animation_; }
+    public GameAnimation getAnimation() { return  animations_; }
 
     public GameLogic getLogic() { return logic_; }
 

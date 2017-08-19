@@ -18,6 +18,7 @@ public class GameLogic {
     //
     private int turn_;
     private int turn_last_round_;
+    private int trumph_player_id;
     private int trumph_;
 
     //----------------------------------------------------------------------------------------------

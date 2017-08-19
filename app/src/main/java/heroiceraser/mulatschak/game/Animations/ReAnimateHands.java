@@ -9,11 +9,11 @@ import heroiceraser.mulatschak.game.Player;
 
 public class ReAnimateHands {
 
-    private ReAnimateHands() {
+    public ReAnimateHands() {
 
     }
 
-    public static void redrawHands(GameLayout layout, Player player) {
+    public void redrawHands(GameLayout layout, Player player) {
         switch (player.getId()) {
             case 0:
                 layout.setHandBottom(layout.getHandBottom().getX() + layout.getCardWidth() / 2,

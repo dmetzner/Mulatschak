@@ -12,6 +12,7 @@ public class Player {
     private int id_;
     private int position_;
     private int lives_;
+    private int trumphs_to_make_;
     private CardStack hand_;
     private CardStack tricks_;
 
@@ -46,4 +47,7 @@ public class Player {
 
     public int getLives() { return lives_; }
     public void setLives(int lives) { lives_ = lives; }
+
+    public int getTrumphsToMake() { return trumphs_to_make_; }
+    public void setTrumphsToMake(int trumphs_to_make) { trumphs_to_make_ = trumphs_to_make; }
 }

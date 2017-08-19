@@ -9,11 +9,20 @@ import heroiceraser.mulatschak.game.GameView;
 public class GameAnimation {
 
     private boolean animation_turned_on_;
-    private DealingAnimation dealingAnimation_;
+
+    private DealingAnimation dealing_animation_;
+    private ReAnimateHands re_animate_hands;
+    private StichAnsage stich_ansage_;
 
     public GameAnimation(GameView view) {
         animation_turned_on_ = true;
-        dealingAnimation_ = new DealingAnimation(view);
+        dealing_animation_ = new DealingAnimation(view);
+        re_animate_hands = new ReAnimateHands();
+        stich_ansage_ = new StichAnsage();
+    }
+
+    public void init(GameView view) {
+        stich_ansage_.init(view);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -21,11 +30,9 @@ public class GameAnimation {
     //
     public boolean getTurnedOn() { return animation_turned_on_; }
     public DealingAnimation getDealingAnimation() {
-        return dealingAnimation_;
+        return dealing_animation_;
     }
+    public ReAnimateHands getReAnimateHands() { return re_animate_hands; }
 
-  //  public Boolean getDealingAnimation() { return dealing_animation_; }
-
-    //public void setDealingAnimation(boolean bool) { dealing_animation_ = bool; }
-
+    public StichAnsage getStichAnsage() { return stich_ansage_; }
 }

@@ -86,8 +86,7 @@ public class TitleView extends View {
                         Y > getPlayButtonY() && Y < getPlayButtonY() + playButton_up.getHeight()) {
                     playButton_pressed = true;
                 }
-                else
-                {
+                else {
                     playButton_pressed = false;
                 }
                 break;

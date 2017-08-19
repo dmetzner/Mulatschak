@@ -1,6 +1,8 @@
 package heroiceraser.mulatschak.game;
 
 
+import java.util.List;
+
 import heroiceraser.mulatschak.game.Animations.ReAnimateHands;
 import heroiceraser.mulatschak.helpers.Coordinate;
 
@@ -34,6 +36,23 @@ public class TouchEvents {
                 }
             }
         }
+
+        if (controller.getAnimation().getStichAnsage().getAnimationRunning()) {
+            List<Button> buttons = controller.getAnimation().getStichAnsage().getButtons();
+            int width = controller.getLayout().getSmallButtonSize();
+            for (int i = 0; i < buttons.size(); i++) {
+                if (i == 6) {
+                    width *= 3;
+                }
+                if (X >= buttons.get(i).getCoordinate().getX() &&  X < buttons.get(i)
+                        .getCoordinate().getX() + width &&
+                        Y >= buttons.get(i).getCoordinate().getY() &&  Y < buttons.get(i)
+                        .getCoordinate().getY() + controller.getLayout().getSmallButtonSize()) {
+                    buttons.get(i).setPressed(true);
+                }
+            }
+        }
+
     }
 
     public void ActionMove(GameController controller, int X, int Y) {
@@ -41,6 +60,25 @@ public class TouchEvents {
             controller.getPlayerById(0).getHand().getCardAt(move_card_).setPosition(
                     X -  controller.getLayout().getCardWidth() / 2,
                     Y -  controller.getLayout().getCardHeight() / 2);
+        }
+
+        if (controller.getAnimation().getStichAnsage().getAnimationRunning()) {
+            List<Button> buttons = controller.getAnimation().getStichAnsage().getButtons();
+            int width = controller.getLayout().getSmallButtonSize();
+            for (int i = 0; i < buttons.size(); i++) {
+                if (i == 6) {
+                    width *= 3;
+                }
+                if (X >= buttons.get(i).getCoordinate().getX() &&  X < buttons.get(i)
+                        .getCoordinate().getX() + width &&
+                        Y >= buttons.get(i).getCoordinate().getY() &&  Y < buttons.get(i)
+                        .getCoordinate().getY() + controller.getLayout().getSmallButtonSize()) {
+                    buttons.get(i).setPressed(true);
+                }
+                else {
+                    buttons.get(i).setPressed(false);
+                }
+            }
         }
     }
 
@@ -65,12 +103,26 @@ public class TouchEvents {
                 controller.getPlayerById(0).getHand().getCardStack().remove(move_card_);
 
                 // TODO recalculate hand positions!
-                ReAnimateHands.redrawHands(controller.getLayout(), controller.getPlayerById(0));
+                controller.getAnimation().getReAnimateHands()
+                        .redrawHands(controller.getLayout(), controller.getPlayerById(0));
 
 
                 // ToDo give turn to next player
             }
             move_card_ = -1;
         }
+
+        if (controller.getAnimation().getStichAnsage().getAnimationRunning()) {
+            List<Button> buttons = controller.getAnimation().getStichAnsage().getButtons();
+            for (int button_id = 0; button_id < buttons.size(); button_id++) {
+                if (buttons.get(button_id).IsPressed())
+                {
+                    controller.getPlayerById(0).setTrumphsToMake(button_id);
+                    buttons.get(button_id).setPressed(false);
+                    controller.getAnimation().getStichAnsage().setAnimatingRunning(false);
+                }
+            }
+        }
+
     }
 }

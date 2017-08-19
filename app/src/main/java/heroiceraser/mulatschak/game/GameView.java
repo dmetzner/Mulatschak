@@ -53,7 +53,7 @@ public class GameView extends View {
         super.onDraw(canvas);
         // TESTCASE
            // drawCheck(canvas);
-        //
+
         drawHandCards(canvas);
         drawDiscardPile(canvas);
         drawAnimations(canvas);
@@ -145,7 +145,19 @@ public class GameView extends View {
             canvas.drawBitmap(controller_.getAnimation().getDealingAnimation().getBitmap(),
                     controller_.getAnimation().getDealingAnimation().getHandCardX(),
                     controller_.getAnimation().getDealingAnimation().getHandCardY(), null);
+        }
 
+        if (controller_.getAnimation().getStichAnsage().getAnimationRunning()) {
+            int amount_of_buttons = controller_.getAnimation().getStichAnsage().getButtons().size();
+            for (int button_id = 0; button_id < amount_of_buttons; button_id++) {
+                Button button = controller_.getAnimation().getStichAnsage().getButtonAt(button_id);
+                Bitmap bitmap = button.getBitmap();
+                if (button.IsPressed()) {
+                    bitmap = button.getBitmapPressed();
+                }
+                canvas.drawBitmap(bitmap, button.getCoordinate().getX(),
+                        button.getCoordinate().getY(), null);
+            }
         }
 
     }

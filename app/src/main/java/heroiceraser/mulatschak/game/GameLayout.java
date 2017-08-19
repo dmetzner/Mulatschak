@@ -24,6 +24,7 @@ public class GameLayout {
     // Dimensions
     private int screen_width, screen_height;
     private int card_width, card_height;
+    private int small_button_size_;
 
     private Coordinate hand_bottom_;
     private Coordinate hand_left_;
@@ -45,6 +46,7 @@ public class GameLayout {
         card_width = (int) (screen_width /
                 (view.getController().getLogic().getMaxCardsPerHand() + 1));
         card_height = (int) (card_width * 1.28);
+        small_button_size_ = screen_width / 4;
     }
 
     //----------------------------------------------------------------------------------------------
@@ -144,4 +146,7 @@ public class GameLayout {
         hand_right_ = new Coordinate(x, y);
     }
 
+    public int getSmallButtonSize() {
+        return small_button_size_;
+    }
 }
