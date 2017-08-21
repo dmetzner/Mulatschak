@@ -22,14 +22,14 @@ public class DiscardPile {
 
     private Card card_bottom_;
     private Card card_left_;
-    private Card card_up_;
+    private Card card_top_;
     private Card card_right_;
 
     public DiscardPile() {
         coordinates_ = new ArrayList<Coordinate>();
         card_bottom_ = null;
         card_left_ = null;
-        card_up_ = null;
+        card_top_ = null;
         card_right_ = null;
 
     }
@@ -66,12 +66,26 @@ public class DiscardPile {
             case 1:
                 return getCardLeft();
             case 2:
-                return getCardUp();
+                return getCardTop();
             case 3:
                 return getCardRight();
         }
         return null;
     }
+
+    public void setCard(int pos, Card card) {
+        switch (pos) {
+            case 0:
+                setCardBottom(card);
+            case 1:
+                setCardLeft(card);
+            case 2:
+                setCardTop(card);
+            case 3:
+                setCardRight(card);
+        }
+    }
+
 
     public Card getCardBottom() {
         return card_bottom_;
@@ -83,10 +97,10 @@ public class DiscardPile {
     }
     public void setCardLeft(Card card_left) { card_left_ = card_left; }
 
-    public Card getCardUp() {
-        return card_up_;
+    public Card getCardTop() {
+        return card_top_;
     }
-    public void setCardUp(Card card_up) { card_up_ = card_up; }
+    public void setCardTop(Card card_up) { card_top_ = card_up; }
 
     public Card getCardRight() {
         return card_right_;

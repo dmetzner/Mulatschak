@@ -18,16 +18,26 @@ public class GameLogic {
     //
     private int turn_;
     private int turn_last_round_;
-    private int trumph_player_id;
+    private int trumph_player_id_;
     private int trumph_;
 
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
     public GameLogic() {
-
-
+        turn_ = -1;
+        turn_last_round_ = -1;
+        trumph_player_id_ = -1;
+        trumph_ = -1;
     }
+
+    public void turnToNextPlayer(int players) {
+        turn_++;
+        if (turn_ >= players) {
+            turn_ = 0;
+        }
+    }
+
 
     //----------------------------------------------------------------------------------------------
     //  Getter & Setter
@@ -39,6 +49,8 @@ public class GameLogic {
     public int getMaxPlayers() { return  MAX_PLAYERS; }
 
     public int getStartLives() { return START_LIVES; }
+
+    public void setTurn(int turn) { turn_ = turn; }
 
     public int getTurn() { return turn_; }
 

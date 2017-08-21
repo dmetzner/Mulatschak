@@ -31,6 +31,8 @@ public class GameController{
     private DiscardPile discardPile_;
     private CardStack trash_;
 
+    private boolean playing = true;
+
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
@@ -90,9 +92,27 @@ public class GameController{
     public void startRound() {
         Collections.shuffle(deck_.getStack(), new Random());
         dealCards(getAmountOfPlayers());
-        if (getAnimation().getTurnedOn()) {
-            getAnimation().getDealingAnimation().start();
+        getAnimation().getDealingAnimation().start();
+    }
+
+    //----------------------------------------------------------------------------------------------
+    //  cada
+    //
+    public void continueAfterDealingAnimation() {
+        logic_.setTurn(-1);
+        nextTurn();
+    }
+
+
+    public void nextTurn() {
+
+        getLogic().turnToNextPlayer(getAmountOfPlayers());
+        if (logic_.getTurn() != 0) {
+            EnemyLogic el = new EnemyLogic();
+            el.playCard(getPlayerById(logic_.getTurn()), discardPile_);
+            nextTurn();
         }
+
     }
 
     //----------------------------------------------------------------------------------------------

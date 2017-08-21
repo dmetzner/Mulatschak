@@ -21,7 +21,7 @@ public class StichAnsage {
     private List<Button> buttons_;
 
     public StichAnsage() {
-        animating_ = true;
+        animating_ = false;
         buttons_ = new ArrayList<Button>();
     }
 

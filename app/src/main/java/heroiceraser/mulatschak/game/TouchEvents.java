@@ -102,12 +102,13 @@ public class TouchEvents {
 
                 controller.getPlayerById(0).getHand().getCardStack().remove(move_card_);
 
-                // TODO recalculate hand positions!
+                // recalculate hand positions!
                 controller.getAnimation().getReAnimateHands()
                         .redrawHands(controller.getLayout(), controller.getPlayerById(0));
 
+                // give turn to next player
+                controller.nextTurn();
 
-                // ToDo give turn to next player
             }
             move_card_ = -1;
         }

@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 
 import heroiceraser.mulatschak.game.CardStack;
+import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.helpers.Coordinate;
@@ -39,9 +40,11 @@ public class DealingAnimation {
     // Getter & Setter
     //
     public boolean getAnimationRunning() { return animation_running_; }
+
     public void setAnimationRunning(boolean animation_running) {
         animation_running_ = animation_running;
     }
+
     public int getHandCardX() { return hand_card_x; }
     public int getHandCardY() { return hand_card_y; }
 
@@ -136,39 +139,41 @@ public class DealingAnimation {
 
         if (cards_to_draw <= 0) {
             animation_running_ = false;
+            view_.getController().continueAfterDealingAnimation();
             return;
         }
+
+        GameController controller = view_.getController();
         int player_id = 0;
-        int position_id = 0;
-        int modulo = cards_to_draw % view_.getController().getAmountOfPlayers();
-        switch (view_.getController().getAmountOfPlayers()) {
+        int modulo = cards_to_draw % controller.getAmountOfPlayers();
+        switch (controller.getAmountOfPlayers()) {
             case 1:
-                player_id = 0;
-                position_id = 0;
+                                        player_id = 0; controller.getPlayerById(0).setPosition(0);
                 break;
             case 2:
-                if      (modulo == 0) { player_id = 0;  position_id = 0; }
-                else if (modulo == 1) { player_id = 1;  position_id = 2; }
+                if      (modulo == 0) { player_id = 0; controller.getPlayerById(0).setPosition(0); }
+                else if (modulo == 1) { player_id = 1; controller.getPlayerById(1).setPosition(2); }
                 break;
             case 3:
-                if      (modulo == 0) { player_id = 0;  position_id = 0; }
-                else if (modulo == 1) { player_id = 2;  position_id = 2; }
-                else if (modulo == 2) { player_id = 1;  position_id = 1; }
+                if      (modulo == 0) { player_id = 0; controller.getPlayerById(0).setPosition(0); }
+                else if (modulo == 1) { player_id = 2; controller.getPlayerById(2).setPosition(2); }
+                else if (modulo == 2) { player_id = 1; controller.getPlayerById(1).setPosition(1); }
                 break;
             case 4:
-                if      (modulo == 0) { player_id = 0;  position_id = 0; }
-                else if (modulo == 1) { player_id = 3;  position_id = 3; }
-                else if (modulo == 2) { player_id = 2;  position_id = 2; }
-                else if (modulo == 3) { player_id = 1;  position_id = 1; }
+                if      (modulo == 0) { player_id = 0; controller.getPlayerById(0).setPosition(0); }
+                else if (modulo == 1) { player_id = 3; controller.getPlayerById(3).setPosition(3); }
+                else if (modulo == 2) { player_id = 2; controller.getPlayerById(2).setPosition(2); }
+                else if (modulo == 3) { player_id = 1; controller.getPlayerById(1).setPosition(1); }
                 break;
         }
-        animatePos(player_id, position_id);
+        animatePos(player_id);
     }
 
-    public void animatePos(int player_id, int pos) {
-        calculateEndPositions(player_id, pos);
-        calculateOffsets(pos);
-        if (pos % 2 == 0) {
+    public void animatePos(int player_id) {
+        int position = view_.getController().getPlayerById(player_id).getPosition();
+        calculateEndPositions(player_id, position);
+        calculateOffsets(position);
+        if (position % 2 == 0) {
             animateDealingVertical(player_id);
         }
         else {

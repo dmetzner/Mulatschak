@@ -21,6 +21,7 @@ public class Player {
     //
     public Player(int id) {
         id_ = id;
+        position_ = -1;
         hand_ = new CardStack();
         tricks_ = new CardStack();
     }
