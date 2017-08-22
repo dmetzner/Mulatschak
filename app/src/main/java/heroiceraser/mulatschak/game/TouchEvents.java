@@ -44,7 +44,8 @@ public class TouchEvents {
                 if (i == 6) {
                     width *= 3;
                 }
-                if (X >= buttons.get(i).getCoordinate().getX() &&  X < buttons.get(i)
+                if (buttons.get(i).IsEnabled() &&
+                        X >= buttons.get(i).getCoordinate().getX() &&  X < buttons.get(i)
                         .getCoordinate().getX() + width &&
                         Y >= buttons.get(i).getCoordinate().getY() &&  Y < buttons.get(i)
                         .getCoordinate().getY() + controller.getLayout().getSmallButtonSize()) {
@@ -80,7 +81,8 @@ public class TouchEvents {
                 if (i == 6) {
                     width *= 3;
                 }
-                if (X >= buttons.get(i).getCoordinate().getX() &&  X < buttons.get(i)
+                if (buttons.get(i).IsEnabled() &&
+                        X >= buttons.get(i).getCoordinate().getX() &&  X < buttons.get(i)
                         .getCoordinate().getX() + width &&
                         Y >= buttons.get(i).getCoordinate().getY() &&  Y < buttons.get(i)
                         .getCoordinate().getY() + controller.getLayout().getSmallButtonSize()) {
@@ -144,6 +146,8 @@ public class TouchEvents {
                 if (buttons.get(button_id).IsPressed())
                 {
                     controller.getPlayerById(0).setTrumphsToMake(button_id);
+                    controller.getLogic().setTrumphsToMake(button_id);
+                    controller.getLogic().setTrumphPlayerId(0);
                     buttons.get(button_id).setPressed(false);
                     controller.getAnimation().getStichAnsage().setAnimationNumbers(false);
                     controller.getLogic().turnToNextPlayer(controller.getAmountOfPlayers());

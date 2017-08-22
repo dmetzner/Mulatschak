@@ -106,7 +106,6 @@ public class GameController{
             getPlayerById(i).setTrumphsToMake(-1);
         }
         sayStiche();
-        // nextTurn();
     }
 
     public void sayStiche() {
@@ -119,11 +118,34 @@ public class GameController{
         }
         else if (logic_.getTurn() != 0) {
             EnemyLogic el = new EnemyLogic();
-            el.sayStiche(getPlayerById(logic_.getTurn()), view_);
+            el.sayStiche(getPlayerById(logic_.getTurn()), this);
             logic_.turnToNextPlayer(getAmountOfPlayers());
             sayStiche();
         }
     }
+
+    public void setNewMaxTrumphs(int amount, int id) {
+        CharSequence text = "player: " + id + " tries ";
+        if (amount > logic_.getTrumphsToMake()) {
+            List<Button> buttons = getAnimation().getStichAnsage().getNumberButtons();
+            for (int i = 1; i <= amount; i++) {
+                buttons.get(i).setEnabled(false);
+            }
+            getPlayerById(id).setTrumphsToMake(amount);
+            text = text + Integer.toString(amount);
+        }
+        else {
+            getPlayerById(id).setTrumphsToMake(0);
+            text = text + "0";
+        }
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(view_.getContext(), text, duration);
+        toast.show();////////////////////////////////////////////
+
+        logic_.setTrumphsToMake(amount);
+        logic_.setTrumphPlayerId(id);
+    }
+
 
     private void letMasterChoose() {
         int master = -1;     // who is master

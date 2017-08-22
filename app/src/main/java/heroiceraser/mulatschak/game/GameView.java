@@ -155,6 +155,9 @@ public class GameView extends View {
                 if (button.IsPressed()) {
                     bitmap = button.getBitmapPressed();
                 }
+                else if (!button.IsEnabled()) {
+                    bitmap = button.getBitmapDisabled();
+                }
                 canvas.drawBitmap(bitmap, button.getCoordinate().getX(),
                         button.getCoordinate().getY(), null);
             }

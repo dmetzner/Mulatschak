@@ -19,6 +19,7 @@ public class GameLogic {
     private int turn_;
     private int turn_last_round_;
     private int trumph_player_id_;
+    private int trumphs_to_make_;
     private int trumph_;
 
     //----------------------------------------------------------------------------------------------
@@ -28,6 +29,7 @@ public class GameLogic {
         turn_ = -1;
         turn_last_round_ = -1;
         trumph_player_id_ = -1;
+        trumphs_to_make_ = -1;
         trumph_ = -1;
     }
 
@@ -59,6 +61,16 @@ public class GameLogic {
     }
 
     public int getTrumph() { return trumph_; }
+
+    public int getTrumphPlayerId() { return  trumph_player_id_; }
+
+    public void setTrumphPlayerId(int trumph_player_id) { trumph_player_id_ = trumph_player_id; }
+
+    public void setTrumphsToMake(int trumphs) {
+        trumphs_to_make_ = trumphs;
+    }
+
+    public int getTrumphsToMake() { return trumphs_to_make_; }
 
     public void setTrumph(int trumph){
         trumph_ = trumph;

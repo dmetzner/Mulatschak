@@ -2,6 +2,8 @@ package heroiceraser.mulatschak.game;
 
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -21,13 +23,25 @@ public class EnemyLogic {
         discard_pile.setCard(player.getPosition(), card);
     }
 
-    public void sayStiche(Player player, GameView view) {
-        player.setTrumphsToMake(1); // ToDo: put in some fancy logic here
-        // DEBUG ////////////////////////////////////////////////////////////////////////////////////////
-        CharSequence text = "player: " + player.getId() + " tries " + 1;
-        int duration = Toast.LENGTH_SHORT;
-        Toast toast = Toast.makeText(view.getContext(), text, duration);
-        toast.show();//////////////////////////////////////////////////////////////////////////////////
+    public void sayStiche(Player player, GameController controller) {
+
+        // ToDo: put in some fancy logic here
+
+        int[] cards_per_trumph = new int[5];
+        for (int i = 0; i < player.getAmountOfCardsInHand(); i++) {
+            int trumph = (player.getHand().getCardAt(i).getId() / 100) % 5;
+            cards_per_trumph[trumph]++;
+        }
+
+        int max = 0;
+        int pos = 0;
+        for (int i = 0; i < cards_per_trumph.length; i++){
+            if (cards_per_trumph[i] > max) {
+                max = cards_per_trumph[i];
+                pos = i;
+            }
+        }
+        controller.setNewMaxTrumphs(max, player.getId());
     }
 
     public void chooseTrumph(Player player, GameLogic logic, GameView view) {

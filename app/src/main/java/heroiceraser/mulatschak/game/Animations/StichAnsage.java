@@ -96,6 +96,7 @@ public class StichAnsage {
 
             button.setBitmap(loadBitmap(view, image_name + button_id, width, height, package_name));
             button.setBitmapPressed(loadBitmap(view, image_name + button_id + "_pressed", width, height, package_name));
+            button.setBitmapDisabled(loadBitmap(view, image_name + button_id + "_disabled", width, height, package_name));
             number_buttons_.add(button);
         }
 
