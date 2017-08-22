@@ -147,10 +147,23 @@ public class GameView extends View {
                     controller_.getAnimation().getDealingAnimation().getHandCardY(), null);
         }
 
-        if (controller_.getAnimation().getStichAnsage().getAnimationRunning()) {
-            int amount_of_buttons = controller_.getAnimation().getStichAnsage().getButtons().size();
+        else if (controller_.getAnimation().getStichAnsage().getAnimationNumbers()) {
+            int amount_of_buttons = controller_.getAnimation().getStichAnsage().getNumberButtons().size();
             for (int button_id = 0; button_id < amount_of_buttons; button_id++) {
-                Button button = controller_.getAnimation().getStichAnsage().getButtonAt(button_id);
+                Button button = controller_.getAnimation().getStichAnsage().getNumberButtonAt(button_id);
+                Bitmap bitmap = button.getBitmap();
+                if (button.IsPressed()) {
+                    bitmap = button.getBitmapPressed();
+                }
+                canvas.drawBitmap(bitmap, button.getCoordinate().getX(),
+                        button.getCoordinate().getY(), null);
+            }
+        }
+
+        else if (controller_.getAnimation().getStichAnsage().getAnimationSymbols()) {
+            int amount_of_buttons = controller_.getAnimation().getStichAnsage().getSymbolButtons().size();
+            for (int button_id = 0; button_id < amount_of_buttons; button_id++) {
+                Button button = controller_.getAnimation().getStichAnsage().getSymbolButtonAt(button_id);
                 Bitmap bitmap = button.getBitmap();
                 if (button.IsPressed()) {
                     bitmap = button.getBitmapPressed();

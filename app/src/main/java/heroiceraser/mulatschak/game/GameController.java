@@ -1,5 +1,7 @@
 package heroiceraser.mulatschak.game;
 
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -91,6 +93,7 @@ public class GameController{
     //
     public void startRound() {
         Collections.shuffle(deck_.getStack(), new Random());
+        chooseStartingPlayer();
         dealCards(getAmountOfPlayers());
         getAnimation().getDealingAnimation().start();
     }
@@ -99,17 +102,73 @@ public class GameController{
     //  cada
     //
     public void continueAfterDealingAnimation() {
-        logic_.setTurn(-1);
-        nextTurn();
+        for (int i = 0; i < getAmountOfPlayers(); i++) {
+            getPlayerById(i).setTrumphsToMake(-1);
+        }
+        sayStiche();
+        // nextTurn();
+    }
+
+    public void sayStiche() {
+        if (getPlayerById(logic_.getTurn()).getTrumphsToMake() != -1) {
+            letMasterChoose();
+            return;
+        }
+        if (logic_.getTurn() == 0) {
+            animations_.getStichAnsage().setAnimationNumbers(true);
+        }
+        else if (logic_.getTurn() != 0) {
+            EnemyLogic el = new EnemyLogic();
+            el.sayStiche(getPlayerById(logic_.getTurn()), view_);
+            logic_.turnToNextPlayer(getAmountOfPlayers());
+            sayStiche();
+        }
+    }
+
+    private void letMasterChoose() {
+        int master = -1;     // who is master
+        int max = 0;
+        for (int i = 0; i < getAmountOfPlayers(); i++) {
+            if (getPlayerById(i).getTrumphsToMake() > max) {
+                master = i;
+                max = getPlayerById(i).getTrumphsToMake();
+            }
+        }
+
+        if (master == -1)
+        {
+            // ToDo new round
+        }
+
+        if (master == 0) {
+            animations_.getStichAnsage().setAnimationSymbols(true);
+        }
+        else if (master != 0) {
+            EnemyLogic el = new EnemyLogic();
+            el.chooseTrumph(getPlayerById(master), logic_, view_);
+            nextTurn();
+        }
     }
 
 
+    private void chooseStartingPlayer() {
+        Random random_generator = new Random();
+        int random_number = random_generator.nextInt(getAmountOfPlayers());
+        logic_.setTurn(random_number);
+
+        // DEBUG ////////////////////////////////////////////////////////////////////////////////////////
+        CharSequence text = "starting turn: " + random_number;
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(view_.getContext(), text, duration);
+        toast.show();//////////////////////////////////////////////////////////////////////////////////
+    }
+
     public void nextTurn() {
 
-        getLogic().turnToNextPlayer(getAmountOfPlayers());
         if (logic_.getTurn() != 0) {
             EnemyLogic el = new EnemyLogic();
             el.playCard(getPlayerById(logic_.getTurn()), discardPile_);
+            getLogic().turnToNextPlayer(getAmountOfPlayers());
             nextTurn();
         }
 

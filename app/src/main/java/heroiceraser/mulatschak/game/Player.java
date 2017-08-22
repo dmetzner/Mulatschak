@@ -22,6 +22,8 @@ public class Player {
     public Player(int id) {
         id_ = id;
         position_ = -1;
+        lives_ = -1;
+        trumphs_to_make_ = -1;
         hand_ = new CardStack();
         tricks_ = new CardStack();
     }

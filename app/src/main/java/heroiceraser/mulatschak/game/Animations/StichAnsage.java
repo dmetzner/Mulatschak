@@ -17,12 +17,16 @@ import heroiceraser.mulatschak.game.GameView;
 
 public class StichAnsage {
 
-    private boolean animating_;
-    private List<Button> buttons_;
+    private boolean animating_numbers_;
+    private boolean animating_smybols_;
+    private List<Button> number_buttons_;
+    private List<Button> symbol_buttons_;
 
     public StichAnsage() {
-        animating_ = false;
-        buttons_ = new ArrayList<Button>();
+        animating_numbers_ = false;
+        number_buttons_ = new ArrayList<Button>();
+        animating_smybols_ = false;
+        symbol_buttons_ = new ArrayList<Button>();
     }
 
     private Bitmap loadBitmap(GameView view, String image_name, int width, int height,
@@ -41,7 +45,43 @@ public class StichAnsage {
     }
 
     public void init(GameView view) {
+        initNumberButtons(view);
+        initSymbols(view);
+    }
 
+    private void initSymbols(GameView view) {
+        String image_name = "symbol_";
+        String package_name = "drawable";
+
+        for (int button_id = 1; button_id <= 4; button_id++) {
+            Button button = new Button();
+            int width = view.getController().getLayout().getSymbolButtonSize();
+            int height = view.getController().getLayout().getSymbolButtonSize();
+
+            button.setBitmap(loadBitmap(view, image_name + button_id, width, height, package_name));
+            button.setBitmapPressed(loadBitmap(view, image_name + button_id + "_pressed", width, height, package_name));
+            symbol_buttons_.add(button);
+        }
+
+        GameLayout layout = view.getController().getLayout();
+        int x = layout.getHandBottom().getX() + layout.getCardWidth() / 2;
+        int y = layout.getHandBottom().getY() - 10 - layout.getSymbolButtonSize() / 2;
+        final int max_buttons_per_row = 2;
+        int buttons_per_row = max_buttons_per_row;
+        for (int button_id = 0; button_id < symbol_buttons_.size(); button_id++) {
+            if (buttons_per_row >= max_buttons_per_row) {
+                buttons_per_row = 0;
+                x = layout.getHandBottom().getX() + layout.getCardWidth() / 2;
+                y -= layout.getSymbolButtonSize();
+            }
+            symbol_buttons_.get(button_id).setCoordinate(x, y);
+            x += layout.getSymbolButtonSize();
+            buttons_per_row++;
+        }
+
+    }
+
+    private void initNumberButtons(GameView view) {
         String image_name = "button_";
         String package_name = "drawable";
 
@@ -56,45 +96,63 @@ public class StichAnsage {
 
             button.setBitmap(loadBitmap(view, image_name + button_id, width, height, package_name));
             button.setBitmapPressed(loadBitmap(view, image_name + button_id + "_pressed", width, height, package_name));
-            buttons_.add(button);
+            number_buttons_.add(button);
         }
 
         GameLayout layout = view.getController().getLayout();
         int x = layout.getHandBottom().getX() + layout.getCardWidth() / 5;
         int y = layout.getHandBottom().getY() - 10 - layout.getSmallButtonSize();
         final int max_buttons_per_row = 3;
-        buttons_.get(6).setCoordinate(x, y);
+        number_buttons_.get(6).setCoordinate(x, y);
         int buttons_per_row = max_buttons_per_row;
-        int amount_of_buttons = getButtons().size();
+        int amount_of_buttons = number_buttons_.size();
         for (int button_id = amount_of_buttons - 2; button_id >= 0; button_id--) {
             if (buttons_per_row >= max_buttons_per_row) {
                 buttons_per_row = 0;
                 x = layout.getHandBottom().getX() + layout.getCardWidth() / 5 + 2 * layout.getSmallButtonSize();
                 y -= layout.getSmallButtonSize();
             }
-            buttons_.get(button_id).setCoordinate(x, y);
+            number_buttons_.get(button_id).setCoordinate(x, y);
             x -= layout.getSmallButtonSize();
             buttons_per_row++;
         }
-
-
     }
 
-    public boolean getAnimationRunning() {
-        return animating_;
+    public boolean getAnimationNumbers() {
+        return animating_numbers_;
     }
-    public void setAnimatingRunning(boolean animating) {
-        animating_ = animating;
-    }
-
-    public List<Button> getButtons() {
-        return buttons_;
+    public void setAnimationNumbers(boolean animating) {
+        animating_numbers_ = animating;
     }
 
-    public Button getButtonAt(int pos) {
-        if (pos < buttons_.size()) {
-            return buttons_.get(pos);
+    public boolean getAnimationSymbols() {
+        return animating_smybols_;
+    }
+    public void setAnimationSymbols(boolean animating) {
+        animating_smybols_ = animating;
+    }
+
+    public List<Button> getNumberButtons() {
+        return number_buttons_;
+    }
+
+    public List<Button> getSymbolButtons() {
+        return symbol_buttons_;
+    }
+
+    public Button getNumberButtonAt(int pos) {
+        if (pos < number_buttons_.size()) {
+            return number_buttons_.get(pos);
         }
         return null;
     }
+
+    public Button getSymbolButtonAt(int pos) {
+        if (pos < symbol_buttons_.size()) {
+            return symbol_buttons_.get(pos);
+        }
+        return null;
+    }
+
+
 }

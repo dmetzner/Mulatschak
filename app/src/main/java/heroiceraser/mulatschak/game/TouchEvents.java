@@ -37,8 +37,8 @@ public class TouchEvents {
             }
         }
 
-        if (controller.getAnimation().getStichAnsage().getAnimationRunning()) {
-            List<Button> buttons = controller.getAnimation().getStichAnsage().getButtons();
+        if (controller.getAnimation().getStichAnsage().getAnimationNumbers()) {
+            List<Button> buttons = controller.getAnimation().getStichAnsage().getNumberButtons();
             int width = controller.getLayout().getSmallButtonSize();
             for (int i = 0; i < buttons.size(); i++) {
                 if (i == 6) {
@@ -48,6 +48,17 @@ public class TouchEvents {
                         .getCoordinate().getX() + width &&
                         Y >= buttons.get(i).getCoordinate().getY() &&  Y < buttons.get(i)
                         .getCoordinate().getY() + controller.getLayout().getSmallButtonSize()) {
+                    buttons.get(i).setPressed(true);
+                }
+            }
+        }
+        else if (controller.getAnimation().getStichAnsage().getAnimationSymbols()) {
+            List<Button> buttons = controller.getAnimation().getStichAnsage().getSymbolButtons();
+            for (int i = 0; i < buttons.size(); i++) {
+                if (X >= buttons.get(i).getCoordinate().getX() &&  X < buttons.get(i)
+                        .getCoordinate().getX() + controller.getLayout().getSymbolButtonSize() &&
+                        Y >= buttons.get(i).getCoordinate().getY() &&  Y < buttons.get(i)
+                        .getCoordinate().getY() + controller.getLayout().getSymbolButtonSize()) {
                     buttons.get(i).setPressed(true);
                 }
             }
@@ -62,8 +73,8 @@ public class TouchEvents {
                     Y -  controller.getLayout().getCardHeight() / 2);
         }
 
-        if (controller.getAnimation().getStichAnsage().getAnimationRunning()) {
-            List<Button> buttons = controller.getAnimation().getStichAnsage().getButtons();
+        if (controller.getAnimation().getStichAnsage().getAnimationNumbers()) {
+            List<Button> buttons = controller.getAnimation().getStichAnsage().getNumberButtons();
             int width = controller.getLayout().getSmallButtonSize();
             for (int i = 0; i < buttons.size(); i++) {
                 if (i == 6) {
@@ -76,6 +87,19 @@ public class TouchEvents {
                     buttons.get(i).setPressed(true);
                 }
                 else {
+                    buttons.get(i).setPressed(false);
+                }
+            }
+        }
+        else if (controller.getAnimation().getStichAnsage().getAnimationSymbols()) {
+            List<Button> buttons = controller.getAnimation().getStichAnsage().getSymbolButtons();
+            for (int i = 0; i < buttons.size(); i++) {
+                if (X >= buttons.get(i).getCoordinate().getX() && X < buttons.get(i)
+                        .getCoordinate().getX() + controller.getLayout().getSymbolButtonSize() &&
+                        Y >= buttons.get(i).getCoordinate().getY() && Y < buttons.get(i)
+                        .getCoordinate().getY() + controller.getLayout().getSymbolButtonSize()) {
+                    buttons.get(i).setPressed(true);
+                } else {
                     buttons.get(i).setPressed(false);
                 }
             }
@@ -107,23 +131,38 @@ public class TouchEvents {
                         .redrawHands(controller.getLayout(), controller.getPlayerById(0));
 
                 // give turn to next player
+                controller.getLogic().turnToNextPlayer(controller.getAmountOfPlayers());
                 controller.nextTurn();
 
             }
             move_card_ = -1;
         }
 
-        if (controller.getAnimation().getStichAnsage().getAnimationRunning()) {
-            List<Button> buttons = controller.getAnimation().getStichAnsage().getButtons();
+        if (controller.getAnimation().getStichAnsage().getAnimationNumbers()) {
+            List<Button> buttons = controller.getAnimation().getStichAnsage().getNumberButtons();
             for (int button_id = 0; button_id < buttons.size(); button_id++) {
                 if (buttons.get(button_id).IsPressed())
                 {
                     controller.getPlayerById(0).setTrumphsToMake(button_id);
                     buttons.get(button_id).setPressed(false);
-                    controller.getAnimation().getStichAnsage().setAnimatingRunning(false);
+                    controller.getAnimation().getStichAnsage().setAnimationNumbers(false);
+                    controller.getLogic().turnToNextPlayer(controller.getAmountOfPlayers());
+                    controller.sayStiche();
                 }
             }
         }
+        else if (controller.getAnimation().getStichAnsage().getAnimationSymbols()) {
+            List<Button> buttons = controller.getAnimation().getStichAnsage().getSymbolButtons();
+            for (int i = 0; i < buttons.size(); i++) {
+                if (buttons.get(i).IsPressed()) {
+                    controller.getLogic().setTrumph(i);
+                    buttons.get(i).setPressed(false);
+                    controller.getAnimation().getStichAnsage().setAnimationSymbols(false);
+                    controller.nextTurn();
+                }
+            }
+        }
+
 
     }
 }
