@@ -10,12 +10,14 @@ public class GameAnimation {
 
     private boolean animation_turned_on_;
 
+    private CardAnimations card_animations_;
     private DealingAnimation dealing_animation_;
     private ReAnimateHands re_animate_hands;
     private StichAnsage stich_ansage_;
 
     public GameAnimation(GameView view) {
         animation_turned_on_ = true;
+        card_animations_ = new CardAnimations();
         dealing_animation_ = new DealingAnimation(view);
         re_animate_hands = new ReAnimateHands();
         stich_ansage_ = new StichAnsage();
@@ -33,6 +35,10 @@ public class GameAnimation {
         return dealing_animation_;
     }
     public ReAnimateHands getReAnimateHands() { return re_animate_hands; }
+
+    public CardAnimations getCardAnimations() {
+        return card_animations_;
+    }
 
     public StichAnsage getStichAnsage() { return stich_ansage_; }
 }

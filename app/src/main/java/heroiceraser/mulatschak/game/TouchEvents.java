@@ -145,13 +145,10 @@ public class TouchEvents {
             for (int button_id = 0; button_id < buttons.size(); button_id++) {
                 if (buttons.get(button_id).IsPressed())
                 {
-                    controller.getPlayerById(0).setTrumphsToMake(button_id);
-                    controller.getLogic().setTrumphsToMake(button_id);
-                    controller.getLogic().setTrumphPlayerId(0);
                     buttons.get(button_id).setPressed(false);
                     controller.getAnimation().getStichAnsage().setAnimationNumbers(false);
-                    controller.getLogic().turnToNextPlayer(controller.getAmountOfPlayers());
-                    controller.sayStiche();
+                    controller.setNewMaxTrumphs(button_id, 0);
+                    controller.trickBids();
                 }
             }
         }
@@ -162,7 +159,7 @@ public class TouchEvents {
                     controller.getLogic().setTrumph(i);
                     buttons.get(i).setPressed(false);
                     controller.getAnimation().getStichAnsage().setAnimationSymbols(false);
-                    controller.nextTurn();
+                    controller.continueAfterTrumpWasChoosen();
                 }
             }
         }

@@ -29,6 +29,7 @@ public class Button {
         bitmap_ = null;
         bitmap_pressed_ = null;
         bitmap_disabled_ = null;
+        coordinate_ = null;
     }
 
     //----------------------------------------------------------------------------------------------

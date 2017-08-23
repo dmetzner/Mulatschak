@@ -23,7 +23,7 @@ public class EnemyLogic {
         discard_pile.setCard(player.getPosition(), card);
     }
 
-    public void sayStiche(Player player, GameController controller) {
+    public void trickBids(Player player, GameController controller) {
 
         // ToDo: put in some fancy logic here
 
@@ -34,11 +34,9 @@ public class EnemyLogic {
         }
 
         int max = 0;
-        int pos = 0;
         for (int i = 0; i < cards_per_trumph.length; i++){
             if (cards_per_trumph[i] > max) {
                 max = cards_per_trumph[i];
-                pos = i;
             }
         }
         controller.setNewMaxTrumphs(max, player.getId());
