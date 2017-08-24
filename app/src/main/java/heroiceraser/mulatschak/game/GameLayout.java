@@ -23,9 +23,12 @@ public class GameLayout {
 
     // Dimensions
     private int screen_width, screen_height;
+    private int button_bar_size_;
     private int card_width, card_height;
     private int small_button_size_;
     private int symbol_button_size;
+
+    private Coordinate button_bar_;
 
     private Coordinate hand_bottom_;
     private Coordinate hand_left_;
@@ -51,6 +54,13 @@ public class GameLayout {
         symbol_button_size = screen_width / 3;
     }
 
+    public void calculateButtonBarPosition() {
+        button_bar_size_ = screen_height / 6;
+        button_bar_ = new Coordinate();
+        button_bar_.setX(0);
+        button_bar_.setY(screen_height - button_bar_size_);
+    }
+
     //----------------------------------------------------------------------------------------------
     //  calculateDeckPosition()
     //
@@ -64,7 +74,7 @@ public class GameLayout {
     //
     public void initHandPositions(MulatschakDeck deck) {
         hand_bottom_ = new Coordinate((int) ((screen_width - card_width * 5) / 2.0),
-                                (int) (screen_height - card_height * 2.0) );
+                                (int) (screen_height - button_bar_size_ - card_height * 1.2) );
 
         hand_left_ = new Coordinate((int) (card_width * -0.6),
                                 (int) (deck.getCoordinate().getY() - card_width) );
@@ -109,6 +119,14 @@ public class GameLayout {
 
     public int getScreenWidth() { return screen_width; }
     public int getScreenHeight() { return screen_height; }
+
+    public int getButtonBarSize() {
+        return button_bar_size_;
+    }
+
+    public Coordinate getButtonBar() {
+        return button_bar_;
+    }
 
     public Coordinate getHandBottom() {
         return hand_bottom_;

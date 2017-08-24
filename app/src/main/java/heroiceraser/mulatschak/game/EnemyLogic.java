@@ -15,9 +15,17 @@ public class EnemyLogic {
 
     }
 
-    public void playCard(Player player, DiscardPile discard_pile) {
+    public void playCard(GameLogic logic, Player player, DiscardPile discard_pile) {
         Random random_generator = new Random();
-        int random_number = random_generator.nextInt(player.getAmountOfCardsInHand());
+        boolean valid = false;
+        int random_number = -1;
+        while (!valid) {
+            random_number = random_generator.nextInt(player.getAmountOfCardsInHand());
+            Card card = player.getHand().getCardAt(random_number);
+            CardStack hand = player.getHand();
+            valid = logic.isAValidCardPlay(card, hand, discard_pile);
+        }
+
         Card card = player.getHand().getCardAt(random_number);
         player.getHand().getCardStack().remove(random_number);
         discard_pile.setCard(player.getPosition(), card);
@@ -44,9 +52,9 @@ public class EnemyLogic {
 
     public void chooseTrumph(Player player, GameLogic logic, GameView view) {
         // ToDo: put in some fancy logic here
-        logic.setTrumph(0);
+        logic.setTrumph(1);
         // DEBUG ////////////////////////////////////////////////////////////////////////////////////////
-        CharSequence text = "player: " + player.getId() + " choose trumph " + 0;
+        CharSequence text = "player: " + player.getId() + " choose trumph " + 1;
         int duration = Toast.LENGTH_SHORT;
         Toast toast = Toast.makeText(view.getContext(), text, duration);
         toast.show();//////////////////////////////////////////////////////////////////////////////////

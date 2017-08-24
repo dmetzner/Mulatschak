@@ -10,6 +10,7 @@ import heroiceraser.mulatschak.game.Button;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
+import heroiceraser.mulatschak.helpers.HelperFunctions;
 
 /**
  * Created by Daniel Metzner on 19.08.2017.
@@ -29,21 +30,6 @@ public class StichAnsage {
         symbol_buttons_ = new ArrayList<Button>();
     }
 
-    private Bitmap loadBitmap(GameView view, String image_name, int width, int height,
-                              String package_name) {
-        int resourceId =
-                view.getResources().getIdentifier(image_name, package_name, view.getContext().getPackageName());
-        Bitmap bitmap =
-                BitmapFactory.decodeResource(view.getContext().getResources(),resourceId);
-
-        // scale Bitmap
-        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, width, height, false);
-
-        assert(scaledBitmap != null) : "StichAnsage -> Bitmap == null";
-
-       return (scaledBitmap);
-    }
-
     public void init(GameView view) {
         initNumberButtons(view);
         initSymbols(view);
@@ -58,14 +44,14 @@ public class StichAnsage {
             int width = view.getController().getLayout().getSymbolButtonSize();
             int height = view.getController().getLayout().getSymbolButtonSize();
 
-            button.setBitmap(loadBitmap(view, image_name + button_id, width, height, package_name));
-            button.setBitmapPressed(loadBitmap(view, image_name + button_id + "_pressed", width, height, package_name));
+            button.setBitmap(HelperFunctions.loadBitmap(view, image_name + button_id, width, height, package_name));
+            button.setBitmapPressed(HelperFunctions.loadBitmap(view, image_name + button_id + "_pressed", width, height, package_name));
             symbol_buttons_.add(button);
         }
 
         GameLayout layout = view.getController().getLayout();
         int x = layout.getHandBottom().getX() + layout.getCardWidth() / 2;
-        int y = layout.getHandBottom().getY() - 10 - layout.getSymbolButtonSize() / 2;
+        int y = (int) (layout.getHandBottom().getY() - layout.getSymbolButtonSize() * 1.3);
         final int max_buttons_per_row = 2;
         int buttons_per_row = max_buttons_per_row;
         for (int button_id = 0; button_id < symbol_buttons_.size(); button_id++) {
@@ -94,15 +80,15 @@ public class StichAnsage {
                 width *= 3;
             }
 
-            button.setBitmap(loadBitmap(view, image_name + button_id, width, height, package_name));
-            button.setBitmapPressed(loadBitmap(view, image_name + button_id + "_pressed", width, height, package_name));
-            button.setBitmapDisabled(loadBitmap(view, image_name + button_id + "_disabled", width, height, package_name));
+            button.setBitmap(HelperFunctions.loadBitmap(view, image_name + button_id, width, height, package_name));
+            button.setBitmapPressed(HelperFunctions.loadBitmap(view, image_name + button_id + "_pressed", width, height, package_name));
+            button.setBitmapDisabled(HelperFunctions.loadBitmap(view, image_name + button_id + "_disabled", width, height, package_name));
             number_buttons_.add(button);
         }
 
         GameLayout layout = view.getController().getLayout();
         int x = layout.getHandBottom().getX() + layout.getCardWidth() / 5;
-        int y = layout.getHandBottom().getY() - 10 - layout.getSmallButtonSize();
+        int y = (int) (layout.getHandBottom().getY() - layout.getSmallButtonSize() * 1.3);
         final int max_buttons_per_row = 3;
         number_buttons_.get(6).setCoordinate(x, y);
         int buttons_per_row = max_buttons_per_row;

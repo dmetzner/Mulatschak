@@ -53,7 +53,8 @@ public class GameView extends View {
         super.onDraw(canvas);
         // TESTCASE
            // drawCheck(canvas);
-
+        drawButtonBar(canvas);
+        drawStatsButton(canvas);
         drawHandCards(canvas);
         drawDiscardPile(canvas);
         drawAnimations(canvas);
@@ -63,6 +64,16 @@ public class GameView extends View {
         canvas.drawCircle(500, 800, test_radius, new Paint(0));
         test_radius += 5;
         if (test_radius > 300) { test_radius = 0; }
+    }
+
+    private void drawButtonBar(Canvas canvas) {
+        int size = controller_.getLayout().getButtonBarSize(); // Button size
+        int width = controller_.getLayout().getScreenWidth();
+        int height = controller_.getLayout().getScreenHeight();
+        Coordinate coordinate = controller_.getLayout().getButtonBar();
+        Paint paint = new Paint();
+        paint.setColor(Color.DKGRAY);
+        canvas.drawRect(coordinate.getX(), coordinate.getY(), width, height, paint );
     }
 
     //----------------------------------------------------------------------------------------------
@@ -124,6 +135,22 @@ public class GameView extends View {
             }
 
         }
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // drawStats()
+    //
+    private void drawStatsButton(Canvas canvas) {
+        Paint paint = new Paint();
+        paint.setColor(Color.BLACK);
+        int width = controller_.getLayout().getCardWidth();
+        Coordinate coordinate = controller_.getStatistics().getStatsButton().getCoordinate();
+        Bitmap bitmap = controller_.getStatistics().getStatsButton().getBitmap();
+        if (controller_.getStatistics().getStatsButton().IsPressed()) {
+            bitmap = controller_.getStatistics().getStatsButton().getBitmapPressed();
+        }
+        canvas.drawBitmap(bitmap, coordinate.getX(), coordinate.getY(), null);
+
     }
 
     //----------------------------------------------------------------------------------------------

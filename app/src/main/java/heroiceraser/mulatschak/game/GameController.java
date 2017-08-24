@@ -27,6 +27,7 @@ public class GameController{
     private GameAnimation animations_;
     private TouchEvents touch_events_;
     private GameLogic logic_;
+    private GameStatistics statistics_;
 
     private List<Player> player_list_;
     private MulatschakDeck deck_;
@@ -45,6 +46,7 @@ public class GameController{
         layout_ = new GameLayout();
         animations_ = new GameAnimation(view);
         touch_events_ = new TouchEvents();
+        statistics_ = new GameStatistics();
 
         deck_ = new MulatschakDeck();
         discardPile_ = new DiscardPile();
@@ -103,12 +105,14 @@ public class GameController{
     //
     private void init() {
         layout_.calculateDimensions(view_);
+        layout_.calculateButtonBarPosition();
         deck_.initDeck(view_);
         layout_.initDeckPosition(deck_);
         discardPile_.init(view_);
         layout_.initDiscardPilePositions(deck_.getCoordinate(), discardPile_);
         layout_.initHandPositions(deck_);
         animations_.init(view_);
+        statistics_.init(view_);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -296,11 +300,15 @@ public class GameController{
         nextTurn(true);
     }
 
-    private void endCardRound() {
-        // ToDo chooseCardRoundWinner();
-        // ToDO moveDiscardPileToWinner();
-        clearDiscardPile();
-        nextCardRound();
+    public boolean waiting = false;
+    public void endCardRound() {
+
+        if (!waiting) {
+            // ToDo chooseCardRoundWinner();
+            // ToDO moveDiscardPileToWinner();
+            clearDiscardPile();
+            nextCardRound();
+        }
     }
 
     private void clearDiscardPile() {
@@ -315,6 +323,7 @@ public class GameController{
         animations_.getCardAnimations().setCardMoveable(false);
 
         if (!first_call && logic_.getTurn() == logic_.getLastTrickId()) {
+            waiting = true;
             endCardRound();
             return;
         }
@@ -325,7 +334,7 @@ public class GameController{
         }
         else if (logic_.getTurn() != 0) {
             EnemyLogic el = new EnemyLogic();
-            el.playCard(getPlayerById(logic_.getTurn()), discardPile_);
+            el.playCard(logic_, getPlayerById(logic_.getTurn()), discardPile_);
             getLogic().turnToNextPlayer(getAmountOfPlayers());
             nextTurn();
         }
@@ -360,5 +369,7 @@ public class GameController{
 
     public int getAmountOfPlayers() { return player_list_.size(); }
 
-
+    public GameStatistics getStatistics() {
+        return statistics_;
+    }
 }

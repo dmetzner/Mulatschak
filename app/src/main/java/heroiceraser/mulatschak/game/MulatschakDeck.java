@@ -31,12 +31,12 @@ public class MulatschakDeck extends CardStack {
     //
     private final String PACKAGE_NAME = "drawable";
     private final String IMG_PRE_NAME = "card";
-    private final int CARDS_PER_DECK = 33;
-    private final int CARD_SUITS = 4;
-    private final int FIRST_CARD = 7;
-    private final int LAST_CARD = 14;
-    private final int JOKER = 0;
-    private final int BACKSIDE = -1;
+    public final static int CARDS_PER_DECK = 33;
+    public final static int CARD_SUITS = 4;
+    public final static int FIRST_CARD = 7;
+    public final static int LAST_CARD = 14;
+    public final static int JOKER = 0;
+    public final static int BACKSIDE = -1;
 
     //----------------------------------------------------------------------------------------------
     // Member Variables
