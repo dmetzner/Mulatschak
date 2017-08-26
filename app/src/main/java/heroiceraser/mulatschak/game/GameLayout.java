@@ -26,7 +26,7 @@ public class GameLayout {
     //
 
     // Dimensions
-    private int screen_width, screen_height;
+    private Point screen_size_;
 
     private int card_width, card_height;
     private int discardPile_width, discardPile_height;
@@ -34,16 +34,23 @@ public class GameLayout {
     private Point deck_position_;
     private List<Point> discard_pile_positions_;
 
-    private int button_bar_size_;
     private int small_button_size_;
     private int symbol_button_size;
-
-    private Point button_bar_;
 
     private Point hand_bottom_;
     private Point hand_left_;
     private Point hand_top_;
     private Point hand_right_;
+
+
+    //---- ButtonBar
+    private Point button_bar_size_;
+    private Point button_bar_position_;
+    private Point button_bar_big_button_size_;
+    private Point button_bar_small_button_size_;
+    private Point button_bar_button_position_right_;
+    private Point button_bar_button_position_middle_;
+    private Point button_bar_button_position_left_;
 
 
     //----------------------------------------------------------------------------------------------
@@ -52,34 +59,39 @@ public class GameLayout {
     public GameLayout() { }
 
     public void init(GameView view) {
+       // calculate sizes
         calculateDimensions(view);
         calculateCardSize(view);
         calculateButtonBarSize();
+        calculateButtonBarSmallButtonSize();
+        calculateButtonBarBigButtonSize();
         calculateDiscardPileSize();     // right now same as card size
+
+        // calculate positions
         initButtonBarPosition();
+        initButtonBarButtonPositionRight();
+        initButtonBarButtonPositionMiddle(); // relative to right one
+        initButtonBarButtonPositionLeft(); // relative to the middle one
         initDeckPosition();
         initDiscardPilePositions();         // uses deck position
         initHandPositions();                // uses deck position
-        small_button_size_ = screen_width / 4;
-        symbol_button_size = screen_width / 3;
+        small_button_size_ = screen_size_.x / 4;
+        symbol_button_size = screen_size_.x / 3;
     }
 
     //----------------------------------------------------------------------------------------------
     //  calculateDimensions()
     //
     private void calculateDimensions(GameView view) {
-        screen_width = DisplayDimension.getWidth(view);
-        screen_height = DisplayDimension.getHeight(view);
+        screen_size_ = new Point();
+        screen_size_.x = (int) DisplayDimension.getWidth(view);
+        screen_size_.y = (int) DisplayDimension.getHeight(view);
     }
 
-    //----------------------------------------------------------------------------------------------
-    //  calculateCardSize:
-    //                      calculates card size based on the screen width
-    //
     private void calculateCardSize(GameView view) {
         final double HEIGHT_FACTOR = 1.28;
         double max_cards_per_hand = view.getController().getLogic().getMaxCardsPerHand();
-        card_width = (int) (screen_width / (max_cards_per_hand + 1));
+        card_width = (int) (screen_size_.x / (max_cards_per_hand + 1));
         card_height = (int) (card_width * HEIGHT_FACTOR);
     }
 
@@ -89,36 +101,76 @@ public class GameLayout {
     }
 
     private void calculateButtonBarSize() {
-        button_bar_size_ = screen_height / 6;
+        button_bar_size_ = new Point();
+        button_bar_size_.x = screen_size_.x;
+        button_bar_size_.y = screen_size_.y / 8;
     }
 
-    public void initButtonBarPosition() {
-        button_bar_ = new Point(0, screen_height - button_bar_size_);
-}
+    private void initButtonBarPosition() {
+        button_bar_position_ = new Point();
+        button_bar_position_.x = 0;
+        button_bar_position_.y = screen_size_.y - button_bar_size_.y;
+    }
+
+    private void calculateButtonBarBigButtonSize() {
+        button_bar_big_button_size_ = new Point();
+        button_bar_big_button_size_.x = (int) (button_bar_size_.x / 3.0);
+        button_bar_big_button_size_.y = (int) (button_bar_size_.y * (7.0 / 9.0));
+    }
+
+    private void calculateButtonBarSmallButtonSize() {
+        button_bar_small_button_size_ = new Point();
+        button_bar_small_button_size_.x = (int) (button_bar_size_.x / 5.0);
+        button_bar_small_button_size_.y = (int) (button_bar_size_.y * (7.0 / 9.0));
+    }
+
+    private void initButtonBarButtonPositionRight() {
+        button_bar_button_position_right_ = new Point();
+        button_bar_button_position_right_.x = (int)
+                (button_bar_position_.x + button_bar_size_.x - button_bar_big_button_size_.x * 1.1);
+        button_bar_button_position_right_.y = (int)
+                (button_bar_position_.y + (button_bar_size_.y * (1 / 9.0)));
+    }
+
+    private void initButtonBarButtonPositionMiddle() {
+        button_bar_button_position_middle_ = new Point();
+        button_bar_button_position_middle_.x = (int) (button_bar_button_position_right_.x -
+                button_bar_big_button_size_.x * 1.1);
+        button_bar_button_position_middle_.y = button_bar_button_position_right_.y;
+    }
+
+    private void initButtonBarButtonPositionLeft() {
+        button_bar_button_position_left_ = new Point();
+        button_bar_button_position_left_.x = (int) (button_bar_small_button_size_.x * 0.15);
+        button_bar_button_position_left_.y = button_bar_button_position_right_.y;
+    }
+
+
+
 
 
     //----------------------------------------------------------------------------------------------
     //  calculateDeckPosition()
     //
     private void initDeckPosition() {
-        deck_position_ = new Point( (int) ((screen_width / 2.0) - (card_width / 2.0)),
-                                    (int) (screen_height / 3.2) );
+        deck_position_ = new Point( (int) ((screen_size_.x / 2.0) - (card_width / 2.0)),
+                                    (int) (screen_size_.y / 3.2) );
     }
 
     //----------------------------------------------------------------------------------------------
     //  calculateHandPositions()
     //
     private void initHandPositions() {
-        hand_bottom_ = new Point((int) ((screen_width - card_width * 5) / 2.0),
-                                (int) (screen_height - button_bar_size_ - card_height * 1.2) );
+        hand_bottom_ = new Point((int) ((screen_size_.x - card_width * 5) / 2.0),
+                                (int) (screen_size_.y - button_bar_size_.y - card_height * 1.2) );
 
         hand_left_ = new Point((int) (card_width * -0.6),
                                 (int) (deck_position_.y - card_width) );
 
-        hand_top_ = new Point(    (int) (screen_width - card_width * 3),
+        hand_top_ = new Point(    (int) (screen_size_.x - card_width * 3),
                                         (int) (card_height * (-0.6)) );
 
-        hand_right_ = new Point(  (int) (screen_width - (card_width * 0.6)),
+        hand_right_ = new Point(  (int) (screen_size_.x - (card_width * 0.6)),
                                  (int) deck_position_.y );
     }
 
@@ -149,8 +201,8 @@ public class GameLayout {
     //
 
     //---------------------- Sizes -----------------------------------------------------------------
-    public int getScreenWidth() { return screen_width; }
-    public int getScreenHeight() { return screen_height; }
+    public int getScreenWidth() { return screen_size_.x; }
+    public int getScreenHeight() { return screen_size_.y; }
 
     public int getCardWidth() { return card_width; }
     public int getCardHeight() { return card_height; }
@@ -165,14 +217,6 @@ public class GameLayout {
 
     public List<Point> getDiscardPilePositions_() {
         return discard_pile_positions_;
-    }
-
-    public int getButtonBarSize() {
-        return button_bar_size_;
-    }
-
-    public Point getButtonBar() {
-        return button_bar_;
     }
 
     public Point getHandBottom() {
@@ -217,4 +261,44 @@ public class GameLayout {
         return small_button_size_;
     }
     public int getSymbolButtonSize() { return symbol_button_size; }
+
+    public int getButtonBarWidth() {
+        return button_bar_size_.x;
+    }
+
+    public int getButtonBarHeight() {
+        return button_bar_size_.y;
+    }
+
+    public Point getButtonBarPosition() {
+        return button_bar_position_;
+    }
+
+    public int getButtonBarBigButtonWidth() {
+        return button_bar_big_button_size_.x;
+    }
+
+    public int getButtonBarBigButtonHeight() {
+        return button_bar_big_button_size_.y;
+    }
+
+    public Point getButtonBarButtonPositionRight() {
+        return button_bar_button_position_right_;
+    }
+
+    public Point getButtonBarButtonPositionMiddle() {
+        return button_bar_button_position_middle_;
+    }
+
+    public int getButtonBarSmallButtonWidth() {
+        return button_bar_small_button_size_.x;
+    }
+
+    public int getButtonBarSmallButtonHeight() {
+        return button_bar_small_button_size_.y;
+    }
+
+    public Point getButtonBarButtonPositionLeft() {
+        return button_bar_button_position_left_;
+    }
 }

@@ -67,20 +67,19 @@ public class GameView extends View {
             Paint paint = new Paint();
             paint.setColor(Color.DKGRAY);
             ButtonBar button_bar = controller_.getButtonBar();
-            canvas.drawRect(
-                    button_bar.getPosition().x,
-                    button_bar.getPosition().y,
-                    button_bar.getPosition().x + button_bar.getWidth(),
-                    button_bar.getPosition().y + button_bar.getHeight() + 10,
-                    paint);
 
+            canvas.drawBitmap(button_bar.getBitmap(), button_bar.getPosition().x, button_bar.getPosition().y, null);
+            canvas.drawBitmap(button_bar.getDecoration(), button_bar.getPosition().x,
+                    (int) (button_bar.getPosition().y - (button_bar.getHeight())) , null);
 
             // Statistics Button
             drawButton(canvas, controller_.getButtonBar().getStatisticsButton());
 
             // Tricks Button
-            //drawButton(canvas, controller_.getButtonBar().getTricksButton());
+            drawButton(canvas, controller_.getButtonBar().getTricksButton());
 
+            // Menu Button
+            drawButton(canvas, controller_.getButtonBar().getMenuButton());
           }
 
     }
