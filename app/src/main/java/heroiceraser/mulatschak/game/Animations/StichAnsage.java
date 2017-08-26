@@ -50,17 +50,17 @@ public class StichAnsage {
         }
 
         GameLayout layout = view.getController().getLayout();
-        int x = layout.getHandBottom().getX() + layout.getCardWidth() / 2;
-        int y = (int) (layout.getHandBottom().getY() - layout.getSymbolButtonSize() * 1.3);
+        int x = layout.getHandBottom().x + layout.getCardWidth() / 2;
+        int y = (int) (layout.getHandBottom().y - layout.getSymbolButtonSize() * 1.3);
         final int max_buttons_per_row = 2;
         int buttons_per_row = max_buttons_per_row;
         for (int button_id = 0; button_id < symbol_buttons_.size(); button_id++) {
             if (buttons_per_row >= max_buttons_per_row) {
                 buttons_per_row = 0;
-                x = layout.getHandBottom().getX() + layout.getCardWidth() / 2;
+                x = layout.getHandBottom().x + layout.getCardWidth() / 2;
                 y -= layout.getSymbolButtonSize();
             }
-            symbol_buttons_.get(button_id).setCoordinate(x, y);
+            symbol_buttons_.get(button_id).setPoint(x, y);
             x += layout.getSymbolButtonSize();
             buttons_per_row++;
         }
@@ -87,19 +87,19 @@ public class StichAnsage {
         }
 
         GameLayout layout = view.getController().getLayout();
-        int x = layout.getHandBottom().getX() + layout.getCardWidth() / 5;
-        int y = (int) (layout.getHandBottom().getY() - layout.getSmallButtonSize() * 1.3);
+        int x = layout.getHandBottom().x + layout.getCardWidth() / 5;
+        int y = (int) (layout.getHandBottom().y - layout.getSmallButtonSize() * 1.3);
         final int max_buttons_per_row = 3;
-        number_buttons_.get(6).setCoordinate(x, y);
+        number_buttons_.get(6).setPoint(x, y);
         int buttons_per_row = max_buttons_per_row;
         int amount_of_buttons = number_buttons_.size();
         for (int button_id = amount_of_buttons - 2; button_id >= 0; button_id--) {
             if (buttons_per_row >= max_buttons_per_row) {
                 buttons_per_row = 0;
-                x = layout.getHandBottom().getX() + layout.getCardWidth() / 5 + 2 * layout.getSmallButtonSize();
+                x = layout.getHandBottom().x + layout.getCardWidth() / 5 + 2 * layout.getSmallButtonSize();
                 y -= layout.getSmallButtonSize();
             }
-            number_buttons_.get(button_id).setCoordinate(x, y);
+            number_buttons_.get(button_id).setPoint(x, y);
             x -= layout.getSmallButtonSize();
             buttons_per_row++;
         }

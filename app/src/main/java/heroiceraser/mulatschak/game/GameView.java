@@ -9,10 +9,6 @@ import android.graphics.Paint;
 import android.view.MotionEvent;
 import android.view.View;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import heroiceraser.mulatschak.helpers.Coordinate;
 
 import static android.R.attr.bitmap;
 
@@ -54,7 +50,6 @@ public class GameView extends View {
         // TESTCASE
            // drawCheck(canvas);
         drawButtonBar(canvas);
-        drawStatsButton(canvas);
         drawHandCards(canvas);
         drawDiscardPile(canvas);
         drawAnimations(canvas);
@@ -67,13 +62,44 @@ public class GameView extends View {
     }
 
     private void drawButtonBar(Canvas canvas) {
-        int size = controller_.getLayout().getButtonBarSize(); // Button size
-        int width = controller_.getLayout().getScreenWidth();
-        int height = controller_.getLayout().getScreenHeight();
-        Coordinate coordinate = controller_.getLayout().getButtonBar();
-        Paint paint = new Paint();
-        paint.setColor(Color.DKGRAY);
-        canvas.drawRect(coordinate.getX(), coordinate.getY(), width, height, paint );
+        if (controller_.getButtonBar().isVisible()) {
+            Paint paint = new Paint();
+            paint.setColor(Color.DKGRAY);
+            ButtonBar button_bar = controller_.getButtonBar();
+            canvas.drawRect(
+                    button_bar.getPointTopLeft().x,
+                    button_bar.getPointTopLeft().y,
+                    button_bar.getPointTopLeft().x + button_bar.getBarWidth(),
+                    button_bar.getPointTopLeft().y + button_bar.getBarHeight() + 10,
+                    paint);
+
+
+            // Statistics Button
+            drawButton(canvas, controller_.getButtonBar().getStatistics().getStatsButton());
+
+            // Tricks Button
+            drawButton(canvas, controller_.getButtonBar().getStatistics().getTricksButton());
+
+          }
+
+    }
+
+    private void drawButton(Canvas canvas, Button button) {
+
+        if (!button.isVisible()) {
+            return;
+        }
+
+        Bitmap bitmap = button.getBitmap();
+        if (!button.IsEnabled()) {
+            bitmap = button.getBitmapDisabled();
+        }
+        else if (button.IsPressed()) {
+            bitmap = button.getBitmapPressed();
+        }
+        canvas.drawBitmap(bitmap,
+                button.getPoint().x,
+                button.getPoint().y, null);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -88,8 +114,8 @@ public class GameView extends View {
                         break;
                     }
                     canvas.drawBitmap(player.getHand().getCardAt(j).getBitmap(),
-                            player.getHand().getCardAt(j).getPosition().getX(),
-                            player.getHand().getCardAt(j).getPosition().getY(), null);
+                            player.getHand().getCardAt(j).getPosition().x,
+                            player.getHand().getCardAt(j).getPosition().y, null);
                 }
             } else if (i == 1 || i == 3) {
                 for (int j = 0; j < player.getAmountOfCardsInHand(); j++) {
@@ -102,8 +128,8 @@ public class GameView extends View {
                     Bitmap rotatedBitmap = Bitmap.createBitmap(backside, 0, 0,
                             backside.getWidth(), backside.getHeight(), matrix, true);
                     canvas.drawBitmap(rotatedBitmap,
-                            player.getHand().getCardAt(j).getPosition().getX(),
-                            player.getHand().getCardAt(j).getPosition().getY(), null);
+                            player.getHand().getCardAt(j).getPosition().x,
+                            player.getHand().getCardAt(j).getPosition().y, null);
                 }
             } else if (i == 2) {
                 for (int j = 0; j < player.getAmountOfCardsInHand(); j++) {
@@ -111,8 +137,8 @@ public class GameView extends View {
                         break;
                     }
                     canvas.drawBitmap(controller_.getDeck().getBacksideBitmap(),
-                            player.getHand().getCardAt(j).getPosition().getX(),
-                            player.getHand().getCardAt(j).getPosition().getY(), null);
+                            player.getHand().getCardAt(j).getPosition().x,
+                            player.getHand().getCardAt(j).getPosition().y, null);
                 }
             }
         }
@@ -122,35 +148,19 @@ public class GameView extends View {
     //  drawDiscardPile
     //
     private void drawDiscardPile(Canvas canvas) {
-        for (int j = 0; j < controller_.getDiscardPile().getCoordinates().size(); j++) {
+        for (int j = 0; j < controller_.getDiscardPile().getPoints().size(); j++) {
             if (controller_.getDiscardPile().getCard(j) == null) {
                 canvas.drawBitmap(controller_.getDiscardPile().getBitmap(),
-                        controller_.getDiscardPile().getCoordinate(j).getX(),
-                        controller_.getDiscardPile().getCoordinate(j).getY(), null);
+                        controller_.getDiscardPile().getPoint(j).x,
+                        controller_.getDiscardPile().getPoint(j).y, null);
             }
             else {
                 canvas.drawBitmap(controller_.getDiscardPile().getCard(j).getBitmap(),
-                        controller_.getDiscardPile().getCoordinate(j).getX(),
-                        controller_.getDiscardPile().getCoordinate(j).getY(), null);
+                        controller_.getDiscardPile().getPoint(j).x,
+                        controller_.getDiscardPile().getPoint(j).y, null);
             }
 
         }
-    }
-
-    //----------------------------------------------------------------------------------------------
-    // drawStats()
-    //
-    private void drawStatsButton(Canvas canvas) {
-        Paint paint = new Paint();
-        paint.setColor(Color.BLACK);
-        int width = controller_.getLayout().getCardWidth();
-        Coordinate coordinate = controller_.getStatistics().getStatsButton().getCoordinate();
-        Bitmap bitmap = controller_.getStatistics().getStatsButton().getBitmap();
-        if (controller_.getStatistics().getStatsButton().IsPressed()) {
-            bitmap = controller_.getStatistics().getStatsButton().getBitmapPressed();
-        }
-        canvas.drawBitmap(bitmap, coordinate.getX(), coordinate.getY(), null);
-
     }
 
     //----------------------------------------------------------------------------------------------
@@ -164,8 +174,8 @@ public class GameView extends View {
         if (controller_.getAnimation().getDealingAnimation().getAnimationRunning()) {
 
             canvas.drawBitmap(controller_.getDeck().getBacksideBitmap(),
-                    controller_.getDeck().getCoordinate().getX(),
-                    controller_.getDeck().getCoordinate().getY(), null);
+                    controller_.getDeck().getPoint().x,
+                    controller_.getDeck().getPoint().y, null);
 
             controller_.getAnimation().getDealingAnimation().deal();
 
@@ -185,8 +195,8 @@ public class GameView extends View {
                 else if (!button.IsEnabled()) {
                     bitmap = button.getBitmapDisabled();
                 }
-                canvas.drawBitmap(bitmap, button.getCoordinate().getX(),
-                        button.getCoordinate().getY(), null);
+                canvas.drawBitmap(bitmap, button.getPoint().x,
+                        button.getPoint().y, null);
             }
         }
 
@@ -198,8 +208,8 @@ public class GameView extends View {
                 if (button.IsPressed()) {
                     bitmap = button.getBitmapPressed();
                 }
-                canvas.drawBitmap(bitmap, button.getCoordinate().getX(),
-                        button.getCoordinate().getY(), null);
+                canvas.drawBitmap(bitmap, button.getPoint().x,
+                        button.getPoint().y, null);
             }
         }
 

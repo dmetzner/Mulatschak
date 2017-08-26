@@ -2,12 +2,12 @@ package heroiceraser.mulatschak.game.Animations;
 
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.graphics.Point;
 
 import heroiceraser.mulatschak.game.CardStack;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.helpers.Coordinate;
 
 /**
  * Created by Daniel Metzner on 11.08.2017.
@@ -93,23 +93,23 @@ public class DealingAnimation {
         GameLayout layout = view_.getController().getLayout();
         switch (pos) {
             case 0:
-                endposition_x = (int) ( layout.getHandBottom().getX() +
+                endposition_x = (int) ( layout.getHandBottom().x +
                         ( layout.getCardWidth() * card_number) / getOverlapFactor(pos) );
-                endposition_y =  layout.getHandBottom().getY();
+                endposition_y =  layout.getHandBottom().y;
                 break;
             case 1:
-                endposition_x = layout.getHandLeft().getX();
-                endposition_y = (int) ( layout.getHandLeft().getY() -
+                endposition_x = layout.getHandLeft().x;
+                endposition_y = (int) ( layout.getHandLeft().y -
                         (layout.getCardHeight() * card_number) / getOverlapFactor(pos) );
                 break;
             case 2:
-                endposition_x = (int) ( layout.getHandTop().getX() +
+                endposition_x = (int) ( layout.getHandTop().x +
                         (layout.getCardWidth() * card_number) / getOverlapFactor(pos) );
-                endposition_y =  layout.getHandTop().getY();
+                endposition_y =  layout.getHandTop().y;
                 break;
             case 3:
-                endposition_x = layout.getHandRight().getX();
-                endposition_y = (int) ( layout.getHandRight().getY() +
+                endposition_x = layout.getHandRight().x;
+                endposition_y = (int) ( layout.getHandRight().y +
                         (layout.getCardHeight() * card_number) / getOverlapFactor(pos) );
                 break;
         }
@@ -120,8 +120,8 @@ public class DealingAnimation {
     }
 
     public void setAnimationToDeck() {
-        hand_card_x = view_.getController().getDeck().getCoordinate().getX();
-        hand_card_y = view_.getController().getDeck().getCoordinate().getY();
+        hand_card_x = view_.getController().getDeck().getPoint().x;
+        hand_card_y = view_.getController().getDeck().getPoint().y;
     }
 
     //----------------------------------------------------------------------------------------------
@@ -129,8 +129,8 @@ public class DealingAnimation {
         cards_to_draw =  view_.getController().getLogic().getMaxCardsPerHand() *
                 view_.getController().getAmountOfPlayers();
         animation_running_ = true;
-        hand_card_x = view_.getController().getDeck().getCoordinate().getX();
-        hand_card_y = view_.getController().getDeck().getCoordinate().getY();
+        hand_card_x = view_.getController().getDeck().getPoint().x;
+        hand_card_y = view_.getController().getDeck().getPoint().y;
         rotation_start_ = 0;
         deal();
     }
@@ -259,13 +259,13 @@ public class DealingAnimation {
     private void goToNextAnimation(int player_id) {//////////////////////////////////////////////////////////////TODO
         bitmap_ = view_.getController().getDeck().getBacksideBitmap();
         cards_to_draw--;
-        Coordinate card_position = new Coordinate(hand_card_x, hand_card_y);
+        Point card_position = new Point(hand_card_x, hand_card_y);
         view_.getController().getPlayerById(player_id).getHand().getCardAt(getPosition(player_id))
                 .setPosition(card_position);
         view_.getController().getPlayerById(player_id).getHand().getCardAt(getFixedPosition(player_id)).
-                setFixedPosition(new Coordinate(card_position));
-        hand_card_x = view_.getController().getDeck().getCoordinate().getX();
-        hand_card_y = view_.getController().getDeck().getCoordinate().getY();
+                setFixedPosition(new Point(card_position));
+        hand_card_x = view_.getController().getDeck().getPoint().x;
+        hand_card_y = view_.getController().getDeck().getPoint().y;
         rotation_start_ = 0;
     }
 

@@ -2,11 +2,10 @@ package heroiceraser.mulatschak.game;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import heroiceraser.mulatschak.helpers.Coordinate;
 
 /**
  * Created by Daniel Metzner on 14.08.2017.
@@ -18,7 +17,7 @@ public class DiscardPile {
     private final String IMAGE_NAME = "discard_pile";
     private final String PACKAGE_NAME = "drawable";
 
-    private List<Coordinate> coordinates_;
+    private List<Point> coordinates_;
 
     private Card card_bottom_;
     private Card card_left_;
@@ -26,7 +25,7 @@ public class DiscardPile {
     private Card card_right_;
 
     public DiscardPile() {
-        coordinates_ = new ArrayList<Coordinate>();
+        coordinates_ = new ArrayList<Point>();
         card_bottom_ = null;
         card_left_ = null;
         card_top_ = null;
@@ -52,10 +51,10 @@ public class DiscardPile {
     //----------------------------------------------------------------------------------------------
     // Getter & Setter
     //
-    public Coordinate getCoordinate(int pos) {
+    public Point getPoint(int pos) {
         return coordinates_.get(pos);
     }
-    public List<Coordinate> getCoordinates() {
+    public List<Point> getPoints() {
         return coordinates_;
     }
 

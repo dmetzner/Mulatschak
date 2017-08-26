@@ -1,9 +1,9 @@
 package heroiceraser.mulatschak.game;
 
+import android.graphics.Point;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import heroiceraser.mulatschak.helpers.Coordinate;
 
 /**
  * Created by Daniel Metzner on 10.08.2017.
@@ -17,7 +17,7 @@ public class CardStack {
     //----------------------------------------------------------------------------------------------
     //  Member Variables
     //
-    private Coordinate coordinate_;
+    private Point coordinate_;
     private List<Card> card_stack_;
 
     //----------------------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ public class CardStack {
     //
     public CardStack() {
         card_stack_ = new ArrayList<Card>();
-        coordinate_ = new Coordinate();
+        coordinate_ = new Point();
     }
 
 
@@ -49,8 +49,8 @@ public class CardStack {
         return card_stack_.get(pos);
     }
 
-    public Coordinate getCoordinate() { return coordinate_; }
-    public void setCoordinate(Coordinate coordinate) { coordinate_ = new Coordinate(coordinate); }
-    public void setCoordinate(int x, int y) { coordinate_ = new Coordinate(x, y); }
+    public Point getPoint() { return coordinate_; }
+    public void setPoint(Point coordinate) { coordinate_ = new Point(coordinate); }
+    public void setPoint(int x, int y) { coordinate_ = new Point(x, y); }
 
 }

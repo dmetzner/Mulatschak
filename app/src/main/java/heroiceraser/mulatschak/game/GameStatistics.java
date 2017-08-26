@@ -13,6 +13,7 @@ public class GameStatistics {
     private boolean on_;
     private Bitmap background_;
     private Button stats_button_;
+    private Button tricks_button_;
 
     public GameStatistics() {
         on_ = false;
@@ -20,30 +21,44 @@ public class GameStatistics {
     }
 
 
-    public void init(GameView view) {
+    public void init(GameView view, ButtonBar buttonBar) {
 
         GameLayout layout = view.getController().getLayout();
         background_ = HelperFunctions.loadBitmap(view, "statistics_background",
                 layout.getScreenWidth(), layout.getCardHeight(), "drawable");
 
-        String image_name = "statistics_button";
+        String image_name = "button_spielstand";
         String package_name = "drawable";
 
         stats_button_ = new Button();
-        int width = (int) (view.getController().getLayout().getScreenWidth() / 3);
-        int height = (int) (view.getController().getLayout().getSymbolButtonSize() / 1.8);
+        int width = (int) (buttonBar.getBarWidth() / 3.0);
+        int height = (int) (buttonBar.getBarHeight() * (7.0 / 9.0));
         stats_button_.setBitmap(HelperFunctions.loadBitmap(view, image_name, width, height, package_name));
         stats_button_.setBitmapPressed(HelperFunctions.loadBitmap(view, image_name + "_pressed", width, height, package_name));
 
-        int x = (int) (layout.getScreenWidth() - width  * 1.1);
-        int y = (int) (layout.getButtonBar().getY() + 15);
+        int x = (int) (buttonBar.getBarWidth() - width  * 1.1);
+        int y = (int) (buttonBar.getPointTopLeft().y + (2.0 / 18.0) * (buttonBar.getBarHeight()));
 
-        stats_button_.setCoordinate(x, y);
+        stats_button_.setPoint(x, y);
+
+        tricks_button_ = new Button();
+        image_name = "button_stiche";
+        tricks_button_.setBitmap(HelperFunctions.loadBitmap(view, image_name, width, height, package_name));
+        tricks_button_.setBitmapPressed(HelperFunctions.loadBitmap(view, image_name + "_pressed", width, height, package_name));
+
+        x = (int) (buttonBar.getBarWidth() - width  * 2.1);
+        y = (int) (buttonBar.getPointTopLeft().y + (2.0 / 18.0) * (buttonBar.getBarHeight()));
+
+        tricks_button_.setPoint(x, y);
     }
 
 
     public Button getStatsButton() {
         return stats_button_;
+    }
+
+    public Button getTricksButton() {
+        return tricks_button_;
     }
 
     public void setStatsButton(Button stats_button_) {

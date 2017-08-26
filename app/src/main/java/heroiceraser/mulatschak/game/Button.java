@@ -1,8 +1,7 @@
 package heroiceraser.mulatschak.game;
 
 import android.graphics.Bitmap;
-
-import heroiceraser.mulatschak.helpers.Coordinate;
+import android.graphics.Point;
 
 /**
  * Created by Daniel Metzner on 19.08.2017.
@@ -13,17 +12,20 @@ public class Button {
     //----------------------------------------------------------------------------------------------
     // Member Variables
     //
+    private boolean visible_;
     private boolean enabled_;
     private boolean pressed_;
     private Bitmap bitmap_;
     private Bitmap bitmap_pressed_;
     private Bitmap bitmap_disabled_;
-    private Coordinate coordinate_;
+    private Point coordinate_;
+
 
     //----------------------------------------------------------------------------------------------
     // Constructor
     //
     public Button() {
+        visible_ = true;
         enabled_ = true;
         pressed_= false;
         bitmap_ = null;
@@ -35,6 +37,13 @@ public class Button {
     //----------------------------------------------------------------------------------------------
     // Getter & Setter
     //
+    public boolean isVisible() {
+        return visible_;
+    }
+    public void setVisible(boolean visible_) {
+        this.visible_ = visible_;
+    }
+
     public boolean IsPressed() {
         return pressed_;
     }
@@ -56,14 +65,14 @@ public class Button {
     public Bitmap getBitmapDisabled() { return bitmap_disabled_; }
     public void setBitmapDisabled(Bitmap bitmap_disabled) { bitmap_disabled_ = bitmap_disabled; }
 
-    public Coordinate getCoordinate() {
+    public Point getPoint() {
         return coordinate_;
     }
-    public void setCoordinate(Coordinate coordinate) {
-        coordinate_ = new Coordinate(coordinate);
+    public void setPoint(Point coordinate) {
+        coordinate_ = new Point(coordinate);
     }
-    public void setCoordinate(int x, int y) {
-        coordinate_ = new Coordinate(x, y);
+    public void setPoint(int x, int y) {
+        coordinate_ = new Point(x, y);
     }
 
 }

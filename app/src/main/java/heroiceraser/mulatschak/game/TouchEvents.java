@@ -1,10 +1,11 @@
 package heroiceraser.mulatschak.game;
 
 
+import android.graphics.Point;
+
 import java.util.List;
 
 import heroiceraser.mulatschak.game.Animations.ReAnimateHands;
-import heroiceraser.mulatschak.helpers.Coordinate;
 
 /**
  * Created by Daniel Metzner on 14.08.2017.
@@ -26,12 +27,12 @@ public class TouchEvents {
             controller.endCardRound();
         }
 
-        if (!controller.getStatistics().isOn()) {
-            if (X >= controller.getStatistics().getStatsButton().getCoordinate().getX() &&
-                    X < controller.getStatistics().getStatsButton().getCoordinate().getX() + controller.getLayout().getCardHeight() &&
-                    Y >= controller.getStatistics().getStatsButton().getCoordinate().getY() &&
-                    Y < controller.getStatistics().getStatsButton().getCoordinate().getY() + controller.getLayout().getCardHeight()) {
-                controller.getStatistics().getStatsButton().setPressed(true);
+        if (!controller.getButtonBar().getStatistics().isOn()) {
+            if (X >= controller.getButtonBar().getStatistics().getStatsButton().getPoint().x &&
+                    X < controller.getButtonBar().getStatistics().getStatsButton().getPoint().x + controller.getLayout().getCardHeight() &&
+                    Y >= controller.getButtonBar().getStatistics().getStatsButton().getPoint().y &&
+                    Y < controller.getButtonBar().getStatistics().getStatsButton().getPoint().y + controller.getLayout().getCardHeight()) {
+                controller.getButtonBar().getStatistics().getStatsButton().setPressed(true);
             }
         }
 
@@ -41,10 +42,10 @@ public class TouchEvents {
                 if (card.getFixedPosition() == null) {
                     break;
                 }
-                if (X >= card.getFixedPosition().getX() &&
-                        X < card.getFixedPosition().getX() + controller.getLayout().getCardWidth() &&
-                        Y >= card.getFixedPosition().getY() &&
-                        Y < card.getFixedPosition().getY() +  controller.getLayout().getCardHeight()) {
+                if (X >= card.getFixedPosition().x &&
+                        X < card.getFixedPosition().x + controller.getLayout().getCardWidth() &&
+                        Y >= card.getFixedPosition().y &&
+                        Y < card.getFixedPosition().y +  controller.getLayout().getCardHeight()) {
                     move_card_ = i;
                     break;
                 } else {
@@ -61,10 +62,10 @@ public class TouchEvents {
                     width *= 3;
                 }
                 if (buttons.get(i).IsEnabled() &&
-                        X >= buttons.get(i).getCoordinate().getX() &&  X < buttons.get(i)
-                        .getCoordinate().getX() + width &&
-                        Y >= buttons.get(i).getCoordinate().getY() &&  Y < buttons.get(i)
-                        .getCoordinate().getY() + controller.getLayout().getSmallButtonSize()) {
+                        X >= buttons.get(i).getPoint().x &&  X < buttons.get(i)
+                        .getPoint().x + width &&
+                        Y >= buttons.get(i).getPoint().y &&  Y < buttons.get(i)
+                        .getPoint().y + controller.getLayout().getSmallButtonSize()) {
                     buttons.get(i).setPressed(true);
                 }
             }
@@ -72,10 +73,10 @@ public class TouchEvents {
         else if (controller.getAnimation().getStichAnsage().getAnimationSymbols()) {
             List<Button> buttons = controller.getAnimation().getStichAnsage().getSymbolButtons();
             for (int i = 0; i < buttons.size(); i++) {
-                if (X >= buttons.get(i).getCoordinate().getX() &&  X < buttons.get(i)
-                        .getCoordinate().getX() + controller.getLayout().getSymbolButtonSize() &&
-                        Y >= buttons.get(i).getCoordinate().getY() &&  Y < buttons.get(i)
-                        .getCoordinate().getY() + controller.getLayout().getSymbolButtonSize()) {
+                if (X >= buttons.get(i).getPoint().x &&  X < buttons.get(i)
+                        .getPoint().x + controller.getLayout().getSymbolButtonSize() &&
+                        Y >= buttons.get(i).getPoint().y &&  Y < buttons.get(i)
+                        .getPoint().y + controller.getLayout().getSymbolButtonSize()) {
                     buttons.get(i).setPressed(true);
                 }
             }
@@ -85,15 +86,15 @@ public class TouchEvents {
 
     public void ActionMove(GameController controller, int X, int Y) {
 
-        if (!controller.getStatistics().isOn() && controller.getStatistics().getStatsButton().IsPressed()) {
-            if (X >= controller.getStatistics().getStatsButton().getCoordinate().getX() &&
-                    X < controller.getStatistics().getStatsButton().getCoordinate().getX() + controller.getLayout().getCardHeight() &&
-                    Y >= controller.getStatistics().getStatsButton().getCoordinate().getY() &&
-                    Y < controller.getStatistics().getStatsButton().getCoordinate().getY() + controller.getLayout().getCardHeight()) {
-                controller.getStatistics().getStatsButton().setPressed(true);
+        if (!controller.getButtonBar().getStatistics().isOn() && controller.getButtonBar().getStatistics().getStatsButton().IsPressed()) {
+            if (X >= controller.getButtonBar().getStatistics().getStatsButton().getPoint().x &&
+                    X < controller.getButtonBar().getStatistics().getStatsButton().getPoint().x + controller.getLayout().getCardHeight() &&
+                    Y >= controller.getButtonBar().getStatistics().getStatsButton().getPoint().y &&
+                    Y < controller.getButtonBar().getStatistics().getStatsButton().getPoint().y + controller.getLayout().getCardHeight()) {
+                controller.getButtonBar().getStatistics().getStatsButton().setPressed(true);
             }
             else {
-                controller.getStatistics().getStatsButton().setPressed(false);
+                controller.getButtonBar().getStatistics().getStatsButton().setPressed(false);
             }
         }
 
@@ -111,10 +112,10 @@ public class TouchEvents {
                     width *= 3;
                 }
                 if (buttons.get(i).IsEnabled() && buttons.get(i).IsPressed() &&
-                        X >= buttons.get(i).getCoordinate().getX() &&  X < buttons.get(i)
-                        .getCoordinate().getX() + width &&
-                        Y >= buttons.get(i).getCoordinate().getY() &&  Y < buttons.get(i)
-                        .getCoordinate().getY() + controller.getLayout().getSmallButtonSize()) {
+                        X >= buttons.get(i).getPoint().x &&  X < buttons.get(i)
+                        .getPoint().x + width &&
+                        Y >= buttons.get(i).getPoint().y &&  Y < buttons.get(i)
+                        .getPoint().y + controller.getLayout().getSmallButtonSize()) {
                     buttons.get(i).setPressed(true);
                 }
                 else {
@@ -126,10 +127,10 @@ public class TouchEvents {
             List<Button> buttons = controller.getAnimation().getStichAnsage().getSymbolButtons();
             for (int i = 0; i < buttons.size(); i++) {
                 if (buttons.get(i).IsPressed() &&
-                        X >= buttons.get(i).getCoordinate().getX() && X < buttons.get(i)
-                        .getCoordinate().getX() + controller.getLayout().getSymbolButtonSize() &&
-                        Y >= buttons.get(i).getCoordinate().getY() && Y < buttons.get(i)
-                        .getCoordinate().getY() + controller.getLayout().getSymbolButtonSize()) {
+                        X >= buttons.get(i).getPoint().x && X < buttons.get(i)
+                        .getPoint().x + controller.getLayout().getSymbolButtonSize() &&
+                        Y >= buttons.get(i).getPoint().y && Y < buttons.get(i)
+                        .getPoint().y + controller.getLayout().getSymbolButtonSize()) {
                     buttons.get(i).setPressed(true);
                 } else {
                     buttons.get(i).setPressed(false);
@@ -139,26 +140,26 @@ public class TouchEvents {
     }
 
     private void returnCardToHand(GameController controller) {
-        controller.getPlayerById(0).getHand().getCardAt(move_card_).setPosition(new Coordinate(
+        controller.getPlayerById(0).getHand().getCardAt(move_card_).setPosition(new Point(
                 controller.getPlayerById(0).getHand().getCardAt(move_card_).getFixedPosition()));
     }
 
     public void ActionUp(GameController controller, int X, int Y) {
 
-        if (!controller.getStatistics().isOn() && controller.getStatistics().getStatsButton().IsPressed()) {
-            if (X >= controller.getStatistics().getStatsButton().getCoordinate().getX() &&
-                    X < controller.getStatistics().getStatsButton().getCoordinate().getX() + controller.getLayout().getCardHeight() &&
-                    Y >= controller.getStatistics().getStatsButton().getCoordinate().getY() &&
-                    Y < controller.getStatistics().getStatsButton().getCoordinate().getY() + controller.getLayout().getCardHeight()) {
-                controller.getStatistics().getStatsButton().setPressed(false);
+        if (!controller.getButtonBar().getStatistics().isOn() && controller.getButtonBar().getStatistics().getStatsButton().IsPressed()) {
+            if (X >= controller.getButtonBar().getStatistics().getStatsButton().getPoint().x &&
+                    X < controller.getButtonBar().getStatistics().getStatsButton().getPoint().x + controller.getLayout().getCardHeight() &&
+                    Y >= controller.getButtonBar().getStatistics().getStatsButton().getPoint().y &&
+                    Y < controller.getButtonBar().getStatistics().getStatsButton().getPoint().y + controller.getLayout().getCardHeight()) {
+                controller.getButtonBar().getStatistics().getStatsButton().setPressed(false);
                 // TODO SHOW STAT SITE
             }
         }
 
         if (move_card_ >= 0) {
             CardStack hand =  controller.getPlayerById(0).getHand();
-            int card_y = hand.getCardAt(move_card_).getPosition().getY();
-            int fixed_y = hand.getCardAt(move_card_).getFixedPosition().getY();
+            int card_y = hand.getCardAt(move_card_).getPosition().y;
+            int fixed_y = hand.getCardAt(move_card_).getFixedPosition().y;
 
             boolean valid = controller.getLogic().isAValidCardPlay(hand.getCardAt(move_card_), hand, controller.getDiscardPile());
 
@@ -170,7 +171,7 @@ public class TouchEvents {
             }
             else if (valid) {
                 controller.getPlayerById(0).getHand().getCardAt(move_card_).setPosition(
-                        new Coordinate(controller.getDiscardPile().getCoordinate(0)) );
+                        new Point(controller.getDiscardPile().getPoint(0)) );
 
                 controller.getDiscardPile().setCardBottom(
                         controller.getPlayerById(0).getHand().getCardAt(move_card_));

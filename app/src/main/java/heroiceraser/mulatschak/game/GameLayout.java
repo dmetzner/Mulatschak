@@ -1,6 +1,7 @@
 package heroiceraser.mulatschak.game;
 
-import heroiceraser.mulatschak.helpers.Coordinate;
+import android.graphics.Point;
+
 import heroiceraser.mulatschak.helpers.DisplayDimension;
 
 /**
@@ -28,12 +29,12 @@ public class GameLayout {
     private int small_button_size_;
     private int symbol_button_size;
 
-    private Coordinate button_bar_;
+    private Point button_bar_;
 
-    private Coordinate hand_bottom_;
-    private Coordinate hand_left_;
-    private Coordinate hand_top_;
-    private Coordinate hand_right_;
+    private Point hand_bottom_;
+    private Point hand_left_;
+    private Point hand_top_;
+    private Point hand_right_;
 
 
     //----------------------------------------------------------------------------------------------
@@ -56,16 +57,16 @@ public class GameLayout {
 
     public void calculateButtonBarPosition() {
         button_bar_size_ = screen_height / 6;
-        button_bar_ = new Coordinate();
-        button_bar_.setX(0);
-        button_bar_.setY(screen_height - button_bar_size_);
+        button_bar_ = new Point();
+        button_bar_.x = (0);
+        button_bar_.y = (screen_height - button_bar_size_);
     }
 
     //----------------------------------------------------------------------------------------------
     //  calculateDeckPosition()
     //
     public void initDeckPosition(MulatschakDeck deck) {
-        deck.setCoordinate( (int) ((screen_width / 2) - (card_width / 2)),
+        deck.setPoint( (int) ((screen_width / 2) - (card_width / 2)),
                             (int) (screen_height / 3.2) );
     }
 
@@ -73,40 +74,40 @@ public class GameLayout {
     //  calculateHandPositions()
     //
     public void initHandPositions(MulatschakDeck deck) {
-        hand_bottom_ = new Coordinate((int) ((screen_width - card_width * 5) / 2.0),
+        hand_bottom_ = new Point((int) ((screen_width - card_width * 5) / 2.0),
                                 (int) (screen_height - button_bar_size_ - card_height * 1.2) );
 
-        hand_left_ = new Coordinate((int) (card_width * -0.6),
-                                (int) (deck.getCoordinate().getY() - card_width) );
+        hand_left_ = new Point((int) (card_width * -0.6),
+                                (int) (deck.getPoint().y - card_width) );
 
-        hand_top_ = new Coordinate(    (int) (screen_width - card_width * 3),
+        hand_top_ = new Point(    (int) (screen_width - card_width * 3),
                                         (int) (card_height * (-0.6)) );
 
-        hand_right_ = new Coordinate(  (int) (screen_width - (card_width * 0.6)),
-                                 (int) deck.getCoordinate().getY() );
+        hand_right_ = new Point(  (int) (screen_width - (card_width * 0.6)),
+                                 (int) deck.getPoint().y );
     }
 
     //----------------------------------------------------------------------------------------------
     //  calculateDiscardPilePositions()
     //                                    has to be called after calculateDeckPositions
     //
-    public void initDiscardPilePositions(Coordinate deck_pos, DiscardPile discard_pile) {
-        int midpoint_x = deck_pos.getX() + card_width / 2;
-        int midpoint_y = deck_pos.getY() + card_height / 2;
+    public void initDiscardPilePositions(Point deck_pos, DiscardPile discard_pile) {
+        int midpoint_x = deck_pos.x + card_width / 2;
+        int midpoint_y = deck_pos.y + card_height / 2;
 
-        discard_pile.getCoordinates().add(new Coordinate(
+        discard_pile.getPoints().add(new Point(
                                                         (int) (midpoint_x - (card_width  / 2)),
                                                         (int) (midpoint_y) ));
 
-        discard_pile.getCoordinates().add(new Coordinate(
+        discard_pile.getPoints().add(new Point(
                                                         (int) (midpoint_x - (card_width * 1.5)),
                                                         (int) (midpoint_y - (card_height / 2)) ));
 
-        discard_pile.getCoordinates().add(new Coordinate(
+        discard_pile.getPoints().add(new Point(
                                                         (int) (midpoint_x - (card_width  / 2)),
                                                         (int) (midpoint_y - card_height) ));
 
-        discard_pile.getCoordinates().add(new Coordinate(
+        discard_pile.getPoints().add(new Point(
                                                         (int) (midpoint_x + (card_width / 2)),
                                                         (int) (midpoint_y - (card_height / 2)) ));
     }
@@ -124,46 +125,46 @@ public class GameLayout {
         return button_bar_size_;
     }
 
-    public Coordinate getButtonBar() {
+    public Point getButtonBar() {
         return button_bar_;
     }
 
-    public Coordinate getHandBottom() {
+    public Point getHandBottom() {
         return hand_bottom_;
     }
-    public Coordinate getHandLeft() {
+    public Point getHandLeft() {
         return hand_left_;
     }
-    public Coordinate getHandTop() {
+    public Point getHandTop() {
         return hand_top_;
     }
-    public Coordinate getHandRight() {
+    public Point getHandRight() {
         return hand_right_;
     }
 
-    public void setHandBottom(Coordinate coordinate) {
+    public void setHandBottom(Point coordinate) {
         hand_bottom_ = coordinate;
     }
     public void setHandBottom(int x, int y) {
-        hand_bottom_ = new Coordinate(x, y);
+        hand_bottom_ = new Point(x, y);
     }
-    public void setHandLeft(Coordinate coordinate) {
+    public void setHandLeft(Point coordinate) {
         hand_left_ = coordinate;
     }
     public void setHandLeft(int x, int y) {
-        hand_left_ = new Coordinate(x, y);
+        hand_left_ = new Point(x, y);
     }
-    public void setHandTop(Coordinate coordinate) {
+    public void setHandTop(Point coordinate) {
         hand_top_ = coordinate;
     }
     public void setHandTop(int x, int y) {
-        hand_top_ = new Coordinate(x, y);
+        hand_top_ = new Point(x, y);
     }
-    public void setHandRight(Coordinate coordinate) {
+    public void setHandRight(Point coordinate) {
         hand_right_ = coordinate;
     }
     public void setHandRight(int x, int y) {
-        hand_right_ = new Coordinate(x, y);
+        hand_right_ = new Point(x, y);
     }
 
     public int getSmallButtonSize() {

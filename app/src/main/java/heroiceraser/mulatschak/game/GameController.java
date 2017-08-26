@@ -27,7 +27,8 @@ public class GameController{
     private GameAnimation animations_;
     private TouchEvents touch_events_;
     private GameLogic logic_;
-    private GameStatistics statistics_;
+
+    private ButtonBar button_bar_;
 
     private List<Player> player_list_;
     private MulatschakDeck deck_;
@@ -46,7 +47,7 @@ public class GameController{
         layout_ = new GameLayout();
         animations_ = new GameAnimation(view);
         touch_events_ = new TouchEvents();
-        statistics_ = new GameStatistics();
+        button_bar_ = new ButtonBar();
 
         deck_ = new MulatschakDeck();
         discardPile_ = new DiscardPile();
@@ -109,10 +110,10 @@ public class GameController{
         deck_.initDeck(view_);
         layout_.initDeckPosition(deck_);
         discardPile_.init(view_);
-        layout_.initDiscardPilePositions(deck_.getCoordinate(), discardPile_);
+        layout_.initDiscardPilePositions(deck_.getPoint(), discardPile_);
         layout_.initHandPositions(deck_);
         animations_.init(view_);
-        statistics_.init(view_);
+        button_bar_.init(view_);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -369,7 +370,7 @@ public class GameController{
 
     public int getAmountOfPlayers() { return player_list_.size(); }
 
-    public GameStatistics getStatistics() {
-        return statistics_;
+    public ButtonBar getButtonBar() {
+        return button_bar_;
     }
 }

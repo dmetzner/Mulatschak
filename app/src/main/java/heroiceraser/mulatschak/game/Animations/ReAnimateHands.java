@@ -16,15 +16,15 @@ public class ReAnimateHands {
     public void redrawHands(GameLayout layout, Player player) {
         switch (player.getId()) {
             case 0:
-                layout.setHandBottom(layout.getHandBottom().getX() + layout.getCardWidth() / 2,
-                        layout.getHandBottom().getY());
+                layout.setHandBottom(layout.getHandBottom().x + layout.getCardWidth() / 2,
+                        layout.getHandBottom().y);
                 for (int i = 0; i < player.getAmountOfCardsInHand(); i++) {
                     player.getHand().getCardAt(i).setFixedPosition(
-                            layout.getHandBottom().getX() + layout.getCardWidth() * i,
-                            layout.getHandBottom().getY());
+                            layout.getHandBottom().x + layout.getCardWidth() * i,
+                            layout.getHandBottom().y);
                     player.getHand().getCardAt(i).setPosition(
-                            layout.getHandBottom().getX() + layout.getCardWidth() * i,
-                            layout.getHandBottom().getY());
+                            layout.getHandBottom().x + layout.getCardWidth() * i,
+                            layout.getHandBottom().y);
                 }
         }
     }

@@ -6,8 +6,6 @@ import android.view.View;
 
 import java.util.List;
 
-import heroiceraser.mulatschak.helpers.Coordinate;
-
 /**
  * Created by Daniel Metzner on 08.08.2017.
  */
