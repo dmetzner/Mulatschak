@@ -5,7 +5,9 @@ import android.graphics.Point;
 
 import java.util.List;
 
-import heroiceraser.mulatschak.game.Animations.ReAnimateHands;
+import heroiceraser.mulatschak.DrawableBasicObjects.Button;
+import heroiceraser.mulatschak.game.DrawableObjects.Card;
+import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
 
 /**
  * Created by Daniel Metzner on 14.08.2017.
@@ -27,12 +29,12 @@ public class TouchEvents {
             controller.endCardRound();
         }
 
-        if (!controller.getButtonBar().getStatistics().isOn()) {
-            if (X >= controller.getButtonBar().getStatistics().getStatsButton().getPosition().x &&
-                    X < controller.getButtonBar().getStatistics().getStatsButton().getPosition().x + controller.getLayout().getCardHeight() &&
-                    Y >= controller.getButtonBar().getStatistics().getStatsButton().getPosition().y &&
-                    Y < controller.getButtonBar().getStatistics().getStatsButton().getPosition().y + controller.getLayout().getCardHeight()) {
-                controller.getButtonBar().getStatistics().getStatsButton().setPressed(true);
+        if (!controller.getStatistics().isOn()) {
+            if (X >= controller.getButtonBar().getStatisticsButton().getPosition().x &&
+                    X < controller.getButtonBar().getStatisticsButton().getPosition().x + controller.getLayout().getCardHeight() &&
+                    Y >= controller.getButtonBar().getStatisticsButton().getPosition().y &&
+                    Y < controller.getButtonBar().getStatisticsButton().getPosition().y + controller.getLayout().getCardHeight()) {
+                controller.getButtonBar().getStatisticsButton().setPressed(true);
             }
         }
 
@@ -86,15 +88,15 @@ public class TouchEvents {
 
     public void ActionMove(GameController controller, int X, int Y) {
 
-        if (!controller.getButtonBar().getStatistics().isOn() && controller.getButtonBar().getStatistics().getStatsButton().IsPressed()) {
-            if (X >= controller.getButtonBar().getStatistics().getStatsButton().getPosition().x &&
-                    X < controller.getButtonBar().getStatistics().getStatsButton().getPosition().x + controller.getLayout().getCardHeight() &&
-                    Y >= controller.getButtonBar().getStatistics().getStatsButton().getPosition().y &&
-                    Y < controller.getButtonBar().getStatistics().getStatsButton().getPosition().y + controller.getLayout().getCardHeight()) {
-                controller.getButtonBar().getStatistics().getStatsButton().setPressed(true);
+        if (!controller.getStatistics().isOn() && controller.getButtonBar().getStatisticsButton().IsPressed()) {
+            if (X >= controller.getButtonBar().getStatisticsButton().getPosition().x &&
+                    X < controller.getButtonBar().getStatisticsButton().getPosition().x + controller.getLayout().getCardHeight() &&
+                    Y >= controller.getButtonBar().getStatisticsButton().getPosition().y &&
+                    Y < controller.getButtonBar().getStatisticsButton().getPosition().y + controller.getLayout().getCardHeight()) {
+                controller.getButtonBar().getStatisticsButton().setPressed(true);
             }
             else {
-                controller.getButtonBar().getStatistics().getStatsButton().setPressed(false);
+                controller.getButtonBar().getStatisticsButton().setPressed(false);
             }
         }
 
@@ -146,12 +148,12 @@ public class TouchEvents {
 
     public void ActionUp(GameController controller, int X, int Y) {
 
-        if (!controller.getButtonBar().getStatistics().isOn() && controller.getButtonBar().getStatistics().getStatsButton().IsPressed()) {
-            if (X >= controller.getButtonBar().getStatistics().getStatsButton().getPosition().x &&
-                    X < controller.getButtonBar().getStatistics().getStatsButton().getPosition().x + controller.getLayout().getCardHeight() &&
-                    Y >= controller.getButtonBar().getStatistics().getStatsButton().getPosition().y &&
-                    Y < controller.getButtonBar().getStatistics().getStatsButton().getPosition().y + controller.getLayout().getCardHeight()) {
-                controller.getButtonBar().getStatistics().getStatsButton().setPressed(false);
+        if (!controller.getStatistics().isOn() && controller.getButtonBar().getStatisticsButton().IsPressed()) {
+            if (X >= controller.getButtonBar().getStatisticsButton().getPosition().x &&
+                    X < controller.getButtonBar().getStatisticsButton().getPosition().x + controller.getLayout().getCardHeight() &&
+                    Y >= controller.getButtonBar().getStatisticsButton().getPosition().y &&
+                    Y < controller.getButtonBar().getStatisticsButton().getPosition().y + controller.getLayout().getCardHeight()) {
+                controller.getButtonBar().getStatisticsButton().setPressed(false);
                 // TODO SHOW STAT SITE
             }
         }

@@ -1,13 +1,9 @@
 package heroiceraser.mulatschak.game.Animations;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import heroiceraser.mulatschak.game.Button;
-import heroiceraser.mulatschak.game.GameController;
+import heroiceraser.mulatschak.DrawableBasicObjects.Button;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.helpers.HelperFunctions;

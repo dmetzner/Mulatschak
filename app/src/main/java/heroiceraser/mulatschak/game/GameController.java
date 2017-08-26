@@ -7,6 +7,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import heroiceraser.mulatschak.DrawableBasicObjects.Button;
+import heroiceraser.mulatschak.game.DrawableObjects.ButtonBar;
+import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
+import heroiceraser.mulatschak.game.DrawableObjects.DiscardPile;
+import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
 import heroiceraser.mulatschak.game.Animations.GameAnimation;
 
 
@@ -27,6 +32,7 @@ public class GameController{
     private GameAnimation animations_;
     private TouchEvents touch_events_;
     private GameLogic logic_;
+    private GameStatistics statistics_;
 
     private ButtonBar button_bar_;
 
@@ -47,6 +53,9 @@ public class GameController{
         layout_ = new GameLayout();
         animations_ = new GameAnimation(view);
         touch_events_ = new TouchEvents();
+
+        statistics_ = new GameStatistics();
+
         button_bar_ = new ButtonBar();
 
         deck_ = new MulatschakDeck();
@@ -110,6 +119,7 @@ public class GameController{
         discardPile_.init(view_);
         animations_.init(view_);
         button_bar_.init(view_);
+        statistics_.init(view_);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -368,5 +378,9 @@ public class GameController{
 
     public ButtonBar getButtonBar() {
         return button_bar_;
+    }
+
+    public GameStatistics getStatistics() {
+        return statistics_;
     }
 }

@@ -1,17 +1,19 @@
-package heroiceraser.mulatschak.game;
+package heroiceraser.mulatschak.game.DrawableObjects;
 
 import android.graphics.Point;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
+import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
 
 /**
  * Created by Daniel Metzner on 14.08.2017.
  */
 
-public class DiscardPile extends DrawableObject{
+public class DiscardPile extends DrawableObject {
 
     private final String BMP_DISCARD_PILE = "discard_pile";
     private final String PACKAGE_DISCARD_PILE = "drawable";
@@ -24,6 +26,7 @@ public class DiscardPile extends DrawableObject{
     private List<Point> positions_;
 
     public DiscardPile() {
+        super();
         positions_ = new ArrayList<Point>();
         card_bottom_ = null;
         card_left_ = null;

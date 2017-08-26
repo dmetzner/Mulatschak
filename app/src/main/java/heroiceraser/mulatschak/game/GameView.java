@@ -10,7 +10,8 @@ import android.view.MotionEvent;
 import android.view.View;
 
 
-import static android.R.attr.bitmap;
+import heroiceraser.mulatschak.DrawableBasicObjects.Button;
+import heroiceraser.mulatschak.game.DrawableObjects.ButtonBar;
 
 /**
  * Created by Daniel Metzner on 08.08.2017.
@@ -66,19 +67,19 @@ public class GameView extends View {
             Paint paint = new Paint();
             paint.setColor(Color.DKGRAY);
             ButtonBar button_bar = controller_.getButtonBar();
-            /*canvas.drawRect(
-                    button_bar.getPointTopLeft().x,
-                    button_bar.getPointTopLeft().y,
-                    button_bar.getPointTopLeft().x + button_bar.getBarWidth(),
-                    button_bar.getPointTopLeft().y + button_bar.getBarHeight() + 10,
+            canvas.drawRect(
+                    button_bar.getPosition().x,
+                    button_bar.getPosition().y,
+                    button_bar.getPosition().x + button_bar.getWidth(),
+                    button_bar.getPosition().y + button_bar.getHeight() + 10,
                     paint);
-*/
+
 
             // Statistics Button
-            drawButton(canvas, controller_.getButtonBar().getStatistics().getStatsButton());
+            drawButton(canvas, controller_.getButtonBar().getStatisticsButton());
 
             // Tricks Button
-            drawButton(canvas, controller_.getButtonBar().getStatistics().getTricksButton());
+            //drawButton(canvas, controller_.getButtonBar().getTricksButton());
 
           }
 

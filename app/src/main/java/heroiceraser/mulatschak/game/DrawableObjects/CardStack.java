@@ -1,9 +1,9 @@
-package heroiceraser.mulatschak.game;
-
-import android.graphics.Point;
+package heroiceraser.mulatschak.game.DrawableObjects;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 
 /**
  * Created by Daniel Metzner on 10.08.2017.
@@ -12,7 +12,7 @@ import java.util.List;
 //----------------------------------------------------------------------------------------------
 //  A CardStack consists of an ArrayList of Cards
 //
-public class CardStack extends DrawableObject{
+public class CardStack extends DrawableObject {
 
     //----------------------------------------------------------------------------------------------
     //  Member Variables
@@ -23,6 +23,7 @@ public class CardStack extends DrawableObject{
     //  Constructor
     //
     public CardStack() {
+        super();
         stack_ = new ArrayList<Card>();
     }
 

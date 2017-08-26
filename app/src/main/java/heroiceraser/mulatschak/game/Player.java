@@ -1,5 +1,7 @@
 package heroiceraser.mulatschak.game;
 
+import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
+
 /**
  * Created by Daniel Metzner on 10.08.2017.
  */

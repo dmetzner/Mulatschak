@@ -1,11 +1,9 @@
-package heroiceraser.mulatschak.game;
+package heroiceraser.mulatschak.game.DrawableObjects;
 
 import android.graphics.Bitmap;
-import android.support.compat.BuildConfig;
 import android.util.Log;
-import android.view.View;
 
-import java.util.List;
+import heroiceraser.mulatschak.game.GameView;
 
 /**
  * Created by Daniel Metzner on 08.08.2017.
@@ -45,7 +43,9 @@ public class MulatschakDeck extends CardStack {
     //----------------------------------------------------------------------------------------------
     //  Constructor:
     //
-    public MulatschakDeck() { }
+    public MulatschakDeck() {
+        super();
+    }
 
     //----------------------------------------------------------------------------------------------
     //  Getter & Setter

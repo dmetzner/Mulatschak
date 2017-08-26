@@ -1,4 +1,4 @@
-package heroiceraser.mulatschak.game;
+package heroiceraser.mulatschak.DrawableBasicObjects;
 
 import android.graphics.Bitmap;
 import android.graphics.Point;
