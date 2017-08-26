@@ -9,10 +9,9 @@ import heroiceraser.mulatschak.helpers.HelperFunctions;
  */
 
 //----------------------------------------------------------------------------------------------
-//  A Card consists of:
+//  A Card is a drawable object with
 //      an Id
 //      a bitmap -> front side Image of the card dd
-//      a position -> where is the card right now
 //      a fixed position -> where should the card be
 //
 public class Card extends DrawableObject {
@@ -37,6 +36,17 @@ public class Card extends DrawableObject {
         fixed_position = null;
     }
 
+    //----------------------------------------------------------------------------------------------
+    //  initCard:
+    //            loads, scales and sets bitmap for a card
+    //
+    public Card initCard(GameView view, String image_name, String package_name) {
+        setWidth(view.getController().getLayout().getCardWidth());
+        setHeight(view.getController().getLayout().getCardHeight());
+        setBitmap(HelperFunctions.loadBitmap(view, image_name, getWidth(), getHeight(), package_name));
+        setVisible(true);
+        return this;
+    }
 
     //----------------------------------------------------------------------------------------------
     //  Getter & Setter
@@ -48,31 +58,13 @@ public class Card extends DrawableObject {
         id_ = id;
     }
 
-    public Point getFixedPosition() { return fixed_position; }
-    public void setFixedPosition(Point coordinate) { fixed_position = new Point(coordinate); }
-    public void setFixedPosition(int x, int y) { fixed_position = new Point(x, y); }
-
-    //----------------------------------------------------------------------------------------------
-    //  initCard:
-    //            loads, scales and sets bitmap for a card
-    //
-    public Card initCard(GameView view, String image_name, String package_name) {
-        calculateCardSize(view);
-        setBitmap(HelperFunctions.loadBitmap(view, image_name, getWidth(), getHeight(), package_name));
-        return this;
+    public Point getFixedPosition() {
+        return fixed_position;
     }
-
-    //----------------------------------------------------------------------------------------------
-    //  calculateCardSize:
-    //                      calculates card size based on the screen width
-    //
-    private void calculateCardSize(GameView view) {
-
-        final double HEIGHT_FACTOR = 1.28;
-        double screen_width = view.getController().getLayout().getScreenWidth();
-        double max_cards_per_hand = view.getController().getLogic().getMaxCardsPerHand();
-
-        setWidth((int) (screen_width / (max_cards_per_hand + 1)) );
-        setHeight( (int) (getWidth() * 1.28) );
+    public void setFixedPosition(Point coordinate) {
+        fixed_position = new Point(coordinate);
+    }
+    public void setFixedPosition(int x, int y) {
+        fixed_position = new Point(x, y);
     }
 }

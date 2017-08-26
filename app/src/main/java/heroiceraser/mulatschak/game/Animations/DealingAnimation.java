@@ -120,8 +120,8 @@ public class DealingAnimation {
     }
 
     public void setAnimationToDeck() {
-        hand_card_x = view_.getController().getDeck().getPoint().x;
-        hand_card_y = view_.getController().getDeck().getPoint().y;
+        hand_card_x = view_.getController().getDeck().getPosition().x;
+        hand_card_y = view_.getController().getDeck().getPosition().y;
     }
 
     //----------------------------------------------------------------------------------------------
@@ -129,8 +129,8 @@ public class DealingAnimation {
         cards_to_draw =  view_.getController().getLogic().getMaxCardsPerHand() *
                 view_.getController().getAmountOfPlayers();
         animation_running_ = true;
-        hand_card_x = view_.getController().getDeck().getPoint().x;
-        hand_card_y = view_.getController().getDeck().getPoint().y;
+        hand_card_x = view_.getController().getDeck().getPosition().x;
+        hand_card_y = view_.getController().getDeck().getPosition().y;
         rotation_start_ = 0;
         deal();
     }
@@ -264,8 +264,8 @@ public class DealingAnimation {
                 .setPosition(card_position);
         view_.getController().getPlayerById(player_id).getHand().getCardAt(getFixedPosition(player_id)).
                 setFixedPosition(new Point(card_position));
-        hand_card_x = view_.getController().getDeck().getPoint().x;
-        hand_card_y = view_.getController().getDeck().getPoint().y;
+        hand_card_x = view_.getController().getDeck().getPosition().x;
+        hand_card_y = view_.getController().getDeck().getPosition().y;
         rotation_start_ = 0;
     }
 

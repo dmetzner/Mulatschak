@@ -66,13 +66,13 @@ public class GameView extends View {
             Paint paint = new Paint();
             paint.setColor(Color.DKGRAY);
             ButtonBar button_bar = controller_.getButtonBar();
-            canvas.drawRect(
+            /*canvas.drawRect(
                     button_bar.getPointTopLeft().x,
                     button_bar.getPointTopLeft().y,
                     button_bar.getPointTopLeft().x + button_bar.getBarWidth(),
                     button_bar.getPointTopLeft().y + button_bar.getBarHeight() + 10,
                     paint);
-
+*/
 
             // Statistics Button
             drawButton(canvas, controller_.getButtonBar().getStatistics().getStatsButton());
@@ -98,8 +98,8 @@ public class GameView extends View {
             bitmap = button.getBitmapPressed();
         }
         canvas.drawBitmap(bitmap,
-                button.getPoint().x,
-                button.getPoint().y, null);
+                button.getPosition().x,
+                button.getPosition().y, null);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -174,8 +174,8 @@ public class GameView extends View {
         if (controller_.getAnimation().getDealingAnimation().getAnimationRunning()) {
 
             canvas.drawBitmap(controller_.getDeck().getBacksideBitmap(),
-                    controller_.getDeck().getPoint().x,
-                    controller_.getDeck().getPoint().y, null);
+                    controller_.getDeck().getPosition().x,
+                    controller_.getDeck().getPosition().y, null);
 
             controller_.getAnimation().getDealingAnimation().deal();
 
@@ -195,8 +195,8 @@ public class GameView extends View {
                 else if (!button.IsEnabled()) {
                     bitmap = button.getBitmapDisabled();
                 }
-                canvas.drawBitmap(bitmap, button.getPoint().x,
-                        button.getPoint().y, null);
+                canvas.drawBitmap(bitmap, button.getPosition().x,
+                        button.getPosition().y, null);
             }
         }
 
@@ -208,8 +208,8 @@ public class GameView extends View {
                 if (button.IsPressed()) {
                     bitmap = button.getBitmapPressed();
                 }
-                canvas.drawBitmap(bitmap, button.getPoint().x,
-                        button.getPoint().y, null);
+                canvas.drawBitmap(bitmap, button.getPosition().x,
+                        button.getPosition().y, null);
             }
         }
 

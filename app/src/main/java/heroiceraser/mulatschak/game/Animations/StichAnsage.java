@@ -60,7 +60,7 @@ public class StichAnsage {
                 x = layout.getHandBottom().x + layout.getCardWidth() / 2;
                 y -= layout.getSymbolButtonSize();
             }
-            symbol_buttons_.get(button_id).setPoint(x, y);
+            symbol_buttons_.get(button_id).setPosition(x, y);
             x += layout.getSymbolButtonSize();
             buttons_per_row++;
         }
@@ -90,7 +90,7 @@ public class StichAnsage {
         int x = layout.getHandBottom().x + layout.getCardWidth() / 5;
         int y = (int) (layout.getHandBottom().y - layout.getSmallButtonSize() * 1.3);
         final int max_buttons_per_row = 3;
-        number_buttons_.get(6).setPoint(x, y);
+        number_buttons_.get(6).setPosition(x, y);
         int buttons_per_row = max_buttons_per_row;
         int amount_of_buttons = number_buttons_.size();
         for (int button_id = amount_of_buttons - 2; button_id >= 0; button_id--) {
@@ -99,7 +99,7 @@ public class StichAnsage {
                 x = layout.getHandBottom().x + layout.getCardWidth() / 5 + 2 * layout.getSmallButtonSize();
                 y -= layout.getSmallButtonSize();
             }
-            number_buttons_.get(button_id).setPoint(x, y);
+            number_buttons_.get(button_id).setPosition(x, y);
             x -= layout.getSmallButtonSize();
             buttons_per_row++;
         }

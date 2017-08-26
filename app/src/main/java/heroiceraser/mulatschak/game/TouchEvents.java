@@ -28,10 +28,10 @@ public class TouchEvents {
         }
 
         if (!controller.getButtonBar().getStatistics().isOn()) {
-            if (X >= controller.getButtonBar().getStatistics().getStatsButton().getPoint().x &&
-                    X < controller.getButtonBar().getStatistics().getStatsButton().getPoint().x + controller.getLayout().getCardHeight() &&
-                    Y >= controller.getButtonBar().getStatistics().getStatsButton().getPoint().y &&
-                    Y < controller.getButtonBar().getStatistics().getStatsButton().getPoint().y + controller.getLayout().getCardHeight()) {
+            if (X >= controller.getButtonBar().getStatistics().getStatsButton().getPosition().x &&
+                    X < controller.getButtonBar().getStatistics().getStatsButton().getPosition().x + controller.getLayout().getCardHeight() &&
+                    Y >= controller.getButtonBar().getStatistics().getStatsButton().getPosition().y &&
+                    Y < controller.getButtonBar().getStatistics().getStatsButton().getPosition().y + controller.getLayout().getCardHeight()) {
                 controller.getButtonBar().getStatistics().getStatsButton().setPressed(true);
             }
         }
@@ -62,10 +62,10 @@ public class TouchEvents {
                     width *= 3;
                 }
                 if (buttons.get(i).IsEnabled() &&
-                        X >= buttons.get(i).getPoint().x &&  X < buttons.get(i)
-                        .getPoint().x + width &&
-                        Y >= buttons.get(i).getPoint().y &&  Y < buttons.get(i)
-                        .getPoint().y + controller.getLayout().getSmallButtonSize()) {
+                        X >= buttons.get(i).getPosition().x &&  X < buttons.get(i)
+                        .getPosition().x + width &&
+                        Y >= buttons.get(i).getPosition().y &&  Y < buttons.get(i)
+                        .getPosition().y + controller.getLayout().getSmallButtonSize()) {
                     buttons.get(i).setPressed(true);
                 }
             }
@@ -73,10 +73,10 @@ public class TouchEvents {
         else if (controller.getAnimation().getStichAnsage().getAnimationSymbols()) {
             List<Button> buttons = controller.getAnimation().getStichAnsage().getSymbolButtons();
             for (int i = 0; i < buttons.size(); i++) {
-                if (X >= buttons.get(i).getPoint().x &&  X < buttons.get(i)
-                        .getPoint().x + controller.getLayout().getSymbolButtonSize() &&
-                        Y >= buttons.get(i).getPoint().y &&  Y < buttons.get(i)
-                        .getPoint().y + controller.getLayout().getSymbolButtonSize()) {
+                if (X >= buttons.get(i).getPosition().x &&  X < buttons.get(i)
+                        .getPosition().x + controller.getLayout().getSymbolButtonSize() &&
+                        Y >= buttons.get(i).getPosition().y &&  Y < buttons.get(i)
+                        .getPosition().y + controller.getLayout().getSymbolButtonSize()) {
                     buttons.get(i).setPressed(true);
                 }
             }
@@ -87,10 +87,10 @@ public class TouchEvents {
     public void ActionMove(GameController controller, int X, int Y) {
 
         if (!controller.getButtonBar().getStatistics().isOn() && controller.getButtonBar().getStatistics().getStatsButton().IsPressed()) {
-            if (X >= controller.getButtonBar().getStatistics().getStatsButton().getPoint().x &&
-                    X < controller.getButtonBar().getStatistics().getStatsButton().getPoint().x + controller.getLayout().getCardHeight() &&
-                    Y >= controller.getButtonBar().getStatistics().getStatsButton().getPoint().y &&
-                    Y < controller.getButtonBar().getStatistics().getStatsButton().getPoint().y + controller.getLayout().getCardHeight()) {
+            if (X >= controller.getButtonBar().getStatistics().getStatsButton().getPosition().x &&
+                    X < controller.getButtonBar().getStatistics().getStatsButton().getPosition().x + controller.getLayout().getCardHeight() &&
+                    Y >= controller.getButtonBar().getStatistics().getStatsButton().getPosition().y &&
+                    Y < controller.getButtonBar().getStatistics().getStatsButton().getPosition().y + controller.getLayout().getCardHeight()) {
                 controller.getButtonBar().getStatistics().getStatsButton().setPressed(true);
             }
             else {
@@ -112,10 +112,10 @@ public class TouchEvents {
                     width *= 3;
                 }
                 if (buttons.get(i).IsEnabled() && buttons.get(i).IsPressed() &&
-                        X >= buttons.get(i).getPoint().x &&  X < buttons.get(i)
-                        .getPoint().x + width &&
-                        Y >= buttons.get(i).getPoint().y &&  Y < buttons.get(i)
-                        .getPoint().y + controller.getLayout().getSmallButtonSize()) {
+                        X >= buttons.get(i).getPosition().x &&  X < buttons.get(i)
+                        .getPosition().x + width &&
+                        Y >= buttons.get(i).getPosition().y &&  Y < buttons.get(i)
+                        .getPosition().y + controller.getLayout().getSmallButtonSize()) {
                     buttons.get(i).setPressed(true);
                 }
                 else {
@@ -127,10 +127,10 @@ public class TouchEvents {
             List<Button> buttons = controller.getAnimation().getStichAnsage().getSymbolButtons();
             for (int i = 0; i < buttons.size(); i++) {
                 if (buttons.get(i).IsPressed() &&
-                        X >= buttons.get(i).getPoint().x && X < buttons.get(i)
-                        .getPoint().x + controller.getLayout().getSymbolButtonSize() &&
-                        Y >= buttons.get(i).getPoint().y && Y < buttons.get(i)
-                        .getPoint().y + controller.getLayout().getSymbolButtonSize()) {
+                        X >= buttons.get(i).getPosition().x && X < buttons.get(i)
+                        .getPosition().x + controller.getLayout().getSymbolButtonSize() &&
+                        Y >= buttons.get(i).getPosition().y && Y < buttons.get(i)
+                        .getPosition().y + controller.getLayout().getSymbolButtonSize()) {
                     buttons.get(i).setPressed(true);
                 } else {
                     buttons.get(i).setPressed(false);
@@ -147,10 +147,10 @@ public class TouchEvents {
     public void ActionUp(GameController controller, int X, int Y) {
 
         if (!controller.getButtonBar().getStatistics().isOn() && controller.getButtonBar().getStatistics().getStatsButton().IsPressed()) {
-            if (X >= controller.getButtonBar().getStatistics().getStatsButton().getPoint().x &&
-                    X < controller.getButtonBar().getStatistics().getStatsButton().getPoint().x + controller.getLayout().getCardHeight() &&
-                    Y >= controller.getButtonBar().getStatistics().getStatsButton().getPoint().y &&
-                    Y < controller.getButtonBar().getStatistics().getStatsButton().getPoint().y + controller.getLayout().getCardHeight()) {
+            if (X >= controller.getButtonBar().getStatistics().getStatsButton().getPosition().x &&
+                    X < controller.getButtonBar().getStatistics().getStatsButton().getPosition().x + controller.getLayout().getCardHeight() &&
+                    Y >= controller.getButtonBar().getStatistics().getStatsButton().getPosition().y &&
+                    Y < controller.getButtonBar().getStatistics().getStatsButton().getPosition().y + controller.getLayout().getCardHeight()) {
                 controller.getButtonBar().getStatistics().getStatsButton().setPressed(false);
                 // TODO SHOW STAT SITE
             }

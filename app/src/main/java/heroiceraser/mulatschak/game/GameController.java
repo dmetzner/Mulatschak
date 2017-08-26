@@ -105,13 +105,9 @@ public class GameController{
     //         initialises the game
     //
     private void init() {
-        layout_.calculateDimensions(view_);
-        layout_.calculateButtonBarPosition();
+        layout_.init(view_);
         deck_.initDeck(view_);
-        layout_.initDeckPosition(deck_);
         discardPile_.init(view_);
-        layout_.initDiscardPilePositions(deck_.getPoint(), discardPile_);
-        layout_.initHandPositions(deck_);
         animations_.init(view_);
         button_bar_.init(view_);
     }
@@ -146,7 +142,7 @@ public class GameController{
     //
     //
     private void shuffleDeck() {
-        Collections.shuffle(deck_.getStack(), new Random());
+        Collections.shuffle(deck_.getCardStack(), new Random());
     }
 
     //----------------------------------------------------------------------------------------------
@@ -172,14 +168,14 @@ public class GameController{
     //  drawCard
     //
     private void drawCard(int player_id, MulatschakDeck deck){
-        if (deck.getStack().isEmpty()) {
+        if (deck.getCardStack().isEmpty()) {
             // ToDo do something when deck is empty
         }
         else
         {
             CardStack player_hand =  getPlayerById(player_id).getHand();
             player_hand.addCard(deck_.getCardAt(0));
-            deck.getStack().remove(0);
+            deck.getCardStack().remove(0);
         }
     }
 

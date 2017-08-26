@@ -2,6 +2,7 @@ package heroiceraser.mulatschak.game;
 
 import android.graphics.Bitmap;
 import android.support.compat.BuildConfig;
+import android.util.Log;
 import android.view.View;
 
 import java.util.List;
@@ -40,7 +41,6 @@ public class MulatschakDeck extends CardStack {
     // Member Variables
     //
     private Card backside_;
-    private Card backside_rotated_;
 
     //----------------------------------------------------------------------------------------------
     //  Constructor:
@@ -50,7 +50,6 @@ public class MulatschakDeck extends CardStack {
     //----------------------------------------------------------------------------------------------
     //  Getter & Setter
     //
-    public List<Card> getStack() {  return getCardStack(); }
     public Bitmap getBacksideBitmap() { return backside_.getBitmap(); }
 
     //----------------------------------------------------------------------------------------------
@@ -59,11 +58,12 @@ public class MulatschakDeck extends CardStack {
     //
     public void initDeck(GameView view) {
         // backside cards
+        setWidth(0);
+        setHeight(0);
+        setPosition(view.getController().getLayout().getDeckPosition());
         backside_ = new Card(BACKSIDE);
         String img_name = IMG_PRE_NAME + "_back";
         backside_.initCard(view, img_name, PACKAGE_NAME);
-        backside_rotated_ = new Card(BACKSIDE);
-        backside_rotated_.initCard(view, img_name, PACKAGE_NAME);
 
         for (int i = 0; i <= CARD_SUITS; i++) {
             if (i == JOKER) {
@@ -82,9 +82,12 @@ public class MulatschakDeck extends CardStack {
                 }
             }
         }
-        if (BuildConfig.DEBUG && getStack().size() == CARDS_PER_DECK) {
-            throw new AssertionError("MulatschakDeck: 'decksize != CARDS_PER_DECK' Error");
+
+        if (getCardStack().size() != CARDS_PER_DECK) {
+            Log.e("Mulatschak Deck", "Not enough Cards");
         }
+
+        setVisible(true);
     }
 
 }

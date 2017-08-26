@@ -12,20 +12,18 @@ import java.util.List;
 //----------------------------------------------------------------------------------------------
 //  A CardStack consists of an ArrayList of Cards
 //
-public class CardStack {
+public class CardStack extends DrawableObject{
 
     //----------------------------------------------------------------------------------------------
     //  Member Variables
     //
-    private Point coordinate_;
-    private List<Card> card_stack_;
+    private List<Card> stack_;
 
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
     public CardStack() {
-        card_stack_ = new ArrayList<Card>();
-        coordinate_ = new Point();
+        stack_ = new ArrayList<Card>();
     }
 
 
@@ -34,7 +32,7 @@ public class CardStack {
     //                  adds a Cart to the stack
     //
     public void addCard(Card card) {
-        card_stack_.add(card);
+        stack_.add(card);
     }
 
 
@@ -42,15 +40,11 @@ public class CardStack {
     //  Getter & Setter
     //
     public List<Card> getCardStack() {
-        return card_stack_;
+        return stack_;
     }
 
     public Card getCardAt(int pos) {
-        return card_stack_.get(pos);
+        return stack_.get(pos);
     }
-
-    public Point getPoint() { return coordinate_; }
-    public void setPoint(Point coordinate) { coordinate_ = new Point(coordinate); }
-    public void setPoint(int x, int y) { coordinate_ = new Point(x, y); }
 
 }

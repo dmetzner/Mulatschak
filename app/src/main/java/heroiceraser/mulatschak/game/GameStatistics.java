@@ -31,25 +31,25 @@ public class GameStatistics {
         String package_name = "drawable";
 
         stats_button_ = new Button();
-        int width = (int) (buttonBar.getBarWidth() / 3.0);
-        int height = (int) (buttonBar.getBarHeight() * (7.0 / 9.0));
+        int width = (int) (buttonBar.getWidth() / 3.0);
+        int height = (int) (buttonBar.getHeight() * (7.0 / 9.0));
         stats_button_.setBitmap(HelperFunctions.loadBitmap(view, image_name, width, height, package_name));
         stats_button_.setBitmapPressed(HelperFunctions.loadBitmap(view, image_name + "_pressed", width, height, package_name));
 
-        int x = (int) (buttonBar.getBarWidth() - width  * 1.1);
-        int y = (int) (buttonBar.getPointTopLeft().y + (2.0 / 18.0) * (buttonBar.getBarHeight()));
+        int x = (int) (buttonBar.getWidth() - width  * 1.1);
+        int y = (int) (buttonBar.getPosition().y + (2.0 / 18.0) * (buttonBar.getHeight()));
 
-        stats_button_.setPoint(x, y);
+        stats_button_.setPosition(x, y);
 
         tricks_button_ = new Button();
         image_name = "button_stiche";
         tricks_button_.setBitmap(HelperFunctions.loadBitmap(view, image_name, width, height, package_name));
         tricks_button_.setBitmapPressed(HelperFunctions.loadBitmap(view, image_name + "_pressed", width, height, package_name));
 
-        x = (int) (buttonBar.getBarWidth() - width  * 2.1);
-        y = (int) (buttonBar.getPointTopLeft().y + (2.0 / 18.0) * (buttonBar.getBarHeight()));
+        x = (int) (buttonBar.getWidth() - width  * 2.1);
+        y = (int) (buttonBar.getPosition().y + (2.0 / 18.0) * (buttonBar.getHeight()));
 
-        tricks_button_.setPoint(x, y);
+        tricks_button_.setPosition(x, y);
     }
 
 
