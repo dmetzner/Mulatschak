@@ -6,6 +6,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -50,10 +53,15 @@ public class GameView extends View {
         super.onDraw(canvas);
         // TESTCASE
            // drawCheck(canvas);
-        drawButtonBar(canvas);
+        drawDealerButton(canvas);
         drawHandCards(canvas);
         drawDiscardPile(canvas);
         drawAnimations(canvas);
+
+        drawStatistics(canvas);
+        drawTricks(canvas);
+        drawMenu(canvas);
+        drawButtonBar(canvas);
     }
 
     private void drawCheck(Canvas canvas) {
@@ -62,13 +70,24 @@ public class GameView extends View {
         if (test_radius > 300) { test_radius = 0; }
     }
 
+
+    private void drawDealerButton(Canvas canvas) {
+        if (controller_.getDealerButton().isVisible()) {
+            canvas.drawBitmap(controller_.getDealerButton().getBitmap(),
+                    controller_.getDealerButton().getPosition().x,
+                    controller_.getDealerButton().getPosition().y, null);
+        }
+    }
+
     private void drawButtonBar(Canvas canvas) {
         if (controller_.getButtonBar().isVisible()) {
-            Paint paint = new Paint();
-            paint.setColor(Color.DKGRAY);
             ButtonBar button_bar = controller_.getButtonBar();
 
-            canvas.drawBitmap(button_bar.getBitmap(), button_bar.getPosition().x, button_bar.getPosition().y, null);
+            /// draw Buttonbar
+            canvas.drawBitmap(button_bar.getBitmap(), button_bar.getPosition().x,
+                    button_bar.getPosition().y, null);
+
+            // draw decoration
             canvas.drawBitmap(button_bar.getDecoration(), button_bar.getPosition().x,
                     (int) (button_bar.getPosition().y - (button_bar.getHeight())) , null);
 
@@ -213,6 +232,59 @@ public class GameView extends View {
             }
         }
 
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // drawStatistics
+    //
+    private void drawStatistics(Canvas canvas) {
+        if (controller_.getStatistics().isVisible()) {
+            canvas.drawBitmap(controller_.getStatistics().getBitmap(),
+                    controller_.getStatistics().getPosition().x,
+                    controller_.getStatistics().getPosition().y, null);
+
+            String text = "Player X:   XXX";
+            TextPaint textPaint = new TextPaint();
+            textPaint.setAntiAlias(true);
+            textPaint.setTextSize(40 * getResources().getDisplayMetrics().density);
+            textPaint.setColor(Color.GREEN);
+            int width = (int) textPaint.measureText(text);
+            int x = (int) ((controller_.getLayout().getScreenWidth() - width) / 2.0);
+            int y = (int) (controller_.getLayout().getScreenHeight() / 8.0 * 1.5);
+            for (int i = 0; i < controller_.getAmountOfPlayers(); i++) {
+                canvas.save();
+                canvas.translate(x, y);
+                text = "Player " + (i + 1);
+                text += ":     " + controller_.getPlayerById(i).getLives();
+                StaticLayout staticLayout = new StaticLayout(text, textPaint,
+                        width, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0, false);
+                staticLayout.draw(canvas);
+                canvas.restore();
+                y += (int) (textPaint.getTextSize() * 1.5);
+            }
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // drawTricks
+    //
+    private void drawTricks(Canvas canvas) {
+        if (controller_.getTricks().isVisible()) {
+            canvas.drawBitmap(controller_.getTricks().getBitmap(),
+                    controller_.getTricks().getPosition().x,
+                    controller_.getTricks().getPosition().y, null);
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // drawMenu
+    //
+    private void drawMenu(Canvas canvas) {
+        if (controller_.getMenu().isVisible()) {
+            canvas.drawBitmap(controller_.getMenu().getBitmap(),
+                    controller_.getMenu().getPosition().x,
+                    controller_.getMenu().getPosition().y, null);
+        }
     }
 
     //----------------------------------------------------------------------------------------------

@@ -42,6 +42,11 @@ public class GameLayout {
     private Point hand_top_;
     private Point hand_right_;
 
+    private Point dealer_button_size_;
+    private Point dealer_button_bottom_;
+    private Point dealer_button_left_;
+    private Point dealer_button_top_;
+    private Point dealer_button_right_;
 
     //---- ButtonBar
     private Point button_bar_size_;
@@ -66,8 +71,10 @@ public class GameLayout {
         calculateButtonBarSmallButtonSize();
         calculateButtonBarBigButtonSize();
         calculateDiscardPileSize();     // right now same as card size
+        calculateDealerButtonSize();
 
         // calculate positions
+        initDealerButtonPositions();
         initButtonBarPosition();
         initButtonBarButtonPositionRight();
         initButtonBarButtonPositionMiddle(); // relative to right one
@@ -122,6 +129,23 @@ public class GameLayout {
         button_bar_small_button_size_ = new Point();
         button_bar_small_button_size_.x = (int) (button_bar_size_.x / 5.0);
         button_bar_small_button_size_.y = (int) (button_bar_size_.y * (7.0 / 9.0));
+    }
+
+    private void calculateDealerButtonSize() {
+        dealer_button_size_ = new Point();
+        dealer_button_size_.x = card_width;
+        dealer_button_size_.y = card_width;
+    }
+
+    private void initDealerButtonPositions() {
+// ToDO
+        dealer_button_bottom_ = new Point(hand_bottom_.x, hand_bottom_.y );
+
+        dealer_button_left_ = new Point(hand_left_.x, hand_left_.y );
+
+        dealer_button_top_ = new Point(hand_top_.x, hand_top_.y  );
+
+        dealer_button_right_ = new Point(hand_right_.x, hand_right_.y );
     }
 
     private void initButtonBarButtonPositionRight() {
@@ -300,5 +324,9 @@ public class GameLayout {
 
     public Point getButtonBarButtonPositionLeft() {
         return button_bar_button_position_left_;
+    }
+
+    public int getDealerButtonSize() {
+        return dealer_button_size_.x;
     }
 }

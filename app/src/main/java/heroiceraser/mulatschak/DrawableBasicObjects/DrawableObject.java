@@ -23,6 +23,10 @@ public abstract class DrawableObject {
         visible_ = false;
     }
 
+    public void switchVisibility() {
+        visible_ = !visible_;
+    }
+
     public boolean isVisible() {
         return this.visible_;
     }

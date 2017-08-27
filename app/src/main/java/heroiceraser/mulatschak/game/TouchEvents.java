@@ -29,14 +29,19 @@ public class TouchEvents {
             controller.endCardRound();
         }
 
-        if (!controller.getStatistics().isOn()) {
-            if (X >= controller.getButtonBar().getStatisticsButton().getPosition().x &&
-                    X < controller.getButtonBar().getStatisticsButton().getPosition().x + controller.getLayout().getCardHeight() &&
-                    Y >= controller.getButtonBar().getStatisticsButton().getPosition().y &&
-                    Y < controller.getButtonBar().getStatisticsButton().getPosition().y + controller.getLayout().getCardHeight()) {
-                controller.getButtonBar().getStatisticsButton().setPressed(true);
-            }
-        }
+        // ----------------------- ButtonBar -------------------------------------------------------
+
+        // Statistic Button
+        ButtonActionDown(X, Y, controller.getButtonBar().getStatisticsButton());
+
+        // Tricks Button
+        ButtonActionDown(X, Y, controller.getButtonBar().getTricksButton());
+
+        // Menu Button
+        ButtonActionDown(X, Y, controller.getButtonBar().getMenuButton());
+
+        //------------------------
+
 
         if (controller.getLogic().getTurn() == 0 && move_card_ < 0) {
             for (int i = 0; i < controller.getPlayerById(0).getAmountOfCardsInHand(); i++) {
@@ -88,17 +93,18 @@ public class TouchEvents {
 
     public void ActionMove(GameController controller, int X, int Y) {
 
-        if (!controller.getStatistics().isOn() && controller.getButtonBar().getStatisticsButton().IsPressed()) {
-            if (X >= controller.getButtonBar().getStatisticsButton().getPosition().x &&
-                    X < controller.getButtonBar().getStatisticsButton().getPosition().x + controller.getLayout().getCardHeight() &&
-                    Y >= controller.getButtonBar().getStatisticsButton().getPosition().y &&
-                    Y < controller.getButtonBar().getStatisticsButton().getPosition().y + controller.getLayout().getCardHeight()) {
-                controller.getButtonBar().getStatisticsButton().setPressed(true);
-            }
-            else {
-                controller.getButtonBar().getStatisticsButton().setPressed(false);
-            }
-        }
+        // ----------------------- ButtonBar -------------------------------------------------------
+
+        // Statistic Button
+        ButtonActionMove(X, Y, controller.getButtonBar().getStatisticsButton());
+
+        // Tricks Button
+        ButtonActionMove(X, Y, controller.getButtonBar().getTricksButton());
+
+        // Menu Button
+        ButtonActionMove(X, Y, controller.getButtonBar().getMenuButton());
+
+        //------------------------
 
         if (move_card_ >= 0) {
             controller.getPlayerById(0).getHand().getCardAt(move_card_).setPosition(
@@ -148,15 +154,30 @@ public class TouchEvents {
 
     public void ActionUp(GameController controller, int X, int Y) {
 
-        if (!controller.getStatistics().isOn() && controller.getButtonBar().getStatisticsButton().IsPressed()) {
-            if (X >= controller.getButtonBar().getStatisticsButton().getPosition().x &&
-                    X < controller.getButtonBar().getStatisticsButton().getPosition().x + controller.getLayout().getCardHeight() &&
-                    Y >= controller.getButtonBar().getStatisticsButton().getPosition().y &&
-                    Y < controller.getButtonBar().getStatisticsButton().getPosition().y + controller.getLayout().getCardHeight()) {
-                controller.getButtonBar().getStatisticsButton().setPressed(false);
-                // TODO SHOW STAT SITE
-            }
+        // ----------------------- ButtonBar -------------------------------------------------------
+
+        // Statistic Button
+        if (ButtonActionUp(X, Y, controller.getButtonBar().getStatisticsButton())) {
+            controller.getMenu().setVisible(false);
+            controller.getTricks().setVisible(false);
+            controller.getStatistics().switchVisibility();
         }
+
+        // Tricks Button
+        if (ButtonActionUp(X, Y, controller.getButtonBar().getTricksButton())) {
+            controller.getMenu().setVisible(false);
+            controller.getTricks().switchVisibility();
+            controller.getStatistics().setVisible(false);
+        }
+
+        // Menu Button
+        if (ButtonActionUp(X, Y, controller.getButtonBar().getMenuButton())) {
+            controller.getMenu().switchVisibility();
+            controller.getTricks().setVisible(false);
+            controller.getStatistics().setVisible(false);
+        }
+
+        //------------------------
 
         if (move_card_ >= 0) {
             CardStack hand =  controller.getPlayerById(0).getHand();
@@ -214,7 +235,39 @@ public class TouchEvents {
                 }
             }
         }
-
-
     }
+
+    //----------------------------------------------------------------------------------------------
+
+    private void ButtonActionDown(int X, int Y, Button button) {
+        if (button.isVisible() && button.IsEnabled() &&
+                X >= button.getPosition().x && X < button.getPosition().x + button.getWidth() &&
+                Y >= button.getPosition().y && Y < button.getPosition().y + button.getHeight()) {
+            button.setPressed(true);
+        }
+    }
+
+    private void ButtonActionMove(int X, int Y, Button button) {
+        if (button.isVisible() && button.IsEnabled() && button.IsPressed()) {
+            if ( X >= button.getPosition().x && X < button.getPosition().x + button.getWidth() &&
+                    Y >= button.getPosition().y && Y < button.getPosition().y + button.getHeight()) {
+                button.setPressed(true);
+            }
+            else {
+                button.setPressed(false);
+            }
+        }
+    }
+
+    private boolean ButtonActionUp(int X, int Y, Button button) {
+        if (button.isVisible() && button.IsEnabled() && button.IsPressed()) {
+            if (X >= button.getPosition().x && X < button.getPosition().x + button.getWidth() &&
+                    Y >= button.getPosition().y && Y < button.getPosition().y + button.getHeight()) {
+                button.setPressed(false);
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

@@ -31,6 +31,7 @@ public class EnemyLogic {
         Card card = player.getHand().getCardAt(random_number);
         player.getHand().getCardStack().remove(random_number);
         discard_pile.setCard(player.getPosition(), card);
+
     }
 
     public void trickBids(Player player, GameController controller) {

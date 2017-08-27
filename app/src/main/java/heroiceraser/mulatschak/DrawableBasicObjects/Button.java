@@ -1,6 +1,10 @@
 package heroiceraser.mulatschak.DrawableBasicObjects;
 
 import android.graphics.Bitmap;
+import android.graphics.Point;
+
+import heroiceraser.mulatschak.game.GameView;
+import heroiceraser.mulatschak.helpers.HelperFunctions;
 
 /**
  * Created by Daniel Metzner on 19.08.2017.
@@ -33,6 +37,18 @@ public class Button extends DrawableObject{
         bitmap_disabled_ = null;
     }
 
+    public void initButton(GameView view, Point position, int width, int height,
+                            String image_name, String package_name) {
+        setPosition(position);
+        setWidth(width);
+        setHeight(height);
+        setBitmap(HelperFunctions.loadBitmap(view, image_name, width, height, package_name));
+        setBitmapPressed(HelperFunctions.loadBitmap(view, image_name + "_pressed",
+                width, height, package_name));
+        setBitmapDisabled(HelperFunctions.loadBitmap(view, image_name + "_disabled",
+                width, height, package_name));
+        setVisible(true);
+    }
 
     //----------------------------------------------------------------------------------------------
     // Getter & Setter

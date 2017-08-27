@@ -10,7 +10,11 @@ import java.util.Random;
 import heroiceraser.mulatschak.DrawableBasicObjects.Button;
 import heroiceraser.mulatschak.game.DrawableObjects.ButtonBar;
 import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
+import heroiceraser.mulatschak.game.DrawableObjects.DealerButton;
 import heroiceraser.mulatschak.game.DrawableObjects.DiscardPile;
+import heroiceraser.mulatschak.game.DrawableObjects.GameMenu;
+import heroiceraser.mulatschak.game.DrawableObjects.GameStatistics;
+import heroiceraser.mulatschak.game.DrawableObjects.GameTricks;
 import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
 import heroiceraser.mulatschak.game.Animations.GameAnimation;
 
@@ -32,14 +36,17 @@ public class GameController{
     private GameAnimation animations_;
     private TouchEvents touch_events_;
     private GameLogic logic_;
-    private GameStatistics statistics_;
 
     private ButtonBar button_bar_;
+    private GameStatistics statistics_;
+    private GameTricks tricks_;
+    private GameMenu menu_;
 
     private List<Player> player_list_;
     private MulatschakDeck deck_;
     private DiscardPile discardPile_;
     private CardStack trash_;
+    private DealerButton dealer_button_;
 
 
     //----------------------------------------------------------------------------------------------
@@ -54,9 +61,11 @@ public class GameController{
         animations_ = new GameAnimation(view);
         touch_events_ = new TouchEvents();
 
-        statistics_ = new GameStatistics();
-
         button_bar_ = new ButtonBar();
+        statistics_ = new GameStatistics();
+        tricks_ = new GameTricks();
+        menu_ = new GameMenu();
+
 
         deck_ = new MulatschakDeck();
         discardPile_ = new DiscardPile();
@@ -64,6 +73,7 @@ public class GameController{
         for (int i = 0; i < players; i++) {
             player_list_.add(new Player(i));
         }
+        dealer_button_ = new DealerButton();
     }
 
     //----------------------------------------------------------------------------------------------
@@ -117,9 +127,12 @@ public class GameController{
         layout_.init(view_);
         deck_.initDeck(view_);
         discardPile_.init(view_);
+        dealer_button_.init(view_);
         animations_.init(view_);
         button_bar_.init(view_);
         statistics_.init(view_);
+        tricks_.init(view_);
+        menu_.init(view_);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -139,6 +152,8 @@ public class GameController{
         Random random_generator = new Random();
         int random_number = random_generator.nextInt(getAmountOfPlayers());
         logic_.setDealer(random_number);
+        dealer_button_.setPosition(
+                layout_.getDealerButtonPosition(getPlayerById(random_number).getPosition()));
         logic_.setTurn(random_number);
 
         // DEBUG ////////////////////////////////////////////////////////////////////////////////////////
@@ -382,5 +397,13 @@ public class GameController{
 
     public GameStatistics getStatistics() {
         return statistics_;
+    }
+
+    public GameTricks getTricks() { return tricks_; }
+
+    public GameMenu getMenu() { return  menu_; }
+
+    public DealerButton getDealerButton() {
+        return dealer_button_;
     }
 }
