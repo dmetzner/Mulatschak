@@ -76,15 +76,6 @@ public class DealingAnimation {
         rotation_offset_ /= (ANIMATION_FACTOR / 12.5);
     }
 
-    private double getOverlapFactor(int pos) {
-        switch (pos) {
-            case 0: return 1;
-            case 1: return 9.5;
-            case 2: return 7.0;
-            case 3: return 9.5;
-            default: return 1;
-        }
-    }
 
     private void calculateEndPositions(int player_id, int pos) {
         int card_number = view_.getController().getLogic().getMaxCardsPerHand() - (cards_to_draw
@@ -94,23 +85,23 @@ public class DealingAnimation {
         switch (pos) {
             case 0:
                 endposition_x = (int) ( layout.getHandBottom().x +
-                        ( layout.getCardWidth() * card_number) / getOverlapFactor(pos) );
+                        ( layout.getCardWidth() * card_number) / layout.getOverlapFactor(pos) );
                 endposition_y =  layout.getHandBottom().y;
                 break;
             case 1:
                 endposition_x = layout.getHandLeft().x;
                 endposition_y = (int) ( layout.getHandLeft().y -
-                        (layout.getCardHeight() * card_number) / getOverlapFactor(pos) );
+                        (layout.getCardHeight() * card_number) / layout.getOverlapFactor(pos) );
                 break;
             case 2:
                 endposition_x = (int) ( layout.getHandTop().x +
-                        (layout.getCardWidth() * card_number) / getOverlapFactor(pos) );
+                        (layout.getCardWidth() * card_number) / layout.getOverlapFactor(pos) );
                 endposition_y =  layout.getHandTop().y;
                 break;
             case 3:
                 endposition_x = layout.getHandRight().x;
                 endposition_y = (int) ( layout.getHandRight().y +
-                        (layout.getCardHeight() * card_number) / getOverlapFactor(pos) );
+                        (layout.getCardHeight() * card_number) / layout.getOverlapFactor(pos) );
                 break;
         }
     }

@@ -71,12 +71,16 @@ public class DiscardPile extends DrawableObject {
         switch (pos) {
             case 0:
                 setCardBottom(card);
+                return;
             case 1:
                 setCardLeft(card);
+                return;
             case 2:
                 setCardTop(card);
+                return;
             case 3:
                 setCardRight(card);
+                return;
         }
     }
 

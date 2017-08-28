@@ -53,9 +53,9 @@ public class GameView extends View {
         super.onDraw(canvas);
         // TESTCASE
            // drawCheck(canvas);
-        drawDealerButton(canvas);
         drawHandCards(canvas);
         drawDiscardPile(canvas);
+        drawDealerButton(canvas);
         drawAnimations(canvas);
 
         drawStatistics(canvas);

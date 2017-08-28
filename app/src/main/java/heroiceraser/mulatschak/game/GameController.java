@@ -82,6 +82,7 @@ public class GameController{
     public void start() {
         init();
         setPlayerLives();
+        setPlayerPositions();
         chooseFirstDealerRandomly();
         startRound();
     }
@@ -142,6 +143,31 @@ public class GameController{
         for (int i = 0; i < getAmountOfPlayers(); i++) {
             getPlayerById(i).setLives(logic_.getStartLives());
             getPlayerById(i).setTrumphsToMake(0);
+        }
+    }
+    //----------------------------------------------------------------------------------------------
+    //  setPlayer Lives
+    //
+    private void setPlayerPositions() {
+        switch (getAmountOfPlayers()) {
+            case 1:
+                getPlayerById(0).setPosition(layout_.POSITION_BOTTOM);
+                break;
+            case 2:
+                getPlayerById(0).setPosition(layout_.POSITION_BOTTOM);
+                getPlayerById(1).setPosition(layout_.POSITION_TOP);
+                break;
+            case 3:
+                getPlayerById(0).setPosition(layout_.POSITION_BOTTOM);
+                getPlayerById(1).setPosition(layout_.POSITION_LEFT);
+                getPlayerById(2).setPosition(layout_.POSITION_TOP);
+                break;
+            case 4:
+                getPlayerById(0).setPosition(layout_.POSITION_BOTTOM);
+                getPlayerById(1).setPosition(layout_.POSITION_LEFT);
+                getPlayerById(2).setPosition(layout_.POSITION_TOP);
+                getPlayerById(3).setPosition(layout_.POSITION_RIGHT);
+                break;
         }
     }
 

@@ -1,6 +1,7 @@
 package heroiceraser.mulatschak.game;
 
 import android.graphics.Point;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +75,6 @@ public class GameLayout {
         calculateDealerButtonSize();
 
         // calculate positions
-        initDealerButtonPositions();
         initButtonBarPosition();
         initButtonBarButtonPositionRight();
         initButtonBarButtonPositionMiddle(); // relative to right one
@@ -82,6 +82,7 @@ public class GameLayout {
         initDeckPosition();
         initDiscardPilePositions();         // uses deck position
         initHandPositions();                // uses deck position
+        initDealerButtonPositions();        // uses hand position
         small_button_size_ = screen_size_.x / 4;
         symbol_button_size = screen_size_.x / 3;
     }
@@ -133,19 +134,37 @@ public class GameLayout {
 
     private void calculateDealerButtonSize() {
         dealer_button_size_ = new Point();
-        dealer_button_size_.x = card_width;
-        dealer_button_size_.y = card_width;
+        dealer_button_size_.x = (int) (card_width / 3.0 * 2.0);
+        dealer_button_size_.y = dealer_button_size_.x;
+    }
+
+    public double getOverlapFactor(int pos) {
+        switch (pos) {
+            case 0: return 1;
+            case 1: return 9.5;
+            case 2: return 7.0;
+            case 3: return 9.5;
+            default: return 1;
+        }
+    }
+
+    private int dealerButtonOffset(int position) {
+        return (int) (card_width + (5.1 * card_width / getOverlapFactor(position)));
     }
 
     private void initDealerButtonPositions() {
-// ToDO
-        dealer_button_bottom_ = new Point(hand_bottom_.x, hand_bottom_.y );
 
-        dealer_button_left_ = new Point(hand_left_.x, hand_left_.y );
+        dealer_button_bottom_ = new Point(hand_bottom_.x - (int) (card_width / 3.0),
+                hand_bottom_.y - dealer_button_size_.y);
 
-        dealer_button_top_ = new Point(hand_top_.x, hand_top_.y  );
+        dealer_button_left_ = new Point(1,
+                hand_left_.y - dealerButtonOffset(POSITION_LEFT));
 
-        dealer_button_right_ = new Point(hand_right_.x, hand_right_.y );
+        dealer_button_top_ = new Point(hand_top_.x + dealerButtonOffset(POSITION_TOP),
+                1);
+
+        dealer_button_right_ = new Point(screen_size_.x - dealer_button_size_.x,
+                hand_right_.y + (int) (dealerButtonOffset(POSITION_RIGHT) * 1.1) );
     }
 
     private void initButtonBarButtonPositionRight() {
@@ -328,5 +347,20 @@ public class GameLayout {
 
     public int getDealerButtonSize() {
         return dealer_button_size_.x;
+    }
+
+    public Point getDealerButtonPosition(int position) {
+        switch (position) {
+            case POSITION_BOTTOM:
+                return dealer_button_bottom_;
+            case POSITION_LEFT:
+                return dealer_button_left_;
+            case POSITION_TOP:
+                return dealer_button_top_;
+            case POSITION_RIGHT:
+                return dealer_button_right_;
+        }
+        Log.e("GameLayout", "getDealerButtonPosition() was called with: " + position +" ,but ony 0-4 is valid");
+        return new Point(0, 0);
     }
 }
