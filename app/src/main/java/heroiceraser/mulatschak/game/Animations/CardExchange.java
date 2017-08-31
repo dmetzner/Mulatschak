@@ -138,6 +138,9 @@ public class CardExchange {
     }
 
     public Button getButton() {
+        if (active_buttons_ < 0) {
+            active_buttons_ = 0;
+        }
         return exchange_buttons_.get(active_buttons_);
     }
 }

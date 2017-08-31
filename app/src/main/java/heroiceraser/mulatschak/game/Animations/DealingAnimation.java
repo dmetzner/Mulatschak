@@ -241,28 +241,16 @@ public class DealingAnimation {
         return 0;
     }
 
-    private int getFixedPosition(int player_id) {
-        CardStack cs = view_.getController().getPlayerById(player_id).getHand();
-        for (int i = 0; i < cs.getCardStack().size(); i++) {
-            if (cs.getCardAt(i).getFixedPosition() == null) {
-                return i;
-            }
-            if (cs.getCardAt(i).getPosition().
-                    equals(view_.getController().getLayout().getDeckPosition())) {
-                return i;
-            }
-        }
-        return 0;
-    }
 
     private void goToNextAnimation(int player_id) {//////////////////////////////////////////////////////////////TODO
         bitmap_ = view_.getController().getDeck().getBacksideBitmap();
         cards_to_draw--;
         Point card_position = new Point(hand_card_x, hand_card_y);
-        view_.getController().getPlayerById(player_id).getHand().getCardAt(getPosition(player_id))
+        int card_pos = getPosition(player_id);
+        view_.getController().getPlayerById(player_id).getHand().getCardAt(card_pos)
                 .setPosition(card_position);
-        view_.getController().getPlayerById(player_id).getHand().getCardAt(getFixedPosition(player_id)).
-                setFixedPosition(new Point(card_position));
+        view_.getController().getPlayerById(player_id).getHand().getCardAt(card_pos)
+                .setFixedPosition(new Point(card_position));
         hand_card_x = view_.getController().getDeck().getPosition().x;
         hand_card_y = view_.getController().getDeck().getPosition().y;
         rotation_start_ = 0;

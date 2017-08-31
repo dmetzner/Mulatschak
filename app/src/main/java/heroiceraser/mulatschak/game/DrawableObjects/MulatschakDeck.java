@@ -20,19 +20,19 @@ public class MulatschakDeck extends CardStack {
     //--------------------------------------------------------------------------------------------------
     //  Constants for the naming convention of the card images
     //
-    public final static int WELI      = 0;            // IMG_NAME0 -> the Joker
-    public final static int DIAMOND  = 1;            // IMG_NAME107 - IMG_NAME114
-    public final static int CLUB     = 2;            // IMG_NAME207 - IMG_NAME214
-    public final static int HEART    = 3;            // IMG_NAME307 - IMG_NAME314
-    public final static int SPADE    = 4;            // IMG_NAME407 - IMG_NAME414
+    public final static int WELI     = 0;            // IMG_NAME0 -> the Joker value 14
+    private final int JOKER          = 14;
+    public final static int DIAMOND  = 1;            // IMG_NAME107 - IMG_NAME115
+    public final static int CLUB     = 2;            // IMG_NAME207 - IMG_NAME215
+    public final static int HEART    = 3;            // IMG_NAME307 - IMG_NAME315
+    public final static int SPADE    = 4;            // IMG_NAME407 - IMG_NAME415
     //
     private final String PACKAGE_NAME = "drawable";
     private final String IMG_PRE_NAME = "card";
     public final static int CARDS_PER_DECK = 33;
     public final static int CARD_SUITS = 4;
     public final static int FIRST_CARD = 7;
-    public final static int LAST_CARD = 14;
-    public final static int JOKER = 0;
+    public final static int LAST_CARD = 15;
     public final static int BACKSIDE = -1;
 
     //----------------------------------------------------------------------------------------------
@@ -66,14 +66,17 @@ public class MulatschakDeck extends CardStack {
         backside_.initCard(view, img_name, PACKAGE_NAME);
 
         for (int i = 0; i <= CARD_SUITS; i++) {
-            if (i == JOKER) {
+            if (i == WELI) {
                 Card card = new Card(JOKER);
-                img_name = IMG_PRE_NAME + JOKER;
+                img_name = IMG_PRE_NAME + WELI + JOKER;
                 card.initCard(view, img_name, PACKAGE_NAME);
                 addCard(card);
             }
             else {
                 for (int j = FIRST_CARD; j <= LAST_CARD; j++) {
+                    if (j == JOKER) {
+                        continue;
+                    }
                     int id = (i * 100) + j;
                     Card card = new Card(id);
                     img_name = IMG_PRE_NAME + id;

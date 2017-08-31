@@ -133,7 +133,10 @@ public class TouchEvents {
 
         //------------------- Card Exchange --------------------------------------------------------
 
-        ButtonActionMove(X, Y, controller.getAnimation().getCardExchange().getButton());
+        if (controller.getAnimation().getCardExchange().isAnimationRunning()) {
+            ButtonActionMove(X, Y, controller.getAnimation().getCardExchange().getButton());
+        }
+
 
         //------------------------
 
@@ -217,9 +220,12 @@ public class TouchEvents {
 
         //------------------- Card Exchange --------------------------------------------------------
 
-        if (ButtonActionUp(X, Y, controller.getAnimation().getCardExchange().getButton())) {
-            controller.getAnimation().getCardExchange().exchangeCards(controller);
+        if (controller.getAnimation().getCardExchange().isAnimationRunning()) {
+            if (ButtonActionUp(X, Y, controller.getAnimation().getCardExchange().getButton())) {
+                controller.getAnimation().getCardExchange().exchangeCards(controller);
+            }
         }
+
 
 
         //------------------------

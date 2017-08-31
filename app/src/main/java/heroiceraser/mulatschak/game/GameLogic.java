@@ -77,6 +77,9 @@ public class GameLogic {
     public boolean isAValidCardPlay(Card card_to_play, CardStack hand, DiscardPile dp) {
 
         int card_to_play_symbol = (card_to_play.getId() / 100) % 5;
+        if (card_to_play_symbol == MulatschakDeck.WELI) {
+            card_to_play_symbol = trump_;
+        }
 
         if (isDiscardPileEmpty(dp)) { // first card
             setStartingCard(card_to_play_symbol);
@@ -87,10 +90,6 @@ public class GameLogic {
         int h_sym = highestCard / 100 % 5;
         int h_value = highestCard % 100;
 
-        if (card_to_play_symbol == MulatschakDeck.JOKER && h_sym == trump_ && h_value < 14) {
-            return true;
-        }
-
         boolean has_a_starting_card = false;
         boolean has_a_trump = false;
         for (int i = 0; i < hand.getCardStack().size(); i++) {
@@ -100,7 +99,7 @@ public class GameLogic {
             if (hand.getCardAt(i).getId() / 100 % 5 == trump_) {
                 has_a_trump = true;
             }
-            if (hand.getCardAt(i).getId() / 100 % 5 == MulatschakDeck.JOKER) {
+            if (hand.getCardAt(i).getId() / 100 % 5 == MulatschakDeck.WELI) {
                 has_a_trump = true;
             }
         }
@@ -126,6 +125,10 @@ public class GameLogic {
                         hand.getCardAt(i).getId() % 100 > h_value) {
                     return false;
                 }
+                if (hand.getCardAt(i).getId() / 100 % 5 == MulatschakDeck.WELI &&
+                        hand.getCardAt(i).getId() % 100 > h_value) {
+                    return false;
+                }
             }
         }
 
@@ -146,36 +149,38 @@ public class GameLogic {
         int highest_card_value = -11;
 
         for (int i = 0; i < 4; i++) {
-            if (dp.getCard(i) != null) {
-                int dp_card_sym = dp.getCard(i).getId() / 100 % 5;
-                int dp_card_value = dp.getCard(i).getId() % 100;
-                if (dp_card_sym == MulatschakDeck.JOKER) {
-                    dp_card_sym = trump_;
-                    dp_card_value = 0;
+            if (dp.getCard(i) == null) {
+                continue;
+            }
+
+            int dp_card_sym = dp.getCard(i).getId() / 100 % 5;
+            int dp_card_value = dp.getCard(i).getId() % 100;
+            if (dp_card_sym == MulatschakDeck.WELI) {
+                dp_card_sym = trump_;
+            }
+            if (dp_card_sym == starting_card_symbol_ && highest_card_sym != trump_) {
+                if (dp_card_value > highest_card_value) {
+                    highest_card_sym = dp_card_sym;
+                    highest_card_value = dp_card_value;
                 }
-                if (dp_card_sym == starting_card_symbol_ && highest_card_sym != trump_) {
+            }
+            if (dp_card_sym == trump_) {
+                if (highest_card_sym == trump_) {
                     if (dp_card_value > highest_card_value) {
                         highest_card_sym = dp_card_sym;
                         highest_card_value = dp_card_value;
                     }
-                }
-                if (dp_card_sym == trump_) {
-                    if (highest_card_sym == trump_) {
-                        if (dp_card_value > highest_card_value) {
-                            highest_card_sym = dp_card_sym;
-                            highest_card_value = dp_card_value;
-                        }
-                        else if (dp_card_value == 0 && highest_card_value < 14) {
-                            highest_card_sym = dp_card_sym;
-                            highest_card_value = dp_card_value;
-                        }
-                    }
-                    else if(highest_card_sym != trump_) {
+                    else if (dp_card_value == 0 && highest_card_value < 14) {
                         highest_card_sym = dp_card_sym;
                         highest_card_value = dp_card_value;
                     }
                 }
+                else if(highest_card_sym != trump_) {
+                    highest_card_sym = dp_card_sym;
+                    highest_card_value = dp_card_value;
+                }
             }
+
         }
         return highest_card_sym * 100 + highest_card_value;
     }
@@ -187,41 +192,43 @@ public class GameLogic {
         int highest_card_owner = -1;
 
         for (int i = 0; i < 4; i++) {
-            if (dp.getCard(i) != null) {
-                int dp_card_sym = dp.getCard(i).getId() / 100 % 5;
-                int dp_card_value = dp.getCard(i).getId() % 100;
-                if (dp_card_sym == MulatschakDeck.JOKER) {
-                    dp_card_sym = trump_;
-                    dp_card_value = 0;
+            if (dp.getCard(i) == null) {
+                continue;
+            }
+
+            int dp_card_sym = dp.getCard(i).getId() / 100 % 5;
+            int dp_card_value = dp.getCard(i).getId() % 100;
+            if (dp_card_sym == MulatschakDeck.WELI) {
+                dp_card_sym = trump_;
+                highest_card_owner = i;
+            }
+            if (dp_card_sym == starting_card_symbol_ && highest_card_sym != trump_) {
+                if (dp_card_value > highest_card_value) {
+                    highest_card_sym = dp_card_sym;
+                    highest_card_value = dp_card_value;
                     highest_card_owner = i;
                 }
-                if (dp_card_sym == starting_card_symbol_ && highest_card_sym != trump_) {
+            }
+            if (dp_card_sym == trump_) {
+                if (highest_card_sym == trump_) {
                     if (dp_card_value > highest_card_value) {
                         highest_card_sym = dp_card_sym;
                         highest_card_value = dp_card_value;
                         highest_card_owner = i;
                     }
-                }
-                if (dp_card_sym == trump_) {
-                    if (highest_card_sym == trump_) {
-                        if (dp_card_value > highest_card_value) {
-                            highest_card_sym = dp_card_sym;
-                            highest_card_value = dp_card_value;
-                            highest_card_owner = i;
-                        }
-                        else if (dp_card_value == 0 && highest_card_value < 14) {
-                            highest_card_sym = dp_card_sym;
-                            highest_card_value = dp_card_value;
-                            highest_card_owner = i;
-                        }
-                    }
-                    else if(highest_card_sym != trump_) {
+                    else if (dp_card_value == 0 && highest_card_value < 14) {
                         highest_card_sym = dp_card_sym;
                         highest_card_value = dp_card_value;
                         highest_card_owner = i;
                     }
                 }
+                else if(highest_card_sym != trump_) {
+                    highest_card_sym = dp_card_sym;
+                    highest_card_value = dp_card_value;
+                    highest_card_owner = i;
+                }
             }
+
         }
 
         for (int i = 0; i < 4; i++) {
