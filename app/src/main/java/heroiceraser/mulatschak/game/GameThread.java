@@ -1,5 +1,6 @@
 package heroiceraser.mulatschak.game;
 
+import android.util.Log;
 import android.view.View;
 
 /**
@@ -51,6 +52,8 @@ public class GameThread extends Thread {
     public void run() {
 
         while (run) {
+            Log.d("Thread", "I RUN:" + this.toString());
+
             //limit frame rate to max 24fps
             timeNow = System.currentTimeMillis();
             timeDelta = timeNow - timePrevFrame;

@@ -10,6 +10,7 @@ import android.graphics.Point;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -57,6 +58,8 @@ public class GameView extends View {
     @Override
     protected synchronized void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+
+        Log.w("DRAW", "Hello here i draw");
 
         drawHandCards(canvas);
         drawDiscardPile(canvas);
@@ -319,6 +322,10 @@ public class GameView extends View {
 
     public GameThread getThread() {
         return thread_;
+    }
+
+    public void setThread(GameThread thread) {
+        this.thread_ = thread;
     }
 
 }

@@ -24,6 +24,7 @@ public class TouchEvents {
     public void ActionDown(GameController controller, int X, int Y) {
 
         if (!controller.getView().getThread().isRunning()) {
+            controller.getView().setThread(new GameThread(controller.getView()));
             controller.getView().getThread().setRun(true);
             controller.getView().getThread().start();
             controller.getView().getThread().setKeepUiActive(true);

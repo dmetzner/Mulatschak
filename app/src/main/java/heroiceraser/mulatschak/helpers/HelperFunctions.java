@@ -20,12 +20,12 @@ public final class HelperFunctions {
                               String package_name) {
 
         if (width <= 0) {
-            Log.e("loadBitmap",
+            Log.w("loadBitmap",
                     "Image: " + image_name + " -> width has to be greater than 0");
             return null;
         }
         if (height <= 0) {
-            Log.e("loadBitmap",
+            Log.w("loadBitmap",
                     "Image: " + image_name +  "-> height has to be greater than 0");
             return null;
         }
@@ -34,7 +34,7 @@ public final class HelperFunctions {
                 .getIdentifier(image_name, package_name, view.getContext().getPackageName());
 
         if (resourceId == 0) {
-            Log.e("loadBitmap",
+            Log.w("loadBitmap",
                     "Image Name: " + image_name + " does not exist in package: " + package_name);
             return null;
         }

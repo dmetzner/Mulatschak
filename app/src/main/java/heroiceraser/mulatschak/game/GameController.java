@@ -54,7 +54,6 @@ public class GameController{
     //
     public GameController(GameView view, int players) {
         view_ = view;
-        //new GameThread2(view); // a new thread, which is updating the view
 
         logic_ = new GameLogic();
         layout_ = new GameLayout();
@@ -95,8 +94,12 @@ public class GameController{
         animations_.getCardAnimations().setCardMoveable(false);
         shuffleDeck();
         resetTurn();
+
+        view_.getThread().setRunning(false);
+        view_.setThread(new GameThread(view_));
         view_.getThread().setRunning(true);
         view_.getThread().start();
+
         dealCards();  // starts an dealing animation
     }
 
