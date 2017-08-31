@@ -1,6 +1,7 @@
 package heroiceraser.mulatschak.DrawableBasicObjects;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Point;
 
 import heroiceraser.mulatschak.game.GameView;
@@ -48,6 +49,25 @@ public class Button extends DrawableObject{
         setBitmapDisabled(HelperFunctions.loadBitmap(view, image_name + "_disabled",
                 width, height, package_name));
         setVisible(true);
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // Draw
+    //
+    public void draw(Canvas canvas) {
+        if (!isVisible()) {
+            return;
+        }
+        Bitmap bitmap = getBitmap();
+        if (!IsEnabled()) {
+            bitmap = getBitmapDisabled();
+        }
+        else if (IsPressed()) {
+            bitmap = getBitmapPressed();
+        }
+        canvas.drawBitmap(bitmap,
+                getPosition().x,
+                getPosition().y, null);
     }
 
     //----------------------------------------------------------------------------------------------

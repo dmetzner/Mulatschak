@@ -55,4 +55,9 @@ public class Player {
 
     public int getTrumphsToMake() { return trumphs_to_make_; }
     public void setTrumphsToMake(int trumphs_to_make) { trumphs_to_make_ = trumphs_to_make; }
+
+    public CardStack getTricks() {
+        return tricks_;
+    }
+
 }

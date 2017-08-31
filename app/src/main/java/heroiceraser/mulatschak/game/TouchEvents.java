@@ -23,13 +23,19 @@ public class TouchEvents {
 
     public void ActionDown(GameController controller, int X, int Y) {
 
+        if (!controller.getView().getThread().isRunning()) {
+            controller.getView().getThread().setRun(true);
+            controller.getView().getThread().start();
+            controller.getView().getThread().setKeepUiActive(true);
+        }
+
         if (controller.waiting) {
             // ToDO Just 4 now Hack, better solution please :D
             controller.waiting = false;
             controller.endCardRound();
         }
 
-        // ----------------------- ButtonBar -------------------------------------------------------
+        // ------------------ ButtonBar ------------------------------------------------------------
 
         // Statistic Button
         ButtonActionDown(X, Y, controller.getButtonBar().getStatisticsButton());
@@ -42,8 +48,27 @@ public class TouchEvents {
 
         //------------------------
 
+        //------------------- Card Exchange --------------------------------------------------------
 
-        if (controller.getLogic().getTurn() == 0 && move_card_ < 0) {
+        if (controller.getAnimation().getCardExchange().isAnimationRunning()) {
+
+            for (int i = 0; i < controller.getPlayerById(0).getAmountOfCardsInHand(); i++) {
+                Card card = controller.getPlayerById(0).getHand().getCardAt(i);
+                if (X >= card.getPosition().x &&
+                        X < card.getPosition().x + card.getWidth() &&
+                        Y >= card.getPosition().y &&
+                        Y < card.getPosition().y + card.getHeight()) {
+                    controller.getAnimation().getCardExchange().prepareCardExchange(card);
+                }
+            }
+
+            ButtonActionDown(X, Y, controller.getAnimation().getCardExchange().getButton());
+        }
+
+        //------------------------
+
+        if (controller.getAnimation().getCardAnimations().getCardMovable() &&
+                controller.getLogic().getTurn() == 0 && move_card_ < 0) {
             for (int i = 0; i < controller.getPlayerById(0).getAmountOfCardsInHand(); i++) {
                 Card card = controller.getPlayerById(0).getHand().getCardAt(i);
                 if (card.getFixedPosition() == null) {
@@ -93,7 +118,7 @@ public class TouchEvents {
 
     public void ActionMove(GameController controller, int X, int Y) {
 
-        // ----------------------- ButtonBar -------------------------------------------------------
+        // ------------------ ButtonBar ------------------------------------------------------------
 
         // Statistic Button
         ButtonActionMove(X, Y, controller.getButtonBar().getStatisticsButton());
@@ -103,6 +128,12 @@ public class TouchEvents {
 
         // Menu Button
         ButtonActionMove(X, Y, controller.getButtonBar().getMenuButton());
+
+        //------------------------
+
+        //------------------- Card Exchange --------------------------------------------------------
+
+        ButtonActionMove(X, Y, controller.getAnimation().getCardExchange().getButton());
 
         //------------------------
 
@@ -154,6 +185,11 @@ public class TouchEvents {
 
     public void ActionUp(GameController controller, int X, int Y) {
 
+        if (controller.getView().getThread().isKeepUiActive()) {
+            controller.getView().getThread().setKeepUiActive(false);
+            controller.getView().getThread().setRun(false);
+        }
+
         // ----------------------- ButtonBar -------------------------------------------------------
 
         // Statistic Button
@@ -176,6 +212,15 @@ public class TouchEvents {
             controller.getTricks().setVisible(false);
             controller.getStatistics().setVisible(false);
         }
+
+        //------------------------
+
+        //------------------- Card Exchange --------------------------------------------------------
+
+        if (ButtonActionUp(X, Y, controller.getAnimation().getCardExchange().getButton())) {
+            controller.getAnimation().getCardExchange().exchangeCards(controller);
+        }
+
 
         //------------------------
 
@@ -220,7 +265,7 @@ public class TouchEvents {
                     buttons.get(button_id).setPressed(false);
                     controller.getAnimation().getStichAnsage().setAnimationNumbers(false);
                     controller.setNewMaxTrumphs(button_id, 0);
-                    controller.trickBids();
+                    controller.makeTrickBids();
                 }
             }
         }
@@ -228,7 +273,7 @@ public class TouchEvents {
             List<Button> buttons = controller.getAnimation().getStichAnsage().getSymbolButtons();
             for (int i = 0; i < buttons.size(); i++) {
                 if (buttons.get(i).IsPressed()) {
-                    controller.getLogic().setTrumph(i + 1);
+                    controller.getLogic().setTrump(i + 1);
                     buttons.get(i).setPressed(false);
                     controller.getAnimation().getStichAnsage().setAnimationSymbols(false);
                     controller.continueAfterTrumpWasChoosen();

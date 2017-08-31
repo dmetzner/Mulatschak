@@ -34,7 +34,7 @@ public class EnemyLogic {
 
     }
 
-    public void trickBids(Player player, GameController controller) {
+    public void makeTrickBids(Player player, GameController controller) {
 
         // ToDo: put in some fancy logic here
 
@@ -55,7 +55,7 @@ public class EnemyLogic {
 
     public void chooseTrumph(Player player, GameLogic logic, GameView view) {
         // ToDo: put in some fancy logic here
-        logic.setTrumph(1);
+        logic.setTrump(1);
         // DEBUG ////////////////////////////////////////////////////////////////////////////////////////
         CharSequence text = "player: " + player.getId() + " choose trumph " + 1;
         int duration = Toast.LENGTH_SHORT;

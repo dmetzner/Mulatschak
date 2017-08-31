@@ -20,11 +20,11 @@ public class MulatschakDeck extends CardStack {
     //--------------------------------------------------------------------------------------------------
     //  Constants for the naming convention of the card images
     //
-    //      WELI      = 0;            // IMG_NAME0 -> the Joker
-    //      DIAMONDS  = 1;            // IMG_NAME107 - IMG_NAME114
-    //      CLUBS     = 2;            // IMG_NAME207 - IMG_NAME214
-    //      HEARTS    = 3;            // IMG_NAME307 - IMG_NAME314
-    //      SPADES    = 4;            // IMG_NAME407 - IMG_NAME414
+    public final static int WELI      = 0;            // IMG_NAME0 -> the Joker
+    public final static int DIAMOND  = 1;            // IMG_NAME107 - IMG_NAME114
+    public final static int CLUB     = 2;            // IMG_NAME207 - IMG_NAME214
+    public final static int HEART    = 3;            // IMG_NAME307 - IMG_NAME314
+    public final static int SPADE    = 4;            // IMG_NAME407 - IMG_NAME414
     //
     private final String PACKAGE_NAME = "drawable";
     private final String IMG_PRE_NAME = "card";

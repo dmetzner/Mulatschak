@@ -78,7 +78,7 @@ public class DealingAnimation {
 
 
     private void calculateEndPositions(int player_id, int pos) {
-        int card_number = view_.getController().getLogic().getMaxCardsPerHand() - (cards_to_draw
+        int card_number = view_.getController().getLogic().MAX_CARDS_PER_HAND - (cards_to_draw
                 / view_.getController().getAmountOfPlayers());
 
         GameLayout layout = view_.getController().getLayout();
@@ -117,7 +117,7 @@ public class DealingAnimation {
 
     //----------------------------------------------------------------------------------------------
     public void start() {
-        cards_to_draw =  view_.getController().getLogic().getMaxCardsPerHand() *
+        cards_to_draw =  view_.getController().getLogic().MAX_CARDS_PER_HAND *
                 view_.getController().getAmountOfPlayers();
         animation_running_ = true;
         hand_card_x = view_.getController().getDeck().getPosition().x;
@@ -233,6 +233,10 @@ public class DealingAnimation {
             if (cs.getCardAt(i).getPosition() == null) {
                 return i;
             }
+            if (cs.getCardAt(i).getPosition().
+                    equals(view_.getController().getLayout().getDeckPosition())) {
+                return i;
+            }
         }
         return 0;
     }
@@ -241,6 +245,10 @@ public class DealingAnimation {
         CardStack cs = view_.getController().getPlayerById(player_id).getHand();
         for (int i = 0; i < cs.getCardStack().size(); i++) {
             if (cs.getCardAt(i).getFixedPosition() == null) {
+                return i;
+            }
+            if (cs.getCardAt(i).getPosition().
+                    equals(view_.getController().getLayout().getDeckPosition())) {
                 return i;
             }
         }

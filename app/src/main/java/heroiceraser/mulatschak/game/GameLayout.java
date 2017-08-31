@@ -43,6 +43,13 @@ public class GameLayout {
     private Point hand_top_;
     private Point hand_right_;
 
+    //---- CardExchange
+    private Point card_exchange_text_size_;
+    private Point card_exchange_text_position_;
+    private Point card_exchange_button_size_;
+    private Point card_exchange_button_position_;
+
+    //---- DealerButton
     private Point dealer_button_size_;
     private Point dealer_button_bottom_;
     private Point dealer_button_left_;
@@ -73,6 +80,8 @@ public class GameLayout {
         calculateButtonBarBigButtonSize();
         calculateDiscardPileSize();     // right now same as card size
         calculateDealerButtonSize();
+        calculateCardExchangeSizes();
+        calculateCardExchangeButtonSize();
 
         // calculate positions
         initButtonBarPosition();
@@ -83,6 +92,8 @@ public class GameLayout {
         initDiscardPilePositions();         // uses deck position
         initHandPositions();                // uses deck position
         initDealerButtonPositions();        // uses hand position
+        initCardExchangePositions();
+        initCardExchangeButtonPosition();
         small_button_size_ = screen_size_.x / 4;
         symbol_button_size = screen_size_.x / 3;
     }
@@ -98,7 +109,7 @@ public class GameLayout {
 
     private void calculateCardSize(GameView view) {
         final double HEIGHT_FACTOR = 1.28;
-        double max_cards_per_hand = view.getController().getLogic().getMaxCardsPerHand();
+        double max_cards_per_hand = view.getController().getLogic().MAX_CARDS_PER_HAND;
         card_width = (int) (screen_size_.x / (max_cards_per_hand + 1));
         card_height = (int) (card_width * HEIGHT_FACTOR);
     }
@@ -136,6 +147,18 @@ public class GameLayout {
         dealer_button_size_ = new Point();
         dealer_button_size_.x = (int) (card_width / 3.0 * 2.0);
         dealer_button_size_.y = dealer_button_size_.x;
+    }
+
+    private void calculateCardExchangeSizes() {
+        card_exchange_text_size_ = new Point();
+        card_exchange_text_size_.x = (int) ((screen_size_.x / 8.0 * 6.0));
+        card_exchange_text_size_.y = 0;
+    }
+
+    private void calculateCardExchangeButtonSize() {
+        card_exchange_button_size_ = new Point();
+        card_exchange_button_size_.x = (int) ((screen_size_.x / 8.0 * 6.0));
+        card_exchange_button_size_.y = button_bar_big_button_size_.y;
     }
 
     public double getOverlapFactor(int pos) {
@@ -188,6 +211,19 @@ public class GameLayout {
         button_bar_button_position_left_.y = button_bar_button_position_right_.y;
     }
 
+    private void initCardExchangePositions() {
+        card_exchange_text_position_ = new Point();
+        card_exchange_text_position_.x = (int)((screen_size_.x - card_exchange_text_size_.x) / 2.0);
+        card_exchange_text_position_.y = (int)(screen_size_.y / 8.0 * 1.5);
+    }
+
+    private void initCardExchangeButtonPosition() {
+        card_exchange_button_position_ = new Point();
+        card_exchange_button_position_.x = (int)
+                ((screen_size_.x - card_exchange_button_size_.x) / 2.0);
+        card_exchange_button_position_.y = hand_bottom_.y -
+                (int) (card_height / 3.0 * 2.0) - card_exchange_button_size_.y;
+    }
 
 
 
@@ -275,31 +311,6 @@ public class GameLayout {
         return hand_right_;
     }
 
-    public void setHandBottom(Point coordinate) {
-        hand_bottom_ = coordinate;
-    }
-    public void setHandBottom(int x, int y) {
-        hand_bottom_ = new Point(x, y);
-    }
-    public void setHandLeft(Point coordinate) {
-        hand_left_ = coordinate;
-    }
-    public void setHandLeft(int x, int y) {
-        hand_left_ = new Point(x, y);
-    }
-    public void setHandTop(Point coordinate) {
-        hand_top_ = coordinate;
-    }
-    public void setHandTop(int x, int y) {
-        hand_top_ = new Point(x, y);
-    }
-    public void setHandRight(Point coordinate) {
-        hand_right_ = coordinate;
-    }
-    public void setHandRight(int x, int y) {
-        hand_right_ = new Point(x, y);
-    }
-
     public int getSmallButtonSize() {
         return small_button_size_;
     }
@@ -362,5 +373,21 @@ public class GameLayout {
         }
         Log.e("GameLayout", "getDealerButtonPosition() was called with: " + position +" ,but ony 0-4 is valid");
         return new Point(0, 0);
+    }
+
+    public int getCardExchangeTextWidth() {
+        return card_exchange_text_size_.x;
+    }
+
+    public Point getCardExchangeTextPosition() {
+        return card_exchange_text_position_;
+    }
+
+    public Point getCardExchangeButtonSize() {
+        return card_exchange_button_size_;
+    }
+
+    public Point getCardExchangePosition() {
+        return card_exchange_button_position_;
     }
 }

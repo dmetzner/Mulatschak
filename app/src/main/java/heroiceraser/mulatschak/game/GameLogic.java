@@ -14,34 +14,38 @@ public class GameLogic {
     //----------------------------------------------------------------------------------------------
     //  Constants
     //
-    private final static int MAX_PLAYERS = 4;
-    private final static int MAX_CARDS_PER_HAND = 5;
-    private final static int START_LIVES = 21;
+    public final static int MAX_PLAYERS = 4;
+    public final static int MAX_CARDS_PER_HAND = 5;
+    public final static int START_LIVES = 21;
 
     //----------------------------------------------------------------------------------------------
     //  Member Variables
     //
+    private int multiplier_;
+
     private int dealer_;
     private int turn_;
-    private int turn_last_round_;
+    private int starting_player_;
+
+    private int starting_card_symbol_;
+    private int trump_;
+
     private int trumph_player_id_;
     private int trumphs_to_make_;
-    private int starting_card_;
-    private int trump_;
-    private int last_trick_id_;
+
 
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
     public GameLogic() {
+        multiplier_ = 1;
         dealer_ = -1;
+        starting_player_ = -1;
         turn_ = -1;
-        turn_last_round_ = -1;
-        trumph_player_id_ = -1;
-        trumphs_to_make_ = -1;
-        starting_card_ = -1;
+
+        starting_card_symbol_ = -1;
         trump_ = -1;
-        last_trick_id_ = -1;
+
     }
 
     public void turnToNextPlayer(int players) {
@@ -59,6 +63,10 @@ public class GameLogic {
         return first_bidder;
     }
 
+    public void raiseMultiplier() {
+        this.multiplier_ *= 2;
+    }
+
     public boolean isAValidCardPlay(Card card_to_play, CardStack hand, DiscardPile dp) {
 
         int card_to_play_symbol = (card_to_play.getId() / 100) % 5;
@@ -68,33 +76,37 @@ public class GameLogic {
             return true;
         }
 
-        if (card_to_play_symbol == MulatschakDeck.JOKER) {
+        int highestCard = getHighestCardOnDiscardPile(dp);
+        int h_sym = highestCard / 100 % 5;
+        int h_value = highestCard % 100;
+
+        if (card_to_play_symbol == MulatschakDeck.JOKER && h_sym == trump_ && h_value < 14) {
             return true;
         }
 
         boolean has_a_starting_card = false;
         boolean has_a_trump = false;
         for (int i = 0; i < hand.getCardStack().size(); i++) {
-            if (hand.getCardAt(i).getId() / 100 % 5 == starting_card_) {
+            if (hand.getCardAt(i).getId() / 100 % 5 == starting_card_symbol_) {
                 has_a_starting_card = true;
             }
             if (hand.getCardAt(i).getId() / 100 % 5 == trump_) {
                 has_a_trump = true;
             }
+            if (hand.getCardAt(i).getId() / 100 % 5 == MulatschakDeck.JOKER) {
+                has_a_trump = true;
+            }
         }
-        if (has_a_starting_card && card_to_play_symbol != starting_card_) {
+        if (has_a_starting_card && card_to_play_symbol != starting_card_symbol_) {
             return false;
         }
         if (!has_a_starting_card && has_a_trump && card_to_play_symbol != trump_) {
             return false;
         }
 
-        int highestCard = getHighestCardOnDiscardPile(dp);
-        int h_sym = highestCard / 100 % 5;
-        int h_value = highestCard % 100;
-        if (h_sym == starting_card_ && card_to_play_symbol == starting_card_ && card_to_play.getId() % 100 <= h_value) {
+        if (h_sym == starting_card_symbol_ && card_to_play_symbol == starting_card_symbol_ && card_to_play.getId() % 100 <= h_value) {
             for (int i = 0; i < hand.getCardStack().size(); i++) {
-                if (hand.getCardAt(i).getId() / 100 % 5 == starting_card_ &&
+                if (hand.getCardAt(i).getId() / 100 % 5 == starting_card_symbol_ &&
                         hand.getCardAt(i).getId() % 100 > h_value) {
                     return false;
                 }
@@ -103,7 +115,7 @@ public class GameLogic {
 
         if (h_sym == trump_ && card_to_play_symbol == trump_ && card_to_play.getId() % 100 <= h_value) {
             for (int i = 0; i < hand.getCardStack().size(); i++) {
-                if (hand.getCardAt(i).getId() / 100 % 5 == starting_card_ &&
+                if (hand.getCardAt(i).getId() / 100 % 5 == trump_ &&
                         hand.getCardAt(i).getId() % 100 > h_value) {
                     return false;
                 }
@@ -128,24 +140,32 @@ public class GameLogic {
 
         for (int i = 0; i < 4; i++) {
             if (dp.getCard(i) != null) {
-                int sym = dp.getCard(i).getId() / 100 % 5;
-                int value = dp.getCard(i).getId() % 100;
-                if (sym == starting_card_ && highest_card_sym != trump_) {
-                    if (value > highest_card_value) {
-                        highest_card_sym = sym;
-                        highest_card_value = value;
+                int dp_card_sym = dp.getCard(i).getId() / 100 % 5;
+                int dp_card_value = dp.getCard(i).getId() % 100;
+                if (dp_card_sym == MulatschakDeck.JOKER) {
+                    dp_card_sym = trump_;
+                    dp_card_value = 0;
+                }
+                if (dp_card_sym == starting_card_symbol_ && highest_card_sym != trump_) {
+                    if (dp_card_value > highest_card_value) {
+                        highest_card_sym = dp_card_sym;
+                        highest_card_value = dp_card_value;
                     }
                 }
-                if (sym == trump_) {
+                if (dp_card_sym == trump_) {
                     if (highest_card_sym == trump_) {
-                        if (value > highest_card_value) {
-                            highest_card_sym = sym;
-                            highest_card_value = value;
+                        if (dp_card_value > highest_card_value) {
+                            highest_card_sym = dp_card_sym;
+                            highest_card_value = dp_card_value;
+                        }
+                        else if (dp_card_value == 0 && highest_card_value < 14) {
+                            highest_card_sym = dp_card_sym;
+                            highest_card_value = dp_card_value;
                         }
                     }
                     else if(highest_card_sym != trump_) {
-                        highest_card_sym = sym;
-                        highest_card_value = value;
+                        highest_card_sym = dp_card_sym;
+                        highest_card_value = dp_card_value;
                     }
                 }
             }
@@ -154,17 +174,61 @@ public class GameLogic {
     }
 
 
+    public void chooseCardRoundWinner(GameController controller, DiscardPile dp) {
+        int highest_card_sym = -1;
+        int highest_card_value = -11;
+        int highest_card_owner = -1;
+
+        for (int i = 0; i < 4; i++) {
+            if (dp.getCard(i) != null) {
+                int dp_card_sym = dp.getCard(i).getId() / 100 % 5;
+                int dp_card_value = dp.getCard(i).getId() % 100;
+                if (dp_card_sym == MulatschakDeck.JOKER) {
+                    dp_card_sym = trump_;
+                    dp_card_value = 0;
+                    highest_card_owner = i;
+                }
+                if (dp_card_sym == starting_card_symbol_ && highest_card_sym != trump_) {
+                    if (dp_card_value > highest_card_value) {
+                        highest_card_sym = dp_card_sym;
+                        highest_card_value = dp_card_value;
+                        highest_card_owner = i;
+                    }
+                }
+                if (dp_card_sym == trump_) {
+                    if (highest_card_sym == trump_) {
+                        if (dp_card_value > highest_card_value) {
+                            highest_card_sym = dp_card_sym;
+                            highest_card_value = dp_card_value;
+                            highest_card_owner = i;
+                        }
+                        else if (dp_card_value == 0 && highest_card_value < 14) {
+                            highest_card_sym = dp_card_sym;
+                            highest_card_value = dp_card_value;
+                            highest_card_owner = i;
+                        }
+                    }
+                    else if(highest_card_sym != trump_) {
+                        highest_card_sym = dp_card_sym;
+                        highest_card_value = dp_card_value;
+                        highest_card_owner = i;
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < 4; i++) {
+            controller.getPlayerById(highest_card_owner).getTricks().addCard(dp.getCard(i));
+        }
+
+        turn_ = highest_card_owner;
+        starting_player_ = highest_card_owner;
+
+    }
+
     //----------------------------------------------------------------------------------------------
     //  Getter & Setter
     //
-    public int getMaxCardsPerHand() {
-        return MAX_CARDS_PER_HAND;
-    }
-
-    public int getMaxPlayers() { return  MAX_PLAYERS; }
-
-    public int getStartLives() { return START_LIVES; }
-
     public int getDealer() { return dealer_; }
 
     public void setDealer(int dealer) { dealer_ = dealer; }
@@ -173,11 +237,7 @@ public class GameLogic {
 
     public int getTurn() { return turn_; }
 
-    public int getTurnLastRound() {
-        return turn_last_round_;
-    }
-
-    public int getTrumph() { return trump_; }
+    public int getTrump() { return trump_; }
 
     public int getTrumphPlayerId() { return  trumph_player_id_; }
 
@@ -187,25 +247,33 @@ public class GameLogic {
         trumphs_to_make_ = trumphs;
     }
 
-    public void setStartingCard(int starting_card_) {
-        this.starting_card_ = starting_card_;
+    public void setStartingCard(int starting_card_symbol_) {
+        this.starting_card_symbol_ = starting_card_symbol_;
     }
 
     public int getStartingCard() {
-        return starting_card_;
+        return starting_card_symbol_;
     }
 
     public int getTrumphsToMake() { return trumphs_to_make_; }
 
-    public void setTrumph(int trump){
+    public void setTrump(int trump){
         trump_ = trump;
     }
 
-    public int getLastTrickId() {
-        return last_trick_id_;
+    public int getMultiplier() {
+        return multiplier_;
     }
 
-    public void setLastTrickId(int last_trick_id) {
-        last_trick_id_ = last_trick_id;
+    public void setMultiplier(int multiplier) {
+        this.multiplier_ = multiplier;
+    }
+
+    public int getStartingPlayer() {
+        return starting_player_;
+    }
+
+    public void setStartingPlayer(int id) {
+        starting_player_ = id;
     }
 }

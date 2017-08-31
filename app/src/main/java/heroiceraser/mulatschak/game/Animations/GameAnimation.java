@@ -13,6 +13,7 @@ public class GameAnimation {
     private CardAnimations card_animations_;
     private DealingAnimation dealing_animation_;
     private ReAnimateHands re_animate_hands;
+    private CardExchange card_exchange_;
     private StichAnsage stich_ansage_;
 
     public GameAnimation(GameView view) {
@@ -20,10 +21,12 @@ public class GameAnimation {
         card_animations_ = new CardAnimations();
         dealing_animation_ = new DealingAnimation(view);
         re_animate_hands = new ReAnimateHands();
+        card_exchange_ = new CardExchange(view);
         stich_ansage_ = new StichAnsage();
     }
 
     public void init(GameView view) {
+        card_exchange_.init(view);
         stich_ansage_.init(view);
     }
 
@@ -40,5 +43,6 @@ public class GameAnimation {
         return card_animations_;
     }
 
+    public CardExchange getCardExchange() { return card_exchange_; }
     public StichAnsage getStichAnsage() { return stich_ansage_; }
 }
