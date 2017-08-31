@@ -90,6 +90,7 @@ public class GameController{
     }
 
     public void startRound() {
+        reEnableButtons();
         resetTricksToMake();
         animations_.getCardAnimations().setCardMoveable(false);
         shuffleDeck();
@@ -159,6 +160,19 @@ public class GameController{
             getPlayerById(i).setTrumphsToMake(0);
         }
     }
+
+    private void reEnableButtons() {
+        List<Button> buttons = getAnimation().getStichAnsage().getNumberButtons();
+        for (int i = 0; i < buttons.size(); i++) {
+            buttons.get(i).setEnabled(true);
+        }
+
+        List<Button> buttons_sym = getAnimation().getStichAnsage().getSymbolButtons();
+        for (int i = 0; i < buttons_sym.size(); i++) {
+            buttons_sym.get(i).setEnabled(true);
+        }
+    }
+
     //----------------------------------------------------------------------------------------------
     //  setPlayer Lives
     //
@@ -348,6 +362,7 @@ public class GameController{
 
         if (amount > logic_.getTrumphsToMake()) {
             List<Button> buttons = getAnimation().getStichAnsage().getNumberButtons();
+            // disable lower amount buttons
             for (int i = 1; i <= amount; i++) {
                 buttons.get(i).setEnabled(false);
             }
@@ -391,6 +406,8 @@ public class GameController{
             updatePlayerLives();
             // ToDO check if game over
             allCardsBackToTheDeck();
+            logic_.moveDealer(getAmountOfPlayers());
+            dealer_button_.setPosition(layout_.getDealerButtonPosition(logic_.getDealer()));
             startRound();
             return;
         }

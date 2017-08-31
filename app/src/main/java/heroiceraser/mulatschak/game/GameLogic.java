@@ -30,8 +30,8 @@ public class GameLogic {
     private int starting_card_symbol_;
     private int trump_;
 
-    private int trumph_player_id_;
-    private int trumphs_to_make_;
+    private int trump_player_id_;
+    private int trumps_to_make_;
 
 
     //----------------------------------------------------------------------------------------------
@@ -46,6 +46,13 @@ public class GameLogic {
         starting_card_symbol_ = -1;
         trump_ = -1;
 
+    }
+
+    public void moveDealer(int players) {
+        dealer_++;
+        if (dealer_ >= players) {
+            dealer_ = 0;
+        }
     }
 
     public void turnToNextPlayer(int players) {
@@ -239,12 +246,12 @@ public class GameLogic {
 
     public int getTrump() { return trump_; }
 
-    public int getTrumphPlayerId() { return  trumph_player_id_; }
+    public int getTrumphPlayerId() { return  trump_player_id_; }
 
-    public void setTrumphPlayerId(int trumph_player_id) { trumph_player_id_ = trumph_player_id; }
+    public void setTrumphPlayerId(int trumph_player_id) { trump_player_id_ = trumph_player_id; }
 
     public void setTrumphsToMake(int trumphs) {
-        trumphs_to_make_ = trumphs;
+        trumps_to_make_ = trumphs;
     }
 
     public void setStartingCard(int starting_card_symbol_) {
@@ -255,7 +262,7 @@ public class GameLogic {
         return starting_card_symbol_;
     }
 
-    public int getTrumphsToMake() { return trumphs_to_make_; }
+    public int getTrumphsToMake() { return trumps_to_make_; }
 
     public void setTrump(int trump){
         trump_ = trump;
