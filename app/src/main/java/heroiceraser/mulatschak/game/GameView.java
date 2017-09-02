@@ -59,8 +59,7 @@ public class GameView extends View {
     protected synchronized void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        Log.w("DRAW", "Hello here i draw");
-
+        drawRoundInfo(canvas);
         drawHandCards(canvas);
         drawDiscardPile(canvas);
         drawDealerButton(canvas);
@@ -80,6 +79,9 @@ public class GameView extends View {
         }
     }
 
+    private void drawRoundInfo(Canvas canvas) {
+        controller_.getRoundInfo().draw(canvas);
+    }
 
     private void drawDealerButton(Canvas canvas) {
         if (controller_.getDealerButton().isVisible()) {
@@ -328,6 +330,42 @@ public class GameView extends View {
         this.thread_ = thread;
     }
 
+    public synchronized void enableUpdateCanvasThread() {
+
+        disableUpdateCanvasThread();
+        setThread(new GameThread(this));
+        getThread().setRunning(true);
+        getThread().start();
+    }
+
+    public synchronized void enableUpdateCanvasThreadOnly4TouchEvents() {
+        if (getThread() == null || !getThread().isRunning()) {
+            setThread(new GameThread(this));
+            getThread().setRun(true);
+            getThread().start();
+            getThread().setKeepUiActive(true);
+        }
+    }
+
+    public synchronized void disableUpdateCanvasThread() {
+        if (thread_ == null) {
+            return;
+        }
+
+        getThread().setRunning(false);
+        try {
+            thread_.join();
+        }
+        catch (Exception e) {
+            Log.w("GameThread", "Join Excpetion");
+        }
+    }
+
+    public synchronized void disableUpdateCanvasThreadOnly4TouchEvents() {
+        if (getThread().isKeepUiActive()) {
+            disableUpdateCanvasThread();
+        }
+    }
 }
 
 

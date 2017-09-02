@@ -23,12 +23,8 @@ public class TouchEvents {
 
     public void ActionDown(GameController controller, int X, int Y) {
 
-        if (!controller.getView().getThread().isRunning()) {
-            controller.getView().setThread(new GameThread(controller.getView()));
-            controller.getView().getThread().setRun(true);
-            controller.getView().getThread().start();
-            controller.getView().getThread().setKeepUiActive(true);
-        }
+        // enables a update thread for the canvas, in case there is no running update thread
+        controller.getView().enableUpdateCanvasThreadOnly4TouchEvents();
 
         if (controller.waiting) {
             // ToDO Just 4 now Hack, better solution please :D
@@ -189,10 +185,7 @@ public class TouchEvents {
 
     public void ActionUp(GameController controller, int X, int Y) {
 
-        if (controller.getView().getThread().isKeepUiActive()) {
-            controller.getView().getThread().setKeepUiActive(false);
-            controller.getView().getThread().setRun(false);
-        }
+        controller.getView().disableUpdateCanvasThreadOnly4TouchEvents();
 
         // ----------------------- ButtonBar -------------------------------------------------------
 

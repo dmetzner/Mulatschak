@@ -14,6 +14,8 @@ import heroiceraser.mulatschak.helpers.HelperFunctions;
 
 public class StichAnsage {
 
+    public static int MULATSCHAK = 6;
+
     private boolean animating_numbers_;
     private boolean animating_smybols_;
     private List<Button> number_buttons_;

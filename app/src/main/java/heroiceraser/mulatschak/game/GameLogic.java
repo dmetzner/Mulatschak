@@ -22,6 +22,8 @@ public class GameLogic {
     //  Member Variables
     //
     private int multiplier_;
+    private boolean game_over_;
+    private boolean mulatschak_round_;
 
     private int dealer_;
     private int turn_;
@@ -39,6 +41,9 @@ public class GameLogic {
     //
     public GameLogic() {
         multiplier_ = 1;
+        game_over_ = false;
+        mulatschak_round_ = false;
+
         dealer_ = -1;
         starting_player_ = -1;
         turn_ = -1;
@@ -289,5 +294,21 @@ public class GameLogic {
 
     public void setStartingPlayer(int id) {
         starting_player_ = id;
+    }
+
+    public boolean isGameOver() {
+        return game_over_;
+    }
+
+    public void setGameOver(boolean game_over) {
+        this.game_over_ = game_over;
+    }
+
+    public boolean isMulatschakRound() {
+        return mulatschak_round_;
+    }
+
+    public void setMulatschakRound(boolean bool) {
+        this.mulatschak_round_ = bool;
     }
 }
