@@ -57,7 +57,7 @@ public class CardExchange {
             if (i == 4) {
                 id = i + 1;
             }
-            button.initButton(view, position, width, height, "button_" + id + "_karten", "drawable");
+            button.init(view, position, width, height, "button_" + id + "_karten");
             exchange_buttons_.add(button);
         }
     }

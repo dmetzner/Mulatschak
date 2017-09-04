@@ -45,7 +45,7 @@ public class Card extends DrawableObject {
     public Card initCard(GameView view, String image_name, String package_name) {
         setWidth(view.getController().getLayout().getCardWidth());
         setHeight(view.getController().getLayout().getCardHeight());
-        setBitmap(HelperFunctions.loadBitmap(view, image_name, getWidth(), getHeight(), package_name));
+        setBitmap(HelperFunctions.loadBitmap(view, image_name, getWidth(), getHeight()));
         setVisible(true);
         return this;
     }

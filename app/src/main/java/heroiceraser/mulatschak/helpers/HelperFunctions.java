@@ -16,8 +16,9 @@ import static android.R.id.message;
 public final class HelperFunctions {
     private HelperFunctions() {}
 
-    public static Bitmap loadBitmap(GameView view, String image_name, int width, int height,
-                              String package_name) {
+    public static Bitmap loadBitmap(GameView view, String image_name, int width, int height) {
+
+        String package_name = "drawable";
 
         if (width <= 0) {
             Log.w("loadBitmap",

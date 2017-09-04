@@ -16,7 +16,6 @@ import heroiceraser.mulatschak.helpers.HelperFunctions;
 public class DiscardPile extends DrawableObject {
 
     private final String BMP_DISCARD_PILE = "discard_pile";
-    private final String PACKAGE_DISCARD_PILE = "drawable";
 
     private Card card_bottom_;
     private Card card_left_;
@@ -39,7 +38,7 @@ public class DiscardPile extends DrawableObject {
         setWidth(view.getController().getLayout().getDiscardPileWidth());
         setHeight(view.getController().getLayout().getDiscardPileHeight());
         positions_ = view.getController().getLayout().getDiscardPilePositions_();
-        setBitmap(HelperFunctions.loadBitmap(view, BMP_DISCARD_PILE, getWidth(), getHeight(), PACKAGE_DISCARD_PILE ));
+        setBitmap(HelperFunctions.loadBitmap(view, BMP_DISCARD_PILE, getWidth(), getHeight()));
         setVisible(true);
     }
 

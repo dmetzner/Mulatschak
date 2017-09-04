@@ -28,18 +28,16 @@ public class ButtonBar extends DrawableObject {
         setWidth(view.getController().getLayout().getButtonBarWidth());
         setHeight(view.getController().getLayout().getButtonBarHeight());
         setPosition(view.getController().getLayout().getButtonBarPosition());
-        setBitmap(HelperFunctions.loadBitmap(view, "button_bar", getWidth(), getHeight(), "drawable"));
+        setBitmap(HelperFunctions.loadBitmap(view, "button_bar", getWidth(), getHeight()));
         setVisible(true);
         initDecoration(view);
         initStatisticButton(view);
         initTricksButton(view);
         initMenuButton(view);
-
     }
 
     private void initDecoration(GameView view) {
-        decoration_ = HelperFunctions.loadBitmap(view, "button_bar_decoration", getWidth(),
-                getHeight(), "drawable" );
+        decoration_ = HelperFunctions.loadBitmap(view, "button_bar_decoration", getWidth(), getHeight());
     }
 
     private void initStatisticButton(GameView view) {
@@ -48,8 +46,7 @@ public class ButtonBar extends DrawableObject {
         int width = view.getController().getLayout().getButtonBarBigButtonWidth();
         int height = view.getController().getLayout().getButtonBarBigButtonHeight();
         String image_name = "button_spielstand";
-        String package_name = "drawable";
-        statistics_button_.initButton(view, position, width, height, image_name, package_name);
+        statistics_button_.init(view, position, width, height, image_name);
     }
 
     private void initTricksButton(GameView view) {
@@ -58,8 +55,7 @@ public class ButtonBar extends DrawableObject {
         int width = view.getController().getLayout().getButtonBarBigButtonWidth();
         int height = view.getController().getLayout().getButtonBarBigButtonHeight();
         String image_name = "button_stiche";
-        String package_name = "drawable";
-        tricks_button_.initButton(view, position, width, height, image_name, package_name);
+        tricks_button_.init(view, position, width, height, image_name);
     }
 
     private void initMenuButton(GameView view) {
@@ -68,8 +64,7 @@ public class ButtonBar extends DrawableObject {
         int width = view.getController().getLayout().getButtonBarSmallButtonWidth();
         int height = view.getController().getLayout().getButtonBarSmallButtonHeight();
         String image_name = "button_menu";
-        String package_name = "drawable";
-        menu_button_.initButton(view, position, width, height, image_name, package_name);
+        menu_button_.init(view, position, width, height, image_name);
     }
 
     public Bitmap getDecoration() { return decoration_; }

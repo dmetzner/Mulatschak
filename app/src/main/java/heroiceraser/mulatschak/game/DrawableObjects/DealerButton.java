@@ -20,7 +20,7 @@ public class DealerButton extends DrawableObject{
         setPosition(0, 0);
         setWidth(view.getController().getLayout().getDealerButtonSize());
         setHeight(getWidth());
-        setBitmap(HelperFunctions.loadBitmap(view, "dealer_button" ,getWidth(), getHeight(), "drawable"));
+        setBitmap(HelperFunctions.loadBitmap(view, "dealer_button" ,getWidth(), getHeight()));
         setVisible(true);
     }
 

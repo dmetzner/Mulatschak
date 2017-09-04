@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.Point;
 import android.text.Layout;
 import android.text.StaticLayout;
@@ -217,10 +216,10 @@ public class GameView extends View {
 
             // exchange Buttons
             controller_.getAnimation().getCardExchange().draw(canvas);
-        } else if (controller_.getAnimation().getStichAnsage().getAnimationNumbers()) {
-            int amount_of_buttons = controller_.getAnimation().getStichAnsage().getNumberButtons().size();
+        } else if (controller_.getAnimation().getTrickBids().getAnimationNumbers()) {
+            int amount_of_buttons = controller_.getAnimation().getTrickBids().getNumberButtons().size();
             for (int button_id = 0; button_id < amount_of_buttons; button_id++) {
-                Button button = controller_.getAnimation().getStichAnsage().getNumberButtonAt(button_id);
+                Button button = controller_.getAnimation().getTrickBids().getNumberButtonAt(button_id);
                 Bitmap bitmap = button.getBitmap();
                 if (button.IsPressed()) {
                     bitmap = button.getBitmapPressed();
@@ -230,10 +229,10 @@ public class GameView extends View {
                 canvas.drawBitmap(bitmap, button.getPosition().x,
                         button.getPosition().y, null);
             }
-        } else if (controller_.getAnimation().getStichAnsage().getAnimationSymbols()) {
-            int amount_of_buttons = controller_.getAnimation().getStichAnsage().getSymbolButtons().size();
+        } else if (controller_.getAnimation().getTrickBids().getAnimationSymbols()) {
+            int amount_of_buttons = controller_.getAnimation().getTrickBids().getTrumpButtons().size();
             for (int button_id = 0; button_id < amount_of_buttons; button_id++) {
-                Button button = controller_.getAnimation().getStichAnsage().getSymbolButtonAt(button_id);
+                Button button = controller_.getAnimation().getTrickBids().getTrumpButtonAt(button_id);
                 Bitmap bitmap = button.getBitmap();
                 if (button.IsPressed()) {
                     bitmap = button.getBitmapPressed();

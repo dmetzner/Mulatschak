@@ -20,7 +20,6 @@ public class GameMenu extends DrawableObject{
         setPosition(0, 0);
         setHeight(layout.getScreenHeight() - layout.getButtonBarHeight());
         setWidth(layout.getScreenWidth());
-        setBitmap(HelperFunctions.loadBitmap(view, "statistics_background",
-                getWidth(), getHeight(), "drawable"));
+        setBitmap(HelperFunctions.loadBitmap(view, "statistics_background", getWidth(), getHeight()));
     }
 }

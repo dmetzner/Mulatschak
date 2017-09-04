@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Random;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.Button;
-import heroiceraser.mulatschak.game.Animations.StichAnsage;
+import heroiceraser.mulatschak.game.Animations.TrickBids;
 import heroiceraser.mulatschak.game.DrawableObjects.ButtonBar;
 import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
 import heroiceraser.mulatschak.game.DrawableObjects.DealerButton;
@@ -93,7 +93,7 @@ public class GameController{
     }
 
     public void startRound() {
-        round_info_.setVisible(false);
+        round_info_.setVisible(true);
         logic_.setMulatschakRound(false);
         reEnableButtons();
         resetTricksToMake();
@@ -128,7 +128,6 @@ public class GameController{
 
     public void continueAfterTrumpWasChoosen() {
         round_info_.updateRoundInfo(logic_);
-        round_info_.setVisible(true);
         logic_.setTurn(logic_.getTrumphPlayerId());
         logic_.setStartingPlayer(logic_.getTrumphPlayerId());
         boolean first_call = true;
@@ -175,12 +174,12 @@ public class GameController{
     }
 
     private void reEnableButtons() {
-        List<Button> buttons = getAnimation().getStichAnsage().getNumberButtons();
+        List<Button> buttons = getAnimation().getTrickBids().getNumberButtons();
         for (int i = 0; i < buttons.size(); i++) {
             buttons.get(i).setEnabled(true);
         }
 
-        List<Button> buttons_sym = getAnimation().getStichAnsage().getSymbolButtons();
+        List<Button> buttons_sym = getAnimation().getTrickBids().getTrumpButtons();
         for (int i = 0; i < buttons_sym.size(); i++) {
             buttons_sym.get(i).setEnabled(true);
         }
@@ -341,7 +340,7 @@ public class GameController{
 
         turnToNextPlayer();
 
-        if (logic_.getTrumphsToMake() == StichAnsage.MULATSCHAK) {
+        if (logic_.getTrumphsToMake() == TrickBids.MULATSCHAK) {
             continueAfterTrickBids();
             return;
         }
@@ -353,7 +352,7 @@ public class GameController{
 
         Log.d("GameController", "Player " +logic_.getTurn() + " is making his bids");
         if (logic_.getTurn() == 0) {
-            animations_.getStichAnsage().setAnimationNumbers(true);
+            animations_.getTrickBids().setAnimationNumbers(true);
             view_.disableUpdateCanvasThread();
             // makeTrickBids should get called when player chooses his tricks
         }
@@ -384,16 +383,16 @@ public class GameController{
     public void setNewMaxTrumphs(int amount, int id) {
         CharSequence text = "player: " + id + " tries ";
 
-        if (amount == StichAnsage.MULATSCHAK) {
+        if (amount == TrickBids.MULATSCHAK) {
             logic_.setMulatschakRound(true);
             logic_.setTrumphPlayerId(id);
-            logic_.setTrumphsToMake(StichAnsage.MULATSCHAK);
-            getPlayerById(id).setTrumphsToMake(StichAnsage.MULATSCHAK);
+            logic_.setTrumphsToMake(TrickBids.MULATSCHAK);
+            getPlayerById(id).setTrumphsToMake(TrickBids.MULATSCHAK);
             text = text + "Mulatschak";
         }
 
         else if (amount > logic_.getTrumphsToMake()) {
-            List<Button> buttons = getAnimation().getStichAnsage().getNumberButtons();
+            List<Button> buttons = getAnimation().getTrickBids().getNumberButtons();
             // disable lower amount buttons, but button 0 is always clickable
             for (int i = 1; i <= amount; i++) {
                 buttons.get(i).setEnabled(false);
@@ -420,7 +419,7 @@ public class GameController{
         Log.d("GameController", "Player " + logic_.getTrumphPlayerId() + " chooses a trump");
 
         if (logic_.getTrumphPlayerId() == 0) {
-            animations_.getStichAnsage().setAnimationSymbols(true);
+            animations_.getTrickBids().setAnimationTrumps(true);
             view_.disableUpdateCanvasThread();
             // touch event should call continueAfterTrumpWasChoosen();
         }

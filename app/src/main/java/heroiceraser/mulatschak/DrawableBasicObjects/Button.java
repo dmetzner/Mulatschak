@@ -38,16 +38,13 @@ public class Button extends DrawableObject{
         bitmap_disabled_ = null;
     }
 
-    public void initButton(GameView view, Point position, int width, int height,
-                            String image_name, String package_name) {
+    public void init(GameView view, Point position, int width, int height, String image_name) {
         setPosition(position);
         setWidth(width);
         setHeight(height);
-        setBitmap(HelperFunctions.loadBitmap(view, image_name, width, height, package_name));
-        setBitmapPressed(HelperFunctions.loadBitmap(view, image_name + "_pressed",
-                width, height, package_name));
-        setBitmapDisabled(HelperFunctions.loadBitmap(view, image_name + "_disabled",
-                width, height, package_name));
+        setBitmap(HelperFunctions.loadBitmap(view, image_name, width, height));
+        setBitmapPressed(HelperFunctions.loadBitmap(view, image_name + "_pressed", width, height));
+        setBitmapDisabled(HelperFunctions.loadBitmap(view, image_name + "_disabled", width, height));
         setVisible(true);
     }
 
