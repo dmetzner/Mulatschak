@@ -34,6 +34,10 @@ public class HelpText extends DrawableObject{
     }
 
     public void init(GameView view, String text, int width) {
+        init(view, text, width, -1);
+    }
+
+    public void init(GameView view, String text, int width, int max_height) {
         text_ = text;
 
         text_paint_ = new TextPaint();
@@ -47,6 +51,13 @@ public class HelpText extends DrawableObject{
 
         static_layout_ = new StaticLayout(text_, text_paint_, width,
                 Layout.Alignment.ALIGN_CENTER, 1, 1, true);
+
+        TextPaint new_text_paint = text_paint_;
+        while (max_height != -1 && static_layout_.getHeight() > max_height) {
+            new_text_paint.setTextSize((int) (new_text_paint.getTextSize() / 1.5));
+            static_layout_ = new StaticLayout(text_, new_text_paint, width,
+                    Layout.Alignment.ALIGN_CENTER, 1, 1, true);
+        }
 
         int padding = (int) ((view.getController().getLayout().getScreenWidth() / 8.0 * 0.5));
         Rect rect = new Rect(0 - padding, 0 - padding,

@@ -18,7 +18,7 @@ public class DealingAnimation {
     private boolean animation_running_;
     private Bitmap bitmap_;
 
-    private final double ANIMATION_FACTOR = 45;
+    private double ANIMATION_FACTOR;
     private double offset_x_;
     private double offset_y_;
     private double rotation_offset_;
@@ -34,6 +34,12 @@ public class DealingAnimation {
     public DealingAnimation(GameView view) {
         view_ = view;
         animation_running_ = false;
+    }
+
+    public void init(GameView view) {
+        view_ = view;
+        ANIMATION_FACTOR = (view.getController().getLayout().getScreenWidth() +
+                view.getController().getLayout().getScreenHeight()) / 2.0 / 30.0;
     }
 
     //----------------------------------------------------------------------------------------------

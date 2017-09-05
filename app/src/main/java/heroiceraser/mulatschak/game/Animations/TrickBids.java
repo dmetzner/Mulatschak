@@ -50,8 +50,8 @@ public class TrickBids {
     private void initNumberButtons(GameView view) {
         String image_name = "trick_bids_button_";
         GameLayout layout = view.getController().getLayout();
-        int x = layout.getHandBottom().x;
-        int y = layout.getRoundInfoPositon().y - 3 * layout.getTrickBidsNumberButtonSize().y;
+        int x = layout.getTrickBidsNumberButtonPosition().x;
+        int y = layout.getTrickBidsNumberButtonPosition().y;
         int max_buttons_per_row = 4;
         int button_per_row = 0;
         for (int button_id = MISS_A_TURN; button_id <= MULATSCHAK; button_id++) {
@@ -98,9 +98,8 @@ public class TrickBids {
             trump_buttons.add(button);
         }
 
-        int x = layout.getHandBottom().x + layout.getCardWidth() / 2;
-        int y = layout.getRoundInfoPositon().y - layout.getTrickBidsTrumpButtonSize().y * 2;
-
+        int x = layout.getTrickBidsTrumpButtonPosition().x;
+        int y = layout.getTrickBidsTrumpButtonPosition().y;
         int remove_drop_shadow = (int) (layout.getTrickBidsTrumpButtonSize().y / 16.0);
 
         trump_buttons.get(0).setPosition(x, y);
@@ -113,14 +112,14 @@ public class TrickBids {
     }
 
     public void setTricks(GameController controller, int button_id) {
-        setAnimationNumbers(false);
+        animating_numbers_ = false;
+        button_id--;  // because of miss a turn button
         if (button_id == MISS_A_TURN) {
             controller.makeTrickBids();
             return;
         }
-        int trumps_to_make = button_id - 1;  // miss a turn button
         int player_id = 0;
-        controller.setNewMaxTrumphs(trumps_to_make, player_id);
+        controller.setNewMaxTrumphs(button_id, player_id);
         controller.makeTrickBids();
     }
     

@@ -44,11 +44,13 @@ public class CardExchange {
         String text = "Berühre alle Karten die du austauschen möchtest. " +
                 "Du kannst Keine, Eine, Zwei, Drei oder alle Karten austauschen";
         int width = view.getController().getLayout().getCardExchangeTextWidth();
-        help_text_.init(view, text, width);
+        int max_height = view.getController().getLayout().getCardExchangeButtonPosition().y -
+                view.getController().getLayout().getCardExchangeTextPosition().y;
+        help_text_.init(view, text, width, max_height);
 
         active_buttons_ = 0;
 
-        Point position = view.getController().getLayout().getCardExchangePosition();
+        Point position = view.getController().getLayout().getCardExchangeButtonPosition();
         width =  view.getController().getLayout().getCardExchangeButtonSize().x;
         int height =  view.getController().getLayout().getCardExchangeButtonSize().y;
         for (int i = 0; i < 6; i++) {

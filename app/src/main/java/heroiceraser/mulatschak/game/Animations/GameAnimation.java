@@ -26,6 +26,7 @@ public class GameAnimation {
     }
 
     public void init(GameView view) {
+        dealing_animation_.init(view);
         card_exchange_.init(view);
         trick_bids_.init(view);
     }
