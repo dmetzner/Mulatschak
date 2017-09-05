@@ -316,6 +316,12 @@ public class GameController{
             return;         // stops the recursion after all players had a chance to exchange their cards
         }
 
+        if (getPlayerById(logic_.getTurn()).getMissATurn()) {
+            Log.d("GameController", "Player " +logic_.getTurn() + " is MISSING his turn");
+            makeCardExchange();
+            return;
+        }
+
         Log.d("GameController", "Player " +logic_.getTurn() + " is making his turn");
 
         if (logic_.getTurn() == 0) {
@@ -353,6 +359,9 @@ public class GameController{
 
         Log.d("GameController", "Player " +logic_.getTurn() + " is making his bids");
         if (logic_.getTurn() == 0) {
+            if (getPlayerById(0).getMissATurn()) {
+                animations_.getTrickBids().getNumberButtonAt(0).setEnabled(false);
+            }
             animations_.getTrickBids().setAnimationNumbers(true);
             view_.disableUpdateCanvasThread();
             // makeTrickBids should get called when player chooses his tricks
@@ -395,7 +404,7 @@ public class GameController{
         else if (amount > logic_.getTrumphsToMake()) {
             List<Button> buttons = getAnimation().getTrickBids().getNumberButtons();
             // disable lower amount buttons, but button 0 is always clickable
-            for (int i = 1; i <= amount; i++) {
+            for (int i = 2; i <= amount; i++) {
                 buttons.get(i).setEnabled(false);
             }
             getPlayerById(id).setTrumphsToMake(amount);
@@ -437,7 +446,7 @@ public class GameController{
     }
 
     private void nextCardRound() {
-
+        // view_.enableUpdateCanvasThread(); // Todo
         if (getPlayerById(logic_.getTurn()).getAmountOfCardsInHand() == 0) {
             updatePlayerLives();
             if (logic_.isGameOver()) {
@@ -499,7 +508,7 @@ public class GameController{
 
     public boolean waiting = false;
     public void endCardRound() {
-
+        // view_.disableUpdateCanvasThread(); // ToDO
         if (!waiting) {
             logic_.chooseCardRoundWinner(this, this.getDiscardPile());
             clearDiscardPile();
@@ -524,8 +533,14 @@ public class GameController{
             return;
         }
 
-        Log.d("GameController", "Player " +logic_.getTurn() + " is playing his card");
+        if (getPlayerById(logic_.getTurn()).getMissATurn()) {
+            Log.d("GameController", "Player " + logic_.getTurn() + " is MISSING his turn");
+            turnToNextPlayer();
+            nextTurn();
+            return;
+        }
 
+        Log.d("GameController", "Player " +logic_.getTurn() + " is playing his card");
 
         if (logic_.getTurn() == 0) {
             animations_.getCardAnimations().setCardMoveable(true);
@@ -545,7 +560,7 @@ public class GameController{
     public void updatePlayerLives() {
 
         boolean mulatschak = false;
-        if (logic_.isMulatschakRound()) {  // ToDo hardcoded
+        if (logic_.isMulatschakRound()) {
             if ((int) (getPlayerById(logic_.getTrumphPlayerId()).getTricks().getCardStack().size()
                     / getAmountOfPlayers()) == GameLogic.MAX_CARDS_PER_HAND) {
                 mulatschak = true;
@@ -592,8 +607,10 @@ public class GameController{
             int add_lives = 0;
             int tricks = getPlayerById(i).getTricks().getCardStack().size() / getAmountOfPlayers();
 
-
-            if (i == logic_.getTrumphPlayerId() && tricks < logic_.getTrumphsToMake()) {
+            if (getPlayerById(i).getMissATurn()) {
+                add_lives = 2 * logic_.getMultiplier();
+            }
+            else if (i == logic_.getTrumphPlayerId() && tricks < logic_.getTrumphsToMake()) {
                 add_lives = 10 * logic_.getMultiplier();
             }
             else if (tricks <= 0) {

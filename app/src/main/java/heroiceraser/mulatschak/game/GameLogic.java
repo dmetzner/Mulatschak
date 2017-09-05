@@ -237,7 +237,9 @@ public class GameLogic {
         }
 
         for (int i = 0; i < 4; i++) {
-            controller.getPlayerById(highest_card_owner).getTricks().addCard(dp.getCard(i));
+            if (dp.getCard(i) != null) {
+                controller.getPlayerById(highest_card_owner).getTricks().addCard(dp.getCard(i));
+            }
         }
 
         turn_ = highest_card_owner;

@@ -76,7 +76,7 @@ public class TrickBids {
             number_buttons_.add(button);
 
             if (button_per_row >= max_buttons_per_row) {
-                x = layout.getHandBottom().x;
+                x = layout.getTrickBidsNumberButtonPosition().x;
                 int remove_button_drop_shadow = (int) (layout.getTrickBidsNumberButtonSize().y / 18.0);
                 y += layout.getTrickBidsNumberButtonSize().y - remove_button_drop_shadow;
                 button_per_row = 0;
@@ -115,9 +115,17 @@ public class TrickBids {
         animating_numbers_ = false;
         button_id--;  // because of miss a turn button
         if (button_id == MISS_A_TURN) {
+            controller.getPlayerById(0).setMissATurn(true);
             controller.makeTrickBids();
             return;
         }
+        if (button_id == MULATSCHAK) {
+            for (int i = 0; i < controller.getAmountOfPlayers(); i++) {
+                controller.getPlayerById(i).setMissATurn(false);
+            }
+        }
+        controller.getPlayerById(0).setMissATurn(false);
+        number_buttons_.get(0).setEnabled(true);
         int player_id = 0;
         controller.setNewMaxTrumphs(button_id, player_id);
         controller.makeTrickBids();

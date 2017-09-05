@@ -15,6 +15,7 @@ public class Player {
     private int position_;
     private int lives_;
     private int trumphs_to_make_;
+    private boolean miss_a_turn_;
     private CardStack hand_;
     private CardStack tricks_;
 
@@ -26,6 +27,7 @@ public class Player {
         position_ = -1;
         lives_ = -1;
         trumphs_to_make_ = -1;
+        miss_a_turn_ = false;
         hand_ = new CardStack();
         tricks_ = new CardStack();
     }
@@ -34,6 +36,14 @@ public class Player {
     //  Getter & Setter
     //
     public int getId() { return id_; }
+
+    public boolean getMissATurn() {
+        return miss_a_turn_;
+    }
+
+    public void setMissATurn(boolean miss_a_turn) {
+        this.miss_a_turn_ = miss_a_turn;
+    }
 
     public int getPosition() {
         return position_;
