@@ -58,16 +58,17 @@ public class GameView extends View {
     protected synchronized void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        drawRoundInfo(canvas);
         drawHandCards(canvas);
         drawDiscardPile(canvas);
         drawDealerButton(canvas);
         drawAnimations(canvas);
 
+        drawRoundInfo(canvas);
         drawStatistics(canvas);
         drawTricks(canvas);
         drawMenu(canvas);
         drawButtonBar(canvas);
+        drawBorder(canvas);
 
         thread_.now = System.currentTimeMillis();
         thread_.framesCount++;
@@ -76,6 +77,14 @@ public class GameView extends View {
             thread_.framesCountAvg = thread_.framesCount;
             thread_.framesCount = 0;
         }
+    }
+
+    private void drawBorder(Canvas canvas) {
+        // draw game middle
+        canvas.drawBitmap(controller_.getButtonBar().getBorderUp(), 0,
+                controller_.getLayout().getSectors().get(2).y, null);
+        canvas.drawBitmap(controller_.getButtonBar().getBorderDown(), 0,
+                controller_.getLayout().getSectors().get(4).y, null);
     }
 
     private void drawRoundInfo(Canvas canvas) {
@@ -248,31 +257,7 @@ public class GameView extends View {
     // drawStatistics
     //
     private void drawStatistics(Canvas canvas) {
-        if (controller_.getStatistics().isVisible()) {
-            canvas.drawBitmap(controller_.getStatistics().getBitmap(),
-                    controller_.getStatistics().getPosition().x,
-                    controller_.getStatistics().getPosition().y, null);
-
-            String text = "Player X:   XXX";
-            TextPaint textPaint = new TextPaint();
-            textPaint.setAntiAlias(true);
-            textPaint.setTextSize(40 * getResources().getDisplayMetrics().density);
-            textPaint.setColor(Color.GREEN);
-            int width = (int) textPaint.measureText(text);
-            int x = (int) ((controller_.getLayout().getScreenWidth() - width) / 2.0);
-            int y = (int) (controller_.getLayout().getScreenHeight() / 8.0 * 1.5);
-            for (int i = 0; i < controller_.getAmountOfPlayers(); i++) {
-                canvas.save();
-                canvas.translate(x, y);
-                text = "Player " + (i + 1);
-                text += ":     " + controller_.getPlayerById(i).getLives();
-                StaticLayout staticLayout = new StaticLayout(text, textPaint,
-                        width, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0, false);
-                staticLayout.draw(canvas);
-                canvas.restore();
-                y += (int) (textPaint.getTextSize() * 1.5);
-            }
-        }
+       controller_.getStatistics().draw(canvas, controller_);
     }
 
     //----------------------------------------------------------------------------------------------

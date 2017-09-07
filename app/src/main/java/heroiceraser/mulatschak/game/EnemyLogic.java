@@ -1,5 +1,7 @@
 package heroiceraser.mulatschak.game;
 
+import android.content.SharedPreferences;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.lang.reflect.Array;
@@ -38,6 +40,7 @@ public class EnemyLogic {
                 max = cards_per_trumph[i];
             }
         }
+
         controller.setNewMaxTrumphs(max, player.getId());
     }
 

@@ -21,7 +21,7 @@ public class TouchEvents {
     // Constructor
     //
     public TouchEvents() {
-        move_card_ = -1;
+        move_card_ = GameController.NOT_SET;
     }
 
     //----------------------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ public class TouchEvents {
                     move_card_ = i;
                     break;
                 } else {
-                    move_card_ = -1;
+                    move_card_ = GameController.NOT_SET;
                 }
             }
         }
@@ -266,7 +266,7 @@ public class TouchEvents {
                 controller.nextTurn();
 
             }
-            move_card_ = -1;
+            move_card_ = GameController.NOT_SET;
         }
 
         //------------------------

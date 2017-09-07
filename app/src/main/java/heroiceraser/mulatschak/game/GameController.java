@@ -1,5 +1,6 @@
 package heroiceraser.mulatschak.game;
 
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -27,6 +28,8 @@ import heroiceraser.mulatschak.game.DrawableObjects.RoundInfo;
  */
 
 public class GameController{
+
+    public static int NOT_SET = -9999;
 
     //----------------------------------------------------------------------------------------------
     //  Member Variables
@@ -95,6 +98,7 @@ public class GameController{
 
     public void startRound() {
         round_info_.setVisible(true);
+        round_info_.setInfoBoxEmpty();
         logic_.setMulatschakRound(false);
         reEnableButtons();
         resetTricksToMake();
@@ -108,10 +112,12 @@ public class GameController{
     public void continueAfterDealingAnimation() {
         Log.d("GameController", "Dealer is Player" + logic_.getDealer());
         boolean first_call = true;
+        round_info_.getTrickBidsTextField().setVisible(true);
         makeTrickBids(first_call);
     }
 
     public void continueAfterTrickBids() {
+        round_info_.getTrickBidsTextField().setVisible(false);
         switch (checkHighestBid()) {
             case 0:
                 logic_.raiseMultiplier();
@@ -128,7 +134,8 @@ public class GameController{
     }
 
     public void continueAfterTrumpWasChoosen() {
-        round_info_.updateRoundInfo(logic_);
+        round_info_.updateRoundInfo(this);
+        round_info_.getTrumpTextField().setVisible(true);
         logic_.setTurn(logic_.getTrumphPlayerId());
         logic_.setStartingPlayer(logic_.getTrumphPlayerId());
         boolean first_call = true;
@@ -170,7 +177,7 @@ public class GameController{
     private void setPlayerLives() {
         for (int i = 0; i < getAmountOfPlayers(); i++) {
             getPlayerById(i).setLives(logic_.START_LIVES);
-            getPlayerById(i).setTrumphsToMake(0);
+            getPlayerById(i).setTrumphsToMake(NOT_SET);
         }
     }
 
@@ -285,10 +292,10 @@ public class GameController{
     //
     private void resetTricksToMake() {
         for (int i = 0; i < getAmountOfPlayers(); i++) {
-            getPlayerById(i).setTrumphsToMake(0);
+            getPlayerById(i).setTrumphsToMake(NOT_SET);
         }
-        logic_.setTrumphsToMake(0);
-        logic_.setTrump(-1);
+        logic_.setTrumphsToMake(NOT_SET);
+        logic_.setTrump(NOT_SET);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -346,6 +353,7 @@ public class GameController{
     private void makeTrickBids(boolean first_call) {
 
         turnToNextPlayer();
+        round_info_.updateBids(view_);
 
         if (logic_.getTrumphsToMake() == TrickBids.MULATSCHAK) {
             continueAfterTrickBids();
@@ -370,7 +378,15 @@ public class GameController{
             EnemyLogic el = new EnemyLogic();
             view_.enableUpdateCanvasThread();
             el.makeTrickBids(getPlayerById(logic_.getTurn()), this);
-            makeTrickBids();
+
+            Handler mHandler = new Handler();
+            Runnable codeToRun = new Runnable() {
+                @Override
+                public void run() {
+                    makeTrickBids();
+                }
+            };
+            mHandler.postDelayed(codeToRun, 1000);
         }
     }
 
@@ -403,8 +419,8 @@ public class GameController{
 
         else if (amount > logic_.getTrumphsToMake()) {
             List<Button> buttons = getAnimation().getTrickBids().getNumberButtons();
-            // disable lower amount buttons, but button 0 is always clickable
-            for (int i = 2; i <= amount; i++) {
+            // disable lower amount buttons, but button 0 is always clickable // miss a turn
+            for (int i = 2; i <= (amount + 1); i++) {
                 buttons.get(i).setEnabled(false);
             }
             getPlayerById(id).setTrumphsToMake(amount);

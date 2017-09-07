@@ -44,12 +44,14 @@ public class GameLogic {
         game_over_ = false;
         mulatschak_round_ = false;
 
-        dealer_ = -1;
-        starting_player_ = -1;
-        turn_ = -1;
+        dealer_ = GameController.NOT_SET;
+        starting_player_ = GameController.NOT_SET;
+        turn_ = GameController.NOT_SET;
 
-        starting_card_symbol_ = -1;
-        trump_ = -1;
+        starting_card_symbol_ = GameController.NOT_SET;
+        trump_ = GameController.NOT_SET;
+        trump_player_id_ = GameController.NOT_SET;
+        trumps_to_make_ = GameController.NOT_SET;
 
     }
 
@@ -150,8 +152,8 @@ public class GameLogic {
     }
 
     private int getHighestCardOnDiscardPile(DiscardPile dp) {
-        int highest_card_sym = -1;
-        int highest_card_value = -11;
+        int highest_card_sym = GameController.NOT_SET;
+        int highest_card_value = GameController.NOT_SET;
 
         for (int i = 0; i < 4; i++) {
             if (dp.getCard(i) == null) {
@@ -192,9 +194,9 @@ public class GameLogic {
 
 
     public void chooseCardRoundWinner(GameController controller, DiscardPile dp) {
-        int highest_card_sym = -1;
-        int highest_card_value = -11;
-        int highest_card_owner = -1;
+        int highest_card_sym = GameController.NOT_SET;
+        int highest_card_value = GameController.NOT_SET;
+        int highest_card_owner = GameController.NOT_SET;
 
         for (int i = 0; i < 4; i++) {
             if (dp.getCard(i) == null) {

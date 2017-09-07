@@ -15,6 +15,8 @@ import heroiceraser.mulatschak.helpers.HelperFunctions;
 
 public class ButtonBar extends DrawableObject {
 
+    private Bitmap border_down_;
+    private Bitmap border_up_;
     private Bitmap decoration_;
     private Button statistics_button_;
     private Button tricks_button_;
@@ -38,6 +40,8 @@ public class ButtonBar extends DrawableObject {
 
     private void initDecoration(GameView view) {
         decoration_ = HelperFunctions.loadBitmap(view, "button_bar_decoration", getWidth(), getHeight());
+        border_down_ = HelperFunctions.loadBitmap(view, "game_border_down", getWidth(), getHeight() * 2);
+        border_up_ = HelperFunctions.loadBitmap(view, "game_border_up", getWidth(), getHeight() * 2);
     }
 
     private void initStatisticButton(GameView view) {
@@ -79,5 +83,13 @@ public class ButtonBar extends DrawableObject {
 
     public Button getMenuButton() {
         return menu_button_;
+    }
+
+    public Bitmap getBorderDown() {
+        return border_down_;
+    }
+
+    public Bitmap getBorderUp() {
+        return border_up_;
     }
 }
