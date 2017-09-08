@@ -1,5 +1,6 @@
 package heroiceraser.mulatschak.game.DrawableObjects;
 
+import android.graphics.Canvas;
 import android.graphics.Point;
 
 import java.util.ArrayList;
@@ -84,6 +85,22 @@ public class DiscardPile extends DrawableObject {
     }
 
 
+    public void draw(Canvas canvas) {
+        if (isVisible()) {
+            for (int j = 0; j < positions_.size(); j++) {
+                if (getCard(j) == null) {
+                    canvas.drawBitmap(getBitmap(),
+                            getPoint(j).x,
+                            getPoint(j).y, null);
+                } else {
+                    canvas.drawBitmap(getCard(j).getBitmap(),
+                            getPoint(j).x,
+                            getPoint(j).y, null);
+                }
+            }
+        }
+    }
+
     public Card getCardBottom() {
         return card_bottom_;
     }
@@ -103,6 +120,7 @@ public class DiscardPile extends DrawableObject {
         return card_right_;
     }
     public void setCardRight(Card card_right) { card_right_ = card_right; }
+
 
 }
 

@@ -41,6 +41,10 @@ public class EnemyLogic {
             }
         }
 
+        if (max > 0) {
+            max--;
+        }
+
         controller.setNewMaxTrumphs(max, player.getId());
     }
 

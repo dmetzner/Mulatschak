@@ -39,7 +39,7 @@ public class TextField extends DrawableObject{
 
         text_paint_ = new TextPaint();
         text_paint_.setAntiAlias(true);
-        text_paint_.setTextSize(18 * view.getResources().getDisplayMetrics().density);
+        text_paint_.setTextSize(20 * view.getResources().getDisplayMetrics().density);
         text_paint_.setColor(Color.WHITE);
 
         bg_paint_ = new Paint();
@@ -58,10 +58,13 @@ public class TextField extends DrawableObject{
                 Layout.Alignment.ALIGN_NORMAL, 1, 1, true);
 
         TextPaint new_text_paint = text_paint_;
-        while (max_height != -1 && static_layout_.getHeight() > max_height) {
-            new_text_paint.setTextSize((int) (new_text_paint.getTextSize() / 1.5));
+        int height = static_layout_.getHeight();
+        while (max_height != -1 && height > max_height) {
+            int new_text_size = (int) (new_text_paint.getTextSize() * 0.9);
+            new_text_paint.setTextSize(new_text_size);
             static_layout_ = new StaticLayout(text_, new_text_paint, getWidth(),
-                    Layout.Alignment.ALIGN_CENTER, 1, 1, true);
+                    Layout.Alignment.ALIGN_NORMAL, 1, 1, true);
+            height = static_layout_.getHeight();
         }
 
     }

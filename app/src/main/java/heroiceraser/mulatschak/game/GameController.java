@@ -16,6 +16,7 @@ import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
 import heroiceraser.mulatschak.game.DrawableObjects.DealerButton;
 import heroiceraser.mulatschak.game.DrawableObjects.DiscardPile;
 import heroiceraser.mulatschak.game.DrawableObjects.GameMenu;
+import heroiceraser.mulatschak.game.DrawableObjects.GameOver;
 import heroiceraser.mulatschak.game.DrawableObjects.GameStatistics;
 import heroiceraser.mulatschak.game.DrawableObjects.GameTricks;
 import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
@@ -49,6 +50,7 @@ public class GameController{
     private GameMenu menu_;
 
     private RoundInfo round_info_;
+    private GameOver game_over_;
 
     private List<Player> player_list_;
     private MulatschakDeck deck_;
@@ -74,6 +76,7 @@ public class GameController{
         menu_ = new GameMenu();
 
         round_info_ = new RoundInfo();
+        game_over_ = new GameOver();
 
         deck_ = new MulatschakDeck();
         trash_ = new CardStack();
@@ -99,6 +102,8 @@ public class GameController{
     public void startRound() {
         round_info_.setVisible(true);
         round_info_.setInfoBoxEmpty();
+        round_info_.updateNewRound(this);
+        round_info_.getNewRound().setVisible(true);
         logic_.setMulatschakRound(false);
         reEnableButtons();
         resetTricksToMake();
@@ -106,26 +111,45 @@ public class GameController{
         resetTurn();
         view_.enableUpdateCanvasThread();
         shuffleDeck();
+        discardPile_.setVisible(false);
         dealCards();  // starts an dealing animation
     }
 
     public void continueAfterDealingAnimation() {
+        discardPile_.setVisible(true);
         Log.d("GameController", "Dealer is Player" + logic_.getDealer());
         boolean first_call = true;
+        round_info_.setInfoBoxEmpty();
         round_info_.getTrickBidsTextField().setVisible(true);
         makeTrickBids(first_call);
     }
 
     public void continueAfterTrickBids() {
-        round_info_.getTrickBidsTextField().setVisible(false);
+        round_info_.setInfoBoxEmpty();
+        round_info_.getChooseTrumpTextField().setVisible(true);
+        Handler mHandler = new Handler();
+        Runnable case_0 = new Runnable() {
+            @Override
+            public void run() {
+                startRound();
+            }
+        };
+        Runnable case_1 = new Runnable() {
+            @Override
+            public void run() {
+                continueAfterTrumpWasChoosen();
+            }
+        };
         switch (checkHighestBid()) {
-            case 0:
+            case 0:  // start a new round if every player said 0 tricks
                 logic_.raiseMultiplier();
-                startRound(); // start a new round if every player said 0 tricks
+                round_info_.updateChooseTrump(this, 0);
+                mHandler.postDelayed(case_0, 3000);
                 break;
             case 1:
                 logic_.setTrump(MulatschakDeck.HEART);
-                continueAfterTrumpWasChoosen();
+                round_info_.updateChooseTrump(this, 1);
+                mHandler.postDelayed(case_1, 4000);
                 break;
             default:
                 letHighestBidderChooseTrump();
@@ -134,8 +158,9 @@ public class GameController{
     }
 
     public void continueAfterTrumpWasChoosen() {
+        round_info_.setInfoBoxEmpty();
         round_info_.updateRoundInfo(this);
-        round_info_.getTrumpTextField().setVisible(true);
+        round_info_.getRoundInfoTextField().setVisible(true);
         logic_.setTurn(logic_.getTrumphPlayerId());
         logic_.setStartingPlayer(logic_.getTrumphPlayerId());
         boolean first_call = true;
@@ -169,6 +194,7 @@ public class GameController{
         tricks_.init(view_);
         menu_.init(view_);
         round_info_.init(view_);
+        game_over_.init(view_);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -443,6 +469,7 @@ public class GameController{
     //
     private void letHighestBidderChooseTrump() {
         Log.d("GameController", "Player " + logic_.getTrumphPlayerId() + " chooses a trump");
+        round_info_.updateChooseTrump(this);
 
         if (logic_.getTrumphPlayerId() == 0) {
             animations_.getTrickBids().setAnimationTrumps(true);
@@ -453,7 +480,14 @@ public class GameController{
             EnemyLogic el = new EnemyLogic();
             view_.enableUpdateCanvasThread();
             el.chooseTrump(getPlayerById(logic_.getTrumphPlayerId()), logic_, view_);
-            continueAfterTrumpWasChoosen();
+            Handler mhandler = new Handler();
+            Runnable codeToRun = new Runnable() {
+                @Override
+                public void run() {
+                    continueAfterTrumpWasChoosen();
+                }
+            };
+            mhandler.postDelayed(codeToRun, 3000);
         }
     }
 
@@ -466,7 +500,9 @@ public class GameController{
         if (getPlayerById(logic_.getTurn()).getAmountOfCardsInHand() == 0) {
             updatePlayerLives();
             if (logic_.isGameOver()) {
-                // ToDo Show endscreen
+                round_info_.setInfoBoxEmpty();
+                round_info_.getGameOver().setVisible(true);
+                game_over_.setVisible(true);
                 return;
             }
             allCardsBackToTheDeck();
@@ -477,6 +513,7 @@ public class GameController{
         }
         boolean first_call = true;
         nextTurn(first_call);
+        round_info_.updateRoundInfo(this);
     }
 
 

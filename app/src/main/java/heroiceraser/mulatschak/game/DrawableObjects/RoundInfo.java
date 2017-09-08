@@ -23,18 +23,26 @@ import heroiceraser.mulatschak.helpers.HelperFunctions;
 
 public class RoundInfo extends DrawableObject {
 
-    private TextField bids_;
-    private TextField trump_;
-    String trump_text_ = "Trumpf: ";
+    private TextField new_round_;
+    private TextField trick_bids_;
+    private TextField choose_trump_;
+    private TextField round_info_;
+    private TextField game_over_;
+
+    private Point monitor_size_;
     private Point board_to_text_offset_;
-    private TextField multiplier_;
+
 
     public RoundInfo() {
         super();
         setVisible(false);
-        bids_ = new TextField();
-        trump_ = new TextField();
-        multiplier_ = new TextField();
+        new_round_ = new TextField();
+        trick_bids_ = new TextField();
+        choose_trump_ = new TextField();
+        round_info_ = new TextField();
+        game_over_ = new TextField();
+
+        monitor_size_ = new Point();
         board_to_text_offset_ = new Point();
     }
 
@@ -45,11 +53,22 @@ public class RoundInfo extends DrawableObject {
         String image_name = "round_info";
         setBitmap(HelperFunctions.loadBitmap(view, image_name , getWidth(), getHeight()));
         setVisible(true);
-        int width = (int) (view.getController().getLayout().getScreenWidth() * (8.0 / 10.0));
         board_to_text_offset_.x = getWidth() / 10;
-        board_to_text_offset_.y = getHeight() / 3;
-        bids_.init(view, "", width);
-        trump_.init(view, trump_text_, width);
+        board_to_text_offset_.y = getHeight() / 6;
+        monitor_size_.x = (int) (view.getController().getLayout().getScreenWidth() * (8.0 / 10.0));
+        monitor_size_.y = view.getController().getLayout().getSectors().get(2).y - 2 * board_to_text_offset_.y;
+        new_round_.init(view, "", monitor_size_.x);
+        trick_bids_.init(view, "", monitor_size_.x);
+        choose_trump_.init(view, "", monitor_size_.x);
+        round_info_.init(view, "", monitor_size_.x);
+        game_over_.init(view, "Game Over", monitor_size_.x);
+    }
+
+    public void updateNewRound(GameController controller) {
+        String text = "";
+        text +=   "Neue Runde!";
+        text += "\n\n Spieler " + (controller.getLogic().getDealer() + 1) + " ist der Dealer";
+        new_round_.update(text, monitor_size_.y);
     }
 
     public void updateBids(GameView view) {
@@ -72,13 +91,56 @@ public class RoundInfo extends DrawableObject {
             else {
                 text += "will " + view.getController().getPlayerById(i).getTrumphsToMake() + " Stiche machen";
             }
-            text += "\n";
+            if (i != view.getController().getAmountOfPlayers() - 1) {
+                text += "\n";
+            }
+
         }
-        bids_.update(text, view.getController().getLayout().getSectors().get(2).y - board_to_text_offset_.y);
+        trick_bids_.update(text, monitor_size_.y);
+    }
+
+    public void updateChooseTrump(GameController controller, int special_case) {
+        String text = "";
+        if (special_case == 0) { // 0 tricks
+            text += "Keiner Spieler macht einen Stich \n";
+            text += "Neue Runde startet! Diese zählt doppelt!";
+        }
+        else if (special_case == 1){  // 1 trick -> heart
+            int id = controller.getLogic().getTrumphPlayerId();
+            if (id == 0) {
+                text += "Du bist der Höchstbietende. \n";
+                text += "Das Trumpf dieser Runde ist Herz.\n";
+                text += "Herz Runden zählen doppelt!";
+            }
+            else {
+                text += "Spieler " + (controller.getLogic().getTrumphPlayerId() + 1) + " ist der Höchstbietende. \n";
+                text += "Das Trumpf dieser Runde ist Herz.\n";
+                text += "Herz Runden zählen doppelt!";
+            }
+        }
+        else {
+            updateChooseTrump(controller);
+            return;
+        }
+        choose_trump_.update(text, monitor_size_.y);
+    }
+
+    public void updateChooseTrump(GameController controller) {
+        String text = "";
+        int id = controller.getLogic().getTrumphPlayerId();
+        if (id == 0) {
+            text += "\nDu bist der Höchstbietende. \n";
+            text += "Wähle das Trumpf";
+        }
+        else {
+            text += "\nSpieler " +(id + 1) + " ist der Höchstbietende. \n";
+            text += "Spieler " + (id + 1) + " wählt das Trumpf";
+        }
+        choose_trump_.update(text, monitor_size_.y);
     }
 
     public void updateRoundInfo(GameController controller) {
-        String text_ = trump_text_;
+        String text_ = "Trumpf:   ";
         switch (controller.getLogic().getTrump()) {
             case MulatschakDeck.HEART:
                 text_ += "Herz";
@@ -93,28 +155,61 @@ public class RoundInfo extends DrawableObject {
                 text_ += "Pik";
                 break;
         }
-        trump_.update(text_, controller.getLayout().getSectors().get(2).y);
+        text_ += "\n";
+        text_ += "Punkte:    x" + controller.getLogic().getMultiplier();
+        text_ += "\n";
+        text_ += "Spieler " + (controller.getLogic().getTrumphPlayerId() + 1) + ":   ";
+        text_ += controller.getPlayerById(
+                controller.getLogic().getTrumphPlayerId()).getAmountOfTricks(controller);
+        text_ += "/" + controller.getLogic().getTrumphsToMake() + " Stiche\n";
+
+        if (controller.getLogic().getTurn() == 0) {
+            text_ +=  "Du bist am Zug";
+        }
+        else {
+            text_ += "Spieler " + (controller.getLogic().getTurn() + 1) + ":   ist am Zug";
+        }
+
+        round_info_.update(text_, monitor_size_.y);
     }
 
     public void draw(Canvas canvas) {
         if (isVisible()) {
             canvas.drawBitmap(getBitmap(), getPosition().x, getPosition().y, null);
-            bids_.draw(canvas, new Point(getPosition().x + board_to_text_offset_.x, getPosition().y + board_to_text_offset_.y / 2));
-            trump_.draw(canvas, new Point(getPosition().x + board_to_text_offset_.x, getPosition().y + board_to_text_offset_.y / 2));
+            Point pos =  new Point(getPosition().x + board_to_text_offset_.x, getPosition().y + board_to_text_offset_.y);
+            new_round_.draw(canvas, pos);
+            trick_bids_.draw(canvas, pos);
+            choose_trump_.draw(canvas, pos);
+            round_info_.draw(canvas, pos);
         }
     }
 
-    public TextField getTrickBidsTextField() {
-        return bids_;
+    public TextField getNewRound() {
+        return new_round_;
     }
 
-    public TextField getTrumpTextField() {
-        return trump_;
+    public TextField getTrickBidsTextField() {
+        return trick_bids_;
+    }
+
+    public TextField getChooseTrumpTextField() {
+        return choose_trump_;
+    }
+
+    public TextField getRoundInfoTextField() {
+        return round_info_;
+    }
+
+    public TextField getGameOver() {
+        return game_over_;
     }
 
     public void setInfoBoxEmpty() {
-        bids_.setVisible(false);
-        trump_.setVisible(false);
+        new_round_.setVisible(false);
+        trick_bids_.setVisible(false);
+        choose_trump_.setVisible(false);
+        round_info_.setVisible(false);
+        game_over_.setVisible(false);
     }
 
 }

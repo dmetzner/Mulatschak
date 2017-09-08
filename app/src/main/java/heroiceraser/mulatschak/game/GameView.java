@@ -182,18 +182,7 @@ public class GameView extends View {
     //  drawDiscardPile
     //
     private void drawDiscardPile(Canvas canvas) {
-        for (int j = 0; j < controller_.getDiscardPile().getPoints().size(); j++) {
-            if (controller_.getDiscardPile().getCard(j) == null) {
-                canvas.drawBitmap(controller_.getDiscardPile().getBitmap(),
-                        controller_.getDiscardPile().getPoint(j).x,
-                        controller_.getDiscardPile().getPoint(j).y, null);
-            } else {
-                canvas.drawBitmap(controller_.getDiscardPile().getCard(j).getBitmap(),
-                        controller_.getDiscardPile().getPoint(j).x,
-                        controller_.getDiscardPile().getPoint(j).y, null);
-            }
-
-        }
+        controller_.getDiscardPile().draw(canvas);
     }
 
     //----------------------------------------------------------------------------------------------

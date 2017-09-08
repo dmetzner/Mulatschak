@@ -32,6 +32,18 @@ public class Player {
         tricks_ = new CardStack();
     }
 
+    public int getAmountOfTricks(GameController controller) {
+        int amount = tricks_.getCardStack().size();
+        int players = controller.getAmountOfPlayers();
+        for (int i = 0; i < controller.getAmountOfPlayers(); i++) {
+            if (controller.getPlayerById(i).getMissATurn()) {
+                players--;
+            }
+        }
+        amount /= (controller.getAmountOfPlayers());
+        return amount;
+    }
+
     //----------------------------------------------------------------------------------------------
     //  Getter & Setter
     //

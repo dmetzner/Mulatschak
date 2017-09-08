@@ -399,14 +399,14 @@ public class GameLayout {
     private void initCardExchangePositions() {
         card_exchange_text_position_ = new Point();
         card_exchange_text_position_.x = (int)((screen_size_.x - card_exchange_text_size_.x) / 2.0);
-        card_exchange_text_position_.y = sectors_.get(3).y;
+        card_exchange_text_position_.y = sectors_.get(2).y + sectors_.get(1).y / 2;
     }
 
     private void initCardExchangeButtonPosition() {
         card_exchange_button_position_ = new Point();
         card_exchange_button_position_.x = (int)
                 ((screen_size_.x - card_exchange_button_size_.x) / 2.0);
-        card_exchange_button_position_.y = (sectors_.get(5).y);
+        card_exchange_button_position_.y = (sectors_.get(4).y + sectors_.get(1).y / 2);
     }
     
     //-----------------------

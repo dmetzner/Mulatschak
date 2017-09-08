@@ -39,7 +39,7 @@ public class GameStatistics extends DrawableObject{
         textPaint = new TextPaint();
         textPaint.setAntiAlias(true);
         textPaint.setTextSize(40 * view.getResources().getDisplayMetrics().density);
-        textPaint.setColor(Color.GREEN);
+        textPaint.setColor(Color.rgb(30, 255, 30));
     }
 
     public void draw(Canvas canvas, GameController controller) {
