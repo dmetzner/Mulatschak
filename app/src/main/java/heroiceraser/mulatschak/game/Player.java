@@ -40,7 +40,7 @@ public class Player {
                 players--;
             }
         }
-        amount /= (controller.getAmountOfPlayers());
+        amount /= players;
         return amount;
     }
 

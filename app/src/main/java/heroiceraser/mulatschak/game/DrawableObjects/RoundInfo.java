@@ -27,6 +27,8 @@ public class RoundInfo extends DrawableObject {
     private TextField trick_bids_;
     private TextField choose_trump_;
     private TextField round_info_;
+    private TextField end_of_card_round_;
+    private TextField end_of_round_;
     private TextField game_over_;
 
     private Point monitor_size_;
@@ -40,6 +42,8 @@ public class RoundInfo extends DrawableObject {
         trick_bids_ = new TextField();
         choose_trump_ = new TextField();
         round_info_ = new TextField();
+        end_of_card_round_ = new TextField();
+        end_of_round_ = new TextField();
         game_over_ = new TextField();
 
         monitor_size_ = new Point();
@@ -61,7 +65,32 @@ public class RoundInfo extends DrawableObject {
         trick_bids_.init(view, "", monitor_size_.x);
         choose_trump_.init(view, "", monitor_size_.x);
         round_info_.init(view, "", monitor_size_.x);
+        end_of_card_round_.init(view, "", monitor_size_.x);
+        end_of_round_.init(view, "", monitor_size_.x);
         game_over_.init(view, "Game Over", monitor_size_.x);
+    }
+
+    public void updateEndOfCardRound(GameController controller) {
+        String text = "";
+        text += "Spieler " + (controller.getLogic().getRoundWinnerId() + 1) + " hat diesen Stich gewonnen.";
+        end_of_card_round_.update(text, monitor_size_.y);
+    }
+
+    public void updateEndOfRound(GameController controller) {
+        String text = "";
+        for (int i = 0; i < controller.getAmountOfPlayers(); i++) {
+            if (i == controller.getLogic().getTrumphPlayerId()) {
+                text += "Spieler " + (i + 1) + ": " + controller.getPlayerById(i).getAmountOfTricks(controller) +
+                        "/" + controller.getLogic().getTrumphsToMake() + " Stiche";
+            }
+            else {
+                text += "Spieler " + (i + 1) + ": " + controller.getPlayerById(i).getAmountOfTricks(controller) + " Stiche";
+            }
+            if (i != controller.getAmountOfPlayers() - 1) {
+                text += "\n";
+            }
+        }
+        end_of_round_.update(text, monitor_size_.y);
     }
 
     public void updateNewRound(GameController controller) {
@@ -176,12 +205,20 @@ public class RoundInfo extends DrawableObject {
     public void draw(Canvas canvas) {
         if (isVisible()) {
             canvas.drawBitmap(getBitmap(), getPosition().x, getPosition().y, null);
-            Point pos =  new Point(getPosition().x + board_to_text_offset_.x, getPosition().y + board_to_text_offset_.y);
+            Point pos =  new Point(getPosition().x + board_to_text_offset_.x,
+                    getPosition().y + board_to_text_offset_.y);
             new_round_.draw(canvas, pos);
             trick_bids_.draw(canvas, pos);
             choose_trump_.draw(canvas, pos);
             round_info_.draw(canvas, pos);
+            end_of_card_round_.draw(canvas, pos);
+            end_of_round_.draw(canvas, pos);
+            game_over_.draw(canvas, pos);
         }
+    }
+
+    public TextField getEndOfRound() {
+        return end_of_round_;
     }
 
     public TextField getNewRound() {
@@ -204,12 +241,18 @@ public class RoundInfo extends DrawableObject {
         return game_over_;
     }
 
+    public TextField getEndOfCardRound() {
+        return end_of_card_round_;
+    }
+
     public void setInfoBoxEmpty() {
         new_round_.setVisible(false);
         trick_bids_.setVisible(false);
         choose_trump_.setVisible(false);
         round_info_.setVisible(false);
+        end_of_card_round_.setVisible(false);
         game_over_.setVisible(false);
+        end_of_round_.setVisible(false);
     }
 
 }

@@ -28,6 +28,7 @@ public class GameLogic {
     private int dealer_;
     private int turn_;
     private int starting_player_;
+    private int round_winner_id_;
 
     private int starting_card_symbol_;
     private int trump_;
@@ -172,15 +173,9 @@ public class GameLogic {
                 }
             }
             if (dp_card_sym == trump_) {
-                if (highest_card_sym == trump_) {
-                    if (dp_card_value > highest_card_value) {
+                if (highest_card_sym == trump_ && dp_card_value > highest_card_value) {
                         highest_card_sym = dp_card_sym;
                         highest_card_value = dp_card_value;
-                    }
-                    else if (dp_card_value == 0 && highest_card_value < 14) {
-                        highest_card_sym = dp_card_sym;
-                        highest_card_value = dp_card_value;
-                    }
                 }
                 else if(highest_card_sym != trump_) {
                     highest_card_sym = dp_card_sym;
@@ -217,17 +212,10 @@ public class GameLogic {
                 }
             }
             if (dp_card_sym == trump_) {
-                if (highest_card_sym == trump_) {
-                    if (dp_card_value > highest_card_value) {
+                if (highest_card_sym == trump_ && dp_card_value > highest_card_value) {
                         highest_card_sym = dp_card_sym;
                         highest_card_value = dp_card_value;
                         highest_card_owner = i;
-                    }
-                    else if (dp_card_value == 0 && highest_card_value < 14) {
-                        highest_card_sym = dp_card_sym;
-                        highest_card_value = dp_card_value;
-                        highest_card_owner = i;
-                    }
                 }
                 else if(highest_card_sym != trump_) {
                     highest_card_sym = dp_card_sym;
@@ -237,6 +225,8 @@ public class GameLogic {
             }
 
         }
+
+        round_winner_id_ = highest_card_owner;
 
         for (int i = 0; i < 4; i++) {
             if (dp.getCard(i) != null) {
@@ -314,5 +304,9 @@ public class GameLogic {
 
     public void setMulatschakRound(boolean bool) {
         this.mulatschak_round_ = bool;
+    }
+
+    public int getRoundWinnerId() {
+        return round_winner_id_;
     }
 }

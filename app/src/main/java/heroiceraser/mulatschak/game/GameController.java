@@ -2,7 +2,6 @@ package heroiceraser.mulatschak.game;
 
 import android.os.Handler;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -158,6 +157,9 @@ public class GameController{
     }
 
     public void continueAfterTrumpWasChoosen() {
+        if (logic_.getTrump() == MulatschakDeck.HEART) {
+            logic_.raiseMultiplier();
+        }
         round_info_.setInfoBoxEmpty();
         round_info_.updateRoundInfo(this);
         round_info_.getRoundInfoTextField().setVisible(true);
@@ -256,12 +258,6 @@ public class GameController{
                 layout_.getDealerButtonPosition(getPlayerById(dealer_id).getPosition()));
         logic_.setStartingPlayer(logic_.getFirstBidder(getAmountOfPlayers()));
         logic_.setTurn(dealer_id);
-
-        // DEBUG ////////////////////////////////////////////////////////////////////////////////////////
-        CharSequence text = "First Dealer is player: " + dealer_id;
-        int duration = Toast.LENGTH_SHORT;
-        Toast toast = Toast.makeText(view_.getContext(), text, duration);
-        toast.show();//////////////////////////////////////////////////////////////////////////////////
     }
 
     //----------------------------------------------------------------------------------------------
@@ -458,10 +454,6 @@ public class GameController{
             getPlayerById(id).setTrumphsToMake(0);
             text = text + "0";
         }
-        int duration = Toast.LENGTH_SHORT;
-        Toast toast = Toast.makeText(view_.getContext(), text, duration);
-        toast.show();
-
     }
 
     //----------------------------------------------------------------------------------------------
@@ -496,6 +488,7 @@ public class GameController{
     }
 
     private void nextCardRound() {
+
         // view_.enableUpdateCanvasThread(); // Todo
         if (getPlayerById(logic_.getTurn()).getAmountOfCardsInHand() == 0) {
             updatePlayerLives();
@@ -505,16 +498,23 @@ public class GameController{
                 game_over_.setVisible(true);
                 return;
             }
+            round_info_.setInfoBoxEmpty();
+            round_info_.getEndOfRound().setVisible(true);
+            round_info_.updateEndOfRound(this);
             allCardsBackToTheDeck();
             logic_.moveDealer(getAmountOfPlayers());
             dealer_button_.setPosition(layout_.getDealerButtonPosition(logic_.getDealer()));
-            startRound();
+            waiting2 = true;
+            // touch events starts new round        ^^
             return;
         }
         boolean first_call = true;
-        nextTurn(first_call);
         round_info_.updateRoundInfo(this);
+        nextTurn(first_call);
+
     }
+
+    public boolean waiting2 = false;
 
 
     private void allCardsBackToTheDeck() {
@@ -563,7 +563,6 @@ public class GameController{
     public void endCardRound() {
         // view_.disableUpdateCanvasThread(); // ToDO
         if (!waiting) {
-            logic_.chooseCardRoundWinner(this, this.getDiscardPile());
             clearDiscardPile();
             nextCardRound();
         }
@@ -579,9 +578,16 @@ public class GameController{
     private void nextTurn(boolean first_call) {
 
         animations_.getCardAnimations().setCardMoveable(false);
+        round_info_.setInfoBoxEmpty();
+        round_info_.getRoundInfoTextField().setVisible(true);
+        round_info_.updateRoundInfo(this);
 
         if (!first_call && logic_.getTurn() == logic_.getStartingPlayer()) {
             waiting = true;
+            logic_.chooseCardRoundWinner(this, this.getDiscardPile());
+            round_info_.setInfoBoxEmpty();
+            round_info_.updateEndOfCardRound(this);
+            round_info_.getEndOfCardRound().setVisible(true);
             endCardRound();
             return;
         }
@@ -726,6 +732,10 @@ public class GameController{
 
     public CardStack getTrash() {
         return trash_;
+    }
+
+    public GameOver getGameOver() {
+        return game_over_;
     }
 
     public RoundInfo getRoundInfo() {

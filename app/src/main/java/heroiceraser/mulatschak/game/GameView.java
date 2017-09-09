@@ -63,6 +63,7 @@ public class GameView extends View {
         drawDealerButton(canvas);
         drawAnimations(canvas);
 
+        drawGameOver(canvas);
         drawRoundInfo(canvas);
         drawStatistics(canvas);
         drawTricks(canvas);
@@ -85,6 +86,10 @@ public class GameView extends View {
                 controller_.getLayout().getSectors().get(2).y, null);
         canvas.drawBitmap(controller_.getButtonBar().getBorderDown(), 0,
                 controller_.getLayout().getSectors().get(4).y, null);
+    }
+
+    private void drawGameOver(Canvas canvas) {
+        controller_.getGameOver().draw(canvas, controller_);
     }
 
     private void drawRoundInfo(Canvas canvas) {

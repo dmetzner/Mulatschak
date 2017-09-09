@@ -37,6 +37,12 @@ public class TouchEvents {
             controller.waiting = false;
             controller.endCardRound();
         }
+        else if (controller.waiting2) {
+            // ToDO Just 4 now Hack, better solution please :D
+            controller.waiting2 = false;
+            controller.startRound();
+        }
+
 
         //------------------------
 
