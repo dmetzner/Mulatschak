@@ -37,7 +37,20 @@ public class GameView extends View {
     public GameView(Context context) {
         super(context);
         context_ = context;
-        controller_ = new GameController(this, 4);
+        int players = 4;
+        int difficulty = 2; // normal
+        int player_lives = 21;
+        controller_ = new GameController(this, players, difficulty, player_lives);
+        thread_ = new GameThread(this);
+        thread_.setRunning(true);
+        thread_.start();
+    }
+
+    public GameView(Context context, int enemies, int difficulty, int player_lives) {
+        super(context);
+        context_ = context;
+        int players = enemies + 1;
+        controller_ = new GameController(this, players, difficulty, player_lives);
         thread_ = new GameThread(this);
         thread_.setRunning(true);
         thread_.start();

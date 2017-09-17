@@ -30,7 +30,8 @@
     <string name="single_player_settings_difficulty_normal">Normal</string>
     <string name="single_player_settings_difficulty_hard">Schwer</string>
 
-    <string name="single_player_settings_player_lives_text">Anzahl der Startleben: </string>
+    <string name="single_player_settings_player_lives_text">Anzahl der Startleben:   </string>
+    <string name="single_player_settings_player_lives_text_default">Anzahl der Startleben:\u0020\u0020\u0020 21</string>
 
     <string name="single_player_settings_start_button">Spiel Starten</string>
 

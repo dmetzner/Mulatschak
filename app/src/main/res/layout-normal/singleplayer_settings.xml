@@ -125,7 +125,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="@string/single_player_settings_player_lives_text"
+            android:text= "@string/single_player_settings_player_lives_text_default"
             android:textSize="18dp" />
 
         <SeekBar
@@ -134,8 +134,8 @@
             android:layout_height="20dp"
             android:layout_marginTop="5dp"
             android:elevation="0dp"
-            android:max="95"
-            android:progress="21" />
+            android:max="99"
+            android:progress="20" />
 
     </LinearLayout>
 

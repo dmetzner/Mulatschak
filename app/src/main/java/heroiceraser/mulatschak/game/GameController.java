@@ -61,10 +61,12 @@ public class GameController{
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
-    public GameController(GameView view, int players) {
+    public GameController(GameView view, int players, int difficulty, int player_lives) {
         view_ = view;
 
         logic_ = new GameLogic();
+        logic_.setStartLives(player_lives);
+        // logic set difficulty ToDO
         layout_ = new GameLayout();
         animations_ = new GameAnimation(view);
         touch_events_ = new TouchEvents();
@@ -204,7 +206,7 @@ public class GameController{
     //
     private void setPlayerLives() {
         for (int i = 0; i < getAmountOfPlayers(); i++) {
-            getPlayerById(i).setLives(logic_.START_LIVES);
+            getPlayerById(i).setLives(logic_.getStartLives());
             getPlayerById(i).setTrumphsToMake(NOT_SET);
         }
     }

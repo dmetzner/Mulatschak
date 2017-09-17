@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements
     // Fragments
     StartScreenFragment mStartScreenFragment;
     SinglePlayerFragment mSinglePlayerFragment;
+    LoadingScreenFragment mLoadingScreenFragment;
 
     // Client used to interact with Google APIs
     private GoogleApiClient mGoogleApiClient;
@@ -79,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements
         // create fragments
         mStartScreenFragment = new StartScreenFragment();
         mSinglePlayerFragment = new SinglePlayerFragment();
+        mLoadingScreenFragment = new LoadingScreenFragment();
 
         // listen to fragment events
         mStartScreenFragment.setListener(this);
@@ -115,6 +117,15 @@ public class MainActivity extends AppCompatActivity implements
         super.onStart();
         Log.d(TAG, "onStart(): connecting");
         mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Fragment frag = getVisibleFragment();
+        if (frag != null && frag.equals(mLoadingScreenFragment)) {
+            onStartMenuRequested();
+        }
     }
 
     //----------------------------------------------------------------------------------------------
@@ -380,11 +391,12 @@ public class MainActivity extends AppCompatActivity implements
     //
     @Override
     public void onSinglePlayerRequested() {
-        switchToFragment(mStartScreenFragment, "mStartScreenFragment");
-        GameView gameView = new GameView(this);
-        gameView.setKeepScreenOn(true);
         Intent gameIntent = new Intent(this, GameActivity.class);
+        gameIntent.putExtra("enemies", mSinglePlayerFragment.getEnemies());
+        gameIntent.putExtra("difficulty", mSinglePlayerFragment.getDifficulty());
+        gameIntent.putExtra("player_lives", mSinglePlayerFragment.getPlayerLives());
         this.startActivity(gameIntent);
+        switchToFragment(mLoadingScreenFragment, "mLoadingScreenFragment");
     }
 
     @Override

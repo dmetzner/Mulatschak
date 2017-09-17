@@ -16,11 +16,13 @@ public class GameLogic {
     //
     public final static int MAX_PLAYERS = 4;
     public final static int MAX_CARDS_PER_HAND = 5;
-    public final static int START_LIVES = 21;
 
     //----------------------------------------------------------------------------------------------
     //  Member Variables
     //
+    private int start_lives_;
+    private int difficulty_;
+
     private int multiplier_;
     private boolean game_over_;
     private boolean mulatschak_round_;
@@ -42,6 +44,7 @@ public class GameLogic {
     //
     public GameLogic() {
         multiplier_ = 1;
+        start_lives_ = GameController.NOT_SET;
         game_over_ = false;
         mulatschak_round_ = false;
 
@@ -202,7 +205,6 @@ public class GameLogic {
             int dp_card_value = dp.getCard(i).getId() % 100;
             if (dp_card_sym == MulatschakDeck.WELI) {
                 dp_card_sym = trump_;
-                highest_card_owner = i;
             }
             if (dp_card_sym == starting_card_symbol_ && highest_card_sym != trump_) {
                 if (dp_card_value > highest_card_value) {
@@ -308,5 +310,13 @@ public class GameLogic {
 
     public int getRoundWinnerId() {
         return round_winner_id_;
+    }
+
+    public int getStartLives() {
+        return start_lives_;
+    }
+
+    public void setStartLives(int start_lives) {
+        this.start_lives_ = start_lives;
     }
 }
