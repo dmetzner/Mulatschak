@@ -127,7 +127,7 @@ public class TrickBids {
         controller.getPlayerById(0).setMissATurn(false);
         number_buttons_.get(0).setEnabled(true);
         int player_id = 0;
-        controller.setNewMaxTrumphs(button_id, player_id);
+        controller.setNewMaxTrumps(button_id, player_id);
         controller.makeTrickBids();
     }
     

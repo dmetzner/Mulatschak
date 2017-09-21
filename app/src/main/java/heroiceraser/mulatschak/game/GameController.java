@@ -3,6 +3,8 @@ package heroiceraser.mulatschak.game;
 import android.os.Handler;
 import android.util.Log;
 
+import com.google.android.gms.games.multiplayer.Participant;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,7 +22,9 @@ import heroiceraser.mulatschak.game.DrawableObjects.GameStatistics;
 import heroiceraser.mulatschak.game.DrawableObjects.GameTricks;
 import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
 import heroiceraser.mulatschak.game.Animations.GameAnimation;
+import heroiceraser.mulatschak.game.DrawableObjects.PlayerInfo;
 import heroiceraser.mulatschak.game.DrawableObjects.RoundInfo;
+import heroiceraser.mulatschak.multi.Player2;
 
 
 /**
@@ -34,9 +38,12 @@ public class GameController{
     //----------------------------------------------------------------------------------------------
     //  Member Variables
     //
-    //----------------------------------------------------------------------------------------------
-    //  Member Variables
-    //
+    public boolean multiplayer_;
+    public ArrayList<Participant> participants_;
+    public Participant host_;
+    public String my_display_name_;
+    public String my_participant_id_;
+
     private GameView view_;
     private GameLayout layout_;
     private GameAnimation animations_;
@@ -49,6 +56,7 @@ public class GameController{
     private GameMenu menu_;
 
     private RoundInfo round_info_;
+    private PlayerInfo player_info_;
     private GameOver game_over_;
 
     private List<Player> player_list_;
@@ -61,11 +69,10 @@ public class GameController{
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
-    public GameController(GameView view, int players, int difficulty, int player_lives) {
+    public GameController(GameView view) {
         view_ = view;
 
         logic_ = new GameLogic();
-        logic_.setStartLives(player_lives);
         // logic set difficulty ToDO
         layout_ = new GameLayout();
         animations_ = new GameAnimation(view);
@@ -77,30 +84,64 @@ public class GameController{
         menu_ = new GameMenu();
 
         round_info_ = new RoundInfo();
+        player_info_ = new PlayerInfo();
         game_over_ = new GameOver();
 
         deck_ = new MulatschakDeck();
         trash_ = new CardStack();
         discardPile_ = new DiscardPile();
         player_list_ = new ArrayList<>();
-        for (int i = 0; i < players; i++) {
-            player_list_.add(new Player(i));
-        }
+
         dealer_button_ = new DealerButton();
     }
 
     //----------------------------------------------------------------------------------------------
     //  start
     //
-    public void start() {
-        init();
-        setPlayerLives();
+    public void start(int lives, int enemies, boolean multiplayer, String myName,
+                      ArrayList<Participant> participants, String my_id) {
+        multiplayer_ = multiplayer;
+
+        my_display_name_ = myName;
+        if (my_display_name_ == null) {
+            my_display_name_ = "notSignedIn";
+        }
+
+        // if singlePlayer -> == null
+        participants_ = participants;
+        if (participants != null) {
+            host_ = participants_.get(0);
+        }
+        my_participant_id_ = my_id;
+
+
+
+        logic_.init(lives); //  int players, int difficulty,
+        layout_.init(view_);
+
+        player_info_.init(view_);
+        initPlayers(my_id, enemies, participants);
+        resetPlayerLives();
         setPlayerPositions();
+        updatePlayerInfo();
+
+        deck_.initDeck(view_);
+        discardPile_.init(view_);
+        dealer_button_.init(view_);
+        animations_.init(view_);
+        button_bar_.init(view_);
+        statistics_.init(view_);
+        tricks_.init(view_);
+        menu_.init(view_);
+        round_info_.init(view_);
+        game_over_.init(view_);
+
         chooseFirstDealerRandomly();
         startRound();
     }
 
     public void startRound() {
+        player_info_.setVisible(true);
         round_info_.setVisible(true);
         round_info_.setInfoBoxEmpty();
         round_info_.updateNewRound(this);
@@ -118,7 +159,7 @@ public class GameController{
 
     public void continueAfterDealingAnimation() {
         discardPile_.setVisible(true);
-        Log.d("GameController", "Dealer is Player" + logic_.getDealer());
+        Log.d("GameController2", "Dealer is Player" + logic_.getDealer());
         boolean first_call = true;
         round_info_.setInfoBoxEmpty();
         round_info_.getTrickBidsTextField().setVisible(true);
@@ -165,8 +206,8 @@ public class GameController{
         round_info_.setInfoBoxEmpty();
         round_info_.updateRoundInfo(this);
         round_info_.getRoundInfoTextField().setVisible(true);
-        logic_.setTurn(logic_.getTrumphPlayerId());
-        logic_.setStartingPlayer(logic_.getTrumphPlayerId());
+        logic_.setTurn(logic_.getTrumpPlayerId());
+        logic_.setStartingPlayer(logic_.getTrumpPlayerId());
         boolean first_call = true;
         if (logic_.isMulatschakRound()) {
             continueAfterCardExchange();
@@ -182,32 +223,46 @@ public class GameController{
     }
 
 
+    private void initPlayers(String my_id, int enemies, ArrayList<Participant> participants) {
 
-    //----------------------------------------------------------------------------------------------
-    //  init:
-    //         initialises the game
-    //
-    private void init() {
-        layout_.init(view_);
-        deck_.initDeck(view_);
-        discardPile_.init(view_);
-        dealer_button_.init(view_);
-        animations_.init(view_);
-        button_bar_.init(view_);
-        statistics_.init(view_);
-        tricks_.init(view_);
-        menu_.init(view_);
-        round_info_.init(view_);
-        game_over_.init(view_);
+        if (multiplayer_) {
+            for (int i = 0; i < participants_.size(); i++) {
+                Player new_player = new Player(view_);
+                new_player.participant_ = participants_.get(i);
+                int player_id = 0;
+                if (participants_.get(i).getParticipantId().equals(my_participant_id_)) {
+                    player_id = 0;
+                }
+                else {
+                    player_id = i;
+                }
+                player_list_.add(player_id, new_player);
+            }
+
+            for (int i = 0; i < player_list_.size(); i++) {
+                player_list_.get(i).setId(i);
+            }
+        }
+
+        // simple Singleplayer
+        if (!multiplayer_) {
+            int players = enemies + 1;
+            for (int i = 0; i < players; i++) {
+                Player new_player = new Player(view_);
+                new_player.setId(i);
+                player_list_.add(new_player);
+            }
+        }
     }
+
 
     //----------------------------------------------------------------------------------------------
     //  setPlayer Lives
     //
-    private void setPlayerLives() {
+    private void resetPlayerLives() {
         for (int i = 0; i < getAmountOfPlayers(); i++) {
-            getPlayerById(i).setLives(logic_.getStartLives());
-            getPlayerById(i).setTrumphsToMake(NOT_SET);
+            getPlayerById(i).setLives(logic_.getStartLives()); ////////////////////////////////////////////////////////////////////////7
+            getPlayerById(i).setTricksToMake(NOT_SET);
         }
     }
 
@@ -224,7 +279,7 @@ public class GameController{
     }
 
     //----------------------------------------------------------------------------------------------
-    //  setPlayer Lives
+    //  setPlayer Position
     //
     private void setPlayerPositions() {
         switch (getAmountOfPlayers()) {
@@ -246,6 +301,12 @@ public class GameController{
                 getPlayerById(2).setPosition(layout_.POSITION_TOP);
                 getPlayerById(3).setPosition(layout_.POSITION_RIGHT);
                 break;
+        }
+    }
+
+    private void updatePlayerInfo() {
+        for (int i = 0; i < getAmountOfPlayers(); i++) {
+            player_info_.updateTextField(getPlayerById(i));
         }
     }
 
@@ -316,9 +377,9 @@ public class GameController{
     //
     private void resetTricksToMake() {
         for (int i = 0; i < getAmountOfPlayers(); i++) {
-            getPlayerById(i).setTrumphsToMake(NOT_SET);
+            getPlayerById(i).setTricksToMake(NOT_SET);
         }
-        logic_.setTrumphsToMake(NOT_SET);
+        logic_.setTricksToMake(NOT_SET);
         logic_.setTrump(NOT_SET);
     }
 
@@ -348,12 +409,12 @@ public class GameController{
         }
 
         if (getPlayerById(logic_.getTurn()).getMissATurn()) {
-            Log.d("GameController", "Player " +logic_.getTurn() + " is MISSING his turn");
+            Log.d("GameController2", "Player " +logic_.getTurn() + " is MISSING his turn");
             makeCardExchange();
             return;
         }
 
-        Log.d("GameController", "Player " +logic_.getTurn() + " is making his turn");
+        Log.d("GameController2", "Player " +logic_.getTurn() + " is making his turn");
 
         if (logic_.getTurn() == 0) {
             animations_.getCardExchange().setAnimationRunning(true);
@@ -379,7 +440,7 @@ public class GameController{
         turnToNextPlayer();
         round_info_.updateBids(view_);
 
-        if (logic_.getTrumphsToMake() == TrickBids.MULATSCHAK) {
+        if (logic_.getTricksToMake() == TrickBids.MULATSCHAK) {
             continueAfterTrickBids();
             return;
         }
@@ -389,7 +450,7 @@ public class GameController{
             return;         // stops the recursion after all players made their bids
         }
 
-        Log.d("GameController", "Player " +logic_.getTurn() + " is making his bids");
+        Log.d("GameController2", "Player " +logic_.getTurn() + " is making his bids");
         if (logic_.getTurn() == 0) {
             if (getPlayerById(0).getMissATurn()) {
                 animations_.getTrickBids().getNumberButtonAt(0).setEnabled(false);
@@ -420,8 +481,8 @@ public class GameController{
     private int checkHighestBid() {
         int highest_bid = 0;
         for (int id = 0; id < getAmountOfPlayers(); id++) {
-            if (getPlayerById(id).getTrumphsToMake() > highest_bid) {
-                highest_bid = getPlayerById(id).getTrumphsToMake();
+            if (getPlayerById(id).getTricksToMake() > highest_bid) {
+                highest_bid = getPlayerById(id).getTricksToMake();
             }
         }
         return highest_bid;
@@ -430,30 +491,30 @@ public class GameController{
     //----------------------------------------------------------------------------------------------
     //  cada
     //
-    public void setNewMaxTrumphs(int amount, int id) {
+    public void setNewMaxTrumps(int amount, int id) {
         CharSequence text = "player: " + id + " tries ";
 
         if (amount == TrickBids.MULATSCHAK) {
             logic_.setMulatschakRound(true);
-            logic_.setTrumphPlayerId(id);
-            logic_.setTrumphsToMake(TrickBids.MULATSCHAK);
-            getPlayerById(id).setTrumphsToMake(TrickBids.MULATSCHAK);
+            logic_.setTrumpPlayerId(id);
+            logic_.setTricksToMake(TrickBids.MULATSCHAK);
+            getPlayerById(id).setTricksToMake(TrickBids.MULATSCHAK);
             text = text + "Mulatschak";
         }
 
-        else if (amount > logic_.getTrumphsToMake()) {
+        else if (amount > logic_.getTricksToMake()) {
             List<Button> buttons = getAnimation().getTrickBids().getNumberButtons();
             // disable lower amount buttons, but button 0 is always clickable // miss a turn
             for (int i = 2; i <= (amount + 1); i++) {
                 buttons.get(i).setEnabled(false);
             }
-            getPlayerById(id).setTrumphsToMake(amount);
-            logic_.setTrumphsToMake(amount);
-            logic_.setTrumphPlayerId(id);
+            getPlayerById(id).setTricksToMake(amount);
+            logic_.setTricksToMake(amount);
+            logic_.setTrumpPlayerId(id);
             text = text + Integer.toString(amount);
         }
         else {
-            getPlayerById(id).setTrumphsToMake(0);
+            getPlayerById(id).setTricksToMake(0);
             text = text + "0";
         }
     }
@@ -462,18 +523,18 @@ public class GameController{
     //  cada
     //
     private void letHighestBidderChooseTrump() {
-        Log.d("GameController", "Player " + logic_.getTrumphPlayerId() + " chooses a trump");
+        Log.d("GameController2", "Player " + logic_.getTrumpPlayerId() + " chooses a trump");
         round_info_.updateChooseTrump(this);
 
-        if (logic_.getTrumphPlayerId() == 0) {
+        if (logic_.getTrumpPlayerId() == 0) {
             animations_.getTrickBids().setAnimationTrumps(true);
             view_.disableUpdateCanvasThread();
             // touch event should call continueAfterTrumpWasChoosen();
         }
-        else if (logic_.getTrumphPlayerId() != 0) {
+        else if (logic_.getTrumpPlayerId() != 0) {
             EnemyLogic el = new EnemyLogic();
             view_.enableUpdateCanvasThread();
-            el.chooseTrump(getPlayerById(logic_.getTrumphPlayerId()), logic_, view_);
+            el.chooseTrump(getPlayerById(logic_.getTrumpPlayerId()), logic_, view_);
             Handler mhandler = new Handler();
             Runnable codeToRun = new Runnable() {
                 @Override
@@ -595,13 +656,13 @@ public class GameController{
         }
 
         if (getPlayerById(logic_.getTurn()).getMissATurn()) {
-            Log.d("GameController", "Player " + logic_.getTurn() + " is MISSING his turn");
+            Log.d("GameController2", "Player " + logic_.getTurn() + " is MISSING his turn");
             turnToNextPlayer();
             nextTurn();
             return;
         }
 
-        Log.d("GameController", "Player " +logic_.getTurn() + " is playing his card");
+        Log.d("GameController2", "Player " +logic_.getTurn() + " is playing his card");
 
         if (logic_.getTurn() == 0) {
             animations_.getCardAnimations().setCardMoveable(true);
@@ -622,14 +683,14 @@ public class GameController{
 
         boolean mulatschak = false;
         if (logic_.isMulatschakRound()) {
-            if ((int) (getPlayerById(logic_.getTrumphPlayerId()).getTricks().getCardStack().size()
+            if ((int) (getPlayerById(logic_.getTrumpPlayerId()).getTricks().getCardStack().size()
                     / getAmountOfPlayers()) == GameLogic.MAX_CARDS_PER_HAND) {
                 mulatschak = true;
             }
             if (!mulatschak) {
                 for (int i = 0; i < getAmountOfPlayers(); i++) {
                     int add_lives = 0;
-                    if (logic_.getTrumphPlayerId() == i) {
+                    if (logic_.getTrumpPlayerId() == i) {
                         add_lives = 10 * logic_.getMultiplier();
                     }
                     else {
@@ -647,7 +708,7 @@ public class GameController{
             else if (mulatschak) {
                 for (int i = 0; i < getAmountOfPlayers(); i++) {
                     int add_lives = 0;
-                    if (logic_.getTrumphPlayerId() == i) {
+                    if (logic_.getTrumpPlayerId() == i) {
                         add_lives = -10 * logic_.getMultiplier();
                     }
                     else {
@@ -671,7 +732,7 @@ public class GameController{
             if (getPlayerById(i).getMissATurn()) {
                 add_lives = 2 * logic_.getMultiplier();
             }
-            else if (i == logic_.getTrumphPlayerId() && tricks < logic_.getTrumphsToMake()) {
+            else if (i == logic_.getTrumpPlayerId() && tricks < logic_.getTricksToMake()) {
                 add_lives = 10 * logic_.getMultiplier();
             }
             else if (tricks <= 0) {
@@ -743,4 +804,6 @@ public class GameController{
     public RoundInfo getRoundInfo() {
         return round_info_;
     }
+
+    public PlayerInfo getPlayerInfo() { return player_info_; }
 }

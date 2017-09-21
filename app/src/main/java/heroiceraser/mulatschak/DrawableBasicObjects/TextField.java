@@ -9,6 +9,7 @@ import android.graphics.RectF;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
+import android.view.View;
 
 import heroiceraser.mulatschak.game.GameView;
 
@@ -29,10 +30,10 @@ public class TextField extends DrawableObject{
         super();
     }
 
-    public void init(GameView view, String text, int width) {
-        init(view, text, width, false);
+    public void init(View view, String text, int width, int text_color) {
+        init(view, text, width, text_color, false, Color.TRANSPARENT);
     }
-    public void init(GameView view, String text, int width, boolean bg) {
+    public void init(View view, String text, int width, int text_color, boolean bg, int bg_color) {
         text_ = text;
         setWidth(width);
         bg_turned_on_ = bg;
@@ -40,10 +41,10 @@ public class TextField extends DrawableObject{
         text_paint_ = new TextPaint();
         text_paint_.setAntiAlias(true);
         text_paint_.setTextSize(20 * view.getResources().getDisplayMetrics().density);
-        text_paint_.setColor(Color.WHITE);
+        text_paint_.setColor(text_color);
 
         bg_paint_ = new Paint();
-        bg_paint_.setColor(Color.BLACK);
+        bg_paint_.setColor(bg_color);
 
         static_layout_ = new StaticLayout(text_, text_paint_, width,
                 Layout.Alignment.ALIGN_NORMAL, 1, 1, true);
@@ -53,7 +54,8 @@ public class TextField extends DrawableObject{
         setVisible(false);
     }
 
-    public void update(String text_, int max_height) {
+    public void update(String text, int max_height) {
+        text_ = text;
         static_layout_ = new StaticLayout(text_, text_paint_, getWidth(),
                 Layout.Alignment.ALIGN_NORMAL, 1, 1, true);
 

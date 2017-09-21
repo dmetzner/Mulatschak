@@ -37,24 +37,12 @@ public class GameView extends View {
     public GameView(Context context) {
         super(context);
         context_ = context;
-        int players = 4;
-        int difficulty = 2; // normal
-        int player_lives = 21;
-        controller_ = new GameController(this, players, difficulty, player_lives);
+        controller_ = new GameController(this);
         thread_ = new GameThread(this);
         thread_.setRunning(true);
         thread_.start();
     }
 
-    public GameView(Context context, int enemies, int difficulty, int player_lives) {
-        super(context);
-        context_ = context;
-        int players = enemies + 1;
-        controller_ = new GameController(this, players, difficulty, player_lives);
-        thread_ = new GameThread(this);
-        thread_.setRunning(true);
-        thread_.start();
-    }
 
     //----------------------------------------------------------------------------------------------
     // Getter & Setter
@@ -84,6 +72,8 @@ public class GameView extends View {
         drawButtonBar(canvas);
         drawBorder(canvas);
 
+        drawPlayerNames(canvas);
+
         thread_.now = System.currentTimeMillis();
         thread_.framesCount++;
         if (thread_.now - thread_.framesTimer > 1000) {
@@ -91,6 +81,10 @@ public class GameView extends View {
             thread_.framesCountAvg = thread_.framesCount;
             thread_.framesCount = 0;
         }
+    }
+
+    private void drawPlayerNames(Canvas canvas) {
+        controller_.getPlayerInfo().draw(canvas);
     }
 
     private void drawBorder(Canvas canvas) {

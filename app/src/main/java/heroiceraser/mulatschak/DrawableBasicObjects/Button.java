@@ -38,6 +38,10 @@ public class Button extends DrawableObject{
         bitmap_disabled_ = null;
     }
 
+    public void init(GameView view, Point position, Point size, String image_name) {
+        init(view, position, size.x, size.y, image_name);
+    }
+
     public void init(GameView view, Point position, int width, int height, String image_name) {
         setPosition(position);
         setWidth(width);

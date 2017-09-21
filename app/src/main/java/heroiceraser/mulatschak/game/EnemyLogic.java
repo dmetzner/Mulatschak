@@ -45,7 +45,7 @@ public class EnemyLogic {
             max--;
         }
 
-        controller.setNewMaxTrumphs(max, player.getId());
+        controller.setNewMaxTrumps(max, player.getId());
     }
 
 

@@ -1,4 +1,4 @@
-package heroiceraser.mulatschak.game;
+package heroiceraser.mulatschak.multi;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -6,25 +6,23 @@ import android.graphics.Point;
 
 import com.google.android.gms.games.multiplayer.Participant;
 
+import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.DrawableBasicObjects.TextField;
 import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
-import heroiceraser.mulatschak.multi.GameView2;
+import heroiceraser.mulatschak.game.GameController;
+import heroiceraser.mulatschak.game.GameView;
 
 /**
  * Created by Daniel Metzner on 10.08.2017.
  */
 
-public class Player {
-
+public class Player2 {
 
     //----------------------------------------------------------------------------------------------
     //  Member Variables
     //
     public Participant participant_;
-    private int id_;
-
-    private GameView view_;
-    private TextField textField_;
+    private GameView2 view_;
 
     private int position_;
     private int lives_;
@@ -37,7 +35,7 @@ public class Player {
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
-    public Player(GameView view) {
+    public Player2(GameView2 view) {
         view_ = view;
         position_ = GameController.NOT_SET;
         lives_ = GameController.NOT_SET;
@@ -45,37 +43,20 @@ public class Player {
         miss_a_turn_ = false;
         hand_ = new CardStack();
         tricks_ = new CardStack();
-        initTextField();
-    }
-
-    private void initTextField() {
-        textField_ = new TextField();
-        String text = "";
-        textField_.init(view_, text,
-                (int)(view_.getController().getLayout().getScreenWidth() * (8.0 / 10.0)),
-                Color.GREEN);
-
-        if (participant_ != null) {
-            text = participant_.getDisplayName();
-        }
-        else if (id_ == 0) {
-            text = "Not signed in";
-        }
-        else {
-            text = "enemie_bot" + id_;
-        }
-        textField_.update(text, 500);
     }
 
     public void draw(Canvas canvas, Point pos) {
-        textField_.draw(canvas, pos);
+        TextField textField = new TextField();
+        String text = participant_.getDisplayName();
+        textField.init(view_, text, 300, Color.GREEN);
+        textField.draw(canvas, pos);
     }
 
     public int getAmountOfTricks(GameController controller) {
         int amount = tricks_.getCardStack().size();
         int players = controller.getAmountOfPlayers();
         for (int i = 0; i < controller.getAmountOfPlayers(); i++) {
-            if (miss_a_turn_) {
+            if (controller.getPlayerById(i).getMissATurn()) {
                 players--;
             }
         }
@@ -113,20 +94,11 @@ public class Player {
     public int getLives() { return lives_; }
     public void setLives(int lives) { lives_ = lives; }
 
-    public int getTricksToMake() { return tricks_to_make_; }
+    public int getTrickToMake() { return tricks_to_make_; }
     public void setTricksToMake(int trumphs_to_make) { tricks_to_make_ = trumphs_to_make; }
 
     public CardStack getTricks() {
         return tricks_;
     }
 
-    public void setId(int id) {
-        this.id_ = id;
-    }
-
-    public int getId() {
-        return id_;
-    }
-
 }
-

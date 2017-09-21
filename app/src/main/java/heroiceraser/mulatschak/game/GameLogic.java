@@ -1,5 +1,9 @@
 package heroiceraser.mulatschak.game;
 
+import com.google.android.gms.games.multiplayer.Participant;
+
+import java.util.ArrayList;
+
 import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
 import heroiceraser.mulatschak.game.DrawableObjects.DiscardPile;
@@ -20,6 +24,7 @@ public class GameLogic {
     //----------------------------------------------------------------------------------------------
     //  Member Variables
     //
+
     private int start_lives_;
     private int difficulty_;
 
@@ -36,15 +41,16 @@ public class GameLogic {
     private int trump_;
 
     private int trump_player_id_;
-    private int trumps_to_make_;
+    private int tricks_to_make_;
 
 
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
     public GameLogic() {
-        multiplier_ = 1;
+        multiplier_ = GameController.NOT_SET;
         start_lives_ = GameController.NOT_SET;
+
         game_over_ = false;
         mulatschak_round_ = false;
 
@@ -55,9 +61,18 @@ public class GameLogic {
         starting_card_symbol_ = GameController.NOT_SET;
         trump_ = GameController.NOT_SET;
         trump_player_id_ = GameController.NOT_SET;
-        trumps_to_make_ = GameController.NOT_SET;
+        tricks_to_make_ = GameController.NOT_SET;
 
     }
+
+    public void init(int lives) {
+        multiplier_ = 1;
+        start_lives_ = lives;
+        game_over_ = false;
+        mulatschak_round_ = false;
+    }
+
+
 
     public void moveDealer(int players) {
         dealer_++;
@@ -254,12 +269,12 @@ public class GameLogic {
 
     public int getTrump() { return trump_; }
 
-    public int getTrumphPlayerId() { return  trump_player_id_; }
+    public int getTrumpPlayerId() { return  trump_player_id_; }
 
-    public void setTrumphPlayerId(int trumph_player_id) { trump_player_id_ = trumph_player_id; }
+    public void setTrumpPlayerId(int trumph_player_id) { trump_player_id_ = trumph_player_id; }
 
-    public void setTrumphsToMake(int trumphs) {
-        trumps_to_make_ = trumphs;
+    public void setTricksToMake(int tricks) {
+        tricks_to_make_ = tricks;
     }
 
     public void setStartingCard(int starting_card_symbol_) {
@@ -270,7 +285,7 @@ public class GameLogic {
         return starting_card_symbol_;
     }
 
-    public int getTrumphsToMake() { return trumps_to_make_; }
+    public int getTricksToMake() { return tricks_to_make_; }
 
     public void setTrump(int trump){
         trump_ = trump;

@@ -3,36 +3,23 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <!-- :::::::::::::::::::: Back Button :::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <Button
         android:id="@+id/single_player_settings_back_button"
-        android:layout_width="51dp"
-        android:layout_height="wrap_content"
-        android:background="@android:drawable/ic_menu_revert"
-        android:backgroundTint="@color/common_google_signin_btn_text_dark_focused"
-        android:elevation="0dp" />
+        style="@style/BackButton" />
 
     <!-- :::::::::::::::::::: Title :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <LinearLayout
         android:id="@+id/single_player_settings_linearLayout_title"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_gravity="bottom"
-        android:orientation="vertical"
-        android:padding="30dp"
+        style="@style/SettingsTitleLayout"
         android:layout_below="@+id/single_player_settings_back_button">
 
         <TextView
-            android:id="@+id/singleplayer_settings_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="@string/single_player_settings_title"
-            android:textSize="33dp" />
-
+            android:id="@+id/single_player_settings_title"
+            style="@style/SettingsTitleText"
+            android:text="@string/single_player_settings_title"/>
     </LinearLayout>
 
     <!-- :::::::::::::::::::: Settings ::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->

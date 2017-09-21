@@ -1,11 +1,17 @@
 package heroiceraser.mulatschak.game;
 
 
+import android.content.Context;
 import android.graphics.Point;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.PopupWindow;
 
 import java.util.List;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.Button;
+import heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
 
@@ -81,6 +87,16 @@ public class TouchEvents {
 
         //------------------------
 
+
+        // ------------------ Player Info ----------------------------------------------------------
+
+        // Player Info Buttons
+        ButtonActionDown(X, Y, controller.getPlayerInfo().getButtonLeft());
+        ButtonActionDown(X, Y, controller.getPlayerInfo().getButtonTop());
+        ButtonActionDown(X, Y, controller.getPlayerInfo().getButtonRight());
+
+        //------------------------
+
         //------------------- Card Exchange --------------------------------------------------------
 
         if (controller.getAnimation().getCardExchange().isAnimationRunning()) {
@@ -148,6 +164,15 @@ public class TouchEvents {
 
         //------------------------
 
+        // ------------------ Player Info ----------------------------------------------------------
+
+        // Player Info Buttons
+        ButtonActionMove(X, Y, controller.getPlayerInfo().getButtonLeft());
+        ButtonActionMove(X, Y, controller.getPlayerInfo().getButtonTop());
+        ButtonActionMove(X, Y, controller.getPlayerInfo().getButtonRight());
+
+        //------------------------
+
         //------------------- Card Exchange --------------------------------------------------------
 
         if (controller.getAnimation().getCardExchange().isAnimationRunning()) {
@@ -208,6 +233,26 @@ public class TouchEvents {
 
         //------------------------
 
+        // ------------------ Player Info ----------------------------------------------------------
+
+        // Player Info Buttons
+        if (ButtonActionUp(X, Y, controller.getPlayerInfo().getButtonLeft())) {
+
+        }
+        else if (ButtonActionUp(X, Y, controller.getPlayerInfo().getButtonTop())) {
+            LayoutInflater layoutInflater =
+                    (LayoutInflater) controller.getView().getContext()
+                            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = layoutInflater.inflate(R.layout.player_info_popup, null);
+            // ToDo read about popUp + create those 3 pop ups in the player info cass
+            PopupWindow popup = new PopupWindow(view, 300, 300, true);
+            popup.showAtLocation(controller.getView(), Gravity.LEFT, 0, 0);
+        }
+        else if (ButtonActionUp(X, Y, controller.getPlayerInfo().getButtonRight())) {
+
+        }
+
+        //------------------------
         //------------------- Trick Bids -----------------------------------------------------------
 
         if (controller.getAnimation().getTrickBids().getAnimationNumbers()) {

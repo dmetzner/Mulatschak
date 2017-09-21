@@ -1,4 +1,4 @@
-package heroiceraser.mulatschak.game;
+package heroiceraser.mulatschak.multi;
 
 import android.graphics.Point;
 import android.util.Log;
@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import heroiceraser.mulatschak.game.Animations.TrickBids;
+import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.helpers.DisplayDimension;
 
 /**
@@ -33,7 +34,7 @@ import heroiceraser.mulatschak.helpers.DisplayDimension;
 //-----MENU---TRICKS---GAMESTATUS-------|     1/8 size                 Sector 7
 //--------------------------------------|---------------------------
 
-public class GameLayout {
+public class GameLayout2 {
 
     //-- Screen Dimension
     private Point screen_size_;
@@ -41,7 +42,7 @@ public class GameLayout {
     // subdivide layout in 8 sector
     private final int SECTORS = 8;
     private List<Point> sectors_;
-    
+
     //-- Card Size
     private Point card_size_;
 
@@ -56,10 +57,10 @@ public class GameLayout {
     private List<Point> discard_pile_positions_;
 
     //-- Player Hands
-    public static final int POSITION_BOTTOM = 0;
-    public static final int POSITION_LEFT = 1;
-    public static final int POSITION_TOP = 2;
-    public static final int POSITION_RIGHT = 3;
+    final int POSITION_BOTTOM = 0;
+    final int POSITION_LEFT = 1;
+    final int POSITION_TOP = 2;
+    final int POSITION_RIGHT = 3;
     private Point hand_bottom_;
     private Point hand_left_;
     private Point hand_top_;
@@ -71,12 +72,6 @@ public class GameLayout {
     private Point dealer_button_left_;
     private Point dealer_button_top_;
     private Point dealer_button_right_;
-
-    //-- Player Info
-    private Point player_info_left_pos_;
-    private Point player_info_top_pos_;
-    private Point player_info_right_pos_;
-    private Point player_info_size_;
 
 
     //---- RoundInfo -> Sector 0,1 --------------
@@ -92,6 +87,7 @@ public class GameLayout {
     private Point button_bar_button_position_right_;
     private Point button_bar_button_position_middle_;
     private Point button_bar_button_position_left_;
+
 
     //---- Animations ---------------------------
     //-- Trick Bids
@@ -110,20 +106,19 @@ public class GameLayout {
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
-    public GameLayout() {
+    public GameLayout2() {
         sectors_ = new ArrayList<>();
     }
 
     //----------------------------------------------------------------------------------------------
     //  Init
     //
-    public void init(GameView view) {
+    public void init(GameView2 view) {
         calculateDimensions(view);
         calculateSectors();
         calculateCardSize();
         initGamePlayLayout();
         initRoundInfoLayout();
-        initPlayerInfoLayout();
         initButtonBarLayout();
         initAnimationLayout();
     }
@@ -131,7 +126,7 @@ public class GameLayout {
     //----------------------------------------------------------------------------------------------
     //  calculateDimensions()
     //
-    private void calculateDimensions(GameView view) {
+    private void calculateDimensions(GameView2 view) {
         screen_size_ = new Point();
         screen_size_.x = DisplayDimension.getWidth(view);
         screen_size_.y = DisplayDimension.getHeight(view);
@@ -325,6 +320,7 @@ public class GameLayout {
 
 
     private void initDealerButtonPositions() {
+
         dealer_button_bottom_ = new Point(hand_bottom_.x - (int) (card_size_.x / 3.0),
                 hand_bottom_.y - dealer_button_size_.y);
 
@@ -336,23 +332,6 @@ public class GameLayout {
 
         dealer_button_right_ = new Point(screen_size_.x - dealer_button_size_.x,
                 hand_right_.y + (int) (dealerButtonOffset(POSITION_RIGHT) * 1.1) );
-    }
-
-    private void initPlayerInfoLayout() {
-        int size = (int)(card_size_.y * (5.0/6.0));
-        player_info_size_ = new Point(size, size);
-
-        int offset = (int)(card_size_.y / 5.0);
-
-        player_info_left_pos_ = new Point(offset,
-                hand_left_.y + (int) (1.1 * player_info_size_.y));
-
-        player_info_top_pos_ = new Point(hand_top_.x - player_info_size_.x,
-                sectors_.get(2).y + (int) (offset * (2.0/3.0)));
-
-        player_info_right_pos_ = new Point(screen_size_.x - (player_info_size_.x + offset),
-                hand_right_.y - player_info_size_.y);
-
     }
 
     //-----------------------
@@ -566,21 +545,5 @@ public class GameLayout {
 
     public List<Point> getSectors() {
         return sectors_;
-    }
-
-    public Point getPlayerInfoSize() {
-        return player_info_size_;
-    }
-
-    public Point getPlayerInfoLeftPos() {
-        return player_info_left_pos_;
-    }
-
-    public Point getPlayerInfoTopPos() {
-        return player_info_top_pos_;
-    }
-
-    public Point getPlayerInfoRightPos() {
-        return player_info_right_pos_;
     }
 }
