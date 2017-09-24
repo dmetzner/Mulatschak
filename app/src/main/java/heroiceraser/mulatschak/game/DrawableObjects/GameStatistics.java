@@ -7,7 +7,7 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 
-import heroiceraser.mulatschak.DrawableBasicObjects.Button;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.game.DrawableObjects.ButtonBar;
 import heroiceraser.mulatschak.game.GameController;

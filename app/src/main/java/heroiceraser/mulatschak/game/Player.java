@@ -3,6 +3,7 @@ package heroiceraser.mulatschak.game;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.util.Log;
 
 import com.google.android.gms.games.multiplayer.Participant;
 
@@ -22,6 +23,7 @@ public class Player {
     //
     public Participant participant_;
     private int id_;
+    private String display_name_;
 
     private GameView view_;
     private TextField textField_;
@@ -79,7 +81,13 @@ public class Player {
                 players--;
             }
         }
-        amount /= players;
+        if (players != 0) {
+            amount /= players;
+        }
+        else {
+            Log.d("Player", "0 Players?");
+        }
+
         return amount;
     }
 
@@ -126,6 +134,14 @@ public class Player {
 
     public int getId() {
         return id_;
+    }
+
+    public void setDisplayName(String display_name) {
+        this.display_name_ = display_name;
+    }
+
+    public String getDisplayName() {
+        return display_name_;
     }
 
 }

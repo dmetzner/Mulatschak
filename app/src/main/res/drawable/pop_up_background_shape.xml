@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <stroke android:width="@dimen/player_info_pop_up_bg_stroke_strength"
+        android:color="@color/black" />
+
+    <gradient android:startColor="#271871" android:endColor="#6282e9"
+        android:angle="90"/>
+
+    <corners android:bottomRightRadius="@dimen/player_info_pop_up_bg_shape_radius"
+        android:bottomLeftRadius="@dimen/player_info_pop_up_bg_shape_radius"
+        android:topLeftRadius="@dimen/player_info_pop_up_bg_shape_radius"
+        android:topRightRadius="@dimen/player_info_pop_up_bg_shape_radius"
+    />
+
+</shape>

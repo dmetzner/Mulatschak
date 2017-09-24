@@ -14,8 +14,9 @@ import android.text.TextPaint;
 import java.util.ArrayList;
 import java.util.List;
 
-import heroiceraser.mulatschak.DrawableBasicObjects.Button;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.HelpText;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
 import heroiceraser.mulatschak.game.GameController;
@@ -29,7 +30,7 @@ public class CardExchange {
 
     private boolean animation_running_;
     private HelpText help_text_;
-    private List<Button> exchange_buttons_;
+    private List<MyButton> exchange_buttons_;
     private int active_buttons_;
 
 
@@ -54,7 +55,7 @@ public class CardExchange {
         width =  view.getController().getLayout().getCardExchangeButtonSize().x;
         int height =  view.getController().getLayout().getCardExchangeButtonSize().y;
         for (int i = 0; i < 6; i++) {
-            Button button = new Button();
+            MyButton button = new MyButton();
             int id = i;
             if (i == 4) {
                 id = i + 1;
@@ -139,7 +140,7 @@ public class CardExchange {
         return help_text_;
     }
 
-    public Button getButton() {
+    public MyButton getButton() {
         if (active_buttons_ < 0) {
             active_buttons_ = 0;
         }

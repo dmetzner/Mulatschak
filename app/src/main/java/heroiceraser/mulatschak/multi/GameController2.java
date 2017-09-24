@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import heroiceraser.mulatschak.DrawableBasicObjects.Button;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.game.Animations.GameAnimation;
 import heroiceraser.mulatschak.game.Animations.TrickBids;
 import heroiceraser.mulatschak.game.DrawableObjects.ButtonBar;

@@ -16,7 +16,7 @@ import heroiceraser.mulatschak.helpers.HelperFunctions;
 //      2 more states ->  enabled, pressed
 //      for both exist different bitmaps
 //
-public class Button extends DrawableObject{
+public class MyButton extends DrawableObject{
 
     //----------------------------------------------------------------------------------------------
     // Member Variables
@@ -30,7 +30,7 @@ public class Button extends DrawableObject{
     //----------------------------------------------------------------------------------------------
     // Constructor
     //
-    public Button() {
+    public MyButton() {
         super();
         enabled_ = true;
         pressed_= false;

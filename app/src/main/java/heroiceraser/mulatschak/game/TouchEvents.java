@@ -10,7 +10,7 @@ import android.widget.PopupWindow;
 
 import java.util.List;
 
-import heroiceraser.mulatschak.DrawableBasicObjects.Button;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
@@ -119,14 +119,14 @@ public class TouchEvents {
 
         //  Buttons to make Trick Bids
         if (controller.getAnimation().getTrickBids().getAnimationNumbers()) {
-            List<Button> buttons = controller.getAnimation().getTrickBids().getNumberButtons();
+            List<MyButton> buttons = controller.getAnimation().getTrickBids().getNumberButtons();
             for (int i = 0; i < buttons.size(); i++) {
                 ButtonActionDown(X, Y, buttons.get(i));
             }
         }
         // Buttons to choose the trump of the round
         else if (controller.getAnimation().getTrickBids().getAnimationSymbols()) {
-            List<Button> buttons = controller.getAnimation().getTrickBids().getTrumpButtons();
+            List<MyButton> buttons = controller.getAnimation().getTrickBids().getTrumpButtons();
             for (int i = 0; i < buttons.size(); i++) {
                 ButtonActionDown(X, Y, buttons.get(i));
             }
@@ -184,7 +184,7 @@ public class TouchEvents {
         //------------------- Trick Bids -----------------------------------------------------------
 
         if (controller.getAnimation().getTrickBids().getAnimationNumbers()) {
-            List<Button> buttons = controller.getAnimation().getTrickBids().getNumberButtons();
+            List<MyButton> buttons = controller.getAnimation().getTrickBids().getNumberButtons();
             for (int i = 0; i < buttons.size(); i++) {
                 if (controller.getAnimation().getTrickBids().getAnimationNumbers()) {
                     ButtonActionMove(X, Y, buttons.get(i));
@@ -192,7 +192,7 @@ public class TouchEvents {
             }
         }
         else if (controller.getAnimation().getTrickBids().getAnimationSymbols()) {
-            List<Button> buttons = controller.getAnimation().getTrickBids().getTrumpButtons();
+            List<MyButton> buttons = controller.getAnimation().getTrickBids().getTrumpButtons();
             for (int i = 0; i < buttons.size(); i++) {
                 if (controller.getAnimation().getTrickBids().getAnimationSymbols()) {
                     ButtonActionMove(X, Y, buttons.get(i));
@@ -237,26 +237,20 @@ public class TouchEvents {
 
         // Player Info Buttons
         if (ButtonActionUp(X, Y, controller.getPlayerInfo().getButtonLeft())) {
-
+            controller.getPlayerInfo().popUpInfoLeft();
         }
         else if (ButtonActionUp(X, Y, controller.getPlayerInfo().getButtonTop())) {
-            LayoutInflater layoutInflater =
-                    (LayoutInflater) controller.getView().getContext()
-                            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View view = layoutInflater.inflate(R.layout.player_info_popup, null);
-            // ToDo read about popUp + create those 3 pop ups in the player info cass
-            PopupWindow popup = new PopupWindow(view, 300, 300, true);
-            popup.showAtLocation(controller.getView(), Gravity.LEFT, 0, 0);
+            controller.getPlayerInfo().popUpInfoTop();
         }
         else if (ButtonActionUp(X, Y, controller.getPlayerInfo().getButtonRight())) {
-
+            controller.getPlayerInfo().popUpInfoRight();
         }
 
         //------------------------
         //------------------- Trick Bids -----------------------------------------------------------
 
         if (controller.getAnimation().getTrickBids().getAnimationNumbers()) {
-            List<Button> buttons = controller.getAnimation().getTrickBids().getNumberButtons();
+            List<MyButton> buttons = controller.getAnimation().getTrickBids().getNumberButtons();
             for (int button_id = 0; button_id < buttons.size(); button_id++) {
                 if (ButtonActionUp(X, Y, buttons.get(button_id))) {
                     controller.getAnimation().getTrickBids().setTricks(controller, button_id);
@@ -264,7 +258,7 @@ public class TouchEvents {
             }
         }
         else if (controller.getAnimation().getTrickBids().getAnimationSymbols()) {
-            List<Button> buttons = controller.getAnimation().getTrickBids().getTrumpButtons();
+            List<MyButton> buttons = controller.getAnimation().getTrickBids().getTrumpButtons();
             for (int i = 0; i < buttons.size(); i++) {
                 if (ButtonActionUp(X, Y, buttons.get(i))) {
                     controller.getAnimation().getTrickBids().setTrump(controller, i);
@@ -328,7 +322,7 @@ public class TouchEvents {
     //----------------------------------------------------------------------------------------------
     // Button Actions
     //
-    private void ButtonActionDown(int X, int Y, Button button) {
+    private void ButtonActionDown(int X, int Y, MyButton button) {
         if (button.isVisible() && button.IsEnabled() &&
                 X >= button.getPosition().x && X < button.getPosition().x + button.getWidth() &&
                 Y >= button.getPosition().y && Y < button.getPosition().y + button.getHeight()) {
@@ -336,7 +330,7 @@ public class TouchEvents {
         }
     }
 
-    private void ButtonActionMove(int X, int Y, Button button) {
+    private void ButtonActionMove(int X, int Y, MyButton button) {
         if (button.isVisible() && button.IsEnabled() && button.IsPressed()) {
             if ( X >= button.getPosition().x && X < button.getPosition().x + button.getWidth() &&
                     Y >= button.getPosition().y && Y < button.getPosition().y + button.getHeight()) {
@@ -348,7 +342,7 @@ public class TouchEvents {
         }
     }
 
-    private boolean ButtonActionUp(int X, int Y, Button button) {
+    private boolean ButtonActionUp(int X, int Y, MyButton button) {
         if (button.isVisible() && button.IsEnabled() && button.IsPressed()) {
             if (X >= button.getPosition().x && X < button.getPosition().x + button.getWidth() &&
                     Y >= button.getPosition().y && Y < button.getPosition().y + button.getHeight()) {

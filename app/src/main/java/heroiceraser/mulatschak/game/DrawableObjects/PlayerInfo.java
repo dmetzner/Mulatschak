@@ -1,77 +1,96 @@
 package heroiceraser.mulatschak.game.DrawableObjects;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.Rect;
+import android.util.Log;
+import android.view.Gravity;
+import android.widget.PopupWindow;
 
-import java.util.ArrayList;
-
-import heroiceraser.mulatschak.DrawableBasicObjects.Button;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
-import heroiceraser.mulatschak.DrawableBasicObjects.TextField;
 import heroiceraser.mulatschak.R;
+import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.game.Player;
+import heroiceraser.mulatschak.game.PlayerInfoPopUpView;
 
 /**
  * Created by Daniel Metzner on 20.09.2017.
  */
 
-public class PlayerInfo extends DrawableObject {
+public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Listener{
 
     private GameView view_;
 
-    private Button button_left_;
-    private Button button_top_;
-    private Button button_right_;
+    private MyButton button_left_;
+    private MyButton button_top_;
+    private MyButton button_right_;
 
-    private TextField player_bottom_;
-    private TextField player_left_;
-    private TextField player_top_;
-    private TextField player_right_;
+    private int pop_up_width_;
+    private int pop_up_height_;
+    private PopupWindow pop_up_top_;
+    private PlayerInfoPopUpView pop_up_top_view_;
+    private PopupWindow pop_up_left_;
+    private PlayerInfoPopUpView pop_up_left_view_;
+    private PopupWindow pop_up_right_;
+    private PlayerInfoPopUpView pop_up_right_view_;
+
+
 
     public PlayerInfo() {
         super();
         setVisible(false);
 
-        button_left_ = new Button();
-        button_right_ = new Button();
-        button_top_ = new Button();
+        button_left_ = new MyButton();
+        button_right_ = new MyButton();
+        button_top_ = new MyButton();
 
-        player_bottom_ = new TextField();
-        player_left_ = new TextField();
-        player_top_ = new TextField();
-        player_right_ = new TextField();
     }
 
     public void init(GameView view) {
         view_ = view;
-        setVisible(true);
-
         GameLayout layout = view.getController().getLayout();
 
+        setWidth(layout.getPlayerInfoSize().x);
+        setHeight(layout.getPlayerInfoSize().y);
+
         button_left_.init(view, layout.getPlayerInfoLeftPos(),
-                layout.getPlayerInfoSize(), "player_info_bg");
+                layout.getPlayerInfoSize(), "lil_robo");
 
         button_top_.init(view, layout.getPlayerInfoTopPos(),
-                layout.getPlayerInfoSize(), "player_info_bg");
+                layout.getPlayerInfoSize(), "lil_robo");
 
         button_right_.init(view, layout.getPlayerInfoRightPos(),
-                layout.getPlayerInfoSize(), "player_info_bg");
+                layout.getPlayerInfoSize(), "lil_robo");
 
+        setPopDimensions();
+        pop_up_left_ = makePopupWindow(pop_up_left_view_, GameLayout.POSITION_LEFT);
+        pop_up_top_ = makePopupWindow(pop_up_top_view_, GameLayout.POSITION_TOP);
+        pop_up_right_ = makePopupWindow(pop_up_right_view_, GameLayout.POSITION_RIGHT);
 
-        int max_size = view.getController().getLayout().getScreenWidth() / 2;
-        int color = Color.GREEN;
-        player_bottom_.init(view, "", max_size, color);
-        player_left_.init(view, "", max_size, color);
-        player_top_.init(view, "", max_size, color);
-        player_right_.init(view, "", max_size, color);
+        setVisible(true);
+
     }
 
-    public void updateTextField(Player player) {
+    private void setPopDimensions() {
+        pop_up_width_ = (int) view_.getResources()
+                .getDimension(R.dimen.player_info_pop_up_width);
+        pop_up_height_ = (int) view_.getResources()
+                .getDimension(R.dimen.player_info_pop_up_height);
+    }
+
+    private PopupWindow makePopupWindow(PlayerInfoPopUpView view, int pos) {
+        view = new PlayerInfoPopUpView(view_.getContext());
+        view.setListener(this);
+        Player p = view_.getController().getPlayerByPosition(pos);
+        setDisplayName(p);
+        String top_display_name = p.getDisplayName();
+        view.init(top_display_name);
+        return new PopupWindow(view, pop_up_width_, pop_up_height_, true);
+    }
+
+    public void setDisplayName(Player player) {
 
         String text = "";
 
@@ -82,54 +101,55 @@ public class PlayerInfo extends DrawableObject {
             text = view_.getController().my_display_name_;
         }
         else {
-            text = "enemie_bot" + player.getId();
+            text = "Muli Bot " + player.getId();
         }
-
-        switch (player.getPosition()) {
-            case 0:
-                player_bottom_.update(text, 500);
-                player_bottom_.setVisible(true);
-                break;
-            case 1:
-                player_left_.update(text, 500);
-                player_left_.setVisible(true);
-                break;
-            case 2:
-                player_top_.update(text, 500);
-                player_top_.setVisible(true);
-                break;
-            case 3:
-                player_right_.update(text, 500);
-                player_right_.setVisible(true);
-                break;
-        }
+        player.setDisplayName(text);
     }
 
     public void draw(Canvas canvas) {
         if (isVisible()) {
-
             button_left_.draw(canvas);
             button_top_.draw(canvas);
             button_right_.draw(canvas);
-
-            // player_bottom_.draw(canvas, view_.getController().getLayout().getHandBottom());
-            // player_left_.draw(canvas,  view_.getController().getLayout().getHandLeft());
-            // player_top_.draw(canvas,  view_.getController().getLayout().getHandTop());
-            // player_right_.draw(canvas,  view_.getController().getLayout().getHandRight());
-
         }
     }
 
-    public Button getButtonLeft() {
+    public MyButton getButtonLeft() {
         return button_left_;
     }
 
-    public Button getButtonTop() {
+    public MyButton getButtonTop() {
         return button_top_;
     }
 
-    public Button getButtonRight() {
+    public MyButton getButtonRight() {
         return button_right_;
+    }
+
+    public void popUpInfoLeft() {
+        Point pos = view_.getController().getLayout().getPlayerInfoLeftPos();
+        pop_up_left_.showAtLocation(view_, Gravity.NO_GRAVITY,
+                pos.x, pos.y - (int) (pop_up_height_ / 3.0) + (getHeight() / 2));
+    }
+    public void popUpInfoTop() {
+        Point pos = view_.getController().getLayout().getPlayerInfoTopPos();
+        pop_up_top_.showAtLocation(view_, Gravity.NO_GRAVITY,
+                pos.x - (int) (pop_up_width_ / 3.0) + (getWidth() / 2), pos.y);
+
+    }
+    public void popUpInfoRight() {
+        Point pos = view_.getController().getLayout().getPlayerInfoRightPos();
+        pop_up_right_.showAtLocation(view_, Gravity.NO_GRAVITY,
+                pos.x  - pop_up_width_ + getWidth(),
+                pos.y);
+
+    }
+
+    @Override
+    public void onBackButtonRequested() {
+        pop_up_top_.dismiss();
+        pop_up_left_.dismiss();
+        pop_up_right_.dismiss();
     }
 
 }

@@ -14,7 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 
-import heroiceraser.mulatschak.DrawableBasicObjects.Button;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.game.DrawableObjects.ButtonBar;
 
 /**
@@ -59,6 +59,7 @@ public class GameView extends View {
     protected synchronized void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        drawPlayerInfo(canvas);
         drawHandCards(canvas);
         drawDiscardPile(canvas);
         drawDealerButton(canvas);
@@ -72,8 +73,6 @@ public class GameView extends View {
         drawButtonBar(canvas);
         drawBorder(canvas);
 
-        drawPlayerNames(canvas);
-
         thread_.now = System.currentTimeMillis();
         thread_.framesCount++;
         if (thread_.now - thread_.framesTimer > 1000) {
@@ -83,7 +82,7 @@ public class GameView extends View {
         }
     }
 
-    private void drawPlayerNames(Canvas canvas) {
+    private void drawPlayerInfo(Canvas canvas) {
         controller_.getPlayerInfo().draw(canvas);
     }
 
@@ -229,7 +228,7 @@ public class GameView extends View {
         } else if (controller_.getAnimation().getTrickBids().getAnimationNumbers()) {
             int amount_of_buttons = controller_.getAnimation().getTrickBids().getNumberButtons().size();
             for (int button_id = 0; button_id < amount_of_buttons; button_id++) {
-                Button button = controller_.getAnimation().getTrickBids().getNumberButtonAt(button_id);
+                MyButton button = controller_.getAnimation().getTrickBids().getNumberButtonAt(button_id);
                 Bitmap bitmap = button.getBitmap();
                 if (button.IsPressed()) {
                     bitmap = button.getBitmapPressed();
@@ -242,7 +241,7 @@ public class GameView extends View {
         } else if (controller_.getAnimation().getTrickBids().getAnimationSymbols()) {
             int amount_of_buttons = controller_.getAnimation().getTrickBids().getTrumpButtons().size();
             for (int button_id = 0; button_id < amount_of_buttons; button_id++) {
-                Button button = controller_.getAnimation().getTrickBids().getTrumpButtonAt(button_id);
+                MyButton button = controller_.getAnimation().getTrickBids().getTrumpButtonAt(button_id);
                 Bitmap bitmap = button.getBitmap();
                 if (button.IsPressed()) {
                     bitmap = button.getBitmapPressed();

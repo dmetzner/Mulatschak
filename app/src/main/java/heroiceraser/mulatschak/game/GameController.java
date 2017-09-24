@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import heroiceraser.mulatschak.DrawableBasicObjects.Button;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.game.Animations.TrickBids;
 import heroiceraser.mulatschak.game.DrawableObjects.ButtonBar;
 import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
@@ -98,8 +98,7 @@ public class GameController{
     //----------------------------------------------------------------------------------------------
     //  start
     //
-    public void start(int lives, int enemies, boolean multiplayer, String myName,
-                      ArrayList<Participant> participants, String my_id) {
+    public void start(int lives, int enemies, boolean multiplayer, String myName, String my_id) {
         multiplayer_ = multiplayer;
 
         my_display_name_ = myName;
@@ -108,22 +107,15 @@ public class GameController{
         }
 
         // if singlePlayer -> == null
-        participants_ = participants;
-        if (participants != null) {
-            host_ = participants_.get(0);
-        }
         my_participant_id_ = my_id;
-
-
 
         logic_.init(lives); //  int players, int difficulty,
         layout_.init(view_);
 
-        player_info_.init(view_);
-        initPlayers(my_id, enemies, participants);
+        initPlayers(my_id, enemies);
         resetPlayerLives();
         setPlayerPositions();
-        updatePlayerInfo();
+        player_info_.init(view_);
 
         deck_.initDeck(view_);
         discardPile_.init(view_);
@@ -223,17 +215,14 @@ public class GameController{
     }
 
 
-    private void initPlayers(String my_id, int enemies, ArrayList<Participant> participants) {
+    private void initPlayers(String my_id, int enemies) {
 
         if (multiplayer_) {
             for (int i = 0; i < participants_.size(); i++) {
                 Player new_player = new Player(view_);
                 new_player.participant_ = participants_.get(i);
                 int player_id = 0;
-                if (participants_.get(i).getParticipantId().equals(my_participant_id_)) {
-                    player_id = 0;
-                }
-                else {
+                {
                     player_id = i;
                 }
                 player_list_.add(player_id, new_player);
@@ -267,12 +256,12 @@ public class GameController{
     }
 
     private void reEnableButtons() {
-        List<Button> buttons = getAnimation().getTrickBids().getNumberButtons();
+        List<MyButton> buttons = getAnimation().getTrickBids().getNumberButtons();
         for (int i = 0; i < buttons.size(); i++) {
             buttons.get(i).setEnabled(true);
         }
 
-        List<Button> buttons_sym = getAnimation().getTrickBids().getTrumpButtons();
+        List<MyButton> buttons_sym = getAnimation().getTrickBids().getTrumpButtons();
         for (int i = 0; i < buttons_sym.size(); i++) {
             buttons_sym.get(i).setEnabled(true);
         }
@@ -306,7 +295,7 @@ public class GameController{
 
     private void updatePlayerInfo() {
         for (int i = 0; i < getAmountOfPlayers(); i++) {
-            player_info_.updateTextField(getPlayerById(i));
+            player_info_.setDisplayName(getPlayerById(i));
         }
     }
 
@@ -503,7 +492,7 @@ public class GameController{
         }
 
         else if (amount > logic_.getTricksToMake()) {
-            List<Button> buttons = getAnimation().getTrickBids().getNumberButtons();
+            List<MyButton> buttons = getAnimation().getTrickBids().getNumberButtons();
             // disable lower amount buttons, but button 0 is always clickable // miss a turn
             for (int i = 2; i <= (amount + 1); i++) {
                 buttons.get(i).setEnabled(false);
@@ -774,6 +763,16 @@ public class GameController{
     public List<Player> getPlayerList() { return player_list_; }
 
     public Player getPlayerById(int id) { return player_list_.get(id); }
+
+    public Player getPlayerByPosition(int pos) {
+        for (int i = 0; i < getAmountOfPlayers(); i++) {
+            if (pos == getPlayerById(i).getPosition()) {
+                return getPlayerById(i);
+            }
+        }
+        Log.d("GameController", "getPlayerByPosition: wrong pos!");
+        return getPlayerByPosition(0);
+    }
 
     public int getAmountOfPlayers() { return player_list_.size(); }
 

@@ -5,7 +5,7 @@ import android.graphics.Point;
 import java.util.ArrayList;
 import java.util.List;
 
-import heroiceraser.mulatschak.DrawableBasicObjects.Button;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
@@ -32,8 +32,8 @@ public class TrickBids {
 
     private boolean animating_numbers_;
     private boolean animating_trumps_;
-    private List<Button> number_buttons_;
-    private List<Button> trump_buttons;
+    private List<MyButton> number_buttons_;
+    private List<MyButton> trump_buttons;
 
     public TrickBids() {
         animating_numbers_ = false;
@@ -55,7 +55,7 @@ public class TrickBids {
         int max_buttons_per_row = 4;
         int button_per_row = 0;
         for (int button_id = MISS_A_TURN; button_id <= MULATSCHAK; button_id++) {
-            Button button = new Button();
+            MyButton button = new MyButton();
             int width = view.getController().getLayout().getTrickBidsNumberButtonSize().x;
             int height = view.getController().getLayout().getTrickBidsNumberButtonSize().y;
 
@@ -91,7 +91,7 @@ public class TrickBids {
         String image_name = "trick_bids_button_trump_";
         GameLayout layout = view.getController().getLayout();
         for (int id = 1; id < MulatschakDeck.CARD_SUITS; id++) { // start at 1, no Joker
-            Button button = new Button();
+            MyButton button = new MyButton();
             int width = layout.getTrickBidsTrumpButtonSize().x;
             int height = layout.getTrickBidsTrumpButtonSize().y;
             button.init(view, new Point(), width, height, image_name + id);
@@ -154,22 +154,22 @@ public class TrickBids {
         animating_trumps_ = animating;
     }
 
-    public List<Button> getNumberButtons() {
+    public List<MyButton> getNumberButtons() {
         return number_buttons_;
     }
 
-    public List<Button> getTrumpButtons() {
+    public List<MyButton> getTrumpButtons() {
         return trump_buttons;
     }
 
-    public Button getNumberButtonAt(int pos) {
+    public MyButton getNumberButtonAt(int pos) {
         if (pos < number_buttons_.size()) {
             return number_buttons_.get(pos);
         }
         return null;
     }
 
-    public Button getTrumpButtonAt(int pos) {
+    public MyButton getTrumpButtonAt(int pos) {
         if (pos < trump_buttons.size()) {
             return trump_buttons.get(pos);
         }

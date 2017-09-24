@@ -4,7 +4,7 @@ package heroiceraser.mulatschak.game.DrawableObjects;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 
-import heroiceraser.mulatschak.DrawableBasicObjects.Button;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
@@ -18,9 +18,9 @@ public class ButtonBar extends DrawableObject {
     private Bitmap border_down_;
     private Bitmap border_up_;
     private Bitmap decoration_;
-    private Button statistics_button_;
-    private Button tricks_button_;
-    private Button menu_button_;
+    private MyButton statistics_button_;
+    private MyButton tricks_button_;
+    private MyButton menu_button_;
 
     public ButtonBar() {
         super();
@@ -45,7 +45,7 @@ public class ButtonBar extends DrawableObject {
     }
 
     private void initStatisticButton(GameView view) {
-        statistics_button_ = new Button();
+        statistics_button_ = new MyButton();
         Point position = view.getController().getLayout().getButtonBarButtonPositionRight();
         int width = view.getController().getLayout().getButtonBarBigButtonWidth();
         int height = view.getController().getLayout().getButtonBarBigButtonHeight();
@@ -54,7 +54,7 @@ public class ButtonBar extends DrawableObject {
     }
 
     private void initTricksButton(GameView view) {
-        tricks_button_ = new Button();
+        tricks_button_ = new MyButton();
         Point position = view.getController().getLayout().getButtonBarButtonPositionMiddle();
         int width = view.getController().getLayout().getButtonBarBigButtonWidth();
         int height = view.getController().getLayout().getButtonBarBigButtonHeight();
@@ -63,7 +63,7 @@ public class ButtonBar extends DrawableObject {
     }
 
     private void initMenuButton(GameView view) {
-        menu_button_ = new Button();
+        menu_button_ = new MyButton();
         Point position = view.getController().getLayout().getButtonBarButtonPositionLeft();
         int width = view.getController().getLayout().getButtonBarSmallButtonWidth();
         int height = view.getController().getLayout().getButtonBarSmallButtonHeight();
@@ -73,15 +73,15 @@ public class ButtonBar extends DrawableObject {
 
     public Bitmap getDecoration() { return decoration_; }
 
-    public Button getStatisticsButton() {
+    public MyButton getStatisticsButton() {
         return statistics_button_;
     }
 
-    public Button getTricksButton() {
+    public MyButton getTricksButton() {
         return tricks_button_;
     }
 
-    public Button getMenuButton() {
+    public MyButton getMenuButton() {
         return menu_button_;
     }
 

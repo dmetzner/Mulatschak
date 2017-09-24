@@ -30,14 +30,13 @@ public class GameActivity extends AppCompatActivity {
 
         // multiplayer Extras
         String my_id = getIntent().getStringExtra("myId");
-        ArrayList<Participant> participants = (ArrayList) getIntent().getSerializableExtra("participants");
 
         GameView gameView = new GameView(this);
         gameView.setKeepScreenOn(true);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(gameView);
         gameView.getController().start(player_lives, enemies, multiplayer,
-                myName, participants, my_id);
+                myName, my_id);
     }
 
     @Override

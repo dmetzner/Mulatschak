@@ -119,7 +119,6 @@ public class SinglePlayerFragment extends Fragment implements View.OnClickListen
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.single_player_settings_start_button:
-                prepareSinglePlayerRequested();
                 mListener.onSinglePlayerRequested();
                 break;
             case R.id.single_player_settings_back_button:

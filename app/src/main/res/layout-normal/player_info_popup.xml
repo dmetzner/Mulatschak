@@ -1,31 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@android:color/background_light">
+    android:background="@color/white"
+    android:weightSum="1">
+
+
+    <!-- pop up size -->
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_margin="1dp"
-        android:background="@color/colorPrimary">
-        >
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_margin="20dp">
-            <TextView
-                android:id="@+id/ColorTV"
-                android:layout_width="fill_parent"
+        android:layout_width="@dimen/player_info_pop_up_width"
+        android:layout_height="@dimen/player_info_pop_up_height"
+        android:orientation="vertical">
+
+        <!-- pop up border color -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/pop_up_background_shape">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Insert Text here" />
+                android:background="@drawable/player_info_pop_up_title_bar"
+                android:id="@+id/relativeLayout3">
+
             <Button
-                android:id="@+id/dismissbtn"
-                android:layout_width="fill_parent"
+                android:id="@+id/player_info_pop_up_back_button"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:background="@android:drawable/ic_delete" />
+
+            <TextView
+                android:id="@+id/player_info_pop_up_title"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Dismiss" />
-        </LinearLayout>
-    </LinearLayout>
+                android:text="@string/player_info_title_bar_name"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:shadowDx="0.0"
+                android:shadowDy="0"
+                android:shadowRadius="3"
+                android:shadowColor="@color/black"
+                android:layout_marginLeft="56dp"
+                android:layout_marginStart="56dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/relativeLayout"
+                android:layout_width="150dp"
+                android:layout_height="100dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginStart="14dp"
+                android:layout_marginTop="7dp"
+                android:layout_below="@+id/relativeLayout3"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true">
+
+                <TextView
+                    android:id="@+id/player_info_pop_up_display_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Player Name"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="37dp"
+                    android:text="..."
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="65dp"
+                android:layout_height="100dp"
+                android:layout_alignTop="@+id/relativeLayout"
+                android:layout_marginLeft="10dp"
+                android:layout_toEndOf="@+id/relativeLayout"
+                android:layout_toRightOf="@+id/relativeLayout">
+
+                <ImageView
+                    android:id="@+id/imageView4"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:srcCompat="@drawable/lil_robo" />
+
+            </RelativeLayout>
+
+
+        </RelativeLayout> <!-- border -->
+
+    </LinearLayout> <!-- size -->
+
 </LinearLayout>

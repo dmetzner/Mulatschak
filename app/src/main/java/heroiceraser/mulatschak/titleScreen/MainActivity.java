@@ -13,8 +13,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,6 +69,8 @@ public class MainActivity extends AppCompatActivity implements
     SinglePlayerFragment mSinglePlayerFragment;
     MultiPlayerFragment mMultiPlayerFragment;
     LoadingScreenFragment mLoadingScreenFragment;
+    GameScreenFragment mGameScreenFragment;
+    GameView mGameView;
 
     // tag for debug logging
     final boolean ENABLE_DEBUG = true;
@@ -139,6 +143,8 @@ public class MainActivity extends AppCompatActivity implements
         mSinglePlayerFragment =     new SinglePlayerFragment();
         mMultiPlayerFragment =      new MultiPlayerFragment();
         mLoadingScreenFragment =    new LoadingScreenFragment();
+        mGameScreenFragment =       new GameScreenFragment();
+
 
         // listen to fragment events
         mStartScreenFragment.setListener(this);
@@ -156,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements
     //----------------------------------------------------------------------------------------------
     // Switch UI to the given fragment
     //
-    void switchToFragment(Fragment newFrag, String id) {
+    public void switchToFragment(Fragment newFrag, String id) {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, newFrag, id)
                 .commit();
     }
@@ -461,6 +467,24 @@ public class MainActivity extends AppCompatActivity implements
         if (active_frag != null && active_frag.getTag().equals("mSinglePlayerFragment")) {
             onStartMenuRequested();
         }
+        else if (active_frag != null && active_frag.getTag().equals("mGameScreenFragment")) {
+            new AlertDialog.Builder(this)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle(getString(R.string.app_name) + " schließen?")
+                    .setCancelable(true)
+                    .setMessage("Bist du sicher dass du dieses Spiel beenden möchtest?")
+                    .setPositiveButton("Ja", new DialogInterface.OnClickListener(){
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ViewGroup viewHolder = (ViewGroup) mGameView.getParent();
+                            viewHolder.removeView(mGameView);
+                            onStartMenuRequested();
+                        }
+                    })
+                    .setNegativeButton("Nein", null)
+                    .show();
+        }
+
         else {
             new AlertDialog.Builder(this)
                     .setIcon(android.R.drawable.ic_dialog_alert)
@@ -484,8 +508,17 @@ public class MainActivity extends AppCompatActivity implements
     //
     @Override
     public void onSinglePlayerRequested() {
-        boolean multiplayer = false;
-        startGame(multiplayer);
+        switchToFragment(mLoadingScreenFragment, "mLoadingScreenFragment");
+        Handler mHandler = new Handler();
+        Runnable showLoadingScreenThenContinue = new Runnable() {
+            @Override
+            public void run() {
+                mSinglePlayerFragment.prepareSinglePlayerRequested();
+                boolean multiplayer = false;
+                startGame(multiplayer);
+            }
+        };
+        mHandler.postDelayed(showLoadingScreenThenContinue, 100);
     }
 
 
@@ -867,7 +900,7 @@ public class MainActivity extends AppCompatActivity implements
         //updateScoreDisplay();
         broadcastScore(false);
 
-        Intent gameIntent = new Intent(this, GameActivity.class);
+/*
 
         // are we playing multiplayer?
         gameIntent.putExtra("multiplayer", mMultiplayer);
@@ -889,10 +922,15 @@ public class MainActivity extends AppCompatActivity implements
         if (multiplayer) {
             gameIntent.putExtra("myId", mMyId);
             gameIntent.putExtra("participants", mParticipants);
-        }
-
-        this.startActivity(gameIntent);
-        switchToFragment(mLoadingScreenFragment, "mLoadingScreenFragment");
+        }*/
+        mGameView = new GameView(this);
+        mGameView.setKeepScreenOn(true);
+        //setContentView(gameView);
+        mGameView.getController().start(21,  mSinglePlayerFragment.getEnemies(), mMultiplayer,
+                "Test",  mMyId);
+        switchToFragment(mGameScreenFragment, "mGameScreenFragment");
+        addContentView(mGameView,  new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT));
     }
 
 
