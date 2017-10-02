@@ -6,10 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
+import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
 import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
+import heroiceraser.mulatschak.game.Player;
 
 /**
  * Created by Daniel Metzner on 19.08.2017.
@@ -116,6 +118,7 @@ public class TrickBids {
         button_id--;  // because of miss a turn button
         if (button_id == MISS_A_TURN) {
             controller.getPlayerById(0).setMissATurn(true);
+            clearHand(controller);
             controller.makeTrickBids();
             return;
         }
@@ -129,6 +132,18 @@ public class TrickBids {
         int player_id = 0;
         controller.setNewMaxTrumps(button_id, player_id);
         controller.makeTrickBids();
+    }
+
+    private void clearHand(GameController controller) {
+        // all hand cards to the deck
+        CardStack hand = controller.getPlayerById(0).getHand();
+        for (int i = 0; i < hand.getCardStack().size(); i++) {
+            hand.getCardAt(i).setPosition(controller.getLayout().getDeckPosition());
+            hand.getCardAt(i).setFixedPosition(controller.getLayout().getDeckPosition());
+            controller.getDeck().addCard(hand.getCardAt(i));
+            hand.getCardStack().remove(i);
+            i--;
+        }
     }
     
     public void setTrump(GameController controller, int button_id) {

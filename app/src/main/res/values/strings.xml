@@ -39,11 +39,22 @@
 
     <string name="single_player_settings_start_button">Spiel Starten</string>
 
-    <!-- :::::::::::::::::::: MultiPlayer Settings :::::::::::::::::::::::::::::::::::::::::::: -->
+    <!-- :::::::::::::::::::: MultiPlayer Settings ::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="multi_player_settings_title">MultiPlayer</string>
 
     <string name="multi_player_settings_quick_game_button">Schnelles Spiel</string>
     <string name="multi_player_settings_invite_button">Freunde einladen</string>
     <string name="multi_player_settings_invitations_button">Einladungen ansehen</string>
+
+    <!-- :::::::::::::::::::: Button Bar Windows ::::::::::::::::::::::::::::::::::::::::::::::: -->
+
+    <!-- :::::::::::::::::::: Menu ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+    <string name="button_bar_menu_title">Menu</string>
+
+    <!-- :::::::::::::::::::: Menu ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+    <string name="button_bar_tricks_title">Stiche</string>
+
+    <!-- :::::::::::::::::::: State of the game :::::::::::::::::::::::::::::::::::::::::::::::: -->
+    <string name="button_bar_state_of_the_game_title">Spielstand</string>
 
 </resources>

@@ -1,4 +1,4 @@
-package heroiceraser.mulatschak.titleScreen;
+package heroiceraser.mulatschak.Fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -21,7 +21,7 @@ public class MultiPlayerFragment extends Fragment implements View.OnClickListene
         void onStartMenuRequested();
     }
 
-    heroiceraser.mulatschak.titleScreen.MultiPlayerFragment.Listener mListener = null;
+    heroiceraser.mulatschak.Fragments.MultiPlayerFragment.Listener mListener = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,7 +44,7 @@ public class MultiPlayerFragment extends Fragment implements View.OnClickListene
         return v;
     }
 
-    public void setListener(heroiceraser.mulatschak.titleScreen.MultiPlayerFragment.Listener l) {
+    public void setListener(heroiceraser.mulatschak.Fragments.MultiPlayerFragment.Listener l) {
         mListener = l;
     }
 

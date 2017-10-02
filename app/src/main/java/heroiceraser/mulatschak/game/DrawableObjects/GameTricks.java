@@ -1,6 +1,14 @@
 package heroiceraser.mulatschak.game.DrawableObjects;
 
+import android.graphics.Canvas;
+import android.graphics.Point;
+import android.text.Layout;
+
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
+import heroiceraser.mulatschak.DrawableBasicObjects.MySimpleTextField;
+import heroiceraser.mulatschak.R;
+import heroiceraser.mulatschak.game.ButtonBarWindowTitle;
+import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
@@ -9,17 +17,39 @@ import heroiceraser.mulatschak.helpers.HelperFunctions;
  * Created by Daniel Metzner on 27.08.2017.
  */
 
-public class GameTricks extends DrawableObject{
+public class GameTricks extends DrawableObject {
+
+    private ButtonBarWindowTitle title_;
 
     public GameTricks() {
         super();
+        title_ = new ButtonBarWindowTitle();
     }
 
     public void init(GameView view) {
         GameLayout layout = view.getController().getLayout();
-        setPosition(0, 0);
-        setHeight(layout.getScreenHeight() - layout.getButtonBarHeight());
-        setWidth(layout.getScreenWidth());
+
+        // background
+        setPosition(layout.getButtonBarWindowPosition());
+        setWidth(layout.getButtonBarWindowSize().x);
+        setHeight(layout.getButtonBarWindowSize().y);
         setBitmap(HelperFunctions.loadBitmap(view, "statistics_background", getWidth(), getHeight()));
+
+        // title
+        String title_text = view.getResources().getString(R.string.button_bar_tricks_title);
+        title_.init(view.getController(), title_text);
+
     }
+
+    public void draw(Canvas canvas) {
+        if (isVisible()) {
+            // background
+            canvas.drawBitmap(getBitmap(), getPosition().x, getPosition().y, null);
+
+            // title
+            title_.draw(canvas);
+        }
+
+    }
+
 }

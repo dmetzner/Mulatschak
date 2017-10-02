@@ -1,4 +1,4 @@
-package heroiceraser.mulatschak.titleScreen;
+package heroiceraser.mulatschak.Fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

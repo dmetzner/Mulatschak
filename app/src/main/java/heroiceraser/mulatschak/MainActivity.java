@@ -1,4 +1,4 @@
-package heroiceraser.mulatschak.titleScreen;
+package heroiceraser.mulatschak;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,13 +11,10 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -45,10 +42,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import heroiceraser.mulatschak.R;
-import heroiceraser.mulatschak.game.GameActivity;
+import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.multi.GameActivity2;
+import heroiceraser.mulatschak.Fragments.GameScreenFragment;
+import heroiceraser.mulatschak.Fragments.LoadingScreenFragment;
+import heroiceraser.mulatschak.Fragments.MultiPlayerFragment;
+import heroiceraser.mulatschak.Fragments.SinglePlayerFragment;
+import heroiceraser.mulatschak.Fragments.StartScreenFragment;
 
 public class MainActivity extends AppCompatActivity implements
         // StartScreen  -> Single/Multi Player, Sign in/out, Achievements, Leaderboards
@@ -75,6 +75,9 @@ public class MainActivity extends AppCompatActivity implements
     // tag for debug logging
     final boolean ENABLE_DEBUG = true;
     final String TAG = "MainActivity";
+
+    // bool if an actual game is active
+    private boolean game_running_;
 
     // request codes we use when invoking an external activity
     private static final int RC_RESOLVE = 5000;
@@ -128,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        game_running_ = false;
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.main_activity);
 
@@ -215,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements
     protected void onResume() {
         super.onResume();
         Fragment frag = getVisibleFragment();
-        if (frag != null && frag.equals(mLoadingScreenFragment)) {
+        if (frag != null && frag.equals(mGameScreenFragment) && game_running_) {
             onStartMenuRequested();
         }
     }
@@ -479,6 +483,7 @@ public class MainActivity extends AppCompatActivity implements
                             ViewGroup viewHolder = (ViewGroup) mGameView.getParent();
                             viewHolder.removeView(mGameView);
                             onStartMenuRequested();
+                            game_running_ = false;
                         }
                     })
                     .setNegativeButton("Nein", null)
@@ -528,22 +533,44 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onMultiPlayerQuickGameRequested() {
         // user wants to play against a random opponent right now
-        startQuickGame();
+        switchToFragment(mLoadingScreenFragment, "mLoadingScreenFragment");
+        Handler mHandler = new Handler();
+        Runnable showLoadingScreenThenContinue = new Runnable() {
+            @Override
+            public void run() {
+                startQuickGame();
+            }
+        };
+        mHandler.postDelayed(showLoadingScreenThenContinue, 10);
     }
 
     @Override
     public void onMultiPlayerInvitePlayersRequested() {
-        Intent intent = Games.RealTimeMultiplayer.getSelectOpponentsIntent(mGoogleApiClient, 1, 3);
         switchToFragment(mLoadingScreenFragment, "mLoadingScreenFragment");
-        startActivityForResult(intent, RC_SELECT_PLAYERS);
+        Handler mHandler = new Handler();
+        Runnable showLoadingScreenThenContinue = new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = Games.RealTimeMultiplayer.getSelectOpponentsIntent(mGoogleApiClient, 1, 3);
+                startActivityForResult(intent, RC_SELECT_PLAYERS);
+            }
+        };
+        mHandler.postDelayed(showLoadingScreenThenContinue, 10);
     }
 
     @Override
     public void onMultiPlayerSeeInvitationsRequested() {
         // show list of pending invitations
-        Intent intent = Games.Invitations.getInvitationInboxIntent(mGoogleApiClient);
         switchToFragment(mLoadingScreenFragment, "mLoadingScreenFragment");
-        startActivityForResult(intent, RC_INVITATION_INBOX);
+        Handler mHandler = new Handler();
+        Runnable showLoadingScreenThenContinue = new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = Games.Invitations.getInvitationInboxIntent(mGoogleApiClient);
+                startActivityForResult(intent, RC_INVITATION_INBOX);
+            }
+        };
+        mHandler.postDelayed(showLoadingScreenThenContinue, 10);
     }
 
     @Override
@@ -560,7 +587,6 @@ public class MainActivity extends AppCompatActivity implements
         rtmConfigBuilder.setMessageReceivedListener(this);
         rtmConfigBuilder.setRoomStatusUpdateListener(this);
         rtmConfigBuilder.setAutoMatchCriteria(autoMatchCriteria);
-        switchToFragment(mLoadingScreenFragment, "mLoadingScreenFragment");
         keepScreenOn();
         resetGameVars();
         Games.RealTimeMultiplayer.create(mGoogleApiClient, rtmConfigBuilder.build());
@@ -900,37 +926,51 @@ public class MainActivity extends AppCompatActivity implements
         //updateScoreDisplay();
         broadcastScore(false);
 
-/*
+        //---- get/set all game starting parameters
 
-        // are we playing multiplayer?
-        gameIntent.putExtra("multiplayer", mMultiplayer);
+        int player_lives = GameLogic.DEFAULT_PLAYER_START_LIVES;
+        int difficulty = GameLogic.DIFFICULTY_NORMAL;
+        int enemies = 0;
 
-        // singleplayer -> retrieve and send settings to game activity
-        if (!multiplayer) {
-            gameIntent.putExtra("enemies", mSinglePlayerFragment.getEnemies());
-            gameIntent.putExtra("difficulty", mSinglePlayerFragment.getDifficulty());
-            gameIntent.putExtra("player_lives", mSinglePlayerFragment.getPlayerLives());
+        if (!multiplayer) { // singleplayer
+            player_lives = mSinglePlayerFragment.getPlayerLives();
+            difficulty = mSinglePlayerFragment.getDifficulty();
+            enemies = mSinglePlayerFragment.getEnemies();
         }
 
-        // display Name if signed in
+        String my_name = null;
         if (isSignedIn()) {
-            String myName = Games.Players.getCurrentPlayer(mGoogleApiClient).getDisplayName();
-            gameIntent.putExtra("myName", myName);
+            my_name = Games.Players.getCurrentPlayer(mGoogleApiClient).getDisplayName();
         }
 
-        // room id's
         if (multiplayer) {
-            gameIntent.putExtra("myId", mMyId);
-            gameIntent.putExtra("participants", mParticipants);
-        }*/
+            // may enable setting
+        }
+
+        //  create the Game View
         mGameView = new GameView(this);
         mGameView.setKeepScreenOn(true);
-        //setContentView(gameView);
-        mGameView.getController().start(21,  mSinglePlayerFragment.getEnemies(), mMultiplayer,
-                "Test",  mMyId);
         switchToFragment(mGameScreenFragment, "mGameScreenFragment");
-        addContentView(mGameView,  new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT));
+
+        // start the game via the game controller of our game view
+        final int player_lives_final = player_lives;
+        final int enemies_final = enemies;
+        final int difficulty_final = difficulty;
+        final String my_name_final = my_name;
+
+        Handler mHandler = new Handler();
+        Runnable showGameScreenThenContinue = new Runnable() {
+            @Override
+            public void run() {
+                addContentView(mGameView,  new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
+                        FrameLayout.LayoutParams.WRAP_CONTENT));
+                game_running_ = true;
+                mGameView.getController().start(player_lives_final, enemies_final, difficulty_final,
+                        mMultiplayer, my_name_final,  mMyId, mParticipants);
+            }
+        };
+        mHandler.postDelayed(showGameScreenThenContinue, 10);
+
     }
 
 

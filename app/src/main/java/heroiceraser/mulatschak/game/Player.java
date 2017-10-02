@@ -9,14 +9,12 @@ import com.google.android.gms.games.multiplayer.Participant;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.TextField;
 import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
-import heroiceraser.mulatschak.multi.GameView2;
 
 /**
  * Created by Daniel Metzner on 10.08.2017.
  */
 
 public class Player {
-
 
     //----------------------------------------------------------------------------------------------
     //  Member Variables

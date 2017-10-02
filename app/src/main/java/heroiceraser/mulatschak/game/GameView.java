@@ -59,17 +59,23 @@ public class GameView extends View {
     protected synchronized void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        if (controller_ == null || !controller_.isDrawingEnabled()) {
+            return;
+        }
+
         drawPlayerInfo(canvas);
         drawHandCards(canvas);
         drawDiscardPile(canvas);
         drawDealerButton(canvas);
         drawAnimations(canvas);
 
-        drawGameOver(canvas);
         drawRoundInfo(canvas);
         drawStatistics(canvas);
         drawTricks(canvas);
         drawMenu(canvas);
+
+        drawGameOver(canvas);
+
         drawButtonBar(canvas);
         drawBorder(canvas);
 
@@ -264,22 +270,14 @@ public class GameView extends View {
     // drawTricks
     //
     private void drawTricks(Canvas canvas) {
-        if (controller_.getTricks().isVisible()) {
-            canvas.drawBitmap(controller_.getTricks().getBitmap(),
-                    controller_.getTricks().getPosition().x,
-                    controller_.getTricks().getPosition().y, null);
-        }
+        controller_.getTricks().draw(canvas);
     }
 
     //----------------------------------------------------------------------------------------------
     // drawMenu
     //
     private void drawMenu(Canvas canvas) {
-        if (controller_.getMenu().isVisible()) {
-            canvas.drawBitmap(controller_.getMenu().getBitmap(),
-                    controller_.getMenu().getPosition().x,
-                    controller_.getMenu().getPosition().y, null);
-        }
+        controller_.getMenu().draw(canvas);
     }
 
     //----------------------------------------------------------------------------------------------

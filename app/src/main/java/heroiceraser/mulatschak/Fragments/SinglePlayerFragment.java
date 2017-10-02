@@ -1,4 +1,4 @@
-package heroiceraser.mulatschak.titleScreen;
+package heroiceraser.mulatschak.Fragments;
 
 /**
  * Created by Daniel Metzner on 15.09.2017.
@@ -8,14 +8,10 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.gms.games.Game;
 
 import heroiceraser.mulatschak.R;
 
@@ -30,7 +26,7 @@ public class SinglePlayerFragment extends Fragment implements View.OnClickListen
         void onStartMenuRequested();
     }
 
-    heroiceraser.mulatschak.titleScreen.SinglePlayerFragment.Listener mListener = null;
+    heroiceraser.mulatschak.Fragments.SinglePlayerFragment.Listener mListener = null;
 
     private final int NOT_SET = -1;
     private int player_lives = NOT_SET;
@@ -106,7 +102,7 @@ public class SinglePlayerFragment extends Fragment implements View.OnClickListen
         return v;
     }
 
-    public void setListener(heroiceraser.mulatschak.titleScreen.SinglePlayerFragment.Listener l) {
+    public void setListener(heroiceraser.mulatschak.Fragments.SinglePlayerFragment.Listener l) {
         mListener = l;
     }
 

@@ -24,7 +24,6 @@ import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
 import heroiceraser.mulatschak.game.Animations.GameAnimation;
 import heroiceraser.mulatschak.game.DrawableObjects.PlayerInfo;
 import heroiceraser.mulatschak.game.DrawableObjects.RoundInfo;
-import heroiceraser.mulatschak.multi.Player2;
 
 
 /**
@@ -38,6 +37,8 @@ public class GameController{
     //----------------------------------------------------------------------------------------------
     //  Member Variables
     //
+    private boolean enable_drawing_;
+
     public boolean multiplayer_;
     public ArrayList<Participant> participants_;
     public Participant host_;
@@ -71,6 +72,7 @@ public class GameController{
     //
     public GameController(GameView view) {
         view_ = view;
+        enable_drawing_ = false;
 
         logic_ = new GameLogic();
         // logic set difficulty ToDO
@@ -93,13 +95,16 @@ public class GameController{
         player_list_ = new ArrayList<>();
 
         dealer_button_ = new DealerButton();
+
     }
 
     //----------------------------------------------------------------------------------------------
     //  start
     //
-    public void start(int lives, int enemies, boolean multiplayer, String myName, String my_id) {
+    public void start(int lives, final int enemies, final int difficulty, boolean multiplayer,
+                      final String myName, String my_id, ArrayList<Participant> participants) {
         multiplayer_ = multiplayer;
+        int start_lives = lives;
 
         my_display_name_ = myName;
         if (my_display_name_ == null) {
@@ -108,8 +113,12 @@ public class GameController{
 
         // if singlePlayer -> == null
         my_participant_id_ = my_id;
+        participants_ = participants;
+        if (participants != null && participants.size() > 0) {
+            host_ = participants.get(0);
+        }
 
-        logic_.init(lives); //  int players, int difficulty,
+        logic_.init(start_lives); //  int players, int difficulty,
         layout_.init(view_);
 
         initPlayers(my_id, enemies);
@@ -128,6 +137,7 @@ public class GameController{
         round_info_.init(view_);
         game_over_.init(view_);
 
+        enable_drawing_ = true;
         chooseFirstDealerRandomly();
         startRound();
     }
@@ -221,16 +231,10 @@ public class GameController{
             for (int i = 0; i < participants_.size(); i++) {
                 Player new_player = new Player(view_);
                 new_player.participant_ = participants_.get(i);
-                int player_id = 0;
-                {
-                    player_id = i;
-                }
+                int player_id = i;
                 player_list_.add(player_id, new_player);
             }
 
-            for (int i = 0; i < player_list_.size(); i++) {
-                player_list_.get(i).setId(i);
-            }
         }
 
         // simple Singleplayer
@@ -242,6 +246,31 @@ public class GameController{
                 player_list_.add(new_player);
             }
         }
+
+        for (int i = 0; i < player_list_.size(); i++) {
+            setDisplayName(getPlayerById(i));
+        }
+    }
+
+    public void setDisplayName(Player player) {
+
+        String text = "";
+
+        if (player.participant_ != null) {
+            text = player.participant_.getDisplayName();
+        }
+        else if (player.getId() == 0) {
+            text = view_.getController().my_display_name_;
+        }
+        else {
+            text = "Muli Bot " + player.getId();
+        }
+        if (text.length() > 15) {
+            text = text.substring(0, 15);
+        }
+
+        Log.d("PlayerInfo", "Player " + player.getId() + " -> " + text);
+        player.setDisplayName(text);
     }
 
 
@@ -258,7 +287,12 @@ public class GameController{
     private void reEnableButtons() {
         List<MyButton> buttons = getAnimation().getTrickBids().getNumberButtons();
         for (int i = 0; i < buttons.size(); i++) {
-            buttons.get(i).setEnabled(true);
+            if (getAmountOfPlayers() <= 2 && i == 0) {
+                buttons.get(i).setEnabled(false);
+            }
+            else {
+                buttons.get(i).setEnabled(true);
+            }
         }
 
         List<MyButton> buttons_sym = getAnimation().getTrickBids().getTrumpButtons();
@@ -290,12 +324,6 @@ public class GameController{
                 getPlayerById(2).setPosition(layout_.POSITION_TOP);
                 getPlayerById(3).setPosition(layout_.POSITION_RIGHT);
                 break;
-        }
-    }
-
-    private void updatePlayerInfo() {
-        for (int i = 0; i < getAmountOfPlayers(); i++) {
-            player_info_.setDisplayName(getPlayerById(i));
         }
     }
 
@@ -398,12 +426,12 @@ public class GameController{
         }
 
         if (getPlayerById(logic_.getTurn()).getMissATurn()) {
-            Log.d("GameController2", "Player " +logic_.getTurn() + " is MISSING his turn");
+            Log.d("GameController2", "Player " + logic_.getTurn() + " is MISSING his turn");
             makeCardExchange();
             return;
         }
 
-        Log.d("GameController2", "Player " +logic_.getTurn() + " is making his turn");
+        Log.d("GameController2", "Player " + logic_.getTurn() + " is making his turn");
 
         if (logic_.getTurn() == 0) {
             animations_.getCardExchange().setAnimationRunning(true);
@@ -506,6 +534,18 @@ public class GameController{
             getPlayerById(id).setTricksToMake(0);
             text = text + "0";
         }
+
+        int amount_of_playing_players =  getAmountOfPlayers();
+        for (int i = 0; i < getAmountOfPlayers(); i++) {
+            if (getPlayerById(i).getMissATurn()) {
+                amount_of_playing_players--;
+            }
+        }
+        if (amount_of_playing_players <= 2) {
+            List<MyButton> buttons = getAnimation().getTrickBids().getNumberButtons();
+            buttons.get(0).setEnabled(false);
+        }
+
     }
 
     //----------------------------------------------------------------------------------------------
@@ -544,6 +584,7 @@ public class GameController{
         // view_.enableUpdateCanvasThread(); // Todo
         if (getPlayerById(logic_.getTurn()).getAmountOfCardsInHand() == 0) {
             updatePlayerLives();
+            statistics_.updatePlayerLives(this);
             if (logic_.isGameOver()) {
                 round_info_.setInfoBoxEmpty();
                 round_info_.getGameOver().setVisible(true);
@@ -805,4 +846,8 @@ public class GameController{
     }
 
     public PlayerInfo getPlayerInfo() { return player_info_; }
+
+    public boolean isDrawingEnabled() {
+        return enable_drawing_;
+    }
 }

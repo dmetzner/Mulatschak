@@ -54,20 +54,26 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
 
         setWidth(layout.getPlayerInfoSize().x);
         setHeight(layout.getPlayerInfoSize().y);
-
-        button_left_.init(view, layout.getPlayerInfoLeftPos(),
-                layout.getPlayerInfoSize(), "lil_robo");
-
-        button_top_.init(view, layout.getPlayerInfoTopPos(),
-                layout.getPlayerInfoSize(), "lil_robo");
-
-        button_right_.init(view, layout.getPlayerInfoRightPos(),
-                layout.getPlayerInfoSize(), "lil_robo");
-
         setPopDimensions();
-        pop_up_left_ = makePopupWindow(pop_up_left_view_, GameLayout.POSITION_LEFT);
-        pop_up_top_ = makePopupWindow(pop_up_top_view_, GameLayout.POSITION_TOP);
-        pop_up_right_ = makePopupWindow(pop_up_right_view_, GameLayout.POSITION_RIGHT);
+
+        if (view.getController().getAmountOfPlayers() > 1) {
+            button_top_.init(view, layout.getPlayerInfoTopPos(),
+                    layout.getPlayerInfoSize(), "lil_robo");
+            pop_up_top_ = makePopupWindow(pop_up_top_view_, GameLayout.POSITION_TOP);
+        }
+
+        if (view.getController().getAmountOfPlayers() > 2) {
+            button_left_.init(view, layout.getPlayerInfoLeftPos(),
+                    layout.getPlayerInfoSize(), "lil_robo");
+            pop_up_left_ = makePopupWindow(pop_up_left_view_, GameLayout.POSITION_LEFT);
+        }
+
+        if (view.getController().getAmountOfPlayers() > 3) {
+            button_right_.init(view, layout.getPlayerInfoRightPos(),
+                    layout.getPlayerInfoSize(), "lil_robo");
+            pop_up_right_ = makePopupWindow(pop_up_right_view_, GameLayout.POSITION_RIGHT);
+        }
+
 
         setVisible(true);
 
@@ -84,26 +90,9 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
         view = new PlayerInfoPopUpView(view_.getContext());
         view.setListener(this);
         Player p = view_.getController().getPlayerByPosition(pos);
-        setDisplayName(p);
         String top_display_name = p.getDisplayName();
         view.init(top_display_name);
         return new PopupWindow(view, pop_up_width_, pop_up_height_, true);
-    }
-
-    public void setDisplayName(Player player) {
-
-        String text = "";
-
-        if (view_.getController().my_participant_id_ != null) {
-            text = view_.getController().my_participant_id_;
-        }
-        else if (player.getId() == 0) {
-            text = view_.getController().my_display_name_;
-        }
-        else {
-            text = "Muli Bot " + player.getId();
-        }
-        player.setDisplayName(text);
     }
 
     public void draw(Canvas canvas) {
@@ -147,9 +136,15 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
 
     @Override
     public void onBackButtonRequested() {
-        pop_up_top_.dismiss();
-        pop_up_left_.dismiss();
-        pop_up_right_.dismiss();
+        if (pop_up_top_ != null) {
+            pop_up_top_.dismiss();
+        }
+        if (pop_up_left_ != null) {
+            pop_up_left_.dismiss();
+        }
+        if (pop_up_right_ != null) {
+            pop_up_right_.dismiss();
+        }
     }
 
 }

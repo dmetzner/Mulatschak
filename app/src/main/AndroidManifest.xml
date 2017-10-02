@@ -35,7 +35,7 @@
             android:value="@integer/google_play_services_version"/>
 
         <activity
-            android:name=".titleScreen.MainActivity"
+            android:name=".MainActivity"
             android:theme="@style/AppTheme.Fullscreen"
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden">
@@ -44,20 +44,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".game.GameActivity"
-            android:label="@string/title_activity_game"
-            android:theme="@style/AppTheme.Fullscreen"
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|keyboardHidden">
-        </activity>
-        <activity
-            android:name=".multi.GameActivity2"
-            android:label="@string/title_activity_game"
-            android:theme="@style/AppTheme.Fullscreen"
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|keyboardHidden">
-        </activity>
+
     </application>
 
 </manifest>

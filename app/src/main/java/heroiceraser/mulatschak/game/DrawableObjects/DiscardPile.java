@@ -16,6 +16,7 @@ import heroiceraser.mulatschak.helpers.HelperFunctions;
 
 public class DiscardPile extends DrawableObject {
 
+    public final int SIZE = 4;
     private final String BMP_DISCARD_PILE = "discard_pile";
 
     private Card card_bottom_;

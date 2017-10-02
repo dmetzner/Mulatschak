@@ -1,4 +1,4 @@
-package heroiceraser.mulatschak.titleScreen;
+package heroiceraser.mulatschak.Fragments;
 
 /**
  * Created by Daniel Metzner on 15.09.2017.

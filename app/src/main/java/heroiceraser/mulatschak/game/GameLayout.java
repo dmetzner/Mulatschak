@@ -19,7 +19,7 @@ import heroiceraser.mulatschak.helpers.DisplayDimension;
 //                                      |                              Sector 0
 //                                      |  -  2/8 size -  -  -  -  -
 //                                      |                              Sector 1
-//                                      |  -  -  -  -  -  -  -  -  -
+// - - - - - - - - - - - - - - - - - - -|  -  -  -  -  -  -  -  -  -
 //               Player 2               |                              Sector 2
 // Player 1                             |  -  -  -  -  -  -  -  -  -
 //               DP0                    |                              Sector 3
@@ -92,6 +92,12 @@ public class GameLayout {
     private Point button_bar_button_position_right_;
     private Point button_bar_button_position_middle_;
     private Point button_bar_button_position_left_;
+
+    //---- ButtonBar Windows
+    private Point button_bar_window_position_;
+    private Point button_bar_window_size_;
+    private Point button_bar_window_title_position_;
+    private Point button_bar_window_title_size_;
 
     //---- Animations ---------------------------
     //-- Trick Bids
@@ -193,6 +199,12 @@ public class GameLayout {
         initButtonBarButtonPositionRight();
         initButtonBarButtonPositionMiddle(); // relative to right one
         initButtonBarButtonPositionLeft();   // relative to the middle one
+
+        //Button Bar Windows
+        calculateButtonBarWindowPosition();
+        calculateButtonBarWindowSize();
+        calculateButtonBarWindowTitleSize();
+        calculateButtonBarWindowTitlePosition();
     }
 
     private void calculateButtonBarSize() {
@@ -236,6 +248,30 @@ public class GameLayout {
         button_bar_button_position_left_ = new Point();
         button_bar_button_position_left_.x = (int) (button_bar_small_button_size_.x * 0.15);
         button_bar_button_position_left_.y = button_bar_button_position_right_.y;
+    }
+
+    private void calculateButtonBarWindowPosition() {
+        button_bar_window_position_ = new Point();
+        button_bar_window_position_.x = 0;
+        button_bar_window_position_.y = getRoundInfoSize().y;
+    }
+    private void calculateButtonBarWindowSize() {
+        button_bar_window_size_ = new Point();
+        button_bar_window_size_.x = getScreenWidth();
+        button_bar_window_size_.y = getScreenHeight() - getButtonBarHeight() - getRoundInfoSize().y;
+    }
+
+    private void calculateButtonBarWindowTitleSize() {
+        button_bar_window_title_size_ = new Point();
+        button_bar_window_title_size_.x = (int)(button_bar_window_size_.x * (8.0/10.0));
+        button_bar_window_title_size_.y = (int) (sectors_.get(1).y * 0.8);
+    }
+
+    private void calculateButtonBarWindowTitlePosition() {
+        button_bar_window_title_position_ = new Point();
+        button_bar_window_title_position_.x = 0;
+        button_bar_window_title_position_.y = (int)
+                (button_bar_window_position_.y + sectors_.get(1).y * 0.5);
     }
 
     //-----------------------
@@ -519,6 +555,22 @@ public class GameLayout {
 
     public Point getButtonBarButtonPositionLeft() {
         return button_bar_button_position_left_;
+    }
+
+    public Point getButtonBarWindowTitlePosition() {
+        return button_bar_window_title_position_;
+    }
+
+    public Point getButtonBarWindowTitleSize() {
+        return button_bar_window_title_size_;
+    }
+
+    public Point getButtonBarWindowPosition() {
+        return button_bar_window_position_;
+    }
+
+    public Point getButtonBarWindowSize() {
+        return button_bar_window_size_;
     }
 
     public int getDealerButtonSize() {

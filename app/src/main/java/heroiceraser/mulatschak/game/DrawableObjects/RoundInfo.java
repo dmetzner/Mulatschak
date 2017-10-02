@@ -72,7 +72,8 @@ public class RoundInfo extends DrawableObject {
 
     public void updateEndOfCardRound(GameController controller) {
         String text = "";
-        text += "Spieler " + (controller.getLogic().getRoundWinnerId() + 1) + " hat diesen Stich gewonnen.";
+        text += controller.getPlayerById(controller.getLogic().getRoundWinnerId()).getDisplayName()
+                + " hat diesen Stich gewonnen.";
         end_of_card_round_.update(text, monitor_size_.y);
     }
 
@@ -80,11 +81,15 @@ public class RoundInfo extends DrawableObject {
         String text = "";
         for (int i = 0; i < controller.getAmountOfPlayers(); i++) {
             if (i == controller.getLogic().getTrumpPlayerId()) {
-                text += "Spieler " + (i + 1) + ": " + controller.getPlayerById(i).getAmountOfTricks(controller) +
-                        "/" + controller.getLogic().getTricksToMake() + " Stiche";
+                text +=  controller.getPlayerById(i).getDisplayName()
+                        + ": " + controller.getPlayerById(i).getAmountOfTricks(controller)
+                        + "/" + controller.getLogic().getTricksToMake()
+                        + " Stiche";
             }
             else {
-                text += "Spieler " + (i + 1) + ": " + controller.getPlayerById(i).getAmountOfTricks(controller) + " Stiche";
+                text += controller.getPlayerById(i).getDisplayName()
+                        + ": " + controller.getPlayerById(i).getAmountOfTricks(controller)
+                        + " Stiche";
             }
             if (i != controller.getAmountOfPlayers() - 1) {
                 text += "\n";
@@ -96,14 +101,15 @@ public class RoundInfo extends DrawableObject {
     public void updateNewRound(GameController controller) {
         String text = "";
         text +=   "Neue Runde!";
-        text += "\n\n Spieler " + (controller.getLogic().getDealer() + 1) + " ist der Dealer";
+        text += "\n\n" + controller.getPlayerById(controller.getLogic().getDealer()).getDisplayName()
+                + " ist der Dealer";
         new_round_.update(text, monitor_size_.y);
     }
 
     public void updateBids(GameView view) {
         String text = "";
         for (int i = 0; i < view.getController().getAmountOfPlayers(); i++) {
-            text += "Player " + (i + 1) + ": ";
+            text += view.getController().getPlayerById(i).getDisplayName() + ": ";
             if (view.getController().getLogic().getTurn() == i &&
                     view.getController().getPlayerById(i).getTricksToMake() == GameController.NOT_SET) {
                 text += "ist am Zug";
@@ -142,7 +148,8 @@ public class RoundInfo extends DrawableObject {
                 text += "Herz Runden zählen doppelt!";
             }
             else {
-                text += "Spieler " + (controller.getLogic().getTrumpPlayerId() + 1) + " ist der Höchstbietende. \n";
+                text += controller.getPlayerById(controller.getLogic().getTrumpPlayerId()).getDisplayName()
+                        + " ist der Höchstbietende. \n";
                 text += "Das Trumpf dieser Runde ist Herz.\n";
                 text += "Herz Runden zählen doppelt!";
             }
@@ -162,8 +169,8 @@ public class RoundInfo extends DrawableObject {
             text += "Wähle das Trumpf";
         }
         else {
-            text += "\nSpieler " +(id + 1) + " ist der Höchstbietende. \n";
-            text += "Spieler " + (id + 1) + " wählt das Trumpf";
+            text += "\n" + controller.getPlayerById(id).getDisplayName() + " ist der Höchstbietende. \n";
+            text += controller.getPlayerById(id).getDisplayName() + " wählt das Trumpf";
         }
         choose_trump_.update(text, monitor_size_.y);
     }
@@ -187,7 +194,8 @@ public class RoundInfo extends DrawableObject {
         text_ += "\n";
         text_ += "Punkte:    x" + controller.getLogic().getMultiplier();
         text_ += "\n";
-        text_ += "Spieler " + (controller.getLogic().getTrumpPlayerId() + 1) + ":   ";
+        text_ += controller.getPlayerById(controller.getLogic().getTrumpPlayerId()).getDisplayName()
+                + ":   ";
         text_ += controller.getPlayerById(
                 controller.getLogic().getTrumpPlayerId()).getAmountOfTricks(controller);
         text_ += "/" + controller.getLogic().getTricksToMake() + " Stiche\n";
@@ -196,7 +204,8 @@ public class RoundInfo extends DrawableObject {
             text_ +=  "Du bist am Zug";
         }
         else {
-            text_ += "Spieler " + (controller.getLogic().getTurn() + 1) + ":   ist am Zug";
+            text_ += controller.getPlayerById(controller.getLogic().getTurn()).getDisplayName()
+                    + ":   ist am Zug";
         }
 
         round_info_.update(text_, monitor_size_.y);
