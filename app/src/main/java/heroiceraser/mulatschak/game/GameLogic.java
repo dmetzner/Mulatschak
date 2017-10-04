@@ -236,11 +236,10 @@ public class GameLogic {
             }
             if (dp_card_sym == trump_) {
                 if (highest_card_sym == trump_ && dp_card_value > highest_card_value) {
-                        highest_card_sym = dp_card_sym;
-                        highest_card_value = dp_card_value;
-                        highest_card_owner_pos = i;
-                }
-                else if(highest_card_sym != trump_) {
+                    highest_card_sym = dp_card_sym;
+                    highest_card_value = dp_card_value;
+                    highest_card_owner_pos = i;
+                } else if (highest_card_sym != trump_) {
                     highest_card_sym = dp_card_sym;
                     highest_card_value = dp_card_value;
                     highest_card_owner_pos = i;
@@ -249,17 +248,7 @@ public class GameLogic {
 
         }
 
-        int highest_card_owner_id = controller.getPlayerByPosition(highest_card_owner_pos).getId();
-
-        for (int i = 0; i < 4; i++) {
-            if (dp.getCard(i) != null) {
-                controller.getPlayerById(highest_card_owner_id).getTricks().addCard(dp.getCard(i));
-            }
-        }
-        round_winner_id_ = highest_card_owner_id;
-        turn_ = highest_card_owner_id;
-        starting_player_ = highest_card_owner_id;
-
+        round_winner_id_ = controller.getPlayerByPosition(highest_card_owner_pos).getId();
     }
 
     //----------------------------------------------------------------------------------------------

@@ -1,7 +1,9 @@
 package heroiceraser.mulatschak.game.DrawableObjects;
 
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Point;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,9 +41,34 @@ public class DiscardPile extends DrawableObject {
     public void init(GameView view) {
         setWidth(view.getController().getLayout().getDiscardPileWidth());
         setHeight(view.getController().getLayout().getDiscardPileHeight());
-        positions_ = view.getController().getLayout().getDiscardPilePositions_();
+        setPosition(new Point(0, 0));
+        this.positions_ = view.getController().getLayout().getDiscardPilePositions_();
         setBitmap(HelperFunctions.loadBitmap(view, BMP_DISCARD_PILE, getWidth(), getHeight()));
         setVisible(true);
+    }
+
+    public void init(GameView view, Point size, List<Point> positions) {
+        setWidth(size.x);
+        setHeight(size.y);
+        this.positions_ = positions ;
+        setBitmap(HelperFunctions.loadBitmap(view, BMP_DISCARD_PILE, getWidth(), getHeight()));
+        setVisible(true);
+    }
+
+    public static DiscardPile copy(DiscardPile dp_to_copy) {
+        DiscardPile tmp = new DiscardPile();
+        tmp.setWidth(dp_to_copy.getWidth());
+        tmp.setHeight(dp_to_copy.getHeight());
+        tmp.setBitmap(dp_to_copy.getBitmap().copy(dp_to_copy.getBitmap().getConfig(), true));
+        tmp.setVisible(dp_to_copy.isVisible());
+        tmp.setPosition(new Point(0, 0));
+        tmp.setPositions(dp_to_copy.getPositions());
+        tmp.card_bottom_ = Card.copy(dp_to_copy.card_bottom_);
+        tmp.card_left_ = Card.copy(dp_to_copy.card_left_);
+        tmp.card_right_ = Card.copy(dp_to_copy.card_right_);
+        tmp.card_top_ = Card.copy(dp_to_copy.card_top_);
+        return tmp;
+
     }
 
     //----------------------------------------------------------------------------------------------
@@ -50,8 +77,12 @@ public class DiscardPile extends DrawableObject {
     public Point getPoint(int pos) {
         return positions_.get(pos);
     }
-    public List<Point> getPoints() {
+    public List<Point> getPositions() {
         return positions_;
+    }
+
+    public void setPositions(List<Point> positions) {
+        this.positions_ = positions;
     }
 
     public Card getCard(int pos) {

@@ -87,6 +87,11 @@ public class TouchEvents {
 
         //------------------------
 
+        // ------------------ ButtonBar Tricks Window ----------------------------------------------
+        ButtonActionDown(X, Y, controller.getTricks().getArrowButtonLeft());
+        ButtonActionDown(X, Y, controller.getTricks().getArrowButtonRight());
+
+        //------------------------
 
         // ------------------ Player Info ----------------------------------------------------------
 
@@ -164,6 +169,12 @@ public class TouchEvents {
 
         //------------------------
 
+        // ------------------ ButtonBar Tricks Window ----------------------------------------------
+        ButtonActionMove(X, Y, controller.getTricks().getArrowButtonLeft());
+        ButtonActionMove(X, Y, controller.getTricks().getArrowButtonRight());
+
+        //------------------------
+
         // ------------------ Player Info ----------------------------------------------------------
 
         // Player Info Buttons
@@ -229,6 +240,16 @@ public class TouchEvents {
             controller.getMenu().switchVisibility();
             controller.getTricks().setVisible(false);
             controller.getStatistics().setVisible(false);
+        }
+
+        //------------------------
+
+        // ------------------ ButtonBar Tricks Window ----------------------------------------------
+        if (ButtonActionUp(X, Y, controller.getTricks().getArrowButtonLeft())) {
+            controller.getTricks().showPrevRound();
+        }
+        if (ButtonActionUp(X, Y, controller.getTricks().getArrowButtonRight())) {
+            controller.getTricks().showNextRound();
         }
 
         //------------------------

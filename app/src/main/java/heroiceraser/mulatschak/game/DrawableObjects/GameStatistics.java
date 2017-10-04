@@ -11,6 +11,7 @@ import android.text.TextPaint;
 import java.util.ArrayList;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
+import heroiceraser.mulatschak.DrawableBasicObjects.MySimpleTextField;
 import heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.ButtonBarWindowTitle;
 import heroiceraser.mulatschak.game.GameController;
@@ -54,9 +55,10 @@ public class GameStatistics extends DrawableObject{
         title_.init(view.getController(), title_text);
 
         // state of the game
+        String font = "fonts/nk57-monospace-no-rg.ttf";
         int text_size = view.getResources().getDimensionPixelSize(R.dimen.button_bar_window_text_size);
         int text_color = view.getResources().getColor(R.color.button_bar_window_text_color);
-        text_paint_ = createTextPaint(view, text_size, text_color, "fonts/nk57-monospace-no-rg.ttf");
+        text_paint_ = MySimpleTextField.createTextPaint(view, text_size, text_color, font);
 
         display_name_text_pos_ = new Point((int) (layout.getScreenWidth() * (1.0/10.0)),
                 (int) (getPosition().y + layout.getSectors().get(1).y * 1.7));
@@ -104,23 +106,8 @@ public class GameStatistics extends DrawableObject{
             }
 
             canvas.restore();
-            pos.y += (int) (text_paint_.getTextSize() * 1.7);
+            pos.y += (int) (text_paint_.getTextSize() * 2);
         }
-    }
-
-
-    private void reduceTextSize(TextPaint text_paint) {
-        text_paint.setTextSize((int) (text_paint.getTextSize() * 0.9));
-    }
-
-    private TextPaint createTextPaint(GameView view, int text_size, int color, String font) {
-        Typeface tf = Typeface.createFromAsset(view.getContext().getAssets(), font);
-        TextPaint text_paint = new TextPaint();
-        text_paint.setAntiAlias(true);
-        text_paint.setTextSize(text_size * view.getResources().getDisplayMetrics().density);
-        text_paint.setColor(color);
-        text_paint.setTypeface(tf);
-        return text_paint;
     }
 
 
@@ -140,7 +127,7 @@ public class GameStatistics extends DrawableObject{
 
             int max_height = (int) (controller.getLayout().getSectors().get(1).y * 0.5);
             while (display_name_layout.getHeight() > max_height) {
-                reduceTextSize(text_paint_);
+                MySimpleTextField.reduceTextSize(text_paint_);
                 display_name_text_pos_.y = display_name_text_pos_.y + (int)
                         (controller.getLayout().getSectors().get(1).y * 0.1);
                 display_name_layout = new StaticLayout(text, text_paint_,

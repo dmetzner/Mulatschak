@@ -9,7 +9,7 @@
 
     <!-- :::::::::::::::::::: Game Button Bar :::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <dimen name="button_bar_window_title_size"> 60sp</dimen>
-
-    <dimen name="button_bar_window_text_size"> 9sp</dimen>
+    <dimen name="button_bar_window_subtitle_size"> 40sp</dimen>
+    <dimen name="button_bar_window_text_size"> 22sp</dimen>
 
 </resources>

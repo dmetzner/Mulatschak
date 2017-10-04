@@ -146,6 +146,7 @@ public class GameController{
         player_info_.setVisible(true);
         round_info_.setVisible(true);
         round_info_.setInfoBoxEmpty();
+        tricks_.clear();
         round_info_.updateNewRound(this);
         round_info_.getNewRound().setVisible(true);
         logic_.setMulatschakRound(false);
@@ -678,6 +679,10 @@ public class GameController{
         if (!first_call && logic_.getTurn() == logic_.getStartingPlayer()) {
             waiting = true;
             logic_.chooseCardRoundWinner(this, this.getDiscardPile());
+            addTricksToWinner();
+            logic_.setTurn(logic_.getRoundWinnerId());
+            logic_.setStartingPlayer(logic_.getRoundWinnerId());
+
             round_info_.setInfoBoxEmpty();
             round_info_.updateEndOfCardRound(this);
             round_info_.getEndOfCardRound().setVisible(true);
@@ -707,6 +712,26 @@ public class GameController{
             nextTurn();
         }
 
+    }
+
+    private void addTricksToWinner() {
+
+        tricks_.getDiscardPiles().add(DiscardPile.copy(discardPile_));
+        int index = tricks_.getDiscardPiles().size() - 1;
+        if (index >= 0 && tricks_.getDiscardPiles() != null) {
+            ((DiscardPile) (tricks_.getDiscardPiles().get(index)))
+                    .setPositions(layout_.getButtonBarWindowTricksDiscardPilePositions());
+            tricks_.setVisibleRoundId(index);
+            tricks_.updateVisibleRound();
+        }
+
+        //tricks_.getRoundWinners().add(logic_.getRoundWinnerId());
+
+        for (int i = 0; i < discardPile_.SIZE; i++) {
+            if (discardPile_.getCard(i) != null) {
+                getPlayerById(logic_.getRoundWinnerId()).getTricks().addCard(discardPile_.getCard(i));
+            }
+        }
     }
 
     public void updatePlayerLives() {

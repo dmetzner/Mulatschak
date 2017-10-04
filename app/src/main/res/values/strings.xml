@@ -51,8 +51,10 @@
     <!-- :::::::::::::::::::: Menu ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="button_bar_menu_title">Menu</string>
 
-    <!-- :::::::::::::::::::: Menu ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+    <!-- :::::::::::::::::::: Tricks ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="button_bar_tricks_title">Stiche</string>
+    <string name="button_bar_tricks_subtitle">Runde</string>
+    <string name="button_bar_tricks_empty_info">Du hast noch keine Stiche gemacht!</string>
 
     <!-- :::::::::::::::::::: State of the game :::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="button_bar_state_of_the_game_title">Spielstand</string>
