@@ -13,6 +13,7 @@ import java.util.Random;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.game.Animations.TrickBids;
 import heroiceraser.mulatschak.game.DrawableObjects.ButtonBar;
+import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
 import heroiceraser.mulatschak.game.DrawableObjects.DealerButton;
 import heroiceraser.mulatschak.game.DrawableObjects.DiscardPile;
@@ -66,6 +67,8 @@ public class GameController{
     private CardStack trash_;
     private DealerButton dealer_button_;
 
+    private boolean wait_for_end_card_round_;
+    // ToDo
 
     //----------------------------------------------------------------------------------------------
     //  Constructor
@@ -75,7 +78,6 @@ public class GameController{
         enable_drawing_ = false;
 
         logic_ = new GameLogic();
-        // logic set difficulty ToDO
         layout_ = new GameLayout();
         animations_ = new GameAnimation(view);
         touch_events_ = new TouchEvents();
@@ -96,15 +98,16 @@ public class GameController{
 
         dealer_button_ = new DealerButton();
 
+        wait_for_end_card_round_ = false;
+
     }
 
     //----------------------------------------------------------------------------------------------
     //  start
     //
-    public void start(int lives, final int enemies, final int difficulty, boolean multiplayer,
+    public void start(int start_lives, final int enemies, final int difficulty, boolean multiplayer,
                       final String myName, String my_id, ArrayList<Participant> participants) {
         multiplayer_ = multiplayer;
-        int start_lives = lives;
 
         my_display_name_ = myName;
         if (my_display_name_ == null) {
@@ -118,7 +121,7 @@ public class GameController{
             host_ = participants.get(0);
         }
 
-        logic_.init(start_lives); //  int players, int difficulty,
+        logic_.init(start_lives, difficulty);
         layout_.init(view_);
 
         initPlayers(my_id, enemies);
@@ -362,23 +365,27 @@ public class GameController{
     private void deal(int players) {
         for (int hand_card = 0; hand_card < logic_.MAX_CARDS_PER_HAND; hand_card++) {
             for (int player_id = 0; player_id < players; player_id++) {
-                drawCard(player_id, deck_);
+                takeCardFromDeck(player_id, deck_);
             }
         }
     }
 
     //----------------------------------------------------------------------------------------------
-    //  drawCard
+    //  draw cards from deck
     //
-    public void drawCard(int player_id, MulatschakDeck deck){
+    public boolean takeCardFromDeck(int player_id, MulatschakDeck deck){
+
         if (deck.getCardStack().isEmpty()) {
-            // ToDo do something when deck is empty
+            //  do something when deck is empty  ->
+            Log.d("take a card", " yo we a got a prob");
+            return false;
         }
         else
         {
             CardStack player_hand =  getPlayerById(player_id).getHand();
             player_hand.addCard(deck_.getCardAt(0));
             deck.getCardStack().remove(0);
+            return true;
         }
     }
 
@@ -440,7 +447,8 @@ public class GameController{
         }
         else if (logic_.getTurn() != 0) {
             view_.enableUpdateCanvasThread();
-            // el.makeCardExchange(getPlayerById(logic_.getTurn()), this);
+            EnemyLogic enemy_logic = new EnemyLogic();
+            enemy_logic.makeCardExchange(getPlayerById(logic_.getTurn()), this);
             makeCardExchange();
         }
     }
@@ -652,16 +660,10 @@ public class GameController{
         }
 
     }
-
-    public boolean waiting = false;
-    public void endCardRound() {
-        // view_.disableUpdateCanvasThread(); // ToDO
-        if (!waiting) {
-            clearDiscardPile();
-            nextCardRound();
-        }
+    private void endCardRound() {
+        clearDiscardPile();
+        nextCardRound();
     }
-
     private void clearDiscardPile() {
         discardPile_.setCardBottom(null);
         discardPile_.setCardLeft(null);
@@ -677,7 +679,6 @@ public class GameController{
         round_info_.updateRoundInfo(this);
 
         if (!first_call && logic_.getTurn() == logic_.getStartingPlayer()) {
-            waiting = true;
             logic_.chooseCardRoundWinner(this, this.getDiscardPile());
             addTricksToWinner();
             logic_.setTurn(logic_.getRoundWinnerId());
@@ -686,7 +687,22 @@ public class GameController{
             round_info_.setInfoBoxEmpty();
             round_info_.updateEndOfCardRound(this);
             round_info_.getEndOfCardRound().setVisible(true);
-            endCardRound();
+
+            wait_for_end_card_round_ = true;
+
+            // ToDO show winner of the round, click to next round button
+
+            Handler end_round_handler = new Handler();
+            Runnable end_round_runnable = new Runnable() {
+                @Override
+                public void run() {
+                    if (wait_for_end_card_round_) {
+                        endCardRound();
+                    }
+                }
+            };
+            int max_waiting_time = 5000;
+            end_round_handler.postDelayed(end_round_runnable, max_waiting_time);
             return;
         }
 
@@ -802,6 +818,16 @@ public class GameController{
                 logic_.setGameOver(true);
             }
             getPlayerById(i).setLives(new_lives);
+        }
+    }
+
+    public void moveCardToTrash(Card card) {
+        trash_.addCard(card);
+    }
+
+    public void moveCardsToTrash(List<Card> cards) {
+        for (int i = 0; i < cards.size(); i++) {
+            trash_.addCard(cards.get(i));
         }
     }
 

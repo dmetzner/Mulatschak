@@ -104,7 +104,7 @@ public class CardExchange {
 
         // adding new cards to hand
         for (int i = 0; i < move_cards.size(); i++) {
-            controller.drawCard(0, controller.getDeck());
+            controller.takeCardFromDeck(0, controller.getDeck());
             Card card = controller.getPlayerById(0).getHand().getCardAt(controller.getPlayerById(0)
                     .getAmountOfCardsInHand() - 1);
             card.setPosition(move_cards.get(i).getFixedPosition());

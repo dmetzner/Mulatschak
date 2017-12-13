@@ -38,12 +38,7 @@ public class TouchEvents {
         // enables a update thread for the canvas, in case there is no running update thread
         controller.getView().enableUpdateCanvasThreadOnly4TouchEvents();
 
-        if (controller.waiting) {
-            // ToDO Just 4 now Hack, better solution please :D
-            controller.waiting = false;
-            controller.endCardRound();
-        }
-        else if (controller.waiting2) {
+        if (controller.waiting2) {
             // ToDO Just 4 now Hack, better solution please :D
             controller.waiting2 = false;
             controller.startRound();

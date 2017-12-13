@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import heroiceraser.mulatschak.R;
@@ -41,6 +42,11 @@ public class StartScreenFragment extends Fragment implements OnClickListener {
         for (int i : CLICKABLES) {
             v.findViewById(i).setOnClickListener(this);
         }
+        // Todo: multiplayer        ;)#
+        // right now deactivated
+        Button multiplayer_button = (Button) v.findViewById(R.id.multi_player_button);
+        multiplayer_button.setEnabled(false);
+
         return v;
     }
 

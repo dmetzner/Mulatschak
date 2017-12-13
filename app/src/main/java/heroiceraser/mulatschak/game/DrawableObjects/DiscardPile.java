@@ -120,7 +120,7 @@ public class DiscardPile extends DrawableObject {
     public void draw(Canvas canvas) {
         if (isVisible()) {
             for (int j = 0; j < positions_.size(); j++) {
-                if (getCard(j) == null) {
+                if (getCard(j) == null || getCard(j).getBitmap() == null) {
                     canvas.drawBitmap(getBitmap(),
                             getPoint(j).x,
                             getPoint(j).y, null);

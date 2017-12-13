@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -131,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         game_running_ = false;
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.main_activity);
@@ -158,6 +160,7 @@ public class MainActivity extends AppCompatActivity implements
         // add initial fragment (welcome fragment)
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container,
                 mStartScreenFragment).commit();
+        //Todo: multiplayer
 
         // load outbox from file
         mOutbox.loadLocal(this);

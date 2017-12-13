@@ -71,11 +71,12 @@ public class GameLogic {
 
     }
 
-    public void init(int lives) {
+    public void init(int lives, int difficulty) {
         multiplier_ = 1;
         start_lives_ = lives;
         game_over_ = false;
         mulatschak_round_ = false;
+        setDifficulty(difficulty);
     }
 
 
@@ -251,6 +252,16 @@ public class GameLogic {
         round_winner_id_ = controller.getPlayerByPosition(highest_card_owner_pos).getId();
     }
 
+
+    public boolean isCardTrump(Card card) {
+        int card_suit = MulatschakDeck.getCardSuit(card);
+        return (card_suit == trump_ || card_suit == MulatschakDeck.WELI);
+    }
+
+    public static int getCardValue(Card card) {
+        return MulatschakDeck.getCardValue(card);
+    }
+
     //----------------------------------------------------------------------------------------------
     //  Getter & Setter
     //
@@ -329,4 +340,30 @@ public class GameLogic {
     public void setStartLives(int start_lives) {
         this.start_lives_ = start_lives;
     }
+
+    public int getDifficulty() {
+        return difficulty_;
+    }
+
+    public void setDifficulty(int difficulty) {
+        switch (difficulty) {
+
+            case DIFFICULTY_EASY:
+                difficulty_ = DIFFICULTY_EASY;
+                break;
+
+            case DIFFICULTY_NORMAL:
+                difficulty_ = DIFFICULTY_NORMAL;
+                break;
+
+            case DIFFICULTY_HARD:
+                difficulty_ = DIFFICULTY_HARD;
+                break;
+
+            default:
+                difficulty_ = DIFFICULTY_NORMAL;
+                break;
+        }
+    }
+
 }

@@ -5,6 +5,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import heroiceraser.mulatschak.game.DrawableObjects.Card;
@@ -17,8 +19,11 @@ import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
  */
 
 public class EnemyLogic {
-    public EnemyLogic() {
 
+    CardExchangeLogic cardExchangeLogic;
+
+    public EnemyLogic() {
+        cardExchangeLogic = new CardExchangeLogic();
     }
 
     //----------------------------------------------------------------------------------------------
@@ -86,6 +91,15 @@ public class EnemyLogic {
         Toast toast = Toast.makeText(view.getContext(), text, duration);
         toast.show();//////////////////////////////////////////////////////////////////////////////////
     }
+
+    //----------------------------------------------------------------------------------------------
+    //  chooseTrump
+    //
+
+    public void makeCardExchange(Player player, GameController controller) {
+        cardExchangeLogic.exchangeCard(player, controller);
+    }
+
 
 
     //----------------------------------------------------------------------------------------------

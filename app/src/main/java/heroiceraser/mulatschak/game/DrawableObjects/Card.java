@@ -53,13 +53,15 @@ public class Card extends DrawableObject {
 
     public static Card copy(Card card_to_copy) {
         Card tmp = new Card();
-        tmp.setId(card_to_copy.getId());
-        tmp.setFixedPosition(card_to_copy.getFixedPosition());
-        tmp.setPosition(card_to_copy.getPosition());
-        tmp.setWidth(card_to_copy.getWidth());
-        tmp.setHeight(card_to_copy.getHeight());
-        tmp.setBitmap(card_to_copy.getBitmap().copy(card_to_copy.getBitmap().getConfig(), true));
-        tmp.setVisible(card_to_copy.isVisible());
+        if (card_to_copy != null) {
+            tmp.setId(card_to_copy.getId());
+            tmp.setFixedPosition(card_to_copy.getFixedPosition());
+            tmp.setPosition(card_to_copy.getPosition());
+            tmp.setWidth(card_to_copy.getWidth());
+            tmp.setHeight(card_to_copy.getHeight());
+            tmp.setBitmap(card_to_copy.getBitmap().copy(card_to_copy.getBitmap().getConfig(), true));
+            tmp.setVisible(card_to_copy.isVisible());
+        }
         return tmp;
     }
 
