@@ -1,22 +1,15 @@
 package heroiceraser.mulatschak.game.Animations;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
+
 import android.graphics.Point;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.text.DynamicLayout;
-import android.text.Layout;
-import android.text.StaticLayout;
-import android.text.TextPaint;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.HelpText;
-import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
 import heroiceraser.mulatschak.game.GameController;
@@ -141,8 +134,11 @@ public class CardExchange {
     }
 
     public MyButton getButton() {
-        if (active_buttons_ < 0) {
+        if (active_buttons_ < 0 || active_buttons_ > exchange_buttons_.size() - 1) {
             active_buttons_ = 0;
+        }
+        if (active_buttons_ == 4) {
+            exchange_buttons_.get(active_buttons_).setEnabled(false);
         }
         return exchange_buttons_.get(active_buttons_);
     }

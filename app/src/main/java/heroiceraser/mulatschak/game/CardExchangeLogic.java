@@ -47,18 +47,12 @@ public class CardExchangeLogic {
         moveWeakCards(player.getHand().getCardStack(), move_cards,
                 controller.getLogic(), weak_border, randomness);
 
-        Log.d("---", "-----");
-        debugMove(move_cards);
-
         // if deck has to less cards to draw
         //      -> give back the best cards from move cards to the players hand
         handleToLessCardsInDeck(move_cards, player, controller.getDeck().getCardStack().size());
 
         // adding new cards from the deck to the hand
         drawNewCards(move_cards, player, controller);
-
-        Log.d("---", "........");
-        debugMove(move_cards);
 
         // add old cards to trash
         controller.moveCardsToTrash(move_cards);
