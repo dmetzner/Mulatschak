@@ -382,6 +382,7 @@ public class GameController{
         }
         else
         {
+            // remove a card from the deck and push it to the players hand
             CardStack player_hand =  getPlayerById(player_id).getHand();
             player_hand.addCard(deck_.getCardAt(0));
             deck.getCardStack().remove(0);
@@ -442,6 +443,8 @@ public class GameController{
         Log.d("GameController2", "Player " + logic_.getTurn() + " is making his turn");
 
         if (logic_.getTurn() == 0) {
+            // handle the card exchange buttons (-> to less cards in deck to exchange to much cards)
+            animations_.getCardExchange().handleExchangeButtons(deck_.getCardStack().size());
             animations_.getCardExchange().setAnimationRunning(true);
             view_.disableUpdateCanvasThread();
         }

@@ -85,6 +85,7 @@ public class GameView extends View {
             thread_.framesTimer = thread_.now;
             thread_.framesCountAvg = thread_.framesCount;
             thread_.framesCount = 0;
+            thread_.framesCount = 0;
         }
     }
 
@@ -138,6 +139,13 @@ public class GameView extends View {
             controller_.getButtonBar().getMenuButton().draw(canvas);
         }
 
+    }
+
+    //----------------------------------------------------------------------------------------------
+    //  drawDiscardPile
+    //
+    private void drawDiscardPile(Canvas canvas) {
+        controller_.getDiscardPile().draw(canvas);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -196,13 +204,6 @@ public class GameView extends View {
     }
 
     //----------------------------------------------------------------------------------------------
-    //  drawDiscardPile
-    //
-    private void drawDiscardPile(Canvas canvas) {
-        controller_.getDiscardPile().draw(canvas);
-    }
-
-    //----------------------------------------------------------------------------------------------
     //  drawAnimations()
     //
     private void drawAnimations(Canvas canvas) {
@@ -230,8 +231,10 @@ public class GameView extends View {
             controller_.getAnimation().getCardExchange().getHelpText().draw(canvas, position);
 
             // exchange Buttons
-            controller_.getAnimation().getCardExchange().draw(canvas);
-        } else if (controller_.getAnimation().getTrickBids().getAnimationNumbers()) {
+            controller_.getAnimation().getCardExchange().draw(canvas, controller_);
+        }
+
+        else if (controller_.getAnimation().getTrickBids().getAnimationNumbers()) {
             int amount_of_buttons = controller_.getAnimation().getTrickBids().getNumberButtons().size();
             for (int button_id = 0; button_id < amount_of_buttons; button_id++) {
                 MyButton button = controller_.getAnimation().getTrickBids().getNumberButtonAt(button_id);
@@ -244,7 +247,9 @@ public class GameView extends View {
                 canvas.drawBitmap(bitmap, button.getPosition().x,
                         button.getPosition().y, null);
             }
-        } else if (controller_.getAnimation().getTrickBids().getAnimationSymbols()) {
+        }
+
+        else if (controller_.getAnimation().getTrickBids().getAnimationSymbols()) {
             int amount_of_buttons = controller_.getAnimation().getTrickBids().getTrumpButtons().size();
             for (int button_id = 0; button_id < amount_of_buttons; button_id++) {
                 MyButton button = controller_.getAnimation().getTrickBids().getTrumpButtonAt(button_id);

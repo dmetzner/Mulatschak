@@ -54,6 +54,9 @@ public class CardExchangeLogic {
         // adding new cards from the deck to the hand
         drawNewCards(move_cards, player, controller);
 
+        Log.d("Card Exchange", "Player " + player.getId() + " : "
+                + move_cards.size() + " cards");
+
         // add old cards to trash
         controller.moveCardsToTrash(move_cards);
     }

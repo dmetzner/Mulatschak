@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 
 android {
-    enforceUniquePackageName=false
 
     compileSdkVersion android_compile_version
     buildToolsVersion android_version
@@ -24,6 +23,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+    buildToolsVersion '26.0.2'
 }
 
 dependencies {

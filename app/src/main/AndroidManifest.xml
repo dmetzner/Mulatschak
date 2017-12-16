@@ -3,17 +3,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="heroiceraser.mulatschak"
 
-    android:versionCode="1"
-    android:versionName="1.0"
     >
-
-    <support-screens
-        android:smallScreens="true"
-        android:normalScreens="true"
-        android:largeScreens="true"
-        android:xlargeScreens="true"
-        android:anyDensity="true" >
-    </support-screens>
 
     <uses-permission android:name="android.permission.INTERNET" />
 

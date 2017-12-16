@@ -3,11 +3,15 @@ package heroiceraser.mulatschak.game.Animations;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.Point;
+import android.util.Log;
 
+import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
+import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GameView;
+import heroiceraser.mulatschak.game.Player;
 
 /**
  * Created by Daniel Metzner on 11.08.2017.
@@ -84,7 +88,7 @@ public class DealingAnimation {
 
 
     private void calculateEndPositions(int player_id, int pos) {
-        int card_number = view_.getController().getLogic().MAX_CARDS_PER_HAND - (cards_to_draw
+        int card_number = GameLogic.MAX_CARDS_PER_HAND - (cards_to_draw
                 / view_.getController().getAmountOfPlayers());
 
         GameLayout layout = view_.getController().getLayout();
@@ -123,12 +127,10 @@ public class DealingAnimation {
 
     //----------------------------------------------------------------------------------------------
     public void start() {
-        cards_to_draw =  view_.getController().getLogic().MAX_CARDS_PER_HAND *
+        cards_to_draw =  GameLogic.MAX_CARDS_PER_HAND *
                 view_.getController().getAmountOfPlayers();
         animation_running_ = true;
-        hand_card_x = view_.getController().getDeck().getPosition().x;
-        hand_card_y = view_.getController().getDeck().getPosition().y;
-        rotation_start_ = 0;
+        resetDealingConfig();
         deal();
     }
 
@@ -253,10 +255,15 @@ public class DealingAnimation {
         cards_to_draw--;
         Point card_position = new Point(hand_card_x, hand_card_y);
         int card_pos = getPosition(player_id);
+        Log.d("------------> player:",+ player_id + " card_pos: " + card_pos + "");
         view_.getController().getPlayerById(player_id).getHand().getCardAt(card_pos)
                 .setPosition(card_position);
         view_.getController().getPlayerById(player_id).getHand().getCardAt(card_pos)
                 .setFixedPosition(new Point(card_position));
+        resetDealingConfig();
+    }
+
+    public void resetDealingConfig() {
         hand_card_x = view_.getController().getDeck().getPosition().x;
         hand_card_y = view_.getController().getDeck().getPosition().y;
         rotation_start_ = 0;
@@ -333,7 +340,7 @@ public class DealingAnimation {
 
         Bitmap backside = view_.getController().getDeck().getBacksideBitmap();
         Bitmap rotatedBitmap = Bitmap.createBitmap(backside , 0, 0,
-                backside.getWidth(), backside .getHeight(), matrix, true);
+                backside.getWidth(), backside.getHeight(), matrix, true);
         return rotatedBitmap;
     }
 }
