@@ -21,7 +21,7 @@ public class GameAnimation {
         card_animations_ = new CardAnimations();
         dealing_animation_ = new DealingAnimation(view);
         re_animate_hands = new ReAnimateHands();
-        card_exchange_ = new CardExchange(view);
+        card_exchange_ = new CardExchange();
         trick_bids_ = new TrickBids();
     }
 

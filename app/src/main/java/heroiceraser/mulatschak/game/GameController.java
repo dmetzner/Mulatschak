@@ -158,6 +158,8 @@ public class GameController{
         animations_.getCardAnimations().setCardMoveable(false);
         resetTurn();
         view_.enableUpdateCanvasThread();
+
+        allCardsBackToTheDeck();
         shuffleDeck();
         discardPile_.setVisible(false);
         dealCards();  // starts an dealing animation
@@ -704,7 +706,7 @@ public class GameController{
                     }
                 }
             };
-            int max_waiting_time = 5000;
+            int max_waiting_time = 2000;
             end_round_handler.postDelayed(end_round_runnable, max_waiting_time);
             return;
         }

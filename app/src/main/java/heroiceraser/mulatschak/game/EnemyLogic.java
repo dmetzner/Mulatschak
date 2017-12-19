@@ -110,6 +110,13 @@ public class EnemyLogic {
         boolean valid = false;
         int random_number = -1;
         while (!valid) {
+            int bound = 0;
+            if (player.getAmountOfCardsInHand() > 0) {
+                bound = player.getAmountOfCardsInHand();
+            }
+            else {
+                Log.d("-----------------", player.getAmountOfCardsInHand() + "");
+            }
             random_number = random_generator.nextInt(player.getAmountOfCardsInHand());
             Card card = player.getHand().getCardAt(random_number);
             CardStack hand = player.getHand();
