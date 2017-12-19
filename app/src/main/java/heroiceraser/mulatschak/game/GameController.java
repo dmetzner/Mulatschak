@@ -162,6 +162,7 @@ public class GameController{
         allCardsBackToTheDeck();
         shuffleDeck();
         discardPile_.setVisible(false);
+        discardPile_.setOverlaysVisible(false);
         dealCards();  // starts an dealing animation
     }
 
@@ -666,6 +667,7 @@ public class GameController{
 
     }
     private void endCardRound() {
+        discardPile_.setOverlaysVisible(false);
         clearDiscardPile();
         nextCardRound();
     }
@@ -696,6 +698,8 @@ public class GameController{
             wait_for_end_card_round_ = true;
 
             // ToDO show winner of the round, click to next round button
+            discardPile_.setOverlaysVisible(true);
+
 
             Handler end_round_handler = new Handler();
             Runnable end_round_runnable = new Runnable() {
@@ -781,7 +785,7 @@ public class GameController{
                 }
                 return;
             }
-            else if (mulatschak) {
+            else  {
                 for (int i = 0; i < getAmountOfPlayers(); i++) {
                     int add_lives = 0;
                     if (logic_.getTrumpPlayerId() == i) {

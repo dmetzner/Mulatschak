@@ -89,6 +89,18 @@ public class Player {
         return amount;
     }
 
+    public void sortHandBasedOnPosition() {
+
+        // sort based on x-coord
+        if (position_ % 2 == 0) {
+            CardStack.bubblesort(hand_, CardStack.xPosComperator);
+        }
+        // sort based on y-coord
+        else {
+            CardStack.bubblesort(hand_, CardStack.yPosComperator);
+        }
+    }
+
     //----------------------------------------------------------------------------------------------
     //  Getter & Setter
     //

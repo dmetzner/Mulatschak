@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import heroiceraser.mulatschak.game.DrawableObjects.Card;
-import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
 
 /**
  * Created by Daniel Metzner on 13.12.2017.
@@ -66,9 +65,9 @@ public class CardExchangeLogic {
         return (int) (Math.random() * 100);
     }
 
-    private void moveWeakCards(List<Card> source, List<Card> dst, GameLogic logic,
+    private void moveWeakCards(List<Card> hand, List<Card> exchanged_cards, GameLogic logic,
                                int weak_border, int randomness) {
-        for (int i = 0; i < source.size(); i++) {
+        for (int i = 0; i < hand.size(); i++) {
 
             // built in random stupidity, easier modes have a higher chance of doing something stupid
             if (getRandomPercent() <= randomness) {
@@ -79,19 +78,19 @@ public class CardExchangeLogic {
                 }
                 if (getRandomPercent() < 25) {
                     // just trade a card without a reason
-                    dst.add(source.get(i));
-                    source.remove(i);
+                    exchanged_cards.add(hand.get(i));
+                    hand.remove(i);
                     i--;
                     continue;
                 }
             }
 
             // check if the card should get sorted out
-            if (!logic.isCardTrump(source.get(i)) &&
-                    GameLogic.getCardValue(source.get(i)) < weak_border) {
+            if (!logic.isCardTrump(hand.get(i)) &&
+                    GameLogic.getCardValue(hand.get(i)) < weak_border) {
 
-                dst.add(source.get(i));
-                source.remove(i);
+                exchanged_cards.add(hand.get(i));
+                hand.remove(i);
                 i--;
             }
         }
