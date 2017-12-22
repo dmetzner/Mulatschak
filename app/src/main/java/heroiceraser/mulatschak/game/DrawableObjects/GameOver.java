@@ -41,7 +41,7 @@ public class GameOver extends DrawableObject {
     public void draw(Canvas canvas, GameController controller) {
         if (isVisible()) {
             // canvas.drawBitmap(getBitmap(), getPosition().x, getPosition().y, null);
-            controller.getStatistics().setVisible(true);
+            controller.getNonGamePlayUIContainer().getStatistics().setVisible(true);
             back_button_.draw(canvas);
         }
     }

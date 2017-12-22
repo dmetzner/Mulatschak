@@ -3,19 +3,14 @@ package heroiceraser.mulatschak.game;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Point;
-import android.text.Layout;
-import android.text.StaticLayout;
-import android.text.TextPaint;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 
 import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
-import heroiceraser.mulatschak.game.DrawableObjects.ButtonBar;
 
 /**
  * Created by Daniel Metzner on 08.08.2017.
@@ -70,14 +65,10 @@ public class GameView extends View {
         drawAnimations(canvas);
 
         drawRoundInfo(canvas);
-        drawStatistics(canvas);
-        drawTricks(canvas);
-        drawMenu(canvas);
 
         drawGameOver(canvas);
 
-        drawButtonBar(canvas);
-        drawBorder(canvas);
+        drawNonGamePlayUI(canvas);
 
         thread_.now = System.currentTimeMillis();
         thread_.framesCount++;
@@ -93,13 +84,6 @@ public class GameView extends View {
         controller_.getPlayerInfo().draw(canvas);
     }
 
-    private void drawBorder(Canvas canvas) {
-        // draw game middle
-        canvas.drawBitmap(controller_.getButtonBar().getBorderUp(), 0,
-                controller_.getLayout().getSectors().get(2).y, null);
-        canvas.drawBitmap(controller_.getButtonBar().getBorderDown(), 0,
-                controller_.getLayout().getSectors().get(4).y, null);
-    }
 
     private void drawGameOver(Canvas canvas) {
         controller_.getGameOver().draw(canvas, controller_);
@@ -117,29 +101,10 @@ public class GameView extends View {
         }
     }
 
-    private void drawButtonBar(Canvas canvas) {
-        if (controller_.getButtonBar().isVisible()) {
-            ButtonBar button_bar = controller_.getButtonBar();
-
-            /// draw Buttonbar
-            canvas.drawBitmap(button_bar.getBitmap(), button_bar.getPosition().x,
-                    button_bar.getPosition().y, null);
-
-            // draw decoration
-            canvas.drawBitmap(button_bar.getDecoration(), button_bar.getPosition().x,
-                    (int) (button_bar.getPosition().y - (button_bar.getHeight())), null);
-
-            // Statistics Button
-            controller_.getButtonBar().getStatisticsButton().draw(canvas);
-
-            // Tricks Button
-            controller_.getButtonBar().getTricksButton().draw(canvas);
-
-            // Menu Button
-            controller_.getButtonBar().getMenuButton().draw(canvas);
-        }
-
+    private void drawNonGamePlayUI(Canvas canvas) {
+        controller_.getNonGamePlayUIContainer().draw(canvas);
     }
+
 
     //----------------------------------------------------------------------------------------------
     //  drawDiscardPile
@@ -212,7 +177,13 @@ public class GameView extends View {
             return;
         }
 
-        if (controller_.getAnimation().getDealingAnimation().getAnimationRunning()) {
+
+        if (controller_.getEnemyLogic().isPlayACardAnimationRunning()) {
+            controller_.getEnemyLogic().draw(canvas);
+        }
+
+
+        else if (controller_.getAnimation().getDealingAnimation().getAnimationRunning()) {
 
             canvas.drawBitmap(controller_.getDeck().getBacksideBitmap(),
                     controller_.getDeck().getPosition().x,
@@ -265,26 +236,6 @@ public class GameView extends View {
 
     }
 
-    //----------------------------------------------------------------------------------------------
-    // drawStatistics
-    //
-    private void drawStatistics(Canvas canvas) {
-       controller_.getStatistics().draw(canvas, controller_);
-    }
-
-    //----------------------------------------------------------------------------------------------
-    // drawTricks
-    //
-    private void drawTricks(Canvas canvas) {
-        controller_.getTricks().draw(canvas);
-    }
-
-    //----------------------------------------------------------------------------------------------
-    // drawMenu
-    //
-    private void drawMenu(Canvas canvas) {
-        controller_.getMenu().draw(canvas);
-    }
 
     //----------------------------------------------------------------------------------------------
     //  onTouchEvent

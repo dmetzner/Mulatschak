@@ -1,16 +1,8 @@
 package heroiceraser.mulatschak.game;
 
-import android.content.SharedPreferences;
-import android.util.Log;
+import android.graphics.Canvas;
 import android.widget.Toast;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import heroiceraser.mulatschak.game.DrawableObjects.Card;
-import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
 import heroiceraser.mulatschak.game.DrawableObjects.DiscardPile;
 import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
 
@@ -20,11 +12,19 @@ import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
 
 public class EnemyLogic {
 
-    CardExchangeLogic cardExchangeLogic;
+    EnemyCardExchangeLogic enemyCardExchangeLogic;
+    EnemyPlayACardLogic playACardLogic;
 
     public EnemyLogic() {
-        cardExchangeLogic = new CardExchangeLogic();
+        enemyCardExchangeLogic = new EnemyCardExchangeLogic();
+        playACardLogic = new EnemyPlayACardLogic();
     }
+
+
+    public void init(GameView view) {
+        playACardLogic.init(view.getController());
+    }
+
 
     //----------------------------------------------------------------------------------------------
     //  TrickBids
@@ -97,7 +97,7 @@ public class EnemyLogic {
     //
 
     public void makeCardExchange(Player player, GameController controller) {
-        cardExchangeLogic.exchangeCard(player, controller);
+        enemyCardExchangeLogic.exchangeCard(player, controller);
         player.sortHandBasedOnPosition();
     }
 
@@ -106,20 +106,19 @@ public class EnemyLogic {
     //----------------------------------------------------------------------------------------------
     //  Play Card
     //
-    public void playCard(GameLogic logic, Player player, DiscardPile discard_pile) {
-        Random random_generator = new Random();
-        boolean valid = false;
-        int random_number = -1;
-        while (!valid) {
-            random_number = random_generator.nextInt(player.getAmountOfCardsInHand());
-            Card card = player.getHand().getCardAt(random_number);
-            CardStack hand = player.getHand();
-            valid = logic.isAValidCardPlay(card, hand, discard_pile);
-        }
+    public void playACard(GameLogic logic, Player player, DiscardPile discard_pile) {
+        playACardLogic.playACard(logic, player, discard_pile);
+    }
 
-        Card card = player.getHand().getCardAt(random_number);
-        player.getHand().getCardStack().remove(random_number);
-        discard_pile.setCard(player.getPosition(), card);
+    public boolean isPlayACardAnimationRunning() {
+        return playACardLogic.isAnimationRunning();
+    }
+
+    public void draw(Canvas canvas) {
+
+        if (isPlayACardAnimationRunning()) {
+            playACardLogic.draw(canvas);
+        }
 
     }
 

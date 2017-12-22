@@ -50,7 +50,9 @@ public class TouchEvents {
         //------------------ Play a Card -----------------------------------------------------------
         // moves the card with the touch movement
         if (controller.getAnimation().getCardAnimations().getCardMovable() &&
+                !controller.getNonGamePlayUIContainer().isAWindowActive() &&
                 controller.getLogic().getTurn() == 0 && move_card_ < 0) {
+
             for (int i = 0; i < controller.getPlayerById(0).getAmountOfCardsInHand(); i++) {
                 Card card = controller.getPlayerById(0).getHand().getCardAt(i);
                 if (card.getFixedPosition() == null) {
@@ -72,34 +74,32 @@ public class TouchEvents {
         // ------------------ ButtonBar ------------------------------------------------------------
 
         // Statistic Button
-        ButtonActionDown(X, Y, controller.getButtonBar().getStatisticsButton());
+        if (ButtonActionDown(X, Y, controller.getNonGamePlayUIContainer()
+                .getButtonBar().getStatisticsButton()) )  {}
 
         // Tricks Button
-        ButtonActionDown(X, Y, controller.getButtonBar().getTricksButton());
+        else if (ButtonActionDown(X, Y, controller.getNonGamePlayUIContainer()
+                .getButtonBar().getTricksButton()) ) {}
 
         // Menu Button
-        ButtonActionDown(X, Y, controller.getButtonBar().getMenuButton());
+        else if (ButtonActionDown(X, Y, controller.getNonGamePlayUIContainer()
+                .getButtonBar().getMenuButton()) ) {}
 
         //------------------------
 
         // ------------------ ButtonBar Tricks Window ----------------------------------------------
-        ButtonActionDown(X, Y, controller.getTricks().getArrowButtonLeft());
-        ButtonActionDown(X, Y, controller.getTricks().getArrowButtonRight());
+        else if (ButtonActionDown(X, Y, controller.getNonGamePlayUIContainer()
+                .getTricks().getArrowButtonLeft()) ) {}
+        else if (ButtonActionDown(X, Y, controller.getNonGamePlayUIContainer()
+                .getTricks().getArrowButtonRight()) ) {}
 
         //------------------------
 
-        // ------------------ Player Info ----------------------------------------------------------
-
-        // Player Info Buttons
-        ButtonActionDown(X, Y, controller.getPlayerInfo().getButtonLeft());
-        ButtonActionDown(X, Y, controller.getPlayerInfo().getButtonTop());
-        ButtonActionDown(X, Y, controller.getPlayerInfo().getButtonRight());
-
-        //------------------------
 
         //------------------- Card Exchange --------------------------------------------------------
 
-        if (controller.getAnimation().getCardExchange().isAnimationRunning()) {
+        else if (controller.getAnimation().getCardExchange().isAnimationRunning() &&
+        !controller.getNonGamePlayUIContainer().isAWindowActive()) {
             for (int i = 0; i < controller.getPlayerById(0).getAmountOfCardsInHand(); i++) {
                 Card card = controller.getPlayerById(0).getHand().getCardAt(i);
                 if (X >= card.getPosition().x &&
@@ -118,19 +118,33 @@ public class TouchEvents {
         //------------------- Trick Bids --------------------------------------------------------
 
         //  Buttons to make Trick Bids
-        if (controller.getAnimation().getTrickBids().getAnimationNumbers()) {
+        else if (controller.getAnimation().getTrickBids().getAnimationNumbers() &&
+                !controller.getNonGamePlayUIContainer().isAWindowActive()) {
             List<MyButton> buttons = controller.getAnimation().getTrickBids().getNumberButtons();
             for (int i = 0; i < buttons.size(); i++) {
                 ButtonActionDown(X, Y, buttons.get(i));
             }
         }
         // Buttons to choose the trump of the round
-        else if (controller.getAnimation().getTrickBids().getAnimationSymbols()) {
+        else if (controller.getAnimation().getTrickBids().getAnimationSymbols() &&
+                !controller.getNonGamePlayUIContainer().isAWindowActive()) {
             List<MyButton> buttons = controller.getAnimation().getTrickBids().getTrumpButtons();
             for (int i = 0; i < buttons.size(); i++) {
                 ButtonActionDown(X, Y, buttons.get(i));
             }
         }
+
+        // ------------------ Player Info ----------------------------------------------------------
+
+        // Player Info Buttons
+        else if (!controller.getNonGamePlayUIContainer().isAWindowActive()) {
+            if (ButtonActionDown(X, Y, controller.getPlayerInfo().getButtonLeft()) ) {}
+            else if (ButtonActionDown(X, Y, controller.getPlayerInfo().getButtonTop()) ) {}
+            else if (ButtonActionDown(X, Y, controller.getPlayerInfo().getButtonRight()) ) {}
+        }
+
+
+        //------------------------
 
     }
 
@@ -154,19 +168,24 @@ public class TouchEvents {
         // ------------------ ButtonBar ------------------------------------------------------------
 
         // Statistic Button
-        ButtonActionMove(X, Y, controller.getButtonBar().getStatisticsButton());
+        ButtonActionMove(X, Y, controller.getNonGamePlayUIContainer()
+                .getButtonBar().getStatisticsButton());
 
         // Tricks Button
-        ButtonActionMove(X, Y, controller.getButtonBar().getTricksButton());
+        ButtonActionMove(X, Y, controller.getNonGamePlayUIContainer()
+                .getButtonBar().getTricksButton());
 
         // Menu Button
-        ButtonActionMove(X, Y, controller.getButtonBar().getMenuButton());
+        ButtonActionMove(X, Y, controller.getNonGamePlayUIContainer()
+                .getButtonBar().getMenuButton());
 
         //------------------------
 
         // ------------------ ButtonBar Tricks Window ----------------------------------------------
-        ButtonActionMove(X, Y, controller.getTricks().getArrowButtonLeft());
-        ButtonActionMove(X, Y, controller.getTricks().getArrowButtonRight());
+        ButtonActionMove(X, Y, controller.getNonGamePlayUIContainer()
+                .getTricks().getArrowButtonLeft());
+        ButtonActionMove(X, Y, controller.getNonGamePlayUIContainer()
+                .getTricks().getArrowButtonRight());
 
         //------------------------
 
@@ -217,34 +236,36 @@ public class TouchEvents {
         // ----------------------- ButtonBar -------------------------------------------------------
 
         // Statistic Button
-        if (ButtonActionUp(X, Y, controller.getButtonBar().getStatisticsButton())) {
-            controller.getMenu().setVisible(false);
-            controller.getTricks().setVisible(false);
-            controller.getStatistics().switchVisibility();
+        if (ButtonActionUp(X, Y, controller.getNonGamePlayUIContainer().getButtonBar().getStatisticsButton())) {
+            controller.getNonGamePlayUIContainer().getMenu().setVisible(false);
+            controller.getNonGamePlayUIContainer().getTricks().setVisible(false);
+            controller.getNonGamePlayUIContainer().getStatistics().switchVisibility();
         }
 
         // Tricks Button
-        if (ButtonActionUp(X, Y, controller.getButtonBar().getTricksButton())) {
-            controller.getMenu().setVisible(false);
-            controller.getTricks().switchVisibility();
-            controller.getStatistics().setVisible(false);
+        if (ButtonActionUp(X, Y, controller.getNonGamePlayUIContainer().getButtonBar().getTricksButton())) {
+            controller.getNonGamePlayUIContainer().getMenu().setVisible(false);
+            controller.getNonGamePlayUIContainer().getTricks().switchVisibility();
+            controller.getNonGamePlayUIContainer().getStatistics().setVisible(false);
         }
 
         // Menu Button
-        if (ButtonActionUp(X, Y, controller.getButtonBar().getMenuButton())) {
-            controller.getMenu().switchVisibility();
-            controller.getTricks().setVisible(false);
-            controller.getStatistics().setVisible(false);
+        if (ButtonActionUp(X, Y, controller.getNonGamePlayUIContainer().getButtonBar().getMenuButton())) {
+            controller.getNonGamePlayUIContainer().getMenu().switchVisibility();
+            controller.getNonGamePlayUIContainer().getTricks().setVisible(false);
+            controller.getNonGamePlayUIContainer().getStatistics().setVisible(false);
         }
 
         //------------------------
 
         // ------------------ ButtonBar Tricks Window ----------------------------------------------
-        if (ButtonActionUp(X, Y, controller.getTricks().getArrowButtonLeft())) {
-            controller.getTricks().showPrevRound();
+        if (ButtonActionUp(X, Y, controller.getNonGamePlayUIContainer()
+                .getTricks().getArrowButtonLeft())) {
+            controller.getNonGamePlayUIContainer().getTricks().showPrevRound();
         }
-        if (ButtonActionUp(X, Y, controller.getTricks().getArrowButtonRight())) {
-            controller.getTricks().showNextRound();
+        if (ButtonActionUp(X, Y, controller.getNonGamePlayUIContainer()
+                .getTricks().getArrowButtonRight())) {
+            controller.getNonGamePlayUIContainer().getTricks().showNextRound();
         }
 
         //------------------------
@@ -338,12 +359,14 @@ public class TouchEvents {
     //----------------------------------------------------------------------------------------------
     // Button Actions
     //
-    private void ButtonActionDown(int X, int Y, MyButton button) {
+    private boolean ButtonActionDown(int X, int Y, MyButton button) {
         if (button.isVisible() && button.IsEnabled() &&
                 X >= button.getPosition().x && X < button.getPosition().x + button.getWidth() &&
                 Y >= button.getPosition().y && Y < button.getPosition().y + button.getHeight()) {
             button.setPressed(true);
+            return true;
         }
+        return false;
     }
 
     private void ButtonActionMove(int X, int Y, MyButton button) {

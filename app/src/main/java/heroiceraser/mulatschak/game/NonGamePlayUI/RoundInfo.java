@@ -1,4 +1,4 @@
-package heroiceraser.mulatschak.game.DrawableObjects;
+package heroiceraser.mulatschak.game.NonGamePlayUI;
 
 import android.graphics.Canvas;
 import android.graphics.Color;

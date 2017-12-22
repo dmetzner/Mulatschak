@@ -1,16 +1,11 @@
-package heroiceraser.mulatschak.game.DrawableObjects;
+package heroiceraser.mulatschak.game.NonGamePlayUI;
 
 
 import android.graphics.Canvas;
-import android.graphics.Point;
-import android.text.Layout;
-import android.text.StaticLayout;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
-import heroiceraser.mulatschak.DrawableBasicObjects.MySimpleTextField;
 import heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.ButtonBarWindowTitle;
-import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.helpers.HelperFunctions;

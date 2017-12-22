@@ -11,9 +11,9 @@ import heroiceraser.mulatschak.game.DrawableObjects.Card;
  * Created by Daniel Metzner on 13.12.2017.
  */
 
-public class CardExchangeLogic {
+public class EnemyCardExchangeLogic {
 
-    public CardExchangeLogic() {
+    public EnemyCardExchangeLogic() {
     }
 
     public void exchangeCard(Player player, GameController controller) {

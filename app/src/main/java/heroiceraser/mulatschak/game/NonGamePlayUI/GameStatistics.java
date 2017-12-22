@@ -1,9 +1,7 @@
-package heroiceraser.mulatschak.game.DrawableObjects;
+package heroiceraser.mulatschak.game.NonGamePlayUI;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Point;
-import android.graphics.Typeface;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -29,6 +27,7 @@ public class GameStatistics extends DrawableObject{
     private ButtonBarWindowTitle title_;
 
     // state of the game
+    private int players_;
     private TextPaint text_paint_;
     private ArrayList<StaticLayout> display_name_layouts_;
     private Point display_name_text_pos_;
@@ -68,13 +67,15 @@ public class GameStatistics extends DrawableObject{
         initPlayerLivesLayouts(view.getController());
 
         setPlayerLivesPosition(layout);
+
+        players_ = view.getController().getAmountOfPlayers();
     }
 
     public void updatePlayerLives(GameController controller) {
         initPlayerLivesLayouts(controller);
     }
 
-    public void draw(Canvas canvas, GameController controller) {
+    public void draw(Canvas canvas) {
         if (isVisible()) {
 
             // draw background
@@ -84,7 +85,7 @@ public class GameStatistics extends DrawableObject{
             title_.draw(canvas);
 
             // display names & lives
-            drawStateOfTheGame(canvas, controller.getAmountOfPlayers());
+            drawStateOfTheGame(canvas, players_);
         }
     }
 
