@@ -221,7 +221,7 @@ public class EnemyCardExchangeAnimation {
             if (timeDelta > 300) {
 
                 // increase speed in the first x rotations
-                if (degree_ / 360 < 2.7) {
+                if (degree_ / 360.0 < 2.5) {
                     spin_speed_ *= 2;
                     if (spin_speed_ > 28) {
                         spin_speed_ = 28;
@@ -240,7 +240,7 @@ public class EnemyCardExchangeAnimation {
             }
 
             // animation is done after x rotations
-            if (degree_ / 360 > 3) {
+            if (degree_ / 360.0 > 3) {
                 spin_speed_ = 0;
                 part1 = false;
                 part1_5 = false;
