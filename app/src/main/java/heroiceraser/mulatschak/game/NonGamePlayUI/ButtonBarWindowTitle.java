@@ -1,10 +1,13 @@
-package heroiceraser.mulatschak.game;
+package heroiceraser.mulatschak.game.NonGamePlayUI;
 
 import android.graphics.Point;
 import android.text.Layout;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.MySimpleTextField;
 import heroiceraser.mulatschak.R;
+import heroiceraser.mulatschak.game.GameController;
+import heroiceraser.mulatschak.game.GameLayout;
+import heroiceraser.mulatschak.game.GameView;
 
 /**
  * Created by Daniel Metzner on 02.10.2017.

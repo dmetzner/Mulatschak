@@ -6,7 +6,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import heroiceraser.mulatschak.game.Animations.TrickBids;
+import heroiceraser.mulatschak.game.GamePlay.TrickBids;
 import heroiceraser.mulatschak.helpers.DisplayDimension;
 
 /**

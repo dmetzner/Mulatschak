@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.R;
-import heroiceraser.mulatschak.game.ButtonBarWindowTitle;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.helpers.HelperFunctions;

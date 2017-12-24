@@ -2,18 +2,13 @@ package heroiceraser.mulatschak.game.NonGamePlayUI;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.RectF;
-import android.text.StaticLayout;
-import android.text.TextPaint;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.DrawableBasicObjects.TextField;
-import heroiceraser.mulatschak.game.Animations.TrickBids;
+import heroiceraser.mulatschak.game.GamePlay.TrickBids;
 import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
 import heroiceraser.mulatschak.game.GameController;
-import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
 

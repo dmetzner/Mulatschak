@@ -1,4 +1,4 @@
-package heroiceraser.mulatschak.game;
+package heroiceraser.mulatschak.game.GamePlay.PlayACard;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -12,6 +12,10 @@ import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
 import heroiceraser.mulatschak.game.DrawableObjects.DiscardPile;
 import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
+import heroiceraser.mulatschak.game.GameController;
+import heroiceraser.mulatschak.game.GameLogic;
+import heroiceraser.mulatschak.game.Player;
+import heroiceraser.mulatschak.helpers.HelperFunctions;
 
 /**
  * Created by Daniel Metzner on 20.12.2017.
@@ -40,8 +44,8 @@ public class EnemyPlayACardLogic {
     }
 
     public void init(GameController controller) {
-        backside_bitmap_ = controller.getDeck().getBacksideBitmap()
-                .copy(controller.getDeck().getBacksideBitmap().getConfig(), true);
+        backside_bitmap_ = HelperFunctions.loadBitmap(controller.getView(), "card_back",
+                controller.getLayout().getCardWidth(), controller.getLayout().getCardHeight());
         controller_ = controller;
     }
 

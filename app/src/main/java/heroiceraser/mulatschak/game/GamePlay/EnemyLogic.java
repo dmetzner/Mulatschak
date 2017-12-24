@@ -1,10 +1,16 @@
-package heroiceraser.mulatschak.game;
+package heroiceraser.mulatschak.game.GamePlay;
 
 import android.graphics.Canvas;
 import android.widget.Toast;
 
 import heroiceraser.mulatschak.game.DrawableObjects.DiscardPile;
 import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
+import heroiceraser.mulatschak.game.GameController;
+import heroiceraser.mulatschak.game.GameLogic;
+import heroiceraser.mulatschak.game.GamePlay.CardExchange.EnemyCardExchange;
+import heroiceraser.mulatschak.game.GamePlay.PlayACard.EnemyPlayACardLogic;
+import heroiceraser.mulatschak.game.GameView;
+import heroiceraser.mulatschak.game.Player;
 
 /**
  * Created by Daniel Metzner on 21.08.2017.
@@ -12,14 +18,15 @@ import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
 
 public class EnemyLogic {
 
-    EnemyCardExchangeLogic enemyCardExchangeLogic;
-    EnemyPlayACardLogic playACardLogic;
+    private int player_id_;
+    private EnemyCardExchange card_exchange_logic_;
+    private EnemyPlayACardLogic playACardLogic;
 
-    public EnemyLogic() {
-        enemyCardExchangeLogic = new EnemyCardExchangeLogic();
+    public EnemyLogic(int player_id) {
+        card_exchange_logic_ = new EnemyCardExchange();
         playACardLogic = new EnemyPlayACardLogic();
+        player_id_ = player_id;
     }
-
 
     public void init(GameView view) {
         playACardLogic.init(view.getController());
@@ -97,7 +104,7 @@ public class EnemyLogic {
     //
 
     public void makeCardExchange(Player player, GameController controller) {
-        enemyCardExchangeLogic.exchangeCard(player, controller);
+        card_exchange_logic_.exchangeCard(player, controller);
         player.sortHandBasedOnPosition();
     }
 
@@ -110,14 +117,27 @@ public class EnemyLogic {
         playACardLogic.playACard(logic, player, discard_pile);
     }
 
+    public boolean isAnimationRunning() {
+        return isPlayACardAnimationRunning() || isCardExchangeAnimationRunning();
+    }
+
     public boolean isPlayACardAnimationRunning() {
         return playACardLogic.isAnimationRunning();
     }
 
-    public void draw(Canvas canvas) {
+    public boolean isCardExchangeAnimationRunning() {
+        return card_exchange_logic_.isAnimationRunning();
+    }
+
+
+    public void draw(Canvas canvas, GameController controller) {
 
         if (isPlayACardAnimationRunning()) {
             playACardLogic.draw(canvas);
+        }
+
+        if (isCardExchangeAnimationRunning()) {
+            card_exchange_logic_.draw(canvas, controller);
         }
 
     }

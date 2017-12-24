@@ -11,7 +11,9 @@ import java.util.List;
 import java.util.Random;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
-import heroiceraser.mulatschak.game.Animations.TrickBids;
+import heroiceraser.mulatschak.game.GamePlay.EnemyLogic;
+import heroiceraser.mulatschak.game.GamePlay.GamePlay;
+import heroiceraser.mulatschak.game.GamePlay.TrickBids;
 import heroiceraser.mulatschak.game.NonGamePlayUI.NonGamePlayUIContainer;
 import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
@@ -51,22 +53,23 @@ public class GameController{
     private GameLogic logic_;
 
     private NonGamePlayUIContainer non_game_play_ui_;
+    private GamePlay game_play_;
 
 
     private PlayerInfo player_info_;
     private GameOver game_over_;
 
     private List<Player> player_list_;
+    private List<EnemyLogic> enemy_logic_list_;
+
     private MulatschakDeck deck_;
     private DiscardPile discardPile_;
     private CardStack trash_;
     private DealerButton dealer_button_;
-    private EnemyLogic enemy_logic_;
 
     private boolean wait_for_end_card_round_;
     // ToDo
 
-    private boolean action_clickable_;
 
     //----------------------------------------------------------------------------------------------
     //  Constructor
@@ -74,9 +77,9 @@ public class GameController{
     public GameController(GameView view) {
         view_ = view;
         enable_drawing_ = false;
-        action_clickable_ = false;
 
         non_game_play_ui_ = new NonGamePlayUIContainer();
+        game_play_ = new GamePlay();
 
         logic_ = new GameLogic();
         layout_ = new GameLayout();
@@ -90,10 +93,10 @@ public class GameController{
         trash_ = new CardStack();
         discardPile_ = new DiscardPile();
         player_list_ = new ArrayList<>();
+        enemy_logic_list_ = new ArrayList<>();
 
         dealer_button_ = new DealerButton();
 
-        enemy_logic_ = new EnemyLogic();
 
         wait_for_end_card_round_ = false;
 
@@ -126,12 +129,15 @@ public class GameController{
         setPlayerPositions();
         player_info_.init(view_);
 
-        deck_.initDeck(view_);
-        enemy_logic_.init(view_);
+        initEnemies(enemies, view_);
+
+        non_game_play_ui_.init(view_);
         discardPile_.init(view_);
+        game_play_.init(view_); // need dp todo
+
+        deck_.initDeck(view_);
         dealer_button_.init(view_);
         animations_.init(view_);
-        non_game_play_ui_.init(view_);
         game_over_.init(view_);
 
         enable_drawing_ = true;
@@ -149,7 +155,7 @@ public class GameController{
         logic_.setMulatschakRound(false);
         reEnableButtons();
         resetTricksToMake();
-        animations_.getCardAnimations().setCardMoveable(false);
+        getGamePlay().getPlayACard().setCardMoveable(false);
         resetTurn();
         view_.enableUpdateCanvasThread();
 
@@ -252,6 +258,16 @@ public class GameController{
             setDisplayName(getPlayerById(i));
         }
     }
+
+    public void initEnemies(int enemies, GameView view) {
+        for (int i = 0; i < enemies; i++) {
+            enemy_logic_list_.add(new EnemyLogic(i + 1));
+        }
+        for (EnemyLogic el : enemy_logic_list_) {
+            el.init(view);
+        }
+    }
+
 
     public void setDisplayName(Player player) {
 
@@ -447,9 +463,7 @@ public class GameController{
         }
         else if (logic_.getTurn() != 0) {
             view_.enableUpdateCanvasThread();
-            EnemyLogic enemy_logic = new EnemyLogic();
-            enemy_logic.makeCardExchange(getPlayerById(logic_.getTurn()), this);
-            makeCardExchange();
+            enemy_logic_list_.get(logic_.getTurn() - 1).makeCardExchange(getPlayerById(logic_.getTurn()), this);
         }
     }
 
@@ -487,7 +501,7 @@ public class GameController{
         }
         else if (logic_.getTurn() != 0) {
             view_.enableUpdateCanvasThread();
-            enemy_logic_.makeTrickBids(getPlayerById(logic_.getTurn()), this);
+            enemy_logic_list_.get(logic_.getTurn() - 1).makeTrickBids(getPlayerById(logic_.getTurn()), this);
 
             Handler mHandler = new Handler();
             Runnable codeToRun = new Runnable() {
@@ -570,7 +584,7 @@ public class GameController{
         }
         else if (logic_.getTrumpPlayerId() != 0) {
             view_.enableUpdateCanvasThread();
-            enemy_logic_.chooseTrump(getPlayerById(logic_.getTrumpPlayerId()), logic_, view_);
+            enemy_logic_list_.get(logic_.getTurn() - 1).chooseTrump(getPlayerById(logic_.getTrumpPlayerId()), logic_, view_);
             Handler mhandler = new Handler();
             Runnable codeToRun = new Runnable() {
                 @Override
@@ -672,7 +686,7 @@ public class GameController{
 
     private void nextTurn(boolean first_call) {
 
-        animations_.getCardAnimations().setCardMoveable(false);
+        getGamePlay().getPlayACard().setCardMoveable(false);
         non_game_play_ui_.getRoundInfo().setInfoBoxEmpty();
         non_game_play_ui_.getRoundInfo().getRoundInfoTextField().setVisible(true);
         non_game_play_ui_.getRoundInfo().updateRoundInfo(this);
@@ -691,7 +705,6 @@ public class GameController{
 
             // ToDO show winner of the round, click to next round button
             discardPile_.setOverlaysVisible(true);
-
 
             Handler end_round_handler = new Handler();
             Runnable end_round_runnable = new Runnable() {
@@ -717,13 +730,13 @@ public class GameController{
         Log.d("GameController2", "Player " +logic_.getTurn() + " is playing his card");
 
         if (logic_.getTurn() == 0) {
-            animations_.getCardAnimations().setCardMoveable(true);
+            getGamePlay().getPlayACard().setCardMoveable(true);
             view_.disableUpdateCanvasThread();
             // touch event calls next turnToNextPlayer & next turn
         }
         else if (logic_.getTurn() != 0) {
             view_.enableUpdateCanvasThread();
-            enemy_logic_.playACard(logic_, getPlayerById(logic_.getTurn()), discardPile_);
+            enemy_logic_list_.get(logic_.getTurn() - 1).playACard(logic_, getPlayerById(logic_.getTurn()), discardPile_);
         }
     }
 
@@ -899,8 +912,11 @@ public class GameController{
         return enable_drawing_;
     }
 
-    public EnemyLogic getEnemyLogic() {
-        return enemy_logic_;
+    public List<EnemyLogic> getEnemyLogic() {
+        return enemy_logic_list_;
     }
 
+    public GamePlay getGamePlay() {
+        return game_play_;
+    }
 }

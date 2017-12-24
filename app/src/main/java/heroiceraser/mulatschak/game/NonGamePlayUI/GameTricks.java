@@ -11,7 +11,6 @@ import heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.MySimpleTextField;
-import heroiceraser.mulatschak.game.ButtonBarWindowTitle;
 import heroiceraser.mulatschak.game.DrawableObjects.DiscardPile;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;

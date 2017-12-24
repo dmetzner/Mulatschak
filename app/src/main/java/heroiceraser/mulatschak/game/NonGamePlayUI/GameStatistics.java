@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.DrawableBasicObjects.MySimpleTextField;
 import heroiceraser.mulatschak.R;
-import heroiceraser.mulatschak.game.ButtonBarWindowTitle;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;

@@ -10,9 +10,6 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 
-import org.w3c.dom.Text;
-
-import heroiceraser.mulatschak.game.Animations.CardExchange;
 import heroiceraser.mulatschak.game.GameView;
 
 /**

@@ -1,4 +1,4 @@
-package heroiceraser.mulatschak.game.Animations;
+package heroiceraser.mulatschak.game.GamePlay;
 
 import android.graphics.Point;
 

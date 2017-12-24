@@ -1,5 +1,7 @@
 package heroiceraser.mulatschak.game.Animations;
 
+import heroiceraser.mulatschak.game.GamePlay.CardExchange.CardExchange;
+import heroiceraser.mulatschak.game.GamePlay.TrickBids;
 import heroiceraser.mulatschak.game.GameView;
 
 /**
@@ -10,7 +12,6 @@ public class GameAnimation {
 
     private boolean animation_turned_on_;
 
-    private CardAnimations card_animations_;
     private DealingAnimation dealing_animation_;
     private ReAnimateHands re_animate_hands;
     private CardExchange card_exchange_;
@@ -18,7 +19,6 @@ public class GameAnimation {
 
     public GameAnimation(GameView view) {
         animation_turned_on_ = true;
-        card_animations_ = new CardAnimations();
         dealing_animation_ = new DealingAnimation(view);
         re_animate_hands = new ReAnimateHands();
         card_exchange_ = new CardExchange();
@@ -39,10 +39,6 @@ public class GameAnimation {
         return dealing_animation_;
     }
     public ReAnimateHands getReAnimateHands() { return re_animate_hands; }
-
-    public CardAnimations getCardAnimations() {
-        return card_animations_;
-    }
 
     public CardExchange getCardExchange() { return card_exchange_; }
     public TrickBids getTrickBids() { return trick_bids_; }

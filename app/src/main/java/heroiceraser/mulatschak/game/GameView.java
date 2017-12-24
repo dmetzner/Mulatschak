@@ -11,6 +11,7 @@ import android.view.View;
 
 
 import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
+import heroiceraser.mulatschak.game.GamePlay.EnemyLogic;
 
 /**
  * Created by Daniel Metzner on 08.08.2017.
@@ -178,12 +179,16 @@ public class GameView extends View {
         }
 
 
-        if (controller_.getEnemyLogic().isPlayACardAnimationRunning()) {
-            controller_.getEnemyLogic().draw(canvas);
+        controller_.getGamePlay().getPlayACard().draw(canvas, controller_);
+
+
+        for (EnemyLogic el : controller_.getEnemyLogic()) {
+            if (el.isAnimationRunning()) {
+                el.draw(canvas, controller_);
+            }
         }
 
-
-        else if (controller_.getAnimation().getDealingAnimation().getAnimationRunning()) {
+        if (controller_.getAnimation().getDealingAnimation().getAnimationRunning()) {
 
             canvas.drawBitmap(controller_.getDeck().getBacksideBitmap(),
                     controller_.getDeck().getPosition().x,

@@ -21,13 +21,12 @@ import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
 
 public class TouchEvents {
 
-    private int move_card_;
 
     //----------------------------------------------------------------------------------------------
     // Constructor
     //
     public TouchEvents() {
-        move_card_ = GameController.NOT_SET;
+
     }
 
     //----------------------------------------------------------------------------------------------
@@ -44,31 +43,10 @@ public class TouchEvents {
             controller.startRound();
         }
 
-
         //------------------------
 
         //------------------ Play a Card -----------------------------------------------------------
-        // moves the card with the touch movement
-        if (controller.getAnimation().getCardAnimations().getCardMovable() &&
-                !controller.getNonGamePlayUIContainer().isAWindowActive() &&
-                controller.getLogic().getTurn() == 0 && move_card_ < 0) {
-
-            for (int i = 0; i < controller.getPlayerById(0).getAmountOfCardsInHand(); i++) {
-                Card card = controller.getPlayerById(0).getHand().getCardAt(i);
-                if (card.getFixedPosition() == null) {
-                    break;
-                }
-                if (X >= card.getFixedPosition().x &&
-                        X < card.getFixedPosition().x + controller.getLayout().getCardWidth() &&
-                        Y >= card.getFixedPosition().y &&
-                        Y < card.getFixedPosition().y +  controller.getLayout().getCardHeight()) {
-                    move_card_ = i;
-                    break;
-                } else {
-                    move_card_ = GameController.NOT_SET;
-                }
-            }
-        }
+        controller.getGamePlay().getPlayACard().touchActionDown(controller, X, Y);
 
 
         // ------------------ ButtonBar ------------------------------------------------------------
@@ -154,16 +132,8 @@ public class TouchEvents {
     //
     public void ActionMove(GameController controller, int X, int Y) {
 
-
-        //------------------- Play a Card ----------------------------------------------------------
-
-        if (move_card_ >= 0) {
-            controller.getPlayerById(0).getHand().getCardAt(move_card_).setPosition(
-                    X -  controller.getLayout().getCardWidth() / 2,
-                    Y -  controller.getLayout().getCardHeight() / 2);
-        }
-
-        //------------------------
+        // ------------------ Play a Card ----------------------------------------------------------
+        controller.getGamePlay().getPlayACard().touchActionMove(controller, X, Y);
 
         // ------------------ ButtonBar ------------------------------------------------------------
 
@@ -314,42 +284,7 @@ public class TouchEvents {
         //------------------------
 
         //------------------- Play a Card ----------------------------------------------------------
-        if (move_card_ >= 0) {
-            CardStack hand =  controller.getPlayerById(0).getHand();
-            int card_y = hand.getCardAt(move_card_).getPosition().y;
-            int fixed_y = hand.getCardAt(move_card_).getFixedPosition().y;
-
-            boolean valid = controller.getLogic().isAValidCardPlay(hand.getCardAt(move_card_), hand, controller.getDiscardPile());
-
-            if (card_y > fixed_y -  controller.getLayout().getCardHeight() * 1.5) {
-                controller.getAnimation().getCardAnimations().returnCardToHand(
-                        controller.getPlayerById(0).getHand().getCardAt(move_card_));
-
-            }
-            else if (!valid) {
-                controller.getAnimation().getCardAnimations().returnCardToHand(
-                        controller.getPlayerById(0).getHand().getCardAt(move_card_));
-            }
-            else if (valid) {
-                controller.getPlayerById(0).getHand().getCardAt(move_card_).setPosition(
-                        new Point(controller.getDiscardPile().getPoint(0)) );
-
-                controller.getDiscardPile().setCardBottom(
-                        controller.getPlayerById(0).getHand().getCardAt(move_card_));
-
-                controller.getPlayerById(0).getHand().getCardStack().remove(move_card_);
-
-                // recalculate hand positions!
-                controller.getAnimation().getReAnimateHands()
-                        .redrawHands(controller.getLayout(), controller.getPlayerById(0));
-
-                // give turn to next player
-                controller.getLogic().turnToNextPlayer(controller.getAmountOfPlayers());
-                controller.nextTurn();
-
-            }
-            move_card_ = GameController.NOT_SET;
-        }
+        controller.getGamePlay().getPlayACard().touchActionUp(controller);
 
         //------------------------
     }

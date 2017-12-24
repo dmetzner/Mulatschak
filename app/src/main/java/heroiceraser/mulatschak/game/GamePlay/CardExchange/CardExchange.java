@@ -1,8 +1,5 @@
-package heroiceraser.mulatschak.game.Animations;
-import android.graphics.Bitmap;
-import android.graphics.Camera;
+package heroiceraser.mulatschak.game.GamePlay.CardExchange;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Point;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +7,6 @@ import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.HelpText;
 import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
-import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameLogic;
@@ -20,7 +16,9 @@ import heroiceraser.mulatschak.game.Player;
 
 //----------------------------------------------------------------------------------------------
 //  CardExchange:
-//                      //
+//                 player 0 card exchange process
+//
+//
 // Card Exchange Animation:
 //
 //    -> What does this animation?
@@ -48,20 +46,7 @@ public class CardExchange {
 
     private HelpText help_text_;    // shows an information text
 
-    private Camera camera_;     // needed for 3D rotation od bitmaps
-    private long timePrev = 0;  // keeps track of the previous timestamp
-
-    private boolean animation_spinning_running_;    // is the spinning animation running
-    private boolean animation_end_running_; // is the animation ending running
-
-    private List<Card> exchanged_cards_; // stores old cards
-    private List<Card> new_drawn_cards_; // stores new cards
-
-    private boolean cards_changed_; // triggered after 50% of the animation is done,
-    //                                   handles which container gets displayed
-
-    private int degree_;    // at which degree is the card in the moment of drawing
-    private double spin_speed_; // how fast is the rotation spinning
+    private CardExchangeAnimation card_exchange_animation_;
 
 
     //----------------------------------------------------------------------------------------------
@@ -69,17 +54,10 @@ public class CardExchange {
     //
     public CardExchange() {
         animation_running_ = false;
-        animation_spinning_running_ = false;
-        animation_end_running_ = false;
         help_text_ = new HelpText();
         exchange_buttons_ = new ArrayList<>();
         active_button_ = 0;
-        camera_ = new Camera();
-        exchanged_cards_ = new ArrayList<>();
-        new_drawn_cards_ = new ArrayList<>();
-        cards_changed_ = false;
-        degree_ = 0;
-        spin_speed_ = 1;
+        card_exchange_animation_ = new CardExchangeAnimation();
     }
 
 
@@ -110,76 +88,9 @@ public class CardExchange {
         }
     }
 
-
-    //----------------------------------------------------------------------------------------------
-    //  draw:
-    //        draws the spinning animations, or the correct exchange button (with a helptext)
     //
-    public void draw(Canvas canvas, GameController controller) {
-
-        // spinning animation
-        if (animation_spinning_running_) {
-
-            // rotation fun
-            Matrix matrix = new Matrix();
-            camera_.save();
-            camera_.rotateX(0);
-            degree_ += spin_speed_;
-
-            // can't see anything
-            if (degree_ % 90 == 0) {
-                degree_++;
-            }
-            camera_.rotateY(degree_);
-            camera_.getMatrix(matrix);
-            float x = (controller.getDeck().getBacksideBitmap().getWidth() / 2);
-            // float y = (bitmap.getHeight() / 2);
-            matrix.preTranslate(-x, 0);
-            matrix.postTranslate(x, 0);
-
-            for (int i = 0; i < exchanged_cards_.size(); i++) {
-
-                // decide which image has to be shown
-                Bitmap bitmap;
-
-                // show frontside
-                if (degree_ % 360 < 90 || degree_ % 360 > 270) {
-                    // show starting image
-                    bitmap = exchanged_cards_.get(i).getBitmap();
-                    //show animation ending image
-                    if (cards_changed_ && i < new_drawn_cards_.size()) {
-                        bitmap = new_drawn_cards_.get(i).getBitmap();
-                    }
-                }
-                // show backside
-                else {
-                    bitmap = controller.getDeck().getBacksideBitmap();
-                }
-
-                Bitmap rotated = Bitmap.createBitmap(bitmap, 0, 0,
-                        bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-
-                // drawing
-                int w = controller.getDeck().getBacksideBitmap().getWidth();
-                int new_x = exchanged_cards_.get(i).getPosition().x + ((w - rotated.getWidth()) / 2);
-                canvas.drawBitmap(rotated, new_x, exchanged_cards_.get(i).getPosition().y, null);
-            }
-            camera_.restore();
-            continueExchangeCards(controller);
-        }
-
-        // continueAfter the spinning animation
-        else if (animation_end_running_) {
-            oldCardsToTrash(controller);
-            moveNewDrawnCardsToPlayerHand(controller);
-        }
-
-        // draws the correct exchange button
-        else {
-            exchange_buttons_.get(active_button_).draw(canvas);
-        }
-    }
-
+    //----------------------- Choose Cards to Exchange ---------------------------------------------
+    //
 
     //----------------------------------------------------------------------------------------------
     //  prepareCardExchange:
@@ -202,6 +113,7 @@ public class CardExchange {
     //  moveCardUp:
     //              moves a card, half the card size, up
     //
+
     private void moveCardUp(Card card) {
         int shift_y = (int) (card.getHeight() / 2.0);
         card.setPosition(card.getPosition().x, card.getPosition().y - shift_y);
@@ -240,6 +152,9 @@ public class CardExchange {
         }
     }
 
+    //
+    //----------------------- Exchange Cards -------------------------------------------------------
+    //
 
     //----------------------------------------------------------------------------------------------
     // exchangeCards:
@@ -247,22 +162,53 @@ public class CardExchange {
     //
     public void exchangeCards(GameController controller) {
 
-        active_button_ = 0;
-
-        resetMemberVars();          // just to be sure ;)
+        active_button_ = GameController.NOT_SET;
         animation_running_ = true;
+        card_exchange_animation_.init(controller);
 
-        moveExchangeCardsFromPlayerToContainer(controller.getPlayerById(0), exchanged_cards_);
+        // move exchange cards to animation container
+        moveExchangeCardsFromPlayerToContainer(controller.getPlayerById(0),
+                card_exchange_animation_.getExchangedCards());
 
-        // start spinning animation
-        if (exchanged_cards_.size() > 0) {
-            animation_spinning_running_ = true;
-            controller.getView().enableUpdateCanvasThread();
-            continueExchangeCards(controller);
-        }
-        // nothing got exchanged, move on without a animation
-        else {
+        // no cards to change? -> nothing to do
+        if (card_exchange_animation_.getExchangedCards().size() <= 0) {
             endCardExchange(controller);
+            return;
+        }
+
+        //
+        takeNewCards(controller, card_exchange_animation_.getExchangedCards(),
+                card_exchange_animation_.getNewDrawnCards());
+
+        // start a wonderful spinning animation -> enables canvas thread
+        controller.getView().enableUpdateCanvasThread();
+        card_exchange_animation_.startSpinning(controller);
+
+        // --> gets continued by draw method
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    //  draw:
+    //        draws the spinning animations, or the correct exchange button (with a helptext)
+    //
+    public void draw(Canvas canvas, GameController controller) {
+
+        // spinning animation
+        if (card_exchange_animation_.isSpinning()) {
+            card_exchange_animation_.drawRotation(canvas);
+            card_exchange_animation_.recalculateSpinningParameters(controller);
+        }
+
+        // continueAfter the spinning animation
+        else if (card_exchange_animation_.hasSpinningStopped()) {
+            oldCardsToTrash(controller);
+            moveNewDrawnCardsToPlayerHand(controller);
+        }
+
+        // draws the correct exchange button
+        else {
+            exchange_buttons_.get(active_button_).draw(canvas);
         }
     }
 
@@ -283,73 +229,23 @@ public class CardExchange {
 
 
     //----------------------------------------------------------------------------------------------
-    // continueExchangeCards
-    //                  -> gets called from draw
-    //                  recalculates new spinning speed and degree
-    //
-    private void continueExchangeCards(GameController controller) {
-
-        // nothing to do if spinning is over
-        if (!animation_spinning_running_) {
-            return;
-        }
-
-        // calculate time interval
-        long timeNow = System.currentTimeMillis();
-        long timeDelta = timeNow - timePrev;
-
-        if (timeDelta > 300) {
-
-            // increase speed in the first x rotations
-            if (degree_ / 360 < 4.2) {
-                spin_speed_ *= 2;
-                if (spin_speed_ > 35) {
-                    spin_speed_ = 35;
-                }
-            }
-            // decrease speed in the last rotations
-            else {
-                spin_speed_ /= 2;
-                if (spin_speed_ < 1) {
-                    spin_speed_ = 1;
-                }
-            }
-
-            timePrev = System.currentTimeMillis();
-        }
-
-        // after around 50% switch the cards
-        if (!cards_changed_ && degree_ / 360 > 2) {
-            takeNewCards(controller);
-            cards_changed_ = true;
-        }
-
-        // animation is done after x rotations
-        if (degree_ / 360 > 5) {
-            spin_speed_ = 0;
-            animation_spinning_running_ = false;
-            animation_end_running_ = true;
-        }
-    }
-
-
-    //----------------------------------------------------------------------------------------------
     // takeNewCards
     //                  draws new cards and saved them in new drawn cards container
     //
-    private void takeNewCards(GameController controller) {
+    private void takeNewCards(GameController controller, List<Card> exchanged_cards,
+                              List<Card> new_drawn_cards) {
 
         // take new cards from the deck
-        for (int i = 0; i < exchanged_cards_.size(); i++) {
+        for (int i = 0; i < exchanged_cards.size(); i++) {
             controller.takeCardFromDeck(0, controller.getDeck());
             Card card = controller.getPlayerById(0).getHand().getCardAt(controller.getPlayerById(0)
                     .getAmountOfCardsInHand() - 1);
-            card.setPosition(exchanged_cards_.get(i).getPosition());
-            card.setFixedPosition(exchanged_cards_.get(i).getFixedPosition());
+            card.setPosition(exchanged_cards.get(i).getPosition());
+            card.setFixedPosition(exchanged_cards.get(i).getFixedPosition());
 
             // but right now just have them in the animation container
             // adding to new_drawn_cards_ for an easier handling in the animation
-            new_drawn_cards_.add(card);
+            new_drawn_cards.add(card);
 
             // and remove them from the hand
             controller.getPlayerById(0).getHand().getCardStack().remove(card);
@@ -363,8 +259,8 @@ public class CardExchange {
     private void oldCardsToTrash(GameController controller) {
 
         // add old cards to trash
-        for (int i = 0; i < exchanged_cards_.size(); i++) {
-            controller.getTrash().addCard(exchanged_cards_.get(i));
+        for (int i = 0; i < card_exchange_animation_.getExchangedCards().size(); i++) {
+            controller.getTrash().addCard(card_exchange_animation_.getExchangedCards().get(i));
         }
     }
 
@@ -375,7 +271,7 @@ public class CardExchange {
     private void moveNewDrawnCardsToPlayerHand(GameController controller) {
 
         // now really move tha cards to the hand and set positions correctly
-        for (Card card : new_drawn_cards_) {
+        for (Card card : card_exchange_animation_.getNewDrawnCards()) {
             card.setPosition(card.getFixedPosition());
             controller.getPlayerById(0).getHand().addCard(card);
         }
@@ -387,24 +283,11 @@ public class CardExchange {
     //  endCard exchange
     //
     private void endCardExchange(GameController controller) {
-        resetMemberVars();
+        animation_running_ = false;
+        card_exchange_animation_.reset();
         controller.makeCardExchange();
     }
 
-
-    //----------------------------------------------------------------------------------------------
-    //  endCard exchange
-    //
-    private void resetMemberVars() {
-        exchanged_cards_.clear();
-        new_drawn_cards_.clear();
-        animation_spinning_running_ = false;
-        animation_end_running_ = false;
-        animation_running_ = false;
-        spin_speed_ = 1;
-        degree_ = 0;
-        cards_changed_ = false;
-    }
 
     //----------------------------------------------------------------------------------------------
     //  Getter & Setter
@@ -437,6 +320,4 @@ public class CardExchange {
     public HelpText getHelpText() {
         return help_text_;
     }
-
-
 }
