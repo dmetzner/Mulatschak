@@ -1,19 +1,9 @@
 package heroiceraser.mulatschak.game;
 
-
-import android.content.Context;
-import android.graphics.Point;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.PopupWindow;
-
 import java.util.List;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
-import heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.DrawableObjects.Card;
-import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
 
 /**
  * Created by Daniel Metzner on 14.08.2017.

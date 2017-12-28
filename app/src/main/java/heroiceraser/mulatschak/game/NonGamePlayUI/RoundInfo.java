@@ -6,7 +6,7 @@ import android.graphics.Point;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.DrawableBasicObjects.TextField;
-import heroiceraser.mulatschak.game.GamePlay.TrickBids;
+import heroiceraser.mulatschak.game.GamePlay.TrickBids.TrickBids;
 import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameView;

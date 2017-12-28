@@ -6,7 +6,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import heroiceraser.mulatschak.game.GamePlay.TrickBids;
+import heroiceraser.mulatschak.game.GamePlay.TrickBids.TrickBids;
 import heroiceraser.mulatschak.helpers.DisplayDimension;
 
 /**
@@ -64,6 +64,7 @@ public class GameLayout {
     private Point hand_left_;
     private Point hand_top_;
     private Point hand_right_;
+    private List<Point> hand_positions_;
 
     //-- DealerButton
     private Point dealer_button_size_;
@@ -73,6 +74,8 @@ public class GameLayout {
     private Point dealer_button_right_;
 
     //-- Player Info
+    private List<Point> player_info_positions_;
+    private Point player_info_bottom_position_;
     private Point player_info_left_position_;
     private Point player_info_top_position_;
     private Point player_info_right_position_;
@@ -380,6 +383,8 @@ public class GameLayout {
     //---- calculateHandPositions() -------------
     //
     private void initHandPositions() {
+        hand_positions_ = new ArrayList<>();
+
         hand_bottom_ = new Point((int) ((screen_size_.x - card_size_.x * 5) / 2.0),
                 (int) (sectors_.get(6).y));
 
@@ -391,6 +396,12 @@ public class GameLayout {
 
         hand_right_ = new Point((int) (screen_size_.x - (card_size_.x * 0.6)),
                 (int) (deck_position_.y + card_size_.y / 6.0));
+
+        hand_positions_.add(hand_bottom_);
+        hand_positions_.add(hand_left_);
+        hand_positions_.add(hand_top_);
+        hand_positions_.add(hand_right_);
+
     }
 
     //
@@ -445,6 +456,9 @@ public class GameLayout {
 
         int offset = (int) (card_size_.y / 5.0);
 
+        player_info_bottom_position_ = new Point(screen_size_.x / 2 - player_info_size_.x / 2,
+                sectors_.get(sectors_.size() - 2).y - player_info_size_.y - offset);
+
         player_info_left_position_ = new Point(offset,
                 hand_left_.y + (int) (1.1 * player_info_size_.y));
 
@@ -453,6 +467,12 @@ public class GameLayout {
 
         player_info_right_position_ = new Point(screen_size_.x - (player_info_size_.x + offset),
                 hand_right_.y - player_info_size_.y);
+
+        player_info_positions_ = new ArrayList<>();
+        player_info_positions_.add(player_info_bottom_position_);
+        player_info_positions_.add(player_info_left_position_);
+        player_info_positions_.add(player_info_top_position_);
+        player_info_positions_.add(player_info_right_position_);
 
     }
 
@@ -574,7 +594,7 @@ public class GameLayout {
         return deck_position_;
     }
 
-    public List<Point> getDiscardPilePositions_() {
+    public List<Point> getDiscardPilePositions() {
         return discard_pile_positions_;
     }
 
@@ -751,5 +771,17 @@ public class GameLayout {
 
     public Point getPlayerInfoRightPos() {
         return player_info_right_position_;
+    }
+
+    public Point getPlayerInfoBottomPos() {
+        return player_info_bottom_position_;
+    }
+
+    public List<Point> getPlayerInfoPositions() {
+        return player_info_positions_;
+    }
+
+    public List<Point> getHandPositions() {
+        return hand_positions_;
     }
 }

@@ -9,6 +9,8 @@ import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GamePlay.CardExchange.EnemyCardExchange;
 import heroiceraser.mulatschak.game.GamePlay.PlayACard.EnemyPlayACardLogic;
+import heroiceraser.mulatschak.game.GamePlay.TrickBids.EnemyTrickBids;
+import heroiceraser.mulatschak.game.GamePlay.TrickBids.TrickBids;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.game.Player;
 
@@ -21,8 +23,10 @@ public class EnemyLogic {
     private int player_id_;
     private EnemyCardExchange card_exchange_logic_;
     private EnemyPlayACardLogic playACardLogic;
+    private EnemyTrickBids trick_bids_;
 
     public EnemyLogic(int player_id) {
+        trick_bids_ = new EnemyTrickBids();
         card_exchange_logic_ = new EnemyCardExchange();
         playACardLogic = new EnemyPlayACardLogic();
         player_id_ = player_id;
@@ -39,25 +43,7 @@ public class EnemyLogic {
     public void makeTrickBids(Player player, GameController controller) {
 
         // ToDo: put in some fancy logic here
-
-        int[] cards_per_trumph = new int[5];
-        for (int i = 0; i < player.getAmountOfCardsInHand(); i++) {
-            int trumph = (player.getHand().getCardAt(i).getId() / 100) % 5;
-            cards_per_trumph[trumph]++;
-        }
-
-        int max = 0;
-        for (int i = 0; i < cards_per_trumph.length; i++){
-            if (cards_per_trumph[i] > max) {
-                max = cards_per_trumph[i];
-            }
-        }
-
-        if (max > 0) {
-            max--;
-        }
-
-        controller.setNewMaxTrumps(0, player.getId());
+        trick_bids_.makeTrickBids(player, controller);
     }
 
 

@@ -1,7 +1,7 @@
 package heroiceraser.mulatschak.game.Animations;
 
 import heroiceraser.mulatschak.game.GamePlay.CardExchange.CardExchange;
-import heroiceraser.mulatschak.game.GamePlay.TrickBids;
+import heroiceraser.mulatschak.game.GamePlay.TrickBids.TrickBids;
 import heroiceraser.mulatschak.game.GameView;
 
 /**

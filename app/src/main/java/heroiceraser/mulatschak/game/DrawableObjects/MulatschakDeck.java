@@ -27,7 +27,6 @@ public class MulatschakDeck extends CardStack {
     public final static int HEART    = 3;            // IMG_NAME307 - IMG_NAME315
     public final static int SPADE    = 4;            // IMG_NAME407 - IMG_NAME415
     //
-    private final String PACKAGE_NAME = "drawable";
     private final String IMG_PRE_NAME = "card";
     public final static int CARDS_PER_DECK = 33;
     public final static int CARD_SUITS = 5;
@@ -63,13 +62,13 @@ public class MulatschakDeck extends CardStack {
         setPosition(view.getController().getLayout().getDeckPosition());
         backside_ = new Card(BACKSIDE);
         String img_name = IMG_PRE_NAME + "_back";
-        backside_.initCard(view, img_name, PACKAGE_NAME);
+        backside_.initCard(view, img_name);
 
         for (int i = 0; i < CARD_SUITS; i++) {
             if (i == WELI) {
                 Card card = new Card(JOKER);
                 img_name = IMG_PRE_NAME + WELI + JOKER;
-                card.initCard(view, img_name, PACKAGE_NAME);
+                card.initCard(view, img_name);
                 addCard(card);
             }
             else {
@@ -80,7 +79,7 @@ public class MulatschakDeck extends CardStack {
                     int id = (i * 100) + j;
                     Card card = new Card(id);
                     img_name = IMG_PRE_NAME + id;
-                    card.initCard(view, img_name, PACKAGE_NAME);
+                    card.initCard(view, img_name);
                     addCard(card);
                 }
             }

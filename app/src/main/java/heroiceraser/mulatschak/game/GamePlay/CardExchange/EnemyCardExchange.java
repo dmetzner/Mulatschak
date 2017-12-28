@@ -1,12 +1,7 @@
 package heroiceraser.mulatschak.game.GamePlay.CardExchange;
 
 import android.graphics.Canvas;
-import android.graphics.Point;
-import android.util.Log;
-
-import java.util.ArrayList;
 import java.util.List;
-
 import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
@@ -17,27 +12,24 @@ import heroiceraser.mulatschak.game.Player;
 //                 enemy player card exchange process
 //
 //
-// Card Exchange Animation:  ToDo
-//
-//    -> What does this animation?
-//        Cards that should get exchanged move up, and spin in a 3D space around the y-axis.
-//        spinning speed increases till it reaches a maximum, than the displayed image switches
-//        to the new image and reduces the spinning speed. At the end the cards move back
-//        to the player hand
-
-//    -> How does this animation work?
-//        It uses 2 containers; cards that get exchanged are stored in the first one,
-//        while the new drawn cards are stored in container two.
-//        This allows an easy switch from one card to another in the animation.
-//        The Rotation animation is handled via a Camera and matrix setup,
-//        which gets called recursive and based on a time interval
+// Exchange Animation:
+//    -> move each card a bit to the center, spins it, and moves it back
 //
 public class EnemyCardExchange {
 
+    //----------------------------------------------------------------------------------------------
+    //  Member Variables
+    //
     private boolean animation_running_;
-    private Player player_;
+
+    private Player player_;     // animation for which player?
+
     private EnemyCardExchangeAnimation card_exchange_animation_;
 
+
+    //----------------------------------------------------------------------------------------------
+    //  Constructor
+    //
     public EnemyCardExchange() {
         card_exchange_animation_ = new EnemyCardExchangeAnimation();
     }
@@ -90,27 +82,9 @@ public class EnemyCardExchange {
             return;
         }
 
-        // move up
-        Point offset = new Point(0, 0);
-        switch (player_.getPosition()) {
-            case 1:
-                offset.x += controller.getLayout().getCardHeight() * 1.2;
-                offset.y += 0;
-                break;
-            case 2:
-                offset.x += 0;
-                offset.y += controller.getLayout().getCardHeight() * 1.2;
-                break;
-            case 3:
-                offset.x += (-1) * controller.getLayout().getCardHeight() * 1.2;
-                offset.y += 0;
-                break;
-        }
-
-
         // start animation -> enables canvas thread
         controller.getView().enableUpdateCanvasThread();
-        card_exchange_animation_.startAnimation(controller, offset);
+        card_exchange_animation_.startAnimation();
 
         // --> gets continued by draw method
     }
@@ -123,7 +97,7 @@ public class EnemyCardExchange {
 
         // spinning animation
         if (card_exchange_animation_.isAnimationRunning()) {
-            card_exchange_animation_.draw(canvas, controller, player_);
+            card_exchange_animation_.draw(canvas, player_);
             card_exchange_animation_.recalculateParameters(controller);
         }
 
@@ -134,10 +108,17 @@ public class EnemyCardExchange {
     }
 
 
+    //----------------------------------------------------------------------------------------------
+    //  returns a random percentage
+    //
     private int getRandomPercent() {
         return (int) (Math.random() * 100);
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  move weak card from hand to exchanged cards
+    //
     private void moveWeakCards(List<Card> hand, List<Card> exchanged_cards, GameLogic logic,
                                int weak_border, int randomness) {
         for (int i = 0; i < hand.size(); i++) {
@@ -170,6 +151,7 @@ public class EnemyCardExchange {
     }
 
 
+    //----------------------------------------------------------------------------------------------
     // if deck has to less cards to draw
     //      -> give back the best cards from cards to remove list to the players hand
     private void handleToLessCardsInDeck(List<Card> cards_to_remove, Player player, int deck_size) {
@@ -203,8 +185,11 @@ public class EnemyCardExchange {
         controller.makeCardExchange();
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  Getter & Setter
+    //
     public boolean isAnimationRunning() {
         return animation_running_;
     }
-
 }

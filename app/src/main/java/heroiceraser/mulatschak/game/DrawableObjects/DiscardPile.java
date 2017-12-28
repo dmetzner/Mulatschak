@@ -1,10 +1,8 @@
 package heroiceraser.mulatschak.game.DrawableObjects;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Point;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +59,7 @@ public class DiscardPile extends DrawableObject {
 
 
     private void finishInit(GameView view) {
-        this.positions_ = view.getController().getLayout().getDiscardPilePositions_();
+        this.positions_ = view.getController().getLayout().getDiscardPilePositions();
         setBitmap(HelperFunctions.loadBitmap(view, BMP_DISCARD_PILE, getWidth(), getHeight()));
         overlay_lost_ = HelperFunctions.loadBitmap(view, BMP_OVERLAY_LOST, getWidth(), getHeight());
         setVisible(true);

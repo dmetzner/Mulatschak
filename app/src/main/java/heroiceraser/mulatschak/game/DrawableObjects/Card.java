@@ -43,7 +43,7 @@ public class Card extends DrawableObject {
     //  initCard:
     //            loads, scales and sets bitmap for a card
     //
-    public Card initCard(GameView view, String image_name, String package_name) {
+    public Card initCard(GameView view, String image_name) {
         setWidth(view.getController().getLayout().getCardWidth());
         setHeight(view.getController().getLayout().getCardHeight());
         setBitmap(HelperFunctions.loadBitmap(view, image_name, getWidth(), getHeight()));

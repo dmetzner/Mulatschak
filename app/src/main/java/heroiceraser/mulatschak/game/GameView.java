@@ -59,8 +59,11 @@ public class GameView extends View {
             return;
         }
 
-        drawPlayerInfo(canvas);
         drawDiscardPile(canvas);
+        drawBidsView(canvas, controller_);
+        drawTrumpView(canvas);
+        drawPlayerInfo(canvas);
+
         drawHandCards(canvas);
         drawDealerButton(canvas);
         drawAnimations(canvas);
@@ -113,6 +116,22 @@ public class GameView extends View {
     private void drawDiscardPile(Canvas canvas) {
         controller_.getDiscardPile().draw(canvas);
         controller_.getDiscardPile().drawOverlays(canvas, controller_.getLogic());
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    //  drawBidsView
+    //
+    private void drawBidsView(Canvas canvas, GameController controller) {
+        controller_.getBidsView().draw(canvas, controller);
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    //  drawBidsView
+    //
+    private void drawTrumpView(Canvas canvas) {
+        controller_.getTrumpView().draw(canvas, controller_);
     }
 
     //----------------------------------------------------------------------------------------------

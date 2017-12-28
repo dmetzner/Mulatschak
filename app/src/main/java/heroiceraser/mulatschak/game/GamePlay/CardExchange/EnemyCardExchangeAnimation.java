@@ -4,96 +4,148 @@ import android.graphics.Bitmap;
 import android.graphics.Camera;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.Point;
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.Player;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
 
-/**
- * Created by Daniel Metzner on 23.12.2017.
- */
+//--------------------------------------------------------------------------------------------------
+//What does this animation?
+//        Cards that should get exchanged move up, and spin in a 3D space.
+//        spinning speed increases till it reaches a maximum, than the displayed image switches
+//        to the new image and reduces the spinning speed. At the end the cards move back
+//        to the player hand
 
+//    -> How does this animation work?
+//        It uses 2 containers; cards that get exchanged are stored in the first one,
+//        while the new drawn cards are stored in container two.
+//        This allows an easy switch from one card to another in the animation.
+//        The Rotation animation is handled via a Camera and matrix setup,
+//        which gets called recursive and based on a time interval
+//
 public class EnemyCardExchangeAnimation {
 
-    Player player_;
+    //----------------------------------------------------------------------------------------------
+    //  Member Variables
+    //
+    private Player player_;
+
+    private boolean clean_hand;      // reorder hand cards
+
     private Camera camera_;     // needed for 3D rotation od bitmaps
-
-    boolean clean_hand = true;
-    boolean part1;
-    boolean part1_5;
-    boolean part2;
-
     private long time_prev_;  // keeps track of the previous timestamp
     private int degree_;    // at which degree is the card in the moment of drawing
     private double spin_speed_; // how fast is the rotation spinning
-
+    private final int MIN_SPIN_SPEED = 1;
 
     private boolean animation_running_;    // is the Animation animation running
+    private boolean moving_up_;
+    private boolean spinning_;
+    private boolean moving_down_;
     private boolean animation_end_running_; // is the animation ending running
 
     private List<Card> exchanged_cards_; // stores old cards
-    private List<Card> new_drawn_cards_; // stores new cards
+
 
     private long start_time_;
-    private int alpha_;
-    private final int MAX_ALPHA = 255;
     private Point offset_;
     private int index_;
 
     private Bitmap backside_bitmap_;
 
 
-    public EnemyCardExchangeAnimation() {
+    //----------------------------------------------------------------------------------------------
+    //  Constructor
+    //
+    EnemyCardExchangeAnimation() {
         camera_ = new Camera();
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  Init
+    //
     public void init(GameController controller, Player player) {
         animation_running_ = false;
         animation_end_running_ = false;
         time_prev_ = 0;
         degree_ = 0;
-        spin_speed_ = 1;
-
+        spin_speed_ = MIN_SPIN_SPEED;
         player_ = player;
         clean_hand = false;
-        
         exchanged_cards_ = new ArrayList<>();
-        new_drawn_cards_ = new ArrayList<>();
-        
         backside_bitmap_ = HelperFunctions.loadBitmap(controller.getView(), "card_back",
                 controller.getLayout().getCardWidth(), controller.getLayout().getCardHeight());
     }
 
 
-    public void draw(Canvas canvas, GameController controller, Player player) {
+    //----------------------------------------------------------------------------------------------
+    //  StartAnimation
+    //
+    void startAnimation() {
+        animation_running_ = true;
+        moving_up_ = true;
+        spinning_ = false;
+        moving_down_ = false;
+        animation_end_running_ = false;
+        index_ = 0;
+        degree_ = 0;
+        spin_speed_ = MIN_SPIN_SPEED;
+        offset_ = calculateOffsets((int) (backside_bitmap_.getHeight() * 1.2));
+        start_time_ = System.currentTimeMillis();
+    }
 
-        if (part1 || part2) {
-            Paint alphaPaint = new Paint();
-            alphaPaint.setAlpha(alpha_);
+
+    //----------------------------------------------------------------------------------------------
+    //  calculateOffsets
+    //
+    private Point calculateOffsets(int shift) {
+
+        Point offset = new Point(0, 0);
+        switch (player_.getPosition()) {
+            case 1:
+                offset.x += shift;
+                offset.y += 0;
+                break;
+            case 2:
+                offset.x += 0;
+                offset.y += shift;
+                break;
+            case 3:
+                offset.x += (-1) * shift;
+                offset.y += 0;
+                break;
+        }
+        return offset;
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    // draw
+    //
+    public void draw(Canvas canvas, Player player) {
+
+        //  draw bitmap without 3d rotation
+        if (moving_up_ || moving_down_) {
+
             Bitmap bitmap = backside_bitmap_;
+
+            // player 1 & 3 show a rotated bitmap
             if (player.getPosition() % 2 != 0) {
-                bitmap = rotateBitmap(bitmap, 90);
+                bitmap = HelperFunctions.rotateBitmap(bitmap, 90);
             }
+
             for (int i = 0; i < exchanged_cards_.size(); i++) {
                 canvas.drawBitmap(bitmap, exchanged_cards_.get(i).getPosition().x,
-                        exchanged_cards_.get(i).getPosition().y, alphaPaint);
-            }
-            if (exchanged_cards_.size() <= 0) {
-                for (int i = 0; i < new_drawn_cards_.size(); i++) {
-                    canvas.drawBitmap(bitmap, new_drawn_cards_.get(i).getPosition().x,
-                            new_drawn_cards_.get(i).getPosition().y, alphaPaint);
-                }
+                        exchanged_cards_.get(i).getPosition().y, null);
             }
         }
 
-        if (part1_5) {
+        // draw bitmap with 3d rotation
+        if (spinning_) {
             // rotation fun
             Matrix matrix = new Matrix();
             camera_.save();
@@ -110,7 +162,7 @@ public class EnemyCardExchangeAnimation {
 
             if (player.getPosition() % 2 != 0) {
 
-                bitmap = rotateBitmap(bitmap, 90);
+                bitmap = HelperFunctions.rotateBitmap(bitmap, 90);
                 camera_.rotateX(degree_);
                 camera_.rotateY(0);
                 camera_.getMatrix(matrix);
@@ -143,24 +195,17 @@ public class EnemyCardExchangeAnimation {
             camera_.restore();
         }
 
+        // if hands got reordered -> redraw
         if (clean_hand) {
             Bitmap bitmap = backside_bitmap_;
             if (player.getPosition() % 2 != 0) {
-                bitmap = rotateBitmap(bitmap, 90);
+                bitmap = HelperFunctions.rotateBitmap(bitmap, 90);
             }
             for (Card card : player.getHand().getCardStack()) {
                 canvas.drawBitmap(bitmap, card.getPosition().x, card.getPosition().y, null);
             }
             clean_hand = false;
         }
-    }
-
-    private Bitmap rotateBitmap(Bitmap bitmap, int degree) {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(degree);
-
-        return Bitmap.createBitmap(bitmap , 0, 0,
-                bitmap.getWidth(), bitmap.getHeight(), matrix, true);
     }
 
 
@@ -175,22 +220,22 @@ public class EnemyCardExchangeAnimation {
     }
 
 
-    public void recalculateParameters(GameController controller) {
+    //----------------------------------------------------------------------------------------------
+    // recalculateParameter
+    //
+    void recalculateParameters(GameController controller) {
 
-        int max_time_section_1 = 500;
-        alpha_ = 255;
-
-        Log.d("------------------rec", "");
+        int max_time_section_1 = 300;
 
         long time = System.currentTimeMillis();
         long time_since_start = time - start_time_;
 
-        if (part1) {
+        if (moving_up_) {
 
             if (index_ >= exchanged_cards_.size()) {
-                part1 = false;
-                part1_5 = true;
-                part2 = false;
+                moving_up_ = false;
+                spinning_ = true;
+                moving_down_ = false;
                 index_ = 0;
                 start_time_ = System.currentTimeMillis();
                 time_prev_ = start_time_;
@@ -204,7 +249,6 @@ public class EnemyCardExchangeAnimation {
                 index_++;
             }
 
-            //alpha_ = MAX_ALPHA - (int) (MAX_ALPHA * percentage);
             int offset_x = (int) (offset_.x * percentage);
             int offset_y = (int) (offset_.y * percentage);
 
@@ -213,7 +257,7 @@ public class EnemyCardExchangeAnimation {
         }
 
 
-        if (part1_5) {
+        if (spinning_) {
             // calculate time interval
             long timeNow = System.currentTimeMillis();
             long timeDelta = timeNow - time_prev_;
@@ -221,7 +265,7 @@ public class EnemyCardExchangeAnimation {
             if (timeDelta > 300) {
 
                 // increase speed in the first x rotations
-                if (degree_ / 360.0 < 2.5) {
+                if (degree_ / 360.0 < 2.1) {
                     spin_speed_ *= 2;
                     if (spin_speed_ > 28) {
                         spin_speed_ = 28;
@@ -234,24 +278,21 @@ public class EnemyCardExchangeAnimation {
                         spin_speed_ = 1;
                     }
                 }
-
                 time_prev_ = System.currentTimeMillis();
-
             }
 
             // animation is done after x rotations
-            if (degree_ / 360.0 > 3) {
+            if (degree_ / 360.0 > 2.5) {
                 spin_speed_ = 0;
-                part1 = false;
-                part1_5 = false;
-                part2 = true;
+                moving_up_ = false;
+                spinning_ = false;
+                moving_down_ = true;
                 index_ = -1;
                 start_time_ = System.currentTimeMillis();
             }
         }
 
-
-        if (part2) {
+        if (moving_down_) {
 
             if (index_ == -1) {
                 start_time_ = System.currentTimeMillis();
@@ -260,9 +301,9 @@ public class EnemyCardExchangeAnimation {
             }
 
             if (index_ >= exchanged_cards_.size()) {
-                part1 = false;
-                part1_5 = false;
-                part2 = false;
+                moving_up_ = false;
+                spinning_ = false;
+                moving_down_ = false;
                 animation_end_running_ = true;
                 index_ = 0;
                 oldCardsToTrash(controller);
@@ -288,9 +329,12 @@ public class EnemyCardExchangeAnimation {
                 start_time_ = System.currentTimeMillis();
             }
         }
-
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  drawNewCards
+    //
     private void drawNewCard(GameController controller) {
         controller.takeCardFromDeck(player_.getId(), controller.getDeck());
         Card card = player_.getHand().getCardAt(player_.getHand().getCardStack().size() - 1);
@@ -320,47 +364,34 @@ public class EnemyCardExchangeAnimation {
                 }
             }
         }
-
         if (!inserted) {
             player_.getHand().addCard(card);
         }
-
-        Log.d("------------>", player_.getHand().getCardStack().size() +"");
     }
+
 
     //----------------------------------------------------------------------------------------------
     //  reset
     //
-    public void reset() {
+    void reset() {
         exchanged_cards_.clear();
-        new_drawn_cards_.clear();
         animation_running_ = false;
         animation_end_running_ = false;
     }
 
 
-    public List<Card> getExchangedCards() {
+    //----------------------------------------------------------------------------------------------
+    //  Getter & Setter
+    //
+    List<Card> getExchangedCards() {
         return exchanged_cards_;
     }
 
-
-    public void startAnimation(GameController controller, Point offset) {
-        animation_running_ = true;
-        animation_end_running_ = false;
-        index_ = 0;
-        degree_ = 0;
-        spin_speed_ = 1;
-        part1 = true;
-        part2 = false;
-        offset_ = offset;
-        start_time_ = System.currentTimeMillis();
-    }
-
-    public boolean isAnimationRunning() {
+    boolean isAnimationRunning() {
         return animation_running_;
     }
 
-    public boolean hasAnimationStopped() {
+    boolean hasAnimationStopped() {
         return animation_end_running_;
     }
 

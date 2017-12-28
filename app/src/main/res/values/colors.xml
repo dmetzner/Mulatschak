@@ -5,4 +5,5 @@
     <color name="colorAccent">#ff4081</color>
     <color name="button_bar_window_title_color">#E0FFFF</color>
     <color name="button_bar_window_text_color">#E0FFFF</color>
+    <color name="metallic_blue">#3842ae</color>
 </resources>

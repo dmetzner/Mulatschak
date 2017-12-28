@@ -13,7 +13,9 @@ import java.util.Random;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.game.GamePlay.EnemyLogic;
 import heroiceraser.mulatschak.game.GamePlay.GamePlay;
-import heroiceraser.mulatschak.game.GamePlay.TrickBids;
+import heroiceraser.mulatschak.game.GamePlay.TrickBids.BidsView;
+import heroiceraser.mulatschak.game.GamePlay.TrickBids.TrickBids;
+import heroiceraser.mulatschak.game.GamePlay.chooseATrump.TrumpView;
 import heroiceraser.mulatschak.game.NonGamePlayUI.NonGamePlayUIContainer;
 import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
@@ -55,12 +57,17 @@ public class GameController{
     private NonGamePlayUIContainer non_game_play_ui_;
     private GamePlay game_play_;
 
-
-    private PlayerInfo player_info_;
-    private GameOver game_over_;
-
     private List<Player> player_list_;
     private List<EnemyLogic> enemy_logic_list_;
+    private PlayerInfo player_info_;
+
+    // toDo -> in game_play
+    private BidsView bids_view_;
+    private TrumpView trump_view_;
+
+
+    private GameOver game_over_;
+
 
     private MulatschakDeck deck_;
     private DiscardPile discardPile_;
@@ -78,22 +85,26 @@ public class GameController{
         view_ = view;
         enable_drawing_ = false;
 
-        non_game_play_ui_ = new NonGamePlayUIContainer();
-        game_play_ = new GamePlay();
-
         logic_ = new GameLogic();
         layout_ = new GameLayout();
         animations_ = new GameAnimation(view);
         touch_events_ = new TouchEvents();
 
+        non_game_play_ui_ = new NonGamePlayUIContainer();
+        game_play_ = new GamePlay();
+
+        player_list_ = new ArrayList<>();
+        enemy_logic_list_ = new ArrayList<>();
         player_info_ = new PlayerInfo();
+
+        bids_view_ = new BidsView();
+        trump_view_ = new TrumpView();
+
         game_over_ = new GameOver();
 
         deck_ = new MulatschakDeck();
         trash_ = new CardStack();
         discardPile_ = new DiscardPile();
-        player_list_ = new ArrayList<>();
-        enemy_logic_list_ = new ArrayList<>();
 
         dealer_button_ = new DealerButton();
 
@@ -133,6 +144,9 @@ public class GameController{
 
         non_game_play_ui_.init(view_);
         discardPile_.init(view_);
+        bids_view_.init(view_);
+        trump_view_.init(view_);
+
         game_play_.init(view_); // need dp todo
 
         deck_.initDeck(view_);
@@ -163,11 +177,13 @@ public class GameController{
         shuffleDeck();
         discardPile_.setVisible(false);
         discardPile_.setOverlaysVisible(false);
+        bids_view_.setVisible(false);
         dealCards();  // starts an dealing animation
     }
 
     public void continueAfterDealingAnimation() {
-        discardPile_.setVisible(true);
+        discardPile_.setVisible(false);
+        bids_view_.setVisible(true);
         Log.d("GameController2", "Dealer is Player" + logic_.getDealer());
         boolean first_call = true;
         non_game_play_ui_.getRoundInfo().setInfoBoxEmpty();
@@ -178,32 +194,44 @@ public class GameController{
     public void continueAfterTrickBids() {
         non_game_play_ui_.getRoundInfo().setInfoBoxEmpty();
         non_game_play_ui_.getRoundInfo().getChooseTrumpTextField().setVisible(true);
+        final GameController controller = this;
         Handler mHandler = new Handler();
         Runnable case_0 = new Runnable() {
             @Override
+            // Todo
             public void run() {
                 startRound();
             }
         };
         Runnable case_1 = new Runnable() {
+                @Override
+                public void run() {
+                trump_view_.startAnimation(MulatschakDeck.HEART, logic_.getTrumpPlayerId(), controller);
+            }
+        };
+        Runnable case_default = new Runnable() {
             @Override
             public void run() {
-                continueAfterTrumpWasChoosen();
+                letHighestBidderChooseTrump();
             }
         };
         switch (checkHighestBid()) {
             case 0:  // start a new round if every player said 0 tricks
+                // ToDo
                 logic_.raiseMultiplier();
                 non_game_play_ui_.getRoundInfo().updateChooseTrump(this, 0);
                 mHandler.postDelayed(case_0, 3000);
                 break;
-            case 1:
+
+            case 1: // heart round -> no trumps to choose
+                // todo animate heart round!!
                 logic_.setTrump(MulatschakDeck.HEART);
                 non_game_play_ui_.getRoundInfo().updateChooseTrump(this, 1);
-                mHandler.postDelayed(case_1, 4000);
+                mHandler.postDelayed(case_1, 100);
                 break;
+
             default:
-                letHighestBidderChooseTrump();
+                mHandler.postDelayed(case_default, 100);
                 break;
         }
     }
@@ -212,6 +240,8 @@ public class GameController{
         if (logic_.getTrump() == MulatschakDeck.HEART) {
             logic_.raiseMultiplier();
         }
+        discardPile_.setVisible(true);
+        bids_view_.setVisible(true);
         non_game_play_ui_.getRoundInfo().setInfoBoxEmpty();
         non_game_play_ui_.getRoundInfo().updateRoundInfo(this);
         non_game_play_ui_.getRoundInfo().getRoundInfoTextField().setVisible(true);
@@ -458,7 +488,7 @@ public class GameController{
         if (logic_.getTurn() == 0) {
             // handle the card exchange buttons (-> to less cards in deck to exchange to much cards)
             animations_.getCardExchange().handleExchangeButtons(deck_.getCardStack().size());
-            animations_.getCardExchange().setAnimationRunning(true);
+            animations_.getCardExchange().startAnimation();
             view_.disableUpdateCanvasThread();
         }
         else if (logic_.getTurn() != 0) {
@@ -481,12 +511,12 @@ public class GameController{
         non_game_play_ui_.getRoundInfo().updateBids(view_);
 
         if (logic_.getTricksToMake() == TrickBids.MULATSCHAK) {
-            continueAfterTrickBids();
+            bids_view_.endingAnimation(logic_.getTrumpPlayerId(), layout_);
             return;
         }
 
         if (!first_call && logic_.getTurn() == logic_.getFirstBidder(getAmountOfPlayers())) {
-            continueAfterTrickBids();
+            bids_view_.endingAnimation(logic_.getTrumpPlayerId(), layout_);
             return;         // stops the recursion after all players made their bids
         }
 
@@ -502,15 +532,7 @@ public class GameController{
         else if (logic_.getTurn() != 0) {
             view_.enableUpdateCanvasThread();
             enemy_logic_list_.get(logic_.getTurn() - 1).makeTrickBids(getPlayerById(logic_.getTurn()), this);
-
-            Handler mHandler = new Handler();
-            Runnable codeToRun = new Runnable() {
-                @Override
-                public void run() {
-                    makeTrickBids();
-                }
-            };
-            mHandler.postDelayed(codeToRun, 1000);
+            // makeTrickBids should get called after animation
         }
     }
 
@@ -539,6 +561,8 @@ public class GameController{
             logic_.setTricksToMake(TrickBids.MULATSCHAK);
             getPlayerById(id).setTricksToMake(TrickBids.MULATSCHAK);
             text = text + "Mulatschak";
+            bids_view_.getBidsFieldList().get(logic_.getTurn())
+                    .startAnimation("M", this);
         }
 
         else if (amount > logic_.getTricksToMake()) {
@@ -551,10 +575,14 @@ public class GameController{
             logic_.setTricksToMake(amount);
             logic_.setTrumpPlayerId(id);
             text = text + Integer.toString(amount);
+            bids_view_.getBidsFieldList().get(logic_.getTurn())
+                    .startAnimation("" + amount, this);
         }
         else {
             getPlayerById(id).setTricksToMake(0);
-            text = text + "0";
+            text = text + "keine";
+            bids_view_.getBidsFieldList().get(logic_.getTurn())
+                    .startAnimation("-", this);
         }
 
         int amount_of_playing_players =  getAmountOfPlayers();
@@ -584,15 +612,16 @@ public class GameController{
         }
         else if (logic_.getTrumpPlayerId() != 0) {
             view_.enableUpdateCanvasThread();
-            enemy_logic_list_.get(logic_.getTurn() - 1).chooseTrump(getPlayerById(logic_.getTrumpPlayerId()), logic_, view_);
+            enemy_logic_list_.get(logic_.getTrumpPlayerId() - 1).chooseTrump(getPlayerById(logic_.getTrumpPlayerId()), logic_, view_);
             Handler mhandler = new Handler();
+            final GameController controller = this;
             Runnable codeToRun = new Runnable() {
                 @Override
                 public void run() {
-                    continueAfterTrumpWasChoosen();
+                    trump_view_.startAnimation(logic_.getTrump(), logic_.getTrumpPlayerId(), controller);
                 }
             };
-            mhandler.postDelayed(codeToRun, 3000);
+            mhandler.postDelayed(codeToRun, 1000);
         }
     }
 
@@ -669,6 +698,10 @@ public class GameController{
         for (int i = 0; i < deck_.getCardStack().size(); i++) {
             deck_.getCardAt(i).setPosition(layout_.getDeckPosition());
             deck_.getCardAt(i).setFixedPosition(getLayout().getDeckPosition());
+        }
+
+        if (deck_.getCardStack().size() != MulatschakDeck.CARDS_PER_DECK) {
+            Log.e("DECK", " not large enough");
         }
 
     }
@@ -828,7 +861,7 @@ public class GameController{
                 add_lives = 5 * logic_.getMultiplier();
             }
             else {
-                add_lives = (-1) * tricks;
+                add_lives = (-1) * tricks * logic_.getMultiplier();
             }
             int new_lives = getPlayerById(i).getLives() + add_lives;
             if (new_lives <= 0 ) {
@@ -918,5 +951,13 @@ public class GameController{
 
     public GamePlay getGamePlay() {
         return game_play_;
+    }
+
+    public BidsView getBidsView() {
+        return bids_view_;
+    }
+
+    public TrumpView getTrumpView() {
+        return trump_view_;
     }
 }

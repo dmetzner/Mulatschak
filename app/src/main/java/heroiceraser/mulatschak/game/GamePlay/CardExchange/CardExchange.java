@@ -21,18 +21,7 @@ import heroiceraser.mulatschak.game.Player;
 //
 // Card Exchange Animation:
 //
-//    -> What does this animation?
-//        Cards that should get exchanged move up, and spin in a 3D space around the y-axis.
-//        spinning speed increases till it reaches a maximum, than the displayed image switches
-//        to the new image and reduces the spinning speed. At the end the cards move back
-//        to the player hand
-
-//    -> How does this animation work?
-//        It uses 2 containers; cards that get exchanged are stored in the first one,
-//        while the new drawn cards are stored in container two.
-//        This allows an easy switch from one card to another in the animation.
-//        The Rotation animation is handled via a Camera and matrix setup,
-//        which gets called recursive and based on a time interval
+//    -> 3D spinning rotation (more details in CardExchangeAnimation class)
 //
 public class CardExchange {
 
@@ -113,7 +102,6 @@ public class CardExchange {
     //  moveCardUp:
     //              moves a card, half the card size, up
     //
-
     private void moveCardUp(Card card) {
         int shift_y = (int) (card.getHeight() / 2.0);
         card.setPosition(card.getPosition().x, card.getPosition().y - shift_y);
@@ -162,7 +150,7 @@ public class CardExchange {
     //
     public void exchangeCards(GameController controller) {
 
-        active_button_ = GameController.NOT_SET;
+        active_button_ = 0;
         animation_running_ = true;
         card_exchange_animation_.init(controller);
 
@@ -182,7 +170,7 @@ public class CardExchange {
 
         // start a wonderful spinning animation -> enables canvas thread
         controller.getView().enableUpdateCanvasThread();
-        card_exchange_animation_.startSpinning(controller);
+        card_exchange_animation_.startSpinning();
 
         // --> gets continued by draw method
     }
@@ -197,7 +185,7 @@ public class CardExchange {
         // spinning animation
         if (card_exchange_animation_.isSpinning()) {
             card_exchange_animation_.drawRotation(canvas);
-            card_exchange_animation_.recalculateSpinningParameters(controller);
+            card_exchange_animation_.recalculateSpinningParameters();
         }
 
         // continueAfter the spinning animation
@@ -313,8 +301,8 @@ public class CardExchange {
         return animation_running_;
     }
 
-    public void setAnimationRunning(boolean animation_running) {
-        this.animation_running_ = animation_running;
+    public void startAnimation() {
+        this.animation_running_ = true;
     }
 
     public HelpText getHelpText() {
