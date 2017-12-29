@@ -203,18 +203,7 @@ public class GameController{
                 startRound();
             }
         };
-        Runnable case_1 = new Runnable() {
-                @Override
-                public void run() {
-                trump_view_.startAnimation(MulatschakDeck.HEART, logic_.getTrumpPlayerId(), controller);
-            }
-        };
-        Runnable case_default = new Runnable() {
-            @Override
-            public void run() {
-                letHighestBidderChooseTrump();
-            }
-        };
+
         switch (checkHighestBid()) {
             case 0:  // start a new round if every player said 0 tricks
                 // ToDo
@@ -227,11 +216,11 @@ public class GameController{
                 // todo animate heart round!!
                 logic_.setTrump(MulatschakDeck.HEART);
                 non_game_play_ui_.getRoundInfo().updateChooseTrump(this, 1);
-                mHandler.postDelayed(case_1, 100);
+                trump_view_.startAnimation(MulatschakDeck.HEART, logic_.getTrumpPlayerId(), controller);
                 break;
 
             default:
-                mHandler.postDelayed(case_default, 100);
+                letHighestBidderChooseTrump();
                 break;
         }
     }
@@ -621,7 +610,7 @@ public class GameController{
                     trump_view_.startAnimation(logic_.getTrump(), logic_.getTrumpPlayerId(), controller);
                 }
             };
-            mhandler.postDelayed(codeToRun, 1000);
+            mhandler.postDelayed(codeToRun, 500);
         }
     }
 

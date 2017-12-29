@@ -758,23 +758,23 @@ public class GameLayout {
     }
 
     public Point getPlayerInfoSize() {
-        return player_info_size_;
+        return new Point(player_info_size_);
     }
 
     public Point getPlayerInfoLeftPos() {
-        return player_info_left_position_;
+        return new Point(player_info_left_position_);
     }
 
     public Point getPlayerInfoTopPos() {
-        return player_info_top_position_;
+        return new Point(player_info_top_position_);
     }
 
     public Point getPlayerInfoRightPos() {
-        return player_info_right_position_;
+        return new Point(player_info_right_position_);
     }
 
     public Point getPlayerInfoBottomPos() {
-        return player_info_bottom_position_;
+        return new Point(player_info_bottom_position_);
     }
 
     public List<Point> getPlayerInfoPositions() {

@@ -62,7 +62,7 @@ public class BidsView extends DrawableObject{
         winner_id_ = winner_pos;
         start_time_ = System.currentTimeMillis();
         if (winner_pos >= 0 && winner_pos < bids_field_list_.size()) {
-            Point offset = layout.getPlayerInfoPositions().get(winner_pos);
+            Point offset = new Point(layout.getPlayerInfoPositions().get(winner_pos));
 
             switch (winner_pos) {
                 case 0:
@@ -101,8 +101,6 @@ public class BidsView extends DrawableObject{
 
         if (percentage > 1) {
             percentage = 1;
-            ending_animation_ = false;
-            controller.continueAfterTrickBids();
         }
 
         for (int i = 0; i < bids_field_list_.size(); i++) {
@@ -131,6 +129,11 @@ public class BidsView extends DrawableObject{
             bids_field_list_.get(i).changeSizeBasedOnPercentage(size_percentage);
         }
 
+        if (percentage >= 1) {
+            ending_animation_ = false;
+            controller.continueAfterTrickBids();
+            return;
+        }
     }
 
     public List<BidsField> getBidsFieldList() {
