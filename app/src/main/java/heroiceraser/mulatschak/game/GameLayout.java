@@ -73,6 +73,14 @@ public class GameLayout {
     private Point dealer_button_top_;
     private Point dealer_button_right_;
 
+    //-- TrickBidsView
+    private Point trick_bids_game_play_size_;
+    private Point trick_bids_game_play_bottom_;
+    private Point trick_bids_game_play_left_;
+    private Point trick_bids_game_play_top_;
+    private Point trick_bids_game_play_right_;
+    private List<Point> trick_bids_game_play_positions_;
+
     //-- Player Info
     private List<Point> player_info_positions_;
     private Point player_info_bottom_position_;
@@ -344,6 +352,7 @@ public class GameLayout {
         initDiscardPilePositions();         // uses deck position
         initHandPositions();                // uses deck position
         initDealerButtonPositions();        // uses hand position
+        initTrickBidsGamePlayPositions();    // uses dealer button positions
     }
 
     //
@@ -427,28 +436,57 @@ public class GameLayout {
     //
     private void calculateDealerButtonSize() {
         dealer_button_size_ = new Point();
-        dealer_button_size_.x = (int) (card_size_.x / 3.0 * 2.0);
+        dealer_button_size_.x = getCardWidth() / 2;
+        //dealer_button_size_.x = (int) (card_size_.x / 3.0 * 2.0);
         dealer_button_size_.y = dealer_button_size_.x;
     }
 
-    private int dealerButtonOffset(int position) {
-        return (int) (card_size_.x + (4.8 * card_size_.x / getOverlapFactor(position)));
-    }
 
+    private int smallPadding() {
+        return (int)(getCardHeight() * 0.1);
+    }
 
     private void initDealerButtonPositions() {
-        dealer_button_bottom_ = new Point(hand_bottom_.x - (int) (card_size_.x / 3.0),
-                hand_bottom_.y - dealer_button_size_.y);
+        dealer_button_bottom_ = new Point(hand_bottom_.x - dealer_button_size_.x / 2,
+                hand_bottom_.y - dealer_button_size_.y - smallPadding());
 
-        dealer_button_left_ = new Point(1,
-                hand_left_.y - dealerButtonOffset(POSITION_LEFT));
+        dealer_button_left_ = new Point(hand_left_.x + getCardHeight() + smallPadding(),
+                hand_left_.y + getCardWidth() - dealer_button_size_.x - smallPadding());
 
-        dealer_button_top_ = new Point(hand_top_.x + dealerButtonOffset(POSITION_TOP),
-                sectors_.get(2).y + 1);
+        dealer_button_top_ = new Point(hand_top_.x + smallPadding(),
+                hand_top_.y + getCardHeight() + smallPadding());
 
-        dealer_button_right_ = new Point(screen_size_.x - dealer_button_size_.x,
-                hand_right_.y + (int) (dealerButtonOffset(POSITION_RIGHT) * 1.1));
+        dealer_button_right_ = new Point(hand_right_.x - smallPadding() - dealer_button_size_.x,
+                hand_right_.y + smallPadding());
+
     }
+
+    private void initTrickBidsGamePlayPositions() {
+
+        // offset caused by radius drawing
+        int offset = dealer_button_size_.x / 2;
+
+        trick_bids_game_play_bottom_ = new Point(
+                dealer_button_bottom_.x + dealer_button_size_.x + offset,
+                dealer_button_bottom_.y + offset);
+
+        trick_bids_game_play_left_ = new Point(dealer_button_left_.x + offset,
+                dealer_button_left_.y - dealer_button_size_.y + offset);
+
+        trick_bids_game_play_top_ = new Point(
+                dealer_button_top_.x + dealer_button_size_.x + offset,
+                dealer_button_top_.y + offset);
+
+        trick_bids_game_play_right_ = new Point(dealer_button_right_.x + offset,
+                dealer_button_right_.y + dealer_button_size_.y + offset);
+
+        trick_bids_game_play_positions_ = new ArrayList<>();
+        trick_bids_game_play_positions_.add(trick_bids_game_play_bottom_);
+        trick_bids_game_play_positions_.add(trick_bids_game_play_left_);
+        trick_bids_game_play_positions_.add(trick_bids_game_play_top_);
+        trick_bids_game_play_positions_.add(trick_bids_game_play_right_);
+    }
+
 
     private void initPlayerInfoLayout() {
         int size = (int) (card_size_.y * (5.0 / 6.0));
@@ -783,5 +821,9 @@ public class GameLayout {
 
     public List<Point> getHandPositions() {
         return hand_positions_;
+    }
+
+    public List<Point> getTrickBidsGamePlayPositions() {
+        return trick_bids_game_play_positions_;
     }
 }

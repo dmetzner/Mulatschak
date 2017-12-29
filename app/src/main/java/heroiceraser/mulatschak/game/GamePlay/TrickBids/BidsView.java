@@ -62,27 +62,8 @@ public class BidsView extends DrawableObject{
         winner_id_ = winner_pos;
         start_time_ = System.currentTimeMillis();
         if (winner_pos >= 0 && winner_pos < bids_field_list_.size()) {
-            Point offset = new Point(layout.getPlayerInfoPositions().get(winner_pos));
-
-            switch (winner_pos) {
-                case 0:
-                    offset.y += layout.getCardHeight() / 2;
-                    break;
-                case 1:
-                    offset.x += bids_field_list_.get(winner_pos).getRadius() * 1.25;
-                    offset.y -= bids_field_list_.get(winner_pos).getRadius() * 0.75;
-                    break;
-                case 2:
-                    offset.x += layout.getPlayerInfoSize().x * 1.5;
-                    offset.y += bids_field_list_.get(winner_pos).getRadius() * 1.25;
-                    break;
-                case 3:
-                    offset.x += bids_field_list_.get(winner_pos).getRadius() * 0.5;
-                    offset.y += layout.getPlayerInfoSize().y;
-                    offset.y += bids_field_list_.get(winner_pos).getRadius() * 0.75;
-                    break;
-            }
-
+            Point end_position = layout.getTrickBidsGamePlayPositions().get(winner_pos);
+            Point offset = new Point (end_position);
             offset.x -= bids_field_list_.get(winner_pos).getPosition().x;
             offset.y -= bids_field_list_.get(winner_pos).getPosition().y;
 
