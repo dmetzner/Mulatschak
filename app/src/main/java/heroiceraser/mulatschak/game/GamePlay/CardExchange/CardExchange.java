@@ -11,7 +11,7 @@ import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.game.Player;
+import heroiceraser.mulatschak.game.MyPlayer;
 
 
 //----------------------------------------------------------------------------------------------
@@ -204,8 +204,8 @@ public class CardExchange {
     //----------------------------------------------------------------------------------------------
     // moveExchangeCardsFromPlayerToContainer:
     //
-    private void moveExchangeCardsFromPlayerToContainer(Player player, List<Card> container) {
-        CardStack hand = player.getHand();
+    private void moveExchangeCardsFromPlayerToContainer(MyPlayer myPlayer, List<Card> container) {
+        CardStack hand = myPlayer.getHand();
         for (int i = 0; i < hand.getCardStack().size(); i++) {
             if (!hand.getCardAt(i).getPosition().equals(hand.getCardAt(i).getFixedPosition())) {
                 container.add(hand.getCardAt(i));

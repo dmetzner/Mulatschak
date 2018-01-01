@@ -19,10 +19,9 @@ import heroiceraser.mulatschak.game.GameView;
 public class BidsView extends DrawableObject{
 
     private List<BidsField> bids_field_list_;
-    boolean ending_animation_;
+    private boolean ending_animation_;
     private long start_time_;
     private int winner_id_;
-    private List<Point> offsets_;
 
     public BidsView() {
         super();
@@ -116,6 +115,18 @@ public class BidsView extends DrawableObject{
             return;
         }
     }
+
+
+    public void reset() {
+        for (BidsField bf : bids_field_list_) {
+            bf.reset();
+        }
+        winner_id_ = GameController.NOT_SET;
+        ending_animation_ = false;
+        setVisible(false);
+    }
+
+
 
     public List<BidsField> getBidsFieldList() {
         return bids_field_list_;

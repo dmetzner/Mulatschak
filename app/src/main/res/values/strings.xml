@@ -17,7 +17,7 @@
     <string name="sign_in_to_upload_this_score">Sign in now to upload this score, save your achievements and share your progress with friends.</string>
     <string name="signin_other_error">There was an issue with sign in.  Please try again later.</string>
 
-    <!-- :::::::::::::::::::: Player Info Pop Up ::::::::::::::::::::::::::::::::::::::::::::::: -->
+    <!-- :::::::::::::::::MyPlayerayer Info Pop Up ::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="player_info_title_bar_name">Spieler Profil</string>
 
 

@@ -1,10 +1,14 @@
 package heroiceraser.mulatschak.game.DrawableObjects;
 
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Point;
-import android.util.Log;
+import android.graphics.Rect;
 import android.view.Gravity;
 import android.widget.PopupWindow;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
@@ -12,7 +16,7 @@ import heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.game.Player;
+import heroiceraser.mulatschak.game.MyPlayer;
 import heroiceraser.mulatschak.game.PlayerInfoPopUpView;
 
 /**
@@ -23,9 +27,14 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
 
     private GameView view_;
 
+    private List<Rect> rects_;
+    private Paint rect_paint_;
+    private int active_player_;
+
     private MyButton button_left_;
     private MyButton button_top_;
     private MyButton button_right_;
+    private List<MyButton> buttons_;
 
     private int pop_up_width_;
     private int pop_up_height_;
@@ -43,14 +52,28 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
         setVisible(false);
 
         button_left_ = new MyButton();
-        button_right_ = new MyButton();
         button_top_ = new MyButton();
+        button_right_ = new MyButton();
+        buttons_ = new ArrayList<>();
 
+        buttons_.add(new MyButton());
+        buttons_.add(button_left_);
+        buttons_.add(button_top_);
+        buttons_.add(button_right_);
+
+        rects_ = new ArrayList<>();
+        rect_paint_ = new Paint();
     }
 
     public void init(GameView view) {
         view_ = view;
         GameLayout layout = view.getController().getLayout();
+        int active_player = GameController.NOT_SET;
+
+        int padding = layout.getPlayerInfoSize().x / 12;
+        if (padding < 1) {
+            padding = 1;
+        }
 
         setWidth(layout.getPlayerInfoSize().x);
         setHeight(layout.getPlayerInfoSize().y);
@@ -74,9 +97,23 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
             pop_up_right_ = makePopupWindow(pop_up_right_view_, GameLayout.POSITION_RIGHT);
         }
 
+        // active player rects
+        for (int i = 0; i < view.getController().getAmountOfPlayers(); i++) {
+            Rect rect = new Rect();
+            if (i != 0) {
 
+                rect.set(buttons_.get(i).getPosition().x - padding,
+                        buttons_.get(i).getPosition().y - padding,
+                        buttons_.get(i).getPosition().x + layout.getPlayerInfoSize().x + padding,
+                        buttons_.get(i).getPosition().y + layout.getPlayerInfoSize().y + padding);
+
+            }
+            rects_.add(rect);
+        }
+
+        rect_paint_.setStyle(Paint.Style.FILL);
+        rect_paint_.setColor(view.getResources().getColor(R.color.metallic_blue));
         setVisible(true);
-
     }
 
     private void setPopDimensions() {
@@ -89,17 +126,25 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
     private PopupWindow makePopupWindow(PlayerInfoPopUpView view, int pos) {
         view = new PlayerInfoPopUpView(view_.getContext());
         view.setListener(this);
-        Player p = view_.getController().getPlayerByPosition(pos);
+        MyPlayer p = view_.getController().getPlayerByPosition(pos);
         String top_display_name = p.getDisplayName();
         view.init(top_display_name);
         return new PopupWindow(view, pop_up_width_, pop_up_height_, true);
     }
 
+    public void setActivePlayer(int id) {
+        active_player_ = id;
+    }
+
     public void draw(Canvas canvas) {
         if (isVisible()) {
-            button_left_.draw(canvas);
-            button_top_.draw(canvas);
-            button_right_.draw(canvas);
+            if (active_player_ >= 0 && active_player_ < rects_.size()){
+                canvas.drawRect(rects_.get(active_player_), rect_paint_);
+            }
+
+            for (MyButton b : buttons_) {
+                b.draw(canvas);
+            }
         }
     }
 

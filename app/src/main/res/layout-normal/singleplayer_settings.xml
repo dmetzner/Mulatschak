@@ -106,7 +106,7 @@
                 android:text="@string/single_player_settings_difficulty_hard" />
         </RadioGroup>
 
-        <!-- . . . . . . . . Start Lives Per Player  . . . . . . . . . . . . . . . . . . . . . . -->
+        <!-- . . . . . . . . Start Lives MyPlayerayer  . . . . . . . . . . . . . . . . . . . . . . -->
         <TextView
             android:id="@+id/single_player_settings_player_lives_text"
             android:layout_width="match_parent"

@@ -16,12 +16,13 @@ import heroiceraser.mulatschak.game.GamePlay.GamePlay;
 import heroiceraser.mulatschak.game.GamePlay.TrickBids.BidsView;
 import heroiceraser.mulatschak.game.GamePlay.TrickBids.TrickBids;
 import heroiceraser.mulatschak.game.GamePlay.chooseATrump.TrumpView;
+import heroiceraser.mulatschak.game.NonGamePlayUI.AllCardsPlayed.AllCardsPlayed;
 import heroiceraser.mulatschak.game.NonGamePlayUI.NonGamePlayUIContainer;
 import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
 import heroiceraser.mulatschak.game.DrawableObjects.DealerButton;
 import heroiceraser.mulatschak.game.DrawableObjects.DiscardPile;
-import heroiceraser.mulatschak.game.DrawableObjects.GameOver;
+import heroiceraser.mulatschak.game.NonGamePlayUI.GameOver.GameOver;
 import heroiceraser.mulatschak.game.NonGamePlayUI.GameTricks;
 import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
 import heroiceraser.mulatschak.game.Animations.GameAnimation;
@@ -57,7 +58,7 @@ public class GameController{
     private NonGamePlayUIContainer non_game_play_ui_;
     private GamePlay game_play_;
 
-    private List<Player> player_list_;
+    private List<MyPlayer> myPlayer_list_;
     private List<EnemyLogic> enemy_logic_list_;
     private PlayerInfo player_info_;
 
@@ -93,7 +94,7 @@ public class GameController{
         non_game_play_ui_ = new NonGamePlayUIContainer();
         game_play_ = new GamePlay();
 
-        player_list_ = new ArrayList<>();
+        myPlayer_list_ = new ArrayList<>();
         enemy_logic_list_ = new ArrayList<>();
         player_info_ = new PlayerInfo();
 
@@ -163,32 +164,39 @@ public class GameController{
         player_info_.setVisible(true);
         non_game_play_ui_.getRoundInfo().setVisible(true);
         non_game_play_ui_.getRoundInfo().setInfoBoxEmpty();
-        non_game_play_ui_.getTricks().clear();
         non_game_play_ui_.getRoundInfo().updateNewRound(this);
         non_game_play_ui_.getRoundInfo().getNewRound().setVisible(true);
+        non_game_play_ui_.getTricks().clear();
+
         logic_.setMulatschakRound(false);
         reEnableButtons();
         resetTricksToMake();
         getGamePlay().getPlayACard().setCardMoveable(false);
-        resetTurn();
         view_.enableUpdateCanvasThread();
-
+        player_info_.setActivePlayer(NOT_SET);
         allCardsBackToTheDeck();
         shuffleDeck();
         discardPile_.setVisible(false);
         discardPile_.setOverlaysVisible(false);
+        bids_view_.reset();
         bids_view_.setVisible(false);
+        trump_view_.setVisible(false);
+        dealer_button_.startMoveAnimation(this, logic_.getDealer());
         dealCards();  // starts an dealing animation
+    }
+
+    public void prepareNewRound() {
+        logic_.moveDealer(getAmountOfPlayers());
+        resetTurn();
     }
 
     public void continueAfterDealingAnimation() {
         discardPile_.setVisible(false);
         bids_view_.setVisible(true);
-        Log.d("GameController2", "Dealer is Player" + logic_.getDealer());
-        boolean first_call = true;
+
         non_game_play_ui_.getRoundInfo().setInfoBoxEmpty();
         non_game_play_ui_.getRoundInfo().getTrickBidsTextField().setVisible(true);
-        makeTrickBids(first_call);
+        makeTrickBids(true);
     }
 
     public void continueAfterTrickBids() {
@@ -208,33 +216,38 @@ public class GameController{
             case 0:  // start a new round if every player said 0 tricks
                 // ToDo
                 logic_.raiseMultiplier();
+                setTurn(NOT_SET);
                 non_game_play_ui_.getRoundInfo().updateChooseTrump(this, 0);
                 mHandler.postDelayed(case_0, 3000);
                 break;
 
             case 1: // heart round -> no trumps to choose
-                // todo animate heart round!!
                 logic_.setTrump(MulatschakDeck.HEART);
+                setTurn(logic_.getTrumpPlayerId());
                 non_game_play_ui_.getRoundInfo().updateChooseTrump(this, 1);
                 trump_view_.startAnimation(MulatschakDeck.HEART, logic_.getTrumpPlayerId(), controller);
                 break;
 
             default:
+                setTurn(logic_.getTrumpPlayerId());
                 letHighestBidderChooseTrump();
                 break;
         }
     }
 
+
+    public void setTurn(int id) {
+        player_info_.setActivePlayer(id);
+        logic_.setTurn(id);
+    }
+
     public void continueAfterTrumpWasChoosen() {
-        if (logic_.getTrump() == MulatschakDeck.HEART) {
-            logic_.raiseMultiplier();
-        }
-        discardPile_.setVisible(true);
+        discardPile_.setVisible(false);
         bids_view_.setVisible(true);
         non_game_play_ui_.getRoundInfo().setInfoBoxEmpty();
         non_game_play_ui_.getRoundInfo().updateRoundInfo(this);
         non_game_play_ui_.getRoundInfo().getRoundInfoTextField().setVisible(true);
-        logic_.setTurn(logic_.getTrumpPlayerId());
+        setTurn(logic_.getTrumpPlayerId());
         logic_.setStartingPlayer(logic_.getTrumpPlayerId());
         boolean first_call = true;
         if (logic_.isMulatschakRound()) {
@@ -247,6 +260,7 @@ public class GameController{
     }
 
     public void continueAfterCardExchange() {
+        discardPile_.setVisible(true);
         nextCardRound(); // first call
     }
 
@@ -255,10 +269,10 @@ public class GameController{
 
         if (multiplayer_) {
             for (int i = 0; i < participants_.size(); i++) {
-                Player new_player = new Player(view_);
-                new_player.participant_ = participants_.get(i);
+                MyPlayer new_My_player = new MyPlayer(view_);
+                new_My_player.participant_ = participants_.get(i);
                 int player_id = i;
-                player_list_.add(player_id, new_player);
+                myPlayer_list_.add(player_id, new_My_player);
             }
 
         }
@@ -267,13 +281,13 @@ public class GameController{
         if (!multiplayer_) {
             int players = enemies + 1;
             for (int i = 0; i < players; i++) {
-                Player new_player = new Player(view_);
-                new_player.setId(i);
-                player_list_.add(new_player);
+                MyPlayer new_My_player = new MyPlayer(view_);
+                new_My_player.setId(i);
+                myPlayer_list_.add(new_My_player);
             }
         }
 
-        for (int i = 0; i < player_list_.size(); i++) {
+        for (int i = 0; i < myPlayer_list_.size(); i++) {
             setDisplayName(getPlayerById(i));
         }
     }
@@ -288,25 +302,25 @@ public class GameController{
     }
 
 
-    public void setDisplayName(Player player) {
+    public void setDisplayName(MyPlayer myPlayer) {
 
         String text = "";
 
-        if (player.participant_ != null) {
-            text = player.participant_.getDisplayName();
+        if (myPlayer.participant_ != null) {
+            text = myPlayer.participant_.getDisplayName();
         }
-        else if (player.getId() == 0) {
+        else if (myPlayer.getId() == 0) {
             text = view_.getController().my_display_name_;
         }
         else {
-            text = "Muli Bot " + player.getId();
+            text = "Muli Bot " + myPlayer.getId();
         }
         if (text.length() > 15) {
             text = text.substring(0, 15);
         }
 
-        Log.d("PlayerInfo", "Player " + player.getId() + " -> " + text);
-        player.setDisplayName(text);
+        Log.d("PlayerInfo", "MyPlayer " + myPlayer.getId() + " -> " + text);
+        myPlayer.setDisplayName(text);
     }
 
 
@@ -370,10 +384,9 @@ public class GameController{
         Random random_generator = new Random();
         int dealer_id = random_generator.nextInt(getAmountOfPlayers());
         logic_.setDealer(dealer_id);
-        dealer_button_.setPosition(
-                layout_.getDealerButtonPosition(getPlayerById(dealer_id).getPosition()));
+        dealer_button_.startMoveAnimation(this, getPlayerById(dealer_id).getPosition());
         logic_.setStartingPlayer(logic_.getFirstBidder(getAmountOfPlayers()));
-        logic_.setTurn(dealer_id);
+        setTurn(dealer_id);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -427,7 +440,7 @@ public class GameController{
     //  cada
     //
     private void resetTurn() {
-        logic_.setTurn(logic_.getDealer());
+        setTurn(logic_.getDealer());
     }
 
     //----------------------------------------------------------------------------------------------
@@ -444,8 +457,9 @@ public class GameController{
     //----------------------------------------------------------------------------------------------
     //  cada
     //
-    private void turnToNextPlayer() {
+    public void turnToNextPlayer() {
         logic_.turnToNextPlayer(getAmountOfPlayers());
+        player_info_.setActivePlayer(logic_.getTurn());
     }
 
     //----------------------------------------------------------------------------------------------
@@ -467,12 +481,12 @@ public class GameController{
         }
 
         if (getPlayerById(logic_.getTurn()).getMissATurn()) {
-            Log.d("GameController2", "Player " + logic_.getTurn() + " is MISSING his turn");
+            Log.d("GameController2", "MyPlayer " + logic_.getTurn() + " is MISSING his turn");
             makeCardExchange();
             return;
         }
 
-        Log.d("GameController2", "Player " + logic_.getTurn() + " is making his turn");
+        Log.d("GameController2", "MyPlayer " + logic_.getTurn() + " is making his turn");
 
         if (logic_.getTurn() == 0) {
             // handle the card exchange buttons (-> to less cards in deck to exchange to much cards)
@@ -509,7 +523,7 @@ public class GameController{
             return;         // stops the recursion after all players made their bids
         }
 
-        Log.d("GameController2", "Player " +logic_.getTurn() + " is making his bids");
+        Log.d("GameController2", "MyPlayer " +logic_.getTurn() + " is making his bids");
         if (logic_.getTurn() == 0) {
             if (getPlayerById(0).getMissATurn()) {
                 animations_.getTrickBids().getNumberButtonAt(0).setEnabled(false);
@@ -554,6 +568,12 @@ public class GameController{
                     .startAnimation("M", this);
         }
 
+        else if (amount == TrickBids.MISS_A_TURN) {
+            getPlayerById(id).setTricksToMake(amount);
+            bids_view_.getBidsFieldList().get(logic_.getTurn())
+                    .startAnimation("X", this);
+        }
+
         else if (amount > logic_.getTricksToMake()) {
             List<MyButton> buttons = getAnimation().getTrickBids().getNumberButtons();
             // disable lower amount buttons, but button 0 is always clickable // miss a turn
@@ -574,6 +594,7 @@ public class GameController{
                     .startAnimation("-", this);
         }
 
+        // there have to be at least two active players every round!
         int amount_of_playing_players =  getAmountOfPlayers();
         for (int i = 0; i < getAmountOfPlayers(); i++) {
             if (getPlayerById(i).getMissATurn()) {
@@ -591,7 +612,7 @@ public class GameController{
     //  cada
     //
     private void letHighestBidderChooseTrump() {
-        Log.d("GameController2", "Player " + logic_.getTrumpPlayerId() + " chooses a trump");
+        Log.d("GameController2", "MyPlayer " + logic_.getTrumpPlayerId() + " chooses a trump");
         non_game_play_ui_.getRoundInfo().updateChooseTrump(this);
 
         if (logic_.getTrumpPlayerId() == 0) {
@@ -620,36 +641,22 @@ public class GameController{
 
     private void nextCardRound() {
 
-        // view_.enableUpdateCanvasThread(); // Todo
-        if (getPlayerById(logic_.getTurn()).getAmountOfCardsInHand() == 0) {
-            updatePlayerLives();
-            non_game_play_ui_.getStatistics().updatePlayerLives(this);
-            if (logic_.isGameOver()) {
-                non_game_play_ui_.getRoundInfo().setInfoBoxEmpty();
-                non_game_play_ui_.getRoundInfo().getGameOver().setVisible(true);
-                game_over_.setVisible(true);
-                return;
-            }
-            non_game_play_ui_.getRoundInfo().setInfoBoxEmpty();
-            non_game_play_ui_.getRoundInfo().getEndOfRound().setVisible(true);
-            non_game_play_ui_.getRoundInfo().updateEndOfRound(this);
-            allCardsBackToTheDeck();
-            logic_.moveDealer(getAmountOfPlayers());
-            dealer_button_.setPosition(layout_.getDealerButtonPosition(logic_.getDealer()));
-            waiting2 = true;
-            // touch events starts new round        ^^
+        // update player lives, game over? or new round?
+        AllCardsPlayed acp = new AllCardsPlayed();
+        if (acp.areAllCardsPlayed(this)) {
+            acp.allCardsArePlayedLogic(this);
             return;
         }
-        boolean first_call = true;
-        non_game_play_ui_.getRoundInfo().updateRoundInfo(this);
-        nextTurn(first_call);
 
+        // next round
+        non_game_play_ui_.getRoundInfo().updateRoundInfo(this);
+        nextTurn(true);
     }
 
     public boolean waiting2 = false;
 
 
-    private void allCardsBackToTheDeck() {
+    public void allCardsBackToTheDeck() {
 
         for (int player_id = 0; player_id < getAmountOfPlayers(); player_id++) {
 
@@ -716,7 +723,7 @@ public class GameController{
         if (!first_call && logic_.getTurn() == logic_.getStartingPlayer()) {
             logic_.chooseCardRoundWinner(this, this.getDiscardPile());
             addTricksToWinner();
-            logic_.setTurn(logic_.getRoundWinnerId());
+            setTurn(logic_.getRoundWinnerId());
             logic_.setStartingPlayer(logic_.getRoundWinnerId());
 
             non_game_play_ui_.getRoundInfo().setInfoBoxEmpty();
@@ -743,13 +750,13 @@ public class GameController{
         }
 
         if (getPlayerById(logic_.getTurn()).getMissATurn()) {
-            Log.d("GameController2", "Player " + logic_.getTurn() + " is MISSING his turn");
+            Log.d("GameController2", "MyPlayer " + logic_.getTurn() + " is MISSING his turn");
             turnToNextPlayer();
             nextTurn();
             return;
         }
 
-        Log.d("GameController2", "Player " +logic_.getTurn() + " is playing his card");
+        Log.d("GameController2", "MyPlayer " +logic_.getTurn() + " is playing his card");
 
         if (logic_.getTurn() == 0) {
             getGamePlay().getPlayACard().setCardMoveable(true);
@@ -764,7 +771,7 @@ public class GameController{
 
 
     public void continueAfterEnemeyPlayedACard() {
-        getLogic().turnToNextPlayer(getAmountOfPlayers());
+        turnToNextPlayer();
         nextTurn();
     }
 
@@ -790,76 +797,6 @@ public class GameController{
         }
     }
 
-    public void updatePlayerLives() {
-
-        boolean mulatschak = false;
-        if (logic_.isMulatschakRound()) {
-            if ((int) (getPlayerById(logic_.getTrumpPlayerId()).getTricks().getCardStack().size()
-                    / getAmountOfPlayers()) == GameLogic.MAX_CARDS_PER_HAND) {
-                mulatschak = true;
-            }
-            if (!mulatschak) {
-                for (int i = 0; i < getAmountOfPlayers(); i++) {
-                    int add_lives = 0;
-                    if (logic_.getTrumpPlayerId() == i) {
-                        add_lives = 10 * logic_.getMultiplier();
-                    }
-                    else {
-                        add_lives = -10 * logic_.getMultiplier();
-                    }
-                    int new_lives = getPlayerById(i).getLives() + add_lives;
-                    if (new_lives <= 0 ) {
-                        new_lives = 0;
-                        logic_.setGameOver(true);
-                    }
-                    getPlayerById(i).setLives(new_lives);
-                }
-                return;
-            }
-            else  {
-                for (int i = 0; i < getAmountOfPlayers(); i++) {
-                    int add_lives = 0;
-                    if (logic_.getTrumpPlayerId() == i) {
-                        add_lives = -10 * logic_.getMultiplier();
-                    }
-                    else {
-                        add_lives = 10 * logic_.getMultiplier();
-                    }
-                    int new_lives = getPlayerById(i).getLives() + add_lives;
-                    if (new_lives <= 0 ) {
-                        new_lives = 0;
-                        logic_.setGameOver(true);
-                    }
-                    getPlayerById(i).setLives(new_lives);
-                }
-                return;
-            }
-        }
-
-        for (int i = 0; i < getAmountOfPlayers(); i++) {
-            int add_lives = 0;
-            int tricks = getPlayerById(i).getTricks().getCardStack().size() / getAmountOfPlayers();
-
-            if (getPlayerById(i).getMissATurn()) {
-                add_lives = 2 * logic_.getMultiplier();
-            }
-            else if (i == logic_.getTrumpPlayerId() && tricks < logic_.getTricksToMake()) {
-                add_lives = 10 * logic_.getMultiplier();
-            }
-            else if (tricks <= 0) {
-                add_lives = 5 * logic_.getMultiplier();
-            }
-            else {
-                add_lives = (-1) * tricks * logic_.getMultiplier();
-            }
-            int new_lives = getPlayerById(i).getLives() + add_lives;
-            if (new_lives <= 0 ) {
-                new_lives = 0;
-                logic_.setGameOver(true);
-            }
-            getPlayerById(i).setLives(new_lives);
-        }
-    }
 
     public void moveCardToTrash(Card card) {
         trash_.addCard(card);
@@ -892,11 +829,11 @@ public class GameController{
         return discardPile_;
     }
 
-    public List<Player> getPlayerList() { return player_list_; }
+    public List<MyPlayer> getPlayerList() { return myPlayer_list_; }
 
-    public Player getPlayerById(int id) { return player_list_.get(id); }
+    public MyPlayer getPlayerById(int id) { return myPlayer_list_.get(id); }
 
-    public Player getPlayerByPosition(int pos) {
+    public MyPlayer getPlayerByPosition(int pos) {
         for (int i = 0; i < getAmountOfPlayers(); i++) {
             if (pos == getPlayerById(i).getPosition()) {
                 return getPlayerById(i);
@@ -906,7 +843,7 @@ public class GameController{
         return getPlayerByPosition(0);
     }
 
-    public int getAmountOfPlayers() { return player_list_.size(); }
+    public int getAmountOfPlayers() { return myPlayer_list_.size(); }
 
     public NonGamePlayUIContainer getNonGamePlayUIContainer() {
         return non_game_play_ui_;

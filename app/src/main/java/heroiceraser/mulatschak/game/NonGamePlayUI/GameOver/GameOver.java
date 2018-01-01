@@ -1,14 +1,14 @@
-package heroiceraser.mulatschak.game.DrawableObjects;
+package heroiceraser.mulatschak.game.NonGamePlayUI.GameOver;
 
 import android.graphics.Canvas;
 import android.graphics.Point;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
-import heroiceraser.mulatschak.DrawableBasicObjects.MySimpleTextField;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
+import heroiceraser.mulatschak.game.MyPlayer;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
 
 /**
@@ -44,5 +44,18 @@ public class GameOver extends DrawableObject {
             controller.getNonGamePlayUIContainer().getStatistics().setVisible(true);
             back_button_.draw(canvas);
         }
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    //  isGameOver
+    //              -> checks is a player has reached 0 lives and therefore won the game
+    //
+    public boolean isGameOver(GameController controller) {
+        for (MyPlayer player : controller.getPlayerList()) {
+            if (player.getLives() <= 0)
+                return true;
+        }
+        return false;
     }
 }

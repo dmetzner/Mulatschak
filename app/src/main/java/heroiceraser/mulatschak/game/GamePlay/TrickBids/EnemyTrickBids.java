@@ -1,7 +1,7 @@
 package heroiceraser.mulatschak.game.GamePlay.TrickBids;
 
 import heroiceraser.mulatschak.game.GameController;
-import heroiceraser.mulatschak.game.Player;
+import heroiceraser.mulatschak.game.MyPlayer;
 
 
 
@@ -18,13 +18,13 @@ public class EnemyTrickBids {
     //----------------------------------------------------------------------------------------------
     //  TrickBids
     //
-    public void makeTrickBids(Player player, GameController controller) {
+    public void makeTrickBids(MyPlayer myPlayer, GameController controller) {
 
         // ToDo: put in some fancy logic here
 
         int[] cards_per_trump = new int[5];
-        for (int i = 0; i < player.getAmountOfCardsInHand(); i++) {
-            int trump = (player.getHand().getCardAt(i).getId() / 100) % 5;
+        for (int i = 0; i < myPlayer.getAmountOfCardsInHand(); i++) {
+            int trump = (myPlayer.getHand().getCardAt(i).getId() / 100) % 5;
             cards_per_trump[trump]++;
         }
 
@@ -39,6 +39,6 @@ public class EnemyTrickBids {
             max--;
         }
 
-        controller.setNewMaxTrumps(max, player.getId());
+        controller.setNewMaxTrumps(max, myPlayer.getId());
     }
 }

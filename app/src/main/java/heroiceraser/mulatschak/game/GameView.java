@@ -98,11 +98,7 @@ public class GameView extends View {
     }
 
     private void drawDealerButton(Canvas canvas) {
-        if (controller_.getDealerButton().isVisible()) {
-            canvas.drawBitmap(controller_.getDealerButton().getBitmap(),
-                    controller_.getDealerButton().getPosition().x,
-                    controller_.getDealerButton().getPosition().y, null);
-        }
+        controller_.getDealerButton().draw(canvas);
     }
 
     private void drawNonGamePlayUI(Canvas canvas) {
@@ -139,26 +135,26 @@ public class GameView extends View {
     //
     private void drawHandCards(Canvas canvas) {
         for (int i = 0; i < controller_.getPlayerList().size(); i++) {
-            Player player = controller_.getPlayerById(i);
+            MyPlayer myPlayer = controller_.getPlayerById(i);
             if (i == 0) {
-                for (int j = 0; j < player.getAmountOfCardsInHand(); j++) {
-                    if (player.getHand().getCardAt(j).getPosition() == null) {
+                for (int j = 0; j < myPlayer.getAmountOfCardsInHand(); j++) {
+                    if (myPlayer.getHand().getCardAt(j).getPosition() == null) {
                         break;
                     }
-                    if (player.getHand().getCardAt(j).getPosition().
+                    if (myPlayer.getHand().getCardAt(j).getPosition().
                             equals(controller_.getLayout().getDeckPosition())) {
                         break;
                     }
-                    canvas.drawBitmap(player.getHand().getCardAt(j).getBitmap(),
-                            player.getHand().getCardAt(j).getPosition().x,
-                            player.getHand().getCardAt(j).getPosition().y, null);
+                    canvas.drawBitmap(myPlayer.getHand().getCardAt(j).getBitmap(),
+                            myPlayer.getHand().getCardAt(j).getPosition().x,
+                            myPlayer.getHand().getCardAt(j).getPosition().y, null);
                 }
             } else if (i == 1 || i == 3) {
-                for (int j = 0; j < player.getAmountOfCardsInHand(); j++) {
-                    if (player.getHand().getCardAt(j).getPosition() == null) {
+                for (int j = 0; j < myPlayer.getAmountOfCardsInHand(); j++) {
+                    if (myPlayer.getHand().getCardAt(j).getPosition() == null) {
                         break;
                     }
-                    if (player.getHand().getCardAt(j).getPosition().
+                    if (myPlayer.getHand().getCardAt(j).getPosition().
                             equals(controller_.getLayout().getDeckPosition())) {
                         break;
                     }
@@ -168,22 +164,22 @@ public class GameView extends View {
                     Bitmap rotatedBitmap = Bitmap.createBitmap(backside, 0, 0,
                             backside.getWidth(), backside.getHeight(), matrix, true);
                     canvas.drawBitmap(rotatedBitmap,
-                            player.getHand().getCardAt(j).getPosition().x,
-                            player.getHand().getCardAt(j).getPosition().y, null);
+                            myPlayer.getHand().getCardAt(j).getPosition().x,
+                            myPlayer.getHand().getCardAt(j).getPosition().y, null);
                     rotatedBitmap.recycle();
                 }
             } else if (i == 2) {
-                for (int j = 0; j < player.getAmountOfCardsInHand(); j++) {
-                    if (player.getHand().getCardAt(j).getPosition() == null) {
+                for (int j = 0; j < myPlayer.getAmountOfCardsInHand(); j++) {
+                    if (myPlayer.getHand().getCardAt(j).getPosition() == null) {
                         break;
                     }
-                    if (player.getHand().getCardAt(j).getPosition().
+                    if (myPlayer.getHand().getCardAt(j).getPosition().
                             equals(controller_.getLayout().getDeckPosition())) {
                         break;
                     }
                     canvas.drawBitmap(controller_.getDeck().getBacksideBitmap(),
-                            player.getHand().getCardAt(j).getPosition().x,
-                            player.getHand().getCardAt(j).getPosition().y, null);
+                            myPlayer.getHand().getCardAt(j).getPosition().x,
+                            myPlayer.getHand().getCardAt(j).getPosition().y, null);
                 }
             }
         }

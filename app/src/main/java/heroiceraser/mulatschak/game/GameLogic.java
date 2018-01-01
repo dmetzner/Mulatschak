@@ -1,8 +1,5 @@
 package heroiceraser.mulatschak.game;
 
-import com.google.android.gms.games.multiplayer.Participant;
-
-import java.util.ArrayList;
 
 import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
@@ -105,6 +102,13 @@ public class GameLogic {
 
     public void raiseMultiplier() {
         this.multiplier_ *= 2;
+        if (multiplier_ > 32) {
+            multiplier_ = 32;
+        }
+    }
+
+    public void resetMultiplier() {
+        this.multiplier_ = 1;
     }
 
     public boolean isAValidCardPlay(Card card_to_play, CardStack hand, DiscardPile dp) {
@@ -299,10 +303,6 @@ public class GameLogic {
 
     public int getMultiplier() {
         return multiplier_;
-    }
-
-    public void setMultiplier(int multiplier) {
-        this.multiplier_ = multiplier;
     }
 
     public int getStartingPlayer() {

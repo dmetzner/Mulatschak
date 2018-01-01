@@ -4,17 +4,15 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Point;
-import android.util.Log;
 
 import java.util.Random;
 
 import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
 import heroiceraser.mulatschak.game.DrawableObjects.DiscardPile;
-import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
-import heroiceraser.mulatschak.game.Player;
+import heroiceraser.mulatschak.game.MyPlayer;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
 
 /**
@@ -51,24 +49,24 @@ public class EnemyPlayACardLogic {
 
     // ToDo: do some magic here ;)
 
-    public void playACard(GameLogic logic, Player player, DiscardPile discard_pile) {
+    public void playACard(GameLogic logic, MyPlayer myPlayer, DiscardPile discard_pile) {
         Random random_generator = new Random();
         boolean valid = false;
         int random_number = -1;
         while (!valid) {
-            random_number = random_generator.nextInt(player.getAmountOfCardsInHand());
-            Card card = player.getHand().getCardAt(random_number);
-            CardStack hand = player.getHand();
+            random_number = random_generator.nextInt(myPlayer.getAmountOfCardsInHand());
+            Card card = myPlayer.getHand().getCardAt(random_number);
+            CardStack hand = myPlayer.getHand();
             valid = logic.isAValidCardPlay(card, hand, discard_pile);
         }
-        Card card = player.getHand().getCardAt(random_number);
-        player.getHand().getCardStack().remove(random_number);
+        Card card = myPlayer.getHand().getCardAt(random_number);
+        myPlayer.getHand().getCardStack().remove(random_number);
 
         move_card_ = card;
         animation_running_ = true;
-        end_position_ = discard_pile.getPositions().get(player.getPosition());
+        end_position_ = discard_pile.getPositions().get(myPlayer.getPosition());
 
-        player_pos_ = player.getPosition();
+        player_pos_ = myPlayer.getPosition();
         if (player_pos_ % 2 != 0) {
             rotation_start_ = 90;
         } else {

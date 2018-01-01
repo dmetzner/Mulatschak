@@ -28,6 +28,7 @@ public class BidsField extends DrawableObject{
     // Animation
     private boolean animation_running_;
     private long start_time_;
+    private Point real_start_pos_;
     private Point start_pos_;
     private Point offset_;
     private Point end_pos_;
@@ -39,9 +40,11 @@ public class BidsField extends DrawableObject{
 
     public void init(View view, final Point start_pos, final Point end_pos, final int radius) {
         text_ = "-";
+
         start_pos_ = start_pos;
+        real_start_pos_= new Point(start_pos);
         end_pos_ = end_pos;
-        offset_ = new Point (end_pos.x - start_pos.x, end_pos.y - start_pos.y);
+        calculateOffset();
 
         // Circle
         end_radius_ = radius;
@@ -82,14 +85,22 @@ public class BidsField extends DrawableObject{
         setVisible(false);
     }
 
+    private void calculateOffset() {
+        offset_ = new Point (end_pos_.x - start_pos_.x, end_pos_.y - start_pos_.y);
+    }
+
+
     public void startAnimation(String text, GameController controller) {
         text_ = text;
         start_time_ = System.currentTimeMillis();
         controller.getView().enableUpdateCanvasThread();
-        setPosition(start_pos_);
+        setPosition(real_start_pos_);
+        start_pos_ = real_start_pos_;
+        calculateOffset();
         setVisible(true);
         animation_running_ = true;
         text_paint_.setTextSize(default_text_size_ * (20.f / 100.f) );
+        updateAlpha(255);
     }
 
     public void updateAlpha(int alpha) {

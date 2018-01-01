@@ -2,7 +2,7 @@ package heroiceraser.mulatschak.game.Animations;
 
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameLogic;
-import heroiceraser.mulatschak.game.Player;
+import heroiceraser.mulatschak.game.MyPlayer;
 
 /**
  * Created by Daniel Metzner on 18.08.2017.
@@ -14,16 +14,16 @@ public class ReAnimateHands {
 
     }
 
-    public void redrawHands(GameLayout layout, Player player) {
-        switch (player.getId()) {
+    public void redrawHands(GameLayout layout, MyPlayer myPlayer) {
+        switch (myPlayer.getId()) {
             case 0:
-                for (int i = 0; i < player.getAmountOfCardsInHand(); i++) {
-                    player.getHand().getCardAt(i).setFixedPosition(layout.getHandBottom().x +
+                for (int i = 0; i < myPlayer.getAmountOfCardsInHand(); i++) {
+                    myPlayer.getHand().getCardAt(i).setFixedPosition(layout.getHandBottom().x +
                             layout.getCardWidth() * i +  (int) (layout.getCardWidth() *
-                            ((GameLogic.MAX_CARDS_PER_HAND - player.getAmountOfCardsInHand()) / 2.0)),
+                            ((GameLogic.MAX_CARDS_PER_HAND - myPlayer.getAmountOfCardsInHand()) / 2.0)),
                             layout.getHandBottom().y);
-                    player.getHand().getCardAt(i).setPosition(
-                            player.getHand().getCardAt(i).getFixedPosition());
+                    myPlayer.getHand().getCardAt(i).setPosition(
+                            myPlayer.getHand().getCardAt(i).getFixedPosition());
                 }
         }
     }

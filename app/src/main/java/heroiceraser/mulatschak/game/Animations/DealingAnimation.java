@@ -5,13 +5,11 @@ import android.graphics.Matrix;
 import android.graphics.Point;
 import android.util.Log;
 
-import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.game.Player;
 
 /**
  * Created by Daniel Metzner on 11.08.2017.

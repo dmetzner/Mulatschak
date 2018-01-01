@@ -11,7 +11,6 @@ import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.game.Player;
 
 /**
  * Created by Daniel Metzner on 19.08.2017.
@@ -119,7 +118,7 @@ public class TrickBids {
         if (button_id == MISS_A_TURN) {
             controller.getPlayerById(0).setMissATurn(true);
             clearHand(controller);
-            controller.setNewMaxTrumps(0, 0);
+            controller.setNewMaxTrumps(MISS_A_TURN, 0);
             return;
         }
         if (button_id == MULATSCHAK) {
@@ -139,7 +138,7 @@ public class TrickBids {
         for (int i = 0; i < hand.getCardStack().size(); i++) {
             hand.getCardAt(i).setPosition(controller.getLayout().getDeckPosition());
             hand.getCardAt(i).setFixedPosition(controller.getLayout().getDeckPosition());
-            controller.getDeck().addCard(hand.getCardAt(i));
+            controller.moveCardToTrash(hand.getCardAt(i));
             hand.getCardStack().remove(i);
             i--;
         }
@@ -150,6 +149,7 @@ public class TrickBids {
         setAnimationTrumps(false);
         controller.getTrumpView().startAnimation(controller.getLogic().getTrump(), 0, controller);
     }
+
 
     //
     // Getter & Setter

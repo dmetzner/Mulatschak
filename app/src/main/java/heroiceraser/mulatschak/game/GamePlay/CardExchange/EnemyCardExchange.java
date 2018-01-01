@@ -5,7 +5,7 @@ import java.util.List;
 import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
-import heroiceraser.mulatschak.game.Player;
+import heroiceraser.mulatschak.game.MyPlayer;
 
 //----------------------------------------------------------------------------------------------
 //  EnemyCardExchange:
@@ -22,7 +22,7 @@ public class EnemyCardExchange {
     //
     private boolean animation_running_;
 
-    private Player player_;     // animation for which player?
+    private MyPlayer myPlayer_;     // animation for which player?
 
     private EnemyCardExchangeAnimation card_exchange_animation_;
 
@@ -38,7 +38,7 @@ public class EnemyCardExchange {
     //----------------------------------------------------------------------------------------------
     // exchangeCards:
     //
-    public void exchangeCard(Player player, GameController controller) {
+    public void exchangeCard(MyPlayer myPlayer, GameController controller) {
 
         animation_running_ = true;
 
@@ -63,17 +63,17 @@ public class EnemyCardExchange {
                 break;
         }
 
-        player_ = player;
-        card_exchange_animation_.init(controller, player);
+        myPlayer_ = myPlayer;
+        card_exchange_animation_.init(controller, myPlayer);
 
         // moves weak cards based on their trump/value to the container
         int weak_border = 13;
-        moveWeakCards(player.getHand().getCardStack(), card_exchange_animation_.getExchangedCards(),
+        moveWeakCards(myPlayer.getHand().getCardStack(), card_exchange_animation_.getExchangedCards(),
                 controller.getLogic(), weak_border, randomness);
 
         // if deck has to less cards to draw
         //      -> give back the best cards from move cards to the players hand
-        handleToLessCardsInDeck(card_exchange_animation_.getExchangedCards(), player,
+        handleToLessCardsInDeck(card_exchange_animation_.getExchangedCards(), myPlayer,
                 controller.getDeck().getCardStack().size());
 
         // no cards to change? -> nothing to do
@@ -97,7 +97,7 @@ public class EnemyCardExchange {
 
         // spinning animation
         if (card_exchange_animation_.isAnimationRunning()) {
-            card_exchange_animation_.draw(canvas, player_);
+            card_exchange_animation_.draw(canvas, myPlayer_);
             card_exchange_animation_.recalculateParameters(controller);
         }
 
@@ -154,7 +154,7 @@ public class EnemyCardExchange {
     //----------------------------------------------------------------------------------------------
     // if deck has to less cards to draw
     //      -> give back the best cards from cards to remove list to the players hand
-    private void handleToLessCardsInDeck(List<Card> cards_to_remove, Player player, int deck_size) {
+    private void handleToLessCardsInDeck(List<Card> cards_to_remove, MyPlayer myPlayer, int deck_size) {
 
         int cards_to_give_back = cards_to_remove.size() - deck_size;
 
@@ -169,7 +169,7 @@ public class EnemyCardExchange {
                 }
             }
             if (highest_id != -1) {
-                player.getHand().addCard(cards_to_remove.get(highest_id));
+                myPlayer.getHand().addCard(cards_to_remove.get(highest_id));
                 cards_to_remove.remove(highest_id);
             }
         }

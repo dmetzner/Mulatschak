@@ -102,9 +102,9 @@ public class TouchEvents {
             }
         }
 
-        // ------------------ Player Info ----------------------------------------------------------
+        // ------------------ MyPlayer Info ----------------------------------------------------------
 
-        // Player Info Buttons
+        // MyPlayer Info Buttons
         else if (!controller.getNonGamePlayUIContainer().isAWindowActive()) {
             if (ButtonActionDown(X, Y, controller.getPlayerInfo().getButtonLeft()) ) {}
             else if (ButtonActionDown(X, Y, controller.getPlayerInfo().getButtonTop()) ) {}
@@ -149,9 +149,9 @@ public class TouchEvents {
 
         //------------------------
 
-        // ------------------ Player Info ----------------------------------------------------------
+        // ------------------ MyPlayer Info ----------------------------------------------------------
 
-        // Player Info Buttons
+        // MyPlayer Info Buttons
         ButtonActionMove(X, Y, controller.getPlayerInfo().getButtonLeft());
         ButtonActionMove(X, Y, controller.getPlayerInfo().getButtonTop());
         ButtonActionMove(X, Y, controller.getPlayerInfo().getButtonRight());
@@ -230,9 +230,9 @@ public class TouchEvents {
 
         //------------------------
 
-        // ------------------ Player Info ----------------------------------------------------------
+        // ------------------ MyPlayer Info ----------------------------------------------------------
 
-        // Player Info Buttons
+        // MyPlayer Info Buttons
         if (ButtonActionUp(X, Y, controller.getPlayerInfo().getButtonLeft())) {
             controller.getPlayerInfo().popUpInfoLeft();
         }

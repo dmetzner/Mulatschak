@@ -201,7 +201,7 @@ public class PlayACard {
                 move_card_idx_ = GameController.NOT_SET;
                 invalid_move_symbol_running_ = false;
                 invalid_symbol_alpha_ = 0;
-                controller.getLogic().turnToNextPlayer(controller.getAmountOfPlayers());
+                controller.turnToNextPlayer();
                 controller.nextTurn();
             }
         }

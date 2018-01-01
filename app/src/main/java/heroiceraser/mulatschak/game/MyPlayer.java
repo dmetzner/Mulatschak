@@ -14,7 +14,7 @@ import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
  * Created by Daniel Metzner on 10.08.2017.
  */
 
-public class Player {
+public class MyPlayer {
 
     //----------------------------------------------------------------------------------------------
     //  Member Variables
@@ -37,7 +37,7 @@ public class Player {
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
-    public Player(GameView view) {
+    public MyPlayer(GameView view) {
         view_ = view;
         position_ = GameController.NOT_SET;
         lives_ = GameController.NOT_SET;
@@ -83,7 +83,7 @@ public class Player {
             amount /= players;
         }
         else {
-            Log.d("Player", "0 Players?");
+            Log.d("MyPlayer", "0 Players?");
         }
 
         return amount;

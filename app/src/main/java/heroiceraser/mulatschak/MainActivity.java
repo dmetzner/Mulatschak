@@ -52,7 +52,7 @@ import heroiceraser.mulatschak.Fragments.SinglePlayerFragment;
 import heroiceraser.mulatschak.Fragments.StartScreenFragment;
 
 public class MainActivity extends AppCompatActivity implements
-        // StartScreen  -> Single/Multi Player, Sign in/out, Achievements, Leaderboards
+        // StartScreen  -> Single/Multi MyPlayer, Sign in/out, Achievements, Leaderboards
         StartScreenFragment.Listener,
         // SinglePlayer Settings
         SinglePlayerFragment.Listener,

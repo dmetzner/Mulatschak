@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.GameController;
-import heroiceraser.mulatschak.game.Player;
+import heroiceraser.mulatschak.game.MyPlayer;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
 
 //--------------------------------------------------------------------------------------------------
@@ -31,7 +31,7 @@ public class EnemyCardExchangeAnimation {
     //----------------------------------------------------------------------------------------------
     //  Member Variables
     //
-    private Player player_;
+    private MyPlayer myPlayer_;
 
     private boolean clean_hand;      // reorder hand cards
 
@@ -68,13 +68,13 @@ public class EnemyCardExchangeAnimation {
     //----------------------------------------------------------------------------------------------
     //  Init
     //
-    public void init(GameController controller, Player player) {
+    public void init(GameController controller, MyPlayer myPlayer) {
         animation_running_ = false;
         animation_end_running_ = false;
         time_prev_ = 0;
         degree_ = 0;
         spin_speed_ = MIN_SPIN_SPEED;
-        player_ = player;
+        myPlayer_ = myPlayer;
         clean_hand = false;
         exchanged_cards_ = new ArrayList<>();
         backside_bitmap_ = HelperFunctions.loadBitmap(controller.getView(), "card_back",
@@ -105,7 +105,7 @@ public class EnemyCardExchangeAnimation {
     private Point calculateOffsets(int shift) {
 
         Point offset = new Point(0, 0);
-        switch (player_.getPosition()) {
+        switch (myPlayer_.getPosition()) {
             case 1:
                 offset.x += shift;
                 offset.y += 0;
@@ -126,15 +126,15 @@ public class EnemyCardExchangeAnimation {
     //----------------------------------------------------------------------------------------------
     // draw
     //
-    public void draw(Canvas canvas, Player player) {
+    public void draw(Canvas canvas, MyPlayer myPlayer) {
 
         //  draw bitmap without 3d rotation
         if (moving_up_ || moving_down_) {
 
             Bitmap bitmap = backside_bitmap_;
 
-            // player 1 & 3 show a rotated bitmap
-            if (player.getPosition() % 2 != 0) {
+            // myPlayer 1 & 3 show a rotated bitmap
+            if (myPlayer.getPosition() % 2 != 0) {
                 bitmap = HelperFunctions.rotateBitmap(bitmap, 90);
             }
 
@@ -160,7 +160,7 @@ public class EnemyCardExchangeAnimation {
             // decide which image has to be shown
             Bitmap bitmap = backside_bitmap_;
 
-            if (player.getPosition() % 2 != 0) {
+            if (myPlayer.getPosition() % 2 != 0) {
 
                 bitmap = HelperFunctions.rotateBitmap(bitmap, 90);
                 camera_.rotateX(degree_);
@@ -198,10 +198,10 @@ public class EnemyCardExchangeAnimation {
         // if hands got reordered -> redraw
         if (clean_hand) {
             Bitmap bitmap = backside_bitmap_;
-            if (player.getPosition() % 2 != 0) {
+            if (myPlayer.getPosition() % 2 != 0) {
                 bitmap = HelperFunctions.rotateBitmap(bitmap, 90);
             }
-            for (Card card : player.getHand().getCardStack()) {
+            for (Card card : myPlayer.getHand().getCardStack()) {
                 canvas.drawBitmap(bitmap, card.getPosition().x, card.getPosition().y, null);
             }
             clean_hand = false;
@@ -336,36 +336,36 @@ public class EnemyCardExchangeAnimation {
     //  drawNewCards
     //
     private void drawNewCard(GameController controller) {
-        controller.takeCardFromDeck(player_.getId(), controller.getDeck());
-        Card card = player_.getHand().getCardAt(player_.getHand().getCardStack().size() - 1);
+        controller.takeCardFromDeck(myPlayer_.getId(), controller.getDeck());
+        Card card = myPlayer_.getHand().getCardAt(myPlayer_.getHand().getCardStack().size() - 1);
         card.setPosition(exchanged_cards_.get(index_).getFixedPosition());
         card.setFixedPosition(exchanged_cards_.get(index_).getFixedPosition());
 
-        player_.getHand().getCardStack().remove(card);
+        myPlayer_.getHand().getCardStack().remove(card);
 
         boolean inserted = false;
 
-        if (player_.getPosition() % 2 == 0) {
+        if (myPlayer_.getPosition() % 2 == 0) {
             // x
-            for (int i = 0; i < player_.getHand().getCardStack().size(); i++) {
-                if (player_.getHand().getCardAt(i).getPosition().x > card.getPosition().x) {
-                    player_.getHand().getCardStack().add(i, card);
+            for (int i = 0; i < myPlayer_.getHand().getCardStack().size(); i++) {
+                if (myPlayer_.getHand().getCardAt(i).getPosition().x > card.getPosition().x) {
+                    myPlayer_.getHand().getCardStack().add(i, card);
                     inserted = true;
                     break;
                 }
             }
         }
         else { // y
-            for (int i = 0; i < player_.getHand().getCardStack().size(); i++) {
-                if (player_.getHand().getCardAt(i).getPosition().y > card.getPosition().y) {
-                    player_.getHand().getCardStack().add(i, card);
+            for (int i = 0; i < myPlayer_.getHand().getCardStack().size(); i++) {
+                if (myPlayer_.getHand().getCardAt(i).getPosition().y > card.getPosition().y) {
+                    myPlayer_.getHand().getCardStack().add(i, card);
                     inserted = true;
                     break;
                 }
             }
         }
         if (!inserted) {
-            player_.getHand().addCard(card);
+            myPlayer_.getHand().addCard(card);
         }
     }
 

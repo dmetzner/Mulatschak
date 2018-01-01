@@ -20,12 +20,12 @@ import heroiceraser.mulatschak.helpers.DisplayDimension;
 //                                      |  -  2/8 size -  -  -  -  -
 //                                      |                              Sector 1
 // - - - - - - - - - - - - - - - - - - -|  -  -  -  -  -  -  -  -  -
-//               Player 2               |                              Sector 2
-// Player 1                             |  -  -  -  -  -  -  -  -  -
+//               MyPlayer 2               |                              Sector 2
+// MyPlayer 1                             |  -  -  -  -  -  -  -  -  -
 //               DP0                    |                              Sector 3
 //           Dp3 Deck Dp1               |  -  4/8 size -  -  -  -  -
 //               Dp2                    |                              Sector 4
-//                             Player 3 |  -  -  -  -  -  -  -  -  -
+//                             MyPlayer 3 |  -  -  -  -  -  -  -  -  -
 //                                      |                              Sector 5
 //--      CARD 0-5 from player 0       -|  -  -  -  -  -  -  -  -  -
 //---  |  C ||  C ||  C ||  C ||  C | --|     1/8 size                 Sector 6
@@ -55,7 +55,7 @@ public class GameLayout {
     private Point discard_pile_size_;
     private List<Point> discard_pile_positions_;
 
-    //-- Player Hands
+    //-- MyPlayer Hands
     public static final int POSITION_BOTTOM = 0;
     public static final int POSITION_LEFT = 1;
     public static final int POSITION_TOP = 2;
@@ -81,7 +81,7 @@ public class GameLayout {
     private Point trick_bids_game_play_right_;
     private List<Point> trick_bids_game_play_positions_;
 
-    //-- Player Info
+    //-- MyPlayer Info
     private List<Point> player_info_positions_;
     private Point player_info_bottom_position_;
     private Point player_info_left_position_;
