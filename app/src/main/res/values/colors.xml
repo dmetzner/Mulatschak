@@ -6,4 +6,7 @@
     <color name="button_bar_window_title_color">#E0FFFF</color>
     <color name="button_bar_window_text_color">#E0FFFF</color>
     <color name="metallic_blue">#3842ae</color>
+
+    <color name="game_play_button_border">#FFFFFF</color>
+    <color name="game_play_button_background">#3842ae</color>
 </resources>

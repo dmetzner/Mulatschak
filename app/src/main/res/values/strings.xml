@@ -59,4 +59,7 @@
     <!-- :::::::::::::::::::: State of the game :::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="button_bar_state_of_the_game_title">Spielstand</string>
 
+    <!-- :::::::::::::::::::: NextRoundButton :::::::::::::::::::::::::::::::::::::::::::::::: -->
+    <string name="next_round_button">Nächste Runde</string>
+
 </resources>

@@ -9,10 +9,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-
-import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
-import heroiceraser.mulatschak.game.GamePlay.EnemyLogic;
-
 /**
  * Created by Daniel Metzner on 08.08.2017.
  */
@@ -60,18 +56,21 @@ public class GameView extends View {
         }
 
         drawDiscardPile(canvas);
-        drawBidsView(canvas, controller_);
+        drawBidsView(canvas);
         drawTrumpView(canvas);
         drawPlayerInfo(canvas);
+        drawDealerButton(canvas);
 
         drawHandCards(canvas);
-        drawDealerButton(canvas);
-        drawAnimations(canvas);
 
-        drawRoundInfo(canvas);
+        drawMakeTrickBidsAnimation(canvas);
+        drawChooseTrumpAnimation(canvas);
+        drawDealingAnimation(canvas);
+        drawPlayACardAnimation(canvas);
+        drawExchangeCardsAnimation(canvas);
 
         drawGameOver(canvas);
-
+        drawRoundInfo(canvas);
         drawNonGamePlayUI(canvas);
 
         thread_.now = System.currentTimeMillis();
@@ -82,6 +81,32 @@ public class GameView extends View {
             thread_.framesCount = 0;
             thread_.framesCount = 0;
         }
+    }
+
+    private void drawDealingAnimation(Canvas canvas) {
+        if (controller_.getGamePlay().getDealCards().getDealingAnimation().isAnimationRunning()) {
+            controller_.getGamePlay().getDealCards().getDealingAnimation().draw(canvas, controller_);
+        }
+    }
+
+    private void drawMakeTrickBidsAnimation(Canvas canvas) {
+        if (controller_.getGamePlay().getTrickBids().getMakeBidsAnimation().getAnimationNumbers()) {
+            controller_.getGamePlay().getTrickBids().getMakeBidsAnimation().draw(canvas);
+        }
+    }
+
+    private void drawChooseTrumpAnimation(Canvas canvas) {
+        if (controller_.getGamePlay().getChooseTrump().getChooseTrumpAnimation().getAnimationSymbols()) {
+            controller_.getGamePlay().getChooseTrump().getChooseTrumpAnimation().draw(canvas);
+        }
+    }
+
+    private void drawExchangeCardsAnimation(Canvas canvas) {
+        controller_.getGamePlay().getCardExchange().draw(canvas, controller_);
+    }
+
+    private void drawPlayACardAnimation(Canvas canvas) {
+        controller_.getGamePlay().getPlayACard().draw(canvas, controller_);
     }
 
     private void drawPlayerInfo(Canvas canvas) {
@@ -98,11 +123,11 @@ public class GameView extends View {
     }
 
     private void drawDealerButton(Canvas canvas) {
-        controller_.getDealerButton().draw(canvas);
+        controller_.getDealerButton().draw(canvas, controller_);
     }
 
     private void drawNonGamePlayUI(Canvas canvas) {
-        controller_.getNonGamePlayUIContainer().draw(canvas);
+        controller_.getNonGamePlayUIContainer().draw(canvas, controller_);
     }
 
 
@@ -118,8 +143,8 @@ public class GameView extends View {
     //----------------------------------------------------------------------------------------------
     //  drawBidsView
     //
-    private void drawBidsView(Canvas canvas, GameController controller) {
-        controller_.getBidsView().draw(canvas, controller);
+    private void drawBidsView(Canvas canvas) {
+        controller_.getGamePlay().getTrickBids().getBidsView().draw(canvas, controller_);
     }
 
 
@@ -127,7 +152,7 @@ public class GameView extends View {
     //  drawBidsView
     //
     private void drawTrumpView(Canvas canvas) {
-        controller_.getTrumpView().draw(canvas, controller_);
+        controller_.getGamePlay().getChooseTrump().getTrumpView().draw(canvas, controller_);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -136,6 +161,7 @@ public class GameView extends View {
     private void drawHandCards(Canvas canvas) {
         for (int i = 0; i < controller_.getPlayerList().size(); i++) {
             MyPlayer myPlayer = controller_.getPlayerById(i);
+
             if (i == 0) {
                 for (int j = 0; j < myPlayer.getAmountOfCardsInHand(); j++) {
                     if (myPlayer.getHand().getCardAt(j).getPosition() == null) {
@@ -145,9 +171,12 @@ public class GameView extends View {
                             equals(controller_.getLayout().getDeckPosition())) {
                         break;
                     }
-                    canvas.drawBitmap(myPlayer.getHand().getCardAt(j).getBitmap(),
-                            myPlayer.getHand().getCardAt(j).getPosition().x,
-                            myPlayer.getHand().getCardAt(j).getPosition().y, null);
+                    if (myPlayer.getHand().getCardAt(j).isVisible()) {
+                        canvas.drawBitmap(myPlayer.getHand().getCardAt(j).getBitmap(),
+                                myPlayer.getHand().getCardAt(j).getPosition().x,
+                                myPlayer.getHand().getCardAt(j).getPosition().y, null);
+                    }
+
                 }
             } else if (i == 1 || i == 3) {
                 for (int j = 0; j < myPlayer.getAmountOfCardsInHand(); j++) {
@@ -163,9 +192,11 @@ public class GameView extends View {
                     Bitmap backside = controller_.getDeck().getBacksideBitmap();
                     Bitmap rotatedBitmap = Bitmap.createBitmap(backside, 0, 0,
                             backside.getWidth(), backside.getHeight(), matrix, true);
-                    canvas.drawBitmap(rotatedBitmap,
-                            myPlayer.getHand().getCardAt(j).getPosition().x,
-                            myPlayer.getHand().getCardAt(j).getPosition().y, null);
+                    if (myPlayer.getHand().getCardAt(j).isVisible()) {
+                        canvas.drawBitmap(rotatedBitmap,
+                                myPlayer.getHand().getCardAt(j).getPosition().x,
+                                myPlayer.getHand().getCardAt(j).getPosition().y, null);
+                    }
                     rotatedBitmap.recycle();
                 }
             } else if (i == 2) {
@@ -177,83 +208,14 @@ public class GameView extends View {
                             equals(controller_.getLayout().getDeckPosition())) {
                         break;
                     }
-                    canvas.drawBitmap(controller_.getDeck().getBacksideBitmap(),
-                            myPlayer.getHand().getCardAt(j).getPosition().x,
-                            myPlayer.getHand().getCardAt(j).getPosition().y, null);
+                    if (myPlayer.getHand().getCardAt(j).isVisible()) {
+                        canvas.drawBitmap(controller_.getDeck().getBacksideBitmap(),
+                                myPlayer.getHand().getCardAt(j).getPosition().x,
+                                myPlayer.getHand().getCardAt(j).getPosition().y, null);
+                    }
                 }
             }
         }
-    }
-
-    //----------------------------------------------------------------------------------------------
-    //  drawAnimations()
-    //
-    private void drawAnimations(Canvas canvas) {
-        if (!controller_.getAnimation().getTurnedOn()) {
-            return;
-        }
-
-
-        controller_.getGamePlay().getPlayACard().draw(canvas, controller_);
-
-
-        for (EnemyLogic el : controller_.getEnemyLogic()) {
-            if (el.isAnimationRunning()) {
-                el.draw(canvas, controller_);
-            }
-        }
-
-        if (controller_.getAnimation().getDealingAnimation().getAnimationRunning()) {
-
-            canvas.drawBitmap(controller_.getDeck().getBacksideBitmap(),
-                    controller_.getDeck().getPosition().x,
-                    controller_.getDeck().getPosition().y, null);
-
-            controller_.getAnimation().getDealingAnimation().deal();
-
-            canvas.drawBitmap(controller_.getAnimation().getDealingAnimation().getBitmap(),
-                    controller_.getAnimation().getDealingAnimation().getHandCardX(),
-                    controller_.getAnimation().getDealingAnimation().getHandCardY(), null);
-        }
-
-        //----- CardExchange
-        else if (controller_.getAnimation().getCardExchange().isAnimationRunning()) {
-            // Help Text
-            Point position = controller_.getLayout().getCardExchangeTextPosition();
-            controller_.getAnimation().getCardExchange().getHelpText().draw(canvas, position);
-
-            // exchange Buttons
-            controller_.getAnimation().getCardExchange().draw(canvas, controller_);
-        }
-
-        else if (controller_.getAnimation().getTrickBids().getAnimationNumbers()) {
-            int amount_of_buttons = controller_.getAnimation().getTrickBids().getNumberButtons().size();
-            for (int button_id = 0; button_id < amount_of_buttons; button_id++) {
-                MyButton button = controller_.getAnimation().getTrickBids().getNumberButtonAt(button_id);
-                Bitmap bitmap = button.getBitmap();
-                if (button.IsPressed()) {
-                    bitmap = button.getBitmapPressed();
-                } else if (!button.IsEnabled()) {
-                    bitmap = button.getBitmapDisabled();
-                }
-                canvas.drawBitmap(bitmap, button.getPosition().x,
-                        button.getPosition().y, null);
-            }
-        }
-
-        else if (controller_.getAnimation().getTrickBids().getAnimationSymbols()) {
-            int amount_of_buttons = controller_.getAnimation().getTrickBids().getTrumpButtons().size();
-            for (int button_id = 0; button_id < amount_of_buttons; button_id++) {
-                MyButton button = controller_.getAnimation().getTrickBids().getTrumpButtonAt(button_id);
-                Bitmap bitmap = button.getBitmap();
-                if (button.IsPressed()) {
-                    bitmap = button.getBitmapPressed();
-                }
-                canvas.drawBitmap(bitmap, button.getPosition().x,
-                        button.getPosition().y, null);
-            }
-        }
-
     }
 
 

@@ -165,6 +165,26 @@ public class DiscardPile extends DrawableObject {
         }
     }
 
+    public void clear() {
+        this.setCardBottom(null);
+        this.setCardLeft(null);
+        this.setCardTop(null);
+        this.setCardRight(null);
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    //  Getter & Setter
+    //
+    public List<Card> getCards() {
+        ArrayList<Card> cards = new ArrayList<>();
+        cards.add(getCardBottom());
+        cards.add(getCardLeft());
+        cards.add(getCardTop());
+        cards.add(getCardRight());
+        return cards;
+    }
+
     public Card getCardBottom() {
         return card_bottom_;
     }

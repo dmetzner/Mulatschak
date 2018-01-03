@@ -224,8 +224,8 @@ public class EnemyCardExchangeAnimation {
     // recalculateParameter
     //
     void recalculateParameters(GameController controller) {
-
-        int max_time_section_1 = 300;
+        double animation_factor = controller.getSettings().getAnimationSpeed().getSpeedFactor();
+        double max_time_section_1 = 300 * animation_factor;
 
         long time = System.currentTimeMillis();
         long time_since_start = time - start_time_;
@@ -336,17 +336,38 @@ public class EnemyCardExchangeAnimation {
     //  drawNewCards
     //
     private void drawNewCard(GameController controller) {
-        controller.takeCardFromDeck(myPlayer_.getId(), controller.getDeck());
+        controller.getGamePlay().getDealCards().takeCardFromDeck(myPlayer_, controller.getDeck());
         Card card = myPlayer_.getHand().getCardAt(myPlayer_.getHand().getCardStack().size() - 1);
         card.setPosition(exchanged_cards_.get(index_).getFixedPosition());
         card.setFixedPosition(exchanged_cards_.get(index_).getFixedPosition());
+        card.setVisible(true);
 
         myPlayer_.getHand().getCardStack().remove(card);
 
         boolean inserted = false;
 
-        if (myPlayer_.getPosition() % 2 == 0) {
-            // x
+        if (myPlayer_.getPosition() == 0) {
+            // < x
+            for (int i = 0; i < myPlayer_.getHand().getCardStack().size(); i++) {
+                if (myPlayer_.getHand().getCardAt(i).getPosition().x < card.getPosition().x) {
+                    myPlayer_.getHand().getCardStack().add(i, card);
+                    inserted = true;
+                    break;
+                }
+            }
+        }
+        else if (myPlayer_.getPosition() == 1) {
+            // < y
+            for (int i = 0; i < myPlayer_.getHand().getCardStack().size(); i++) {
+                if (myPlayer_.getHand().getCardAt(i).getPosition().y < card.getPosition().y) {
+                    myPlayer_.getHand().getCardStack().add(i, card);
+                    inserted = true;
+                    break;
+                }
+            }
+        }
+        else if (myPlayer_.getPosition() == 2) {
+            // > x
             for (int i = 0; i < myPlayer_.getHand().getCardStack().size(); i++) {
                 if (myPlayer_.getHand().getCardAt(i).getPosition().x > card.getPosition().x) {
                     myPlayer_.getHand().getCardStack().add(i, card);
@@ -355,7 +376,8 @@ public class EnemyCardExchangeAnimation {
                 }
             }
         }
-        else { // y
+        else if (myPlayer_.getPosition() == 3) {
+            // > y
             for (int i = 0; i < myPlayer_.getHand().getCardStack().size(); i++) {
                 if (myPlayer_.getHand().getCardAt(i).getPosition().y > card.getPosition().y) {
                     myPlayer_.getHand().getCardStack().add(i, card);

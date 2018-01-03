@@ -1,194 +1,181 @@
 package heroiceraser.mulatschak.game.GamePlay.TrickBids;
 
-import android.graphics.Point;
-
-import java.util.ArrayList;
 import java.util.List;
-
 import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
-import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
-import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
+import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GameView;
+import heroiceraser.mulatschak.game.MyPlayer;
 
-/**
- * Created by Daniel Metzner on 19.08.2017.
- */
 
-// ToDo Aussetzen einbauen
-
+//----------------------------------------------------------------------------------------------
+//  Trick Bids Class
+//                      ToDo explain me ;) +
+//
 public class TrickBids {
 
-    // for the layout
-    public static int MAX_BID_ROWS = 3;
-    public static int MAX_BID_COLS = 4;
-    public static int MAX_TRUMP_ROWS = 2;
-    public static int MAX_TRUMP_COLS = 2;
-
+    //----------------------------------------------------------------------------------------------
+    //  Member Variables
     //
-    public static int MULATSCHAK = 5;
-    public static int MISS_A_TURN = -1;
-    public static int NO_CARD = 0;
+    private MakeBidsAnimation makeBidsAnimation;
 
-    private boolean animating_numbers_;
-    private boolean animating_trumps_;
-    private List<MyButton> number_buttons_;
-    private List<MyButton> trump_buttons;
+    private EnemyMakeBidsLogic enemyMakeBidsLogic;
 
+    private BidsView bids_view_;
+
+
+    //----------------------------------------------------------------------------------------------
+    //  Constructor
+    //
     public TrickBids() {
-        animating_numbers_ = false;
-        number_buttons_ = new ArrayList<>();
-        animating_trumps_ = false;
-        trump_buttons = new ArrayList<>();
+        makeBidsAnimation = new MakeBidsAnimation();
+        enemyMakeBidsLogic = new EnemyMakeBidsLogic();
+        bids_view_ = new BidsView();
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  init
+    //
     public void init(GameView view) {
-        initNumberButtons(view);
-        initTrumpButtons(view);
+        makeBidsAnimation.init(view);
+        //  enemyMakeBidsLogic    NO init needed!
+        bids_view_.init(view);
     }
 
-    private void initNumberButtons(GameView view) {
-        String image_name = "trick_bids_button_";
-        GameLayout layout = view.getController().getLayout();
-        int x = layout.getTrickBidsNumberButtonPosition().x;
-        int y = layout.getTrickBidsNumberButtonPosition().y;
-        int max_buttons_per_row = 4;
-        int button_per_row = 0;
-        for (int button_id = MISS_A_TURN; button_id <= MULATSCHAK; button_id++) {
-            MyButton button = new MyButton();
-            int width = view.getController().getLayout().getTrickBidsNumberButtonSize().x;
-            int height = view.getController().getLayout().getTrickBidsNumberButtonSize().y;
 
-            if(button_id == MISS_A_TURN) {
-                width *= 4;
-                button_per_row += 4;
-                button.init(view, new Point(x, y), width, height, image_name + "x");
-            }
-            else if (button_id == NO_CARD || button_id ==  MULATSCHAK) {
-                width *= 2;
-                button_per_row += 2;
-                button.init(view, new Point(x, y), width, height, image_name + button_id);
-            }
-            else {
-                button_per_row++;
-                button.init(view, new Point(x, y), width, height, image_name + button_id);
-            }
-            number_buttons_.add(button);
-
-            if (button_per_row >= max_buttons_per_row) {
-                x = layout.getTrickBidsNumberButtonPosition().x;
-                int remove_button_drop_shadow = (int) (layout.getTrickBidsNumberButtonSize().y / 18.0);
-                y += layout.getTrickBidsNumberButtonSize().y - remove_button_drop_shadow;
-                button_per_row = 0;
-            }
-            else {
-                x += width;
-            }
-        }
+    //----------------------------------------------------------------------------------------------
+    //  startRound
+    //
+    public void startRound(GameController controller) {
+        makeBidsAnimation.reEnableButtons(controller.getAmountOfPlayers());
+        bids_view_.reset();
+        bids_view_.setVisible(false);
     }
 
-    private void initTrumpButtons(GameView view) {
-        String image_name = "trick_bids_button_trump_";
-        GameLayout layout = view.getController().getLayout();
-        for (int id = 1; id < MulatschakDeck.CARD_SUITS; id++) { // start at 1, no Joker
-            MyButton button = new MyButton();
-            int width = layout.getTrickBidsTrumpButtonSize().x;
-            int height = layout.getTrickBidsTrumpButtonSize().y;
-            button.init(view, new Point(), width, height, image_name + id);
-            trump_buttons.add(button);
-        }
 
-        int x = layout.getTrickBidsTrumpButtonPosition().x;
-        int y = layout.getTrickBidsTrumpButtonPosition().y;
-        int remove_drop_shadow = (int) (layout.getTrickBidsTrumpButtonSize().y / 16.0);
-
-        trump_buttons.get(0).setPosition(x, y);
-        trump_buttons.get(1).setPosition(x,
-                y + layout.getTrickBidsTrumpButtonSize().y - remove_drop_shadow);
-        trump_buttons.get(2).setPosition(x + layout.getTrickBidsTrumpButtonSize().x,
-                y + layout.getTrickBidsTrumpButtonSize().y - remove_drop_shadow);
-        trump_buttons.get(3).setPosition(x + layout.getTrickBidsTrumpButtonSize().x, y);
-        
+    //----------------------------------------------------------------------------------------------
+    //  startTrickBids
+    //                  -> first makeTrickBids call, bids_view get visible
+    //
+    public void startTrickBids(GameController controller) {
+        bids_view_.setVisible(true);
+        makeTrickBids(true, controller); // not first call
     }
 
-    public void setTricks(GameController controller, int button_id) {
-        animating_numbers_ = false;
-        button_id--;  // because of miss a turn button
-        if (button_id == MISS_A_TURN) {
-            controller.getPlayerById(0).setMissATurn(true);
-            clearHand(controller);
-            controller.setNewMaxTrumps(MISS_A_TURN, 0);
+
+    //----------------------------------------------------------------------------------------------
+    //  makeTrickBids
+    //
+    void makeTrickBids(boolean first_call, GameController controller) {
+        GameLogic logic = controller.getLogic();
+        GameLayout layout = controller.getLayout();
+
+        controller.turnToNextPlayer();
+        controller.getNonGamePlayUIContainer().getRoundInfo().updateBids(controller.getView());
+
+        if (logic.getTricksToMake() == MakeBidsAnimation.MULATSCHAK) {
+            bids_view_.startEndingAnimation(logic.getTrumpPlayerId(), layout);
             return;
         }
-        if (button_id == MULATSCHAK) {
-            for (int i = 0; i < controller.getAmountOfPlayers(); i++) {
-                controller.getPlayerById(i).setMissATurn(false);
+
+        if (!first_call && logic.getTurn() == logic.getFirstBidder(controller.getAmountOfPlayers())) {
+            bids_view_.startEndingAnimation(logic.getTrumpPlayerId(), layout);
+            return;         // stops the recursion after all players made their bids
+        }
+
+        if (logic.getTurn() == 0) {
+            if (controller.getPlayerById(0).getMissATurn()) {
+                makeBidsAnimation.getNumberButtons().get(0).setEnabled(false);
+            }
+            makeBidsAnimation.turnOnAnimationNumbers();
+            controller.getView().disableUpdateCanvasThread();
+            // makeTrickBids should get called when player chooses his tricks
+        }
+        else if (logic.getTurn() != 0) {
+            controller.getView().enableUpdateCanvasThread();
+            enemyMakeBidsLogic.makeTrickBids(controller.getPlayerById(logic.getTurn()), controller);
+            // makeTrickBids should get called after animation
+        }
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    //  setNewMaxTrumps
+    //
+    void setNewMaxTrumps(int amount, int id, GameController controller) {
+        GameLogic logic = controller.getLogic();
+
+        if (amount == MakeBidsAnimation.MULATSCHAK) {
+            logic.setMulatschakRound(true);
+            logic.setTrumpPlayerId(id);
+            logic.setTricksToMake(MakeBidsAnimation.MULATSCHAK);
+            controller.getPlayerById(id).setTricksToMake(MakeBidsAnimation.MULATSCHAK);
+            bids_view_.getBidsFieldList().get(logic.getTurn())
+                    .startAnimation("M", controller);
+        }
+
+        else if (amount == MakeBidsAnimation.MISS_A_TURN) {
+            controller.getPlayerById(id).setTricksToMake(amount);
+            bids_view_.getBidsFieldList().get(logic.getTurn())
+                    .startAnimation("X", controller);
+        }
+
+        else if (amount > logic.getTricksToMake()) {
+            List<MyButton> buttons = makeBidsAnimation.getNumberButtons();
+            // disable lower amount buttons, but button 0 is always clickable // miss a turn
+            for (int i = 2; i <= (amount + 1); i++) {
+                buttons.get(i).setEnabled(false);
+            }
+            controller.getPlayerById(id).setTricksToMake(amount);
+            logic.setTricksToMake(amount);
+            logic.setTrumpPlayerId(id);
+            bids_view_.getBidsFieldList().get(logic.getTurn())
+                    .startAnimation("" + amount, controller);
+        }
+        else {
+            controller.getPlayerById(id).setTricksToMake(0);
+            bids_view_.getBidsFieldList().get(logic.getTurn())
+                    .startAnimation("-", controller);
+        }
+
+        // there have to be at least two active players every round!
+        int amount_of_playing_players =  controller.getAmountOfPlayers();
+        for (int i = 0; i < controller.getAmountOfPlayers(); i++) {
+            if (controller.getPlayerById(i).getMissATurn()) {
+                amount_of_playing_players--;
             }
         }
-        controller.getPlayerById(0).setMissATurn(false);
-        number_buttons_.get(0).setEnabled(true);
-        int player_id = 0;
-        controller.setNewMaxTrumps(button_id, player_id);
-    }
-
-    private void clearHand(GameController controller) {
-        // all hand cards to the deck
-        CardStack hand = controller.getPlayerById(0).getHand();
-        for (int i = 0; i < hand.getCardStack().size(); i++) {
-            hand.getCardAt(i).setPosition(controller.getLayout().getDeckPosition());
-            hand.getCardAt(i).setFixedPosition(controller.getLayout().getDeckPosition());
-            controller.moveCardToTrash(hand.getCardAt(i));
-            hand.getCardStack().remove(i);
-            i--;
+        if (amount_of_playing_players <= 2) {
+            List<MyButton> buttons = makeBidsAnimation.getNumberButtons();
+            buttons.get(0).setEnabled(false);
         }
     }
-    
-    public void setTrump(GameController controller, int button_id) {
-        controller.getLogic().setTrump(button_id + 1); // No Joker Button
-        setAnimationTrumps(false);
-        controller.getTrumpView().startAnimation(controller.getLogic().getTrump(), 0, controller);
-    }
 
-
+    //----------------------------------------------------------------------------------------------
+    //  getHighestBid
+    //                  -> return the highest bid of all players
     //
-    // Getter & Setter
+    public int getHighestBid(GameController controller) {
+        int highest_bid = 0;
+        for (MyPlayer player : controller.getPlayerList()) {
+            if (player.getTricksToMake() > highest_bid) {
+                highest_bid = player.getTricksToMake();
+            }
+        }
+        return highest_bid;
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    //  Getter
     //
-    public boolean getAnimationNumbers() {
-        return animating_numbers_;
-    }
-    public void setAnimationNumbers(boolean animating) {
-        animating_numbers_ = animating;
+    public MakeBidsAnimation getMakeBidsAnimation() {
+        return makeBidsAnimation;
     }
 
-    public boolean getAnimationSymbols() {
-        return animating_trumps_;
+    public BidsView getBidsView() {
+        return bids_view_;
     }
-    public void setAnimationTrumps(boolean animating) {
-        animating_trumps_ = animating;
-    }
-
-    public List<MyButton> getNumberButtons() {
-        return number_buttons_;
-    }
-
-    public List<MyButton> getTrumpButtons() {
-        return trump_buttons;
-    }
-
-    public MyButton getNumberButtonAt(int pos) {
-        if (pos < number_buttons_.size()) {
-            return number_buttons_.get(pos);
-        }
-        return null;
-    }
-
-    public MyButton getTrumpButtonAt(int pos) {
-        if (pos < trump_buttons.size()) {
-            return trump_buttons.get(pos);
-        }
-        return null;
-    }
-
-
 }

@@ -6,33 +6,24 @@ import android.util.Log;
 import com.google.android.gms.games.multiplayer.Participant;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
-import heroiceraser.mulatschak.game.GamePlay.EnemyLogic;
+import heroiceraser.mulatschak.GameSettings.GameSettings;
 import heroiceraser.mulatschak.game.GamePlay.GamePlay;
-import heroiceraser.mulatschak.game.GamePlay.TrickBids.BidsView;
-import heroiceraser.mulatschak.game.GamePlay.TrickBids.TrickBids;
-import heroiceraser.mulatschak.game.GamePlay.chooseATrump.TrumpView;
-import heroiceraser.mulatschak.game.NonGamePlayUI.AllCardsPlayed.AllCardsPlayed;
 import heroiceraser.mulatschak.game.NonGamePlayUI.NonGamePlayUIContainer;
 import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
 import heroiceraser.mulatschak.game.DrawableObjects.DealerButton;
 import heroiceraser.mulatschak.game.DrawableObjects.DiscardPile;
 import heroiceraser.mulatschak.game.NonGamePlayUI.GameOver.GameOver;
-import heroiceraser.mulatschak.game.NonGamePlayUI.GameTricks;
+import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBar.Windows.GameTricks;
 import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
 import heroiceraser.mulatschak.game.Animations.GameAnimation;
-import heroiceraser.mulatschak.game.DrawableObjects.PlayerInfo;
-import heroiceraser.mulatschak.game.NonGamePlayUI.RoundInfo;
+import heroiceraser.mulatschak.game.NonGamePlayUI.PlayerInfo.PlayerInfo;
+import heroiceraser.mulatschak.game.NonGamePlayUI.RoundInfo.RoundInfo;
 
 
-/**
- * Created by Daniel Metzner on 10.08.2017.
- */
 
 public class GameController{
 
@@ -51,24 +42,19 @@ public class GameController{
 
     private GameView view_;
     private GameLayout layout_;
-    private GameAnimation animations_;
     private TouchEvents touch_events_;
     private GameLogic logic_;
+    private GameSettings settings_;
+
+    private GameAnimation animations_;
 
     private NonGamePlayUIContainer non_game_play_ui_;
     private GamePlay game_play_;
 
     private List<MyPlayer> myPlayer_list_;
-    private List<EnemyLogic> enemy_logic_list_;
     private PlayerInfo player_info_;
 
-    // toDo -> in game_play
-    private BidsView bids_view_;
-    private TrumpView trump_view_;
-
-
     private GameOver game_over_;
-
 
     private MulatschakDeck deck_;
     private DiscardPile discardPile_;
@@ -90,16 +76,13 @@ public class GameController{
         layout_ = new GameLayout();
         animations_ = new GameAnimation(view);
         touch_events_ = new TouchEvents();
+        settings_ = new GameSettings();
 
         non_game_play_ui_ = new NonGamePlayUIContainer();
         game_play_ = new GamePlay();
 
         myPlayer_list_ = new ArrayList<>();
-        enemy_logic_list_ = new ArrayList<>();
         player_info_ = new PlayerInfo();
-
-        bids_view_ = new BidsView();
-        trump_view_ = new TrumpView();
 
         game_over_ = new GameOver();
 
@@ -135,24 +118,16 @@ public class GameController{
 
         logic_.init(start_lives, difficulty);
         layout_.init(view_);
-
+        settings_.init(view_);
         initPlayers(my_id, enemies);
         resetPlayerLives();
         setPlayerPositions();
         player_info_.init(view_);
-
-        initEnemies(enemies, view_);
-
         non_game_play_ui_.init(view_);
         discardPile_.init(view_);
-        bids_view_.init(view_);
-        trump_view_.init(view_);
-
-        game_play_.init(view_); // need dp todo
-
+        game_play_.init(view_);
         deck_.initDeck(view_);
         dealer_button_.init(view_);
-        animations_.init(view_);
         game_over_.init(view_);
 
         enable_drawing_ = true;
@@ -160,6 +135,12 @@ public class GameController{
         startRound();
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // ----------------------  Game Flow
+
+    // ---------------------------------------------------------------------------------------------
+    //  startRound
+    //
     public void startRound() {
         player_info_.setVisible(true);
         non_game_play_ui_.getRoundInfo().setVisible(true);
@@ -168,40 +149,42 @@ public class GameController{
         non_game_play_ui_.getRoundInfo().getNewRound().setVisible(true);
         non_game_play_ui_.getTricks().clear();
 
-        logic_.setMulatschakRound(false);
-        reEnableButtons();
-        resetTricksToMake();
-        getGamePlay().getPlayACard().setCardMoveable(false);
-        view_.enableUpdateCanvasThread();
-        player_info_.setActivePlayer(NOT_SET);
         allCardsBackToTheDeck();
-        shuffleDeck();
+
+        logic_.setMulatschakRound(false);
+        resetTricksToMake();
+        // getGamePlay().getPlayACard().setCardMoveable(false);
+        player_info_.setActivePlayer(NOT_SET);
+
         discardPile_.setVisible(false);
         discardPile_.setOverlaysVisible(false);
-        bids_view_.reset();
-        bids_view_.setVisible(false);
-        trump_view_.setVisible(false);
+
+        game_play_.startRound(this);
+
+        view_.enableUpdateCanvasThread();
         dealer_button_.startMoveAnimation(this, logic_.getDealer());
-        dealCards();  // starts an dealing animation
+        deck_.shuffleDeck();
+        game_play_.getDealCards().dealCards(this);  // starts an dealing animation
     }
 
-    public void prepareNewRound() {
-        logic_.moveDealer(getAmountOfPlayers());
-        resetTurn();
-    }
 
+    //----------------------------------------------------------------------------------------------
+    //  continueAfterDealingAnimation
+    //
     public void continueAfterDealingAnimation() {
-        discardPile_.setVisible(false);
-        bids_view_.setVisible(true);
-
         non_game_play_ui_.getRoundInfo().setInfoBoxEmpty();
         non_game_play_ui_.getRoundInfo().getTrickBidsTextField().setVisible(true);
-        makeTrickBids(true);
+        game_play_.getTrickBids().startTrickBids(this);
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  continueAfterTrickBids
+    //
     public void continueAfterTrickBids() {
         non_game_play_ui_.getRoundInfo().setInfoBoxEmpty();
         non_game_play_ui_.getRoundInfo().getChooseTrumpTextField().setVisible(true);
+
         final GameController controller = this;
         Handler mHandler = new Handler();
         Runnable case_0 = new Runnable() {
@@ -212,7 +195,8 @@ public class GameController{
             }
         };
 
-        switch (checkHighestBid()) {
+        // check the highest bid
+        switch (game_play_.getTrickBids().getHighestBid(controller)) {
             case 0:  // start a new round if every player said 0 tricks
                 // ToDo
                 logic_.raiseMultiplier();
@@ -225,45 +209,59 @@ public class GameController{
                 logic_.setTrump(MulatschakDeck.HEART);
                 setTurn(logic_.getTrumpPlayerId());
                 non_game_play_ui_.getRoundInfo().updateChooseTrump(this, 1);
-                trump_view_.startAnimation(MulatschakDeck.HEART, logic_.getTrumpPlayerId(), controller);
+                game_play_.getChooseTrump().getTrumpView()
+                        .startAnimation(MulatschakDeck.HEART, logic_.getTrumpPlayerId(), controller);
                 break;
 
             default:
                 setTurn(logic_.getTrumpPlayerId());
-                letHighestBidderChooseTrump();
+                game_play_.getChooseTrump().letHighestBidderChooseTrump(this);
                 break;
         }
     }
 
 
-    public void setTurn(int id) {
-        player_info_.setActivePlayer(id);
-        logic_.setTurn(id);
-    }
-
-    public void continueAfterTrumpWasChoosen() {
-        discardPile_.setVisible(false);
-        bids_view_.setVisible(true);
+    //----------------------------------------------------------------------------------------------
+    //  continueAfterTrumpWasChosen
+    //
+    public void continueAfterTrumpWasChosen() {
+        game_play_.getTrickBids().getBidsView().setVisible(true);
         non_game_play_ui_.getRoundInfo().setInfoBoxEmpty();
         non_game_play_ui_.getRoundInfo().updateRoundInfo(this);
         non_game_play_ui_.getRoundInfo().getRoundInfoTextField().setVisible(true);
         setTurn(logic_.getTrumpPlayerId());
         logic_.setStartingPlayer(logic_.getTrumpPlayerId());
-        boolean first_call = true;
         if (logic_.isMulatschakRound()) {
             continueAfterCardExchange();
         }
         else {
-            makeCardExchange(first_call);        // first player to bid is the player next to the dealer
+            game_play_.getCardExchange().makeCardExchange(true, this); // first player to bid is the player next to the dealer
         }
-
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  continueAfterCardExchange
+    //
     public void continueAfterCardExchange() {
         discardPile_.setVisible(true);
         nextCardRound(); // first call
     }
 
+
+    //----------------------- Game Flow
+
+
+
+    public void prepareNewRound() {
+        logic_.moveDealer(getAmountOfPlayers());
+        resetTurn();
+    }
+
+    public void setTurn(int id) {
+        player_info_.setActivePlayer(id);
+        logic_.setTurn(id);
+    }
 
     private void initPlayers(String my_id, int enemies) {
 
@@ -290,17 +288,28 @@ public class GameController{
         for (int i = 0; i < myPlayer_list_.size(); i++) {
             setDisplayName(getPlayerById(i));
         }
-    }
 
-    public void initEnemies(int enemies, GameView view) {
-        for (int i = 0; i < enemies; i++) {
-            enemy_logic_list_.add(new EnemyLogic(i + 1));
-        }
-        for (EnemyLogic el : enemy_logic_list_) {
-            el.init(view);
+        switch (getAmountOfPlayers()) {
+            case 1:
+                getPlayerById(0).setPosition(0);
+                break;
+            case 2:
+                getPlayerById(0).setPosition(0);
+                getPlayerById(1).setPosition(2);
+                break;
+            case 3:
+                getPlayerById(0).setPosition(0);
+                getPlayerById(1).setPosition(1);
+                getPlayerById(2).setPosition(2);
+                break;
+            case 4:
+                getPlayerById(0).setPosition(0);
+                getPlayerById(1).setPosition(1);
+                getPlayerById(3).setPosition(3);
+                getPlayerById(2).setPosition(2);
+                break;
         }
     }
-
 
     public void setDisplayName(MyPlayer myPlayer) {
 
@@ -331,23 +340,6 @@ public class GameController{
         for (int i = 0; i < getAmountOfPlayers(); i++) {
             getPlayerById(i).setLives(logic_.getStartLives()); ////////////////////////////////////////////////////////////////////////7
             getPlayerById(i).setTricksToMake(NOT_SET);
-        }
-    }
-
-    private void reEnableButtons() {
-        List<MyButton> buttons = getAnimation().getTrickBids().getNumberButtons();
-        for (int i = 0; i < buttons.size(); i++) {
-            if (getAmountOfPlayers() <= 2 && i == 0) {
-                buttons.get(i).setEnabled(false);
-            }
-            else {
-                buttons.get(i).setEnabled(true);
-            }
-        }
-
-        List<MyButton> buttons_sym = getAnimation().getTrickBids().getTrumpButtons();
-        for (int i = 0; i < buttons_sym.size(); i++) {
-            buttons_sym.get(i).setEnabled(true);
         }
     }
 
@@ -389,52 +381,6 @@ public class GameController{
         setTurn(dealer_id);
     }
 
-    //----------------------------------------------------------------------------------------------
-    //
-    //
-    private void shuffleDeck() {
-        Collections.shuffle(deck_.getCardStack(), new Random());
-    }
-
-    //----------------------------------------------------------------------------------------------
-    //
-    //
-    private void dealCards() {
-        deal(getAmountOfPlayers());
-        getAnimation().getDealingAnimation().start();
-    }
-
-    //----------------------------------------------------------------------------------------------
-    //  deal
-    //
-    private void deal(int players) {
-        for (int hand_card = 0; hand_card < logic_.MAX_CARDS_PER_HAND; hand_card++) {
-            for (int player_id = 0; player_id < players; player_id++) {
-                takeCardFromDeck(player_id, deck_);
-            }
-        }
-    }
-
-    //----------------------------------------------------------------------------------------------
-    //  draw cards from deck
-    //
-    public boolean takeCardFromDeck(int player_id, MulatschakDeck deck){
-
-        if (deck.getCardStack().isEmpty()) {
-            //  do something when deck is empty  ->
-            Log.d("take a card", " yo we a got a prob");
-            return false;
-        }
-        else
-        {
-            // remove a card from the deck and push it to the players hand
-            CardStack player_hand =  getPlayerById(player_id).getHand();
-            player_hand.addCard(deck_.getCardAt(0));
-            deck.getCardStack().remove(0);
-            return true;
-        }
-    }
-
 
     //----------------------------------------------------------------------------------------------
     //  cada
@@ -462,178 +408,6 @@ public class GameController{
         player_info_.setActivePlayer(logic_.getTurn());
     }
 
-    //----------------------------------------------------------------------------------------------
-    //  cada
-    //
-    public void makeCardExchange() {
-        makeCardExchange(false); // not first call
-    }
-
-    private void makeCardExchange(boolean first_call) {
-
-        if (!first_call) {
-            turnToNextPlayer();
-        }
-
-        if (!first_call && logic_.getTurn() == logic_.getStartingPlayer()) {
-            continueAfterCardExchange();
-            return;         // stops the recursion after all players had a chance to exchange their cards
-        }
-
-        if (getPlayerById(logic_.getTurn()).getMissATurn()) {
-            Log.d("GameController2", "MyPlayer " + logic_.getTurn() + " is MISSING his turn");
-            makeCardExchange();
-            return;
-        }
-
-        Log.d("GameController2", "MyPlayer " + logic_.getTurn() + " is making his turn");
-
-        if (logic_.getTurn() == 0) {
-            // handle the card exchange buttons (-> to less cards in deck to exchange to much cards)
-            animations_.getCardExchange().handleExchangeButtons(deck_.getCardStack().size());
-            animations_.getCardExchange().startAnimation();
-            view_.disableUpdateCanvasThread();
-        }
-        else if (logic_.getTurn() != 0) {
-            view_.enableUpdateCanvasThread();
-            enemy_logic_list_.get(logic_.getTurn() - 1).makeCardExchange(getPlayerById(logic_.getTurn()), this);
-        }
-    }
-
-
-    //----------------------------------------------------------------------------------------------
-    //  cada
-    //
-    public void makeTrickBids() {
-        makeTrickBids(false); // not first call
-    }
-
-    private void makeTrickBids(boolean first_call) {
-
-        turnToNextPlayer();
-        non_game_play_ui_.getRoundInfo().updateBids(view_);
-
-        if (logic_.getTricksToMake() == TrickBids.MULATSCHAK) {
-            bids_view_.endingAnimation(logic_.getTrumpPlayerId(), layout_);
-            return;
-        }
-
-        if (!first_call && logic_.getTurn() == logic_.getFirstBidder(getAmountOfPlayers())) {
-            bids_view_.endingAnimation(logic_.getTrumpPlayerId(), layout_);
-            return;         // stops the recursion after all players made their bids
-        }
-
-        Log.d("GameController2", "MyPlayer " +logic_.getTurn() + " is making his bids");
-        if (logic_.getTurn() == 0) {
-            if (getPlayerById(0).getMissATurn()) {
-                animations_.getTrickBids().getNumberButtonAt(0).setEnabled(false);
-            }
-            animations_.getTrickBids().setAnimationNumbers(true);
-            view_.disableUpdateCanvasThread();
-            // makeTrickBids should get called when player chooses his tricks
-        }
-        else if (logic_.getTurn() != 0) {
-            view_.enableUpdateCanvasThread();
-            enemy_logic_list_.get(logic_.getTurn() - 1).makeTrickBids(getPlayerById(logic_.getTurn()), this);
-            // makeTrickBids should get called after animation
-        }
-    }
-
-    //----------------------------------------------------------------------------------------------
-    //  cada
-    //
-    private int checkHighestBid() {
-        int highest_bid = 0;
-        for (int id = 0; id < getAmountOfPlayers(); id++) {
-            if (getPlayerById(id).getTricksToMake() > highest_bid) {
-                highest_bid = getPlayerById(id).getTricksToMake();
-            }
-        }
-        return highest_bid;
-    }
-
-    //----------------------------------------------------------------------------------------------
-    //  cada
-    //
-    public void setNewMaxTrumps(int amount, int id) {
-        CharSequence text = "player: " + id + " tries ";
-
-        if (amount == TrickBids.MULATSCHAK) {
-            logic_.setMulatschakRound(true);
-            logic_.setTrumpPlayerId(id);
-            logic_.setTricksToMake(TrickBids.MULATSCHAK);
-            getPlayerById(id).setTricksToMake(TrickBids.MULATSCHAK);
-            text = text + "Mulatschak";
-            bids_view_.getBidsFieldList().get(logic_.getTurn())
-                    .startAnimation("M", this);
-        }
-
-        else if (amount == TrickBids.MISS_A_TURN) {
-            getPlayerById(id).setTricksToMake(amount);
-            bids_view_.getBidsFieldList().get(logic_.getTurn())
-                    .startAnimation("X", this);
-        }
-
-        else if (amount > logic_.getTricksToMake()) {
-            List<MyButton> buttons = getAnimation().getTrickBids().getNumberButtons();
-            // disable lower amount buttons, but button 0 is always clickable // miss a turn
-            for (int i = 2; i <= (amount + 1); i++) {
-                buttons.get(i).setEnabled(false);
-            }
-            getPlayerById(id).setTricksToMake(amount);
-            logic_.setTricksToMake(amount);
-            logic_.setTrumpPlayerId(id);
-            text = text + Integer.toString(amount);
-            bids_view_.getBidsFieldList().get(logic_.getTurn())
-                    .startAnimation("" + amount, this);
-        }
-        else {
-            getPlayerById(id).setTricksToMake(0);
-            text = text + "keine";
-            bids_view_.getBidsFieldList().get(logic_.getTurn())
-                    .startAnimation("-", this);
-        }
-
-        // there have to be at least two active players every round!
-        int amount_of_playing_players =  getAmountOfPlayers();
-        for (int i = 0; i < getAmountOfPlayers(); i++) {
-            if (getPlayerById(i).getMissATurn()) {
-                amount_of_playing_players--;
-            }
-        }
-        if (amount_of_playing_players <= 2) {
-            List<MyButton> buttons = getAnimation().getTrickBids().getNumberButtons();
-            buttons.get(0).setEnabled(false);
-        }
-
-    }
-
-    //----------------------------------------------------------------------------------------------
-    //  cada
-    //
-    private void letHighestBidderChooseTrump() {
-        Log.d("GameController2", "MyPlayer " + logic_.getTrumpPlayerId() + " chooses a trump");
-        non_game_play_ui_.getRoundInfo().updateChooseTrump(this);
-
-        if (logic_.getTrumpPlayerId() == 0) {
-            animations_.getTrickBids().setAnimationTrumps(true);
-            view_.disableUpdateCanvasThread();
-            // touch event should call continueAfterTrumpWasChoosen();
-        }
-        else if (logic_.getTrumpPlayerId() != 0) {
-            view_.enableUpdateCanvasThread();
-            enemy_logic_list_.get(logic_.getTrumpPlayerId() - 1).chooseTrump(getPlayerById(logic_.getTrumpPlayerId()), logic_, view_);
-            Handler mhandler = new Handler();
-            final GameController controller = this;
-            Runnable codeToRun = new Runnable() {
-                @Override
-                public void run() {
-                    trump_view_.startAnimation(logic_.getTrump(), logic_.getTrumpPlayerId(), controller);
-                }
-            };
-            mhandler.postDelayed(codeToRun, 500);
-        }
-    }
 
     public void nextTurn() {
         nextTurn(false);
@@ -642,9 +416,9 @@ public class GameController{
     private void nextCardRound() {
 
         // update player lives, game over? or new round?
-        AllCardsPlayed acp = new AllCardsPlayed();
-        if (acp.areAllCardsPlayed(this)) {
-            acp.allCardsArePlayedLogic(this);
+        // starts the animations if needed
+        if (game_play_.getAllCardsPlayed().areAllCardsPlayed(this)) {
+            game_play_.getAllCardsPlayed().allCardsArePlayedLogic(this);
             return;
         }
 
@@ -652,8 +426,6 @@ public class GameController{
         non_game_play_ui_.getRoundInfo().updateRoundInfo(this);
         nextTurn(true);
     }
-
-    public boolean waiting2 = false;
 
 
     public void allCardsBackToTheDeck() {
@@ -694,6 +466,7 @@ public class GameController{
         for (int i = 0; i < deck_.getCardStack().size(); i++) {
             deck_.getCardAt(i).setPosition(layout_.getDeckPosition());
             deck_.getCardAt(i).setFixedPosition(getLayout().getDeckPosition());
+            deck_.getCardAt(i).setVisible(false);
         }
 
         if (deck_.getCardStack().size() != MulatschakDeck.CARDS_PER_DECK) {
@@ -701,16 +474,12 @@ public class GameController{
         }
 
     }
+
+
     private void endCardRound() {
         discardPile_.setOverlaysVisible(false);
-        clearDiscardPile();
+        discardPile_.clear();
         nextCardRound();
-    }
-    private void clearDiscardPile() {
-        discardPile_.setCardBottom(null);
-        discardPile_.setCardLeft(null);
-        discardPile_.setCardTop(null);
-        discardPile_.setCardRight(null);
     }
 
     private void nextTurn(boolean first_call) {
@@ -765,7 +534,8 @@ public class GameController{
         }
         else if (logic_.getTurn() != 0) {
             view_.enableUpdateCanvasThread();
-            enemy_logic_list_.get(logic_.getTurn() - 1).playACard(logic_, getPlayerById(logic_.getTurn()), discardPile_);
+            game_play_.getPlayACard().getEnemyPlayACardLogic()
+                    .playACard(logic_, getPlayerById(logic_.getTurn()), discardPile_);
         }
     }
 
@@ -779,16 +549,11 @@ public class GameController{
     private void addTricksToWinner() {
 
         GameTricks tricks = non_game_play_ui_.getTricks();
-        tricks.getDiscardPiles().add(DiscardPile.copy(discardPile_));
+        tricks.addDiscardPile(DiscardPile.copy(discardPile_), logic_.getRoundWinnerId());
         int index = tricks.getDiscardPiles().size() - 1;
-        if (index >= 0 && tricks.getDiscardPiles() != null) {
-            ((DiscardPile) (tricks.getDiscardPiles().get(index)))
-                    .setPositions(layout_.getButtonBarWindowTricksDiscardPilePositions());
-            tricks.setVisibleRoundId(index);
-            tricks.updateVisibleRound();
-        }
+        tricks.setVisibleRoundId(index);
+        tricks.updateVisibleRound();
 
-        //tricks_.getRoundWinners().add(logic_.getRoundWinnerId());
 
         for (int i = 0; i < discardPile_.SIZE; i++) {
             if (discardPile_.getCard(i) != null) {
@@ -802,11 +567,6 @@ public class GameController{
         trash_.addCard(card);
     }
 
-    public void moveCardsToTrash(List<Card> cards) {
-        for (int i = 0; i < cards.size(); i++) {
-            trash_.addCard(cards.get(i));
-        }
-    }
 
     //----------------------------------------------------------------------------------------------
     //  Getter
@@ -871,19 +631,11 @@ public class GameController{
         return enable_drawing_;
     }
 
-    public List<EnemyLogic> getEnemyLogic() {
-        return enemy_logic_list_;
-    }
-
     public GamePlay getGamePlay() {
         return game_play_;
     }
 
-    public BidsView getBidsView() {
-        return bids_view_;
-    }
-
-    public TrumpView getTrumpView() {
-        return trump_view_;
+    public GameSettings getSettings() {
+        return settings_;
     }
 }

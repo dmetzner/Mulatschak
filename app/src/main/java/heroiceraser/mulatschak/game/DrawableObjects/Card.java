@@ -47,7 +47,7 @@ public class Card extends DrawableObject {
         setWidth(view.getController().getLayout().getCardWidth());
         setHeight(view.getController().getLayout().getCardHeight());
         setBitmap(HelperFunctions.loadBitmap(view, image_name, getWidth(), getHeight()));
-        setVisible(true);
+        setVisible(false);
         return this;
     }
 

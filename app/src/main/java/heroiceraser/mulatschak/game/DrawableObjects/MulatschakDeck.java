@@ -3,6 +3,9 @@ package heroiceraser.mulatschak.game.DrawableObjects;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import java.util.Collections;
+import java.util.Random;
+
 import heroiceraser.mulatschak.game.GameView;
 
 /**
@@ -91,6 +94,13 @@ public class MulatschakDeck extends CardStack {
 
         setVisible(true);
     }
+
+
+    public void shuffleDeck() {
+        Collections.shuffle(getCardStack(), new Random());
+    }
+
+
 
     public static int getCardSuit(Card card) {
         return (card.getId() / 100) % CARD_SUITS;

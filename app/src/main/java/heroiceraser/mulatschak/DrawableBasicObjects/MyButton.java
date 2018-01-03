@@ -2,7 +2,9 @@ package heroiceraser.mulatschak.DrawableBasicObjects;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Point;
+import android.text.TextPaint;
 
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
@@ -25,7 +27,6 @@ public class MyButton extends DrawableObject{
     private boolean pressed_;
     private Bitmap bitmap_pressed_;
     private Bitmap bitmap_disabled_;
-
 
     //----------------------------------------------------------------------------------------------
     // Constructor
@@ -51,6 +52,8 @@ public class MyButton extends DrawableObject{
         setBitmapDisabled(HelperFunctions.loadBitmap(view, image_name + "_disabled", width, height));
         setVisible(true);
     }
+
+
 
     //----------------------------------------------------------------------------------------------
     // Draw

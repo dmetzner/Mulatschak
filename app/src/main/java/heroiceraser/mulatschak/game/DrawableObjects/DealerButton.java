@@ -9,10 +9,8 @@ import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
 
-/**
- * Created by Daniel Metzner on 27.08.2017.
- */
 
+// ToDo
 public class DealerButton extends DrawableObject{
 
     private long time_start_;
@@ -41,13 +39,13 @@ public class DealerButton extends DrawableObject{
         controller.getView().enableUpdateCanvasThread();
     }
 
-    private void continueMoveAnimation() {
+    private void continueMoveAnimation(GameController controller) {
         long time = System.currentTimeMillis();
         long time_since_start = time - time_start_;
-        double max_time = 1500;
+        double speed_factor = controller.getSettings().getAnimationSpeed().getSpeedFactor();
+        double max_time = 1500 * speed_factor;
 
         double percentage = time_since_start / max_time;
-
         if (percentage > 1) {
             percentage = 1;
             animation_running_ = false;
@@ -58,12 +56,12 @@ public class DealerButton extends DrawableObject{
 
     }
 
-    public void draw(Canvas canvas) {
+    public void draw(Canvas canvas, GameController controller) {
         if (isVisible()) {
             canvas.drawBitmap(getBitmap(), getPosition().x, getPosition().y, null);
 
             if (animation_running_) {
-                continueMoveAnimation();
+                continueMoveAnimation(controller);
             }
 
         }

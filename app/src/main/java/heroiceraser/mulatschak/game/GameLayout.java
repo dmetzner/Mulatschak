@@ -6,7 +6,8 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import heroiceraser.mulatschak.game.GamePlay.TrickBids.TrickBids;
+import heroiceraser.mulatschak.game.GamePlay.ChooseTrump.ChooseTrumpAnimation;
+import heroiceraser.mulatschak.game.GamePlay.TrickBids.MakeBidsAnimation;
 import heroiceraser.mulatschak.helpers.DisplayDimension;
 
 /**
@@ -124,7 +125,7 @@ public class GameLayout {
     private Point trick_bids_trump_button_size;
     private Point trick_bids_trump_button_position_;
 
-    //-- CardExchange
+    //-- CardExchangeLogic
     private Point card_exchange_text_size_;
     private Point card_exchange_text_position_;
     private Point card_exchange_button_size_;
@@ -297,7 +298,7 @@ public class GameLayout {
         button_bar_window_title_position_ = new Point();
         button_bar_window_title_position_.x = 0;
         button_bar_window_title_position_.y = (int)
-                (button_bar_window_position_.y + sectors_.get(1).y * 0.5);
+                (sectors_.get(1).y * 2.65);
     }
 
     private void calculateButtonBarWindowTricksArrowSize() {
@@ -309,20 +310,20 @@ public class GameLayout {
     private void calculateButtonBarWindowTricksArrowLeftPosition() {
         button_bar_window_tricks_left_arrow_position_ = new Point();
         button_bar_window_tricks_left_arrow_position_.x = (int) (getScreenWidth() / 10.0);
-        button_bar_window_tricks_left_arrow_position_.y = (int) (sectors_.get(1).y * 4.8);
+        button_bar_window_tricks_left_arrow_position_.y = (int) (sectors_.get(1).y * 4.6);
     }
 
     private void calculateButtonBarWindowTricksArrowRightPosition() {
         button_bar_window_tricks_right_arrow_position_ = new Point();
         button_bar_window_tricks_right_arrow_position_.x = (int) (getScreenWidth() * (9.0 / 10.0) -
                 button_bar_window_tricks_arrow_size_.x);
-        button_bar_window_tricks_right_arrow_position_.y = (int) (sectors_.get(1).y * 4.8);
+        button_bar_window_tricks_right_arrow_position_.y = (int) (sectors_.get(1).y * 4.6);
     }
 
     private void calculateButtonBarWindowTricksSubtitlePosition() {
         button_bar_window_tricks_subtitle_pos_ = new Point();
         button_bar_window_tricks_subtitle_pos_.x = 0;
-        button_bar_window_tricks_subtitle_pos_.y = (int) (sectors_.get(1).y * 3.5);
+        button_bar_window_tricks_subtitle_pos_.y = (int) (sectors_.get(1).y * 3.3);
     }
 
     private void calculateButtonBarWindowTricksSubtitleMaxSize() {
@@ -335,7 +336,7 @@ public class GameLayout {
         button_bar_window_tricks_discard_pile_positions_ = new ArrayList<>();
         for (int i = 0; i < discard_pile_positions_.size(); i++) {
             Point tmp = new Point(discard_pile_positions_.get(i));
-            tmp.y += sectors_.get(1).y;
+            tmp.y += sectors_.get(1).y * 0.7;
             button_bar_window_tricks_discard_pile_positions_.add(tmp);
         }
     }
@@ -375,17 +376,21 @@ public class GameLayout {
         int midpoint_x = (int) (deck_position_.x + card_size_.x / 2.0);
         int midpoint_y = (int) (deck_position_.y + card_size_.y / 2.0);
 
-        discard_pile_positions_.add(new Point((int) (midpoint_x - (card_size_.x / 2.0)),
+        // down
+        discard_pile_positions_.add(new Point((int) (midpoint_x - (card_size_.x / 1.97)),
                 (midpoint_y)));
 
-        discard_pile_positions_.add(new Point((int) (midpoint_x - (card_size_.x * 1.5)),
-                (int) (midpoint_y - (card_size_.y / 2.0))));
+        // left
+        discard_pile_positions_.add(new Point((int) (midpoint_x - (card_size_.x * 1.53)),
+                (int) (midpoint_y - (card_size_.y / 1.97))));
 
-        discard_pile_positions_.add(new Point((int) (midpoint_x - (card_size_.x / 2.0)),
+        // top
+        discard_pile_positions_.add(new Point((int) (midpoint_x - (card_size_.x / 1.97)),
                 (midpoint_y - (card_size_.y))));
 
-        discard_pile_positions_.add(new Point((int) (midpoint_x + (card_size_.x / 2.0)),
-                (int) (midpoint_y - (card_size_.y / 2.0))));
+        // bottom
+        discard_pile_positions_.add(new Point((int) (midpoint_x + (card_size_.x / 2.03)),
+                (int) (midpoint_y - (card_size_.y / 1.97))));
     }
 
     //
@@ -398,13 +403,13 @@ public class GameLayout {
                 (int) (sectors_.get(6).y));
 
         hand_left_ = new Point((int) (card_size_.x * -0.6),
-                (int) (deck_position_.y - card_size_.y / 4.0));
+                (int) (deck_position_.y - card_size_.y / 3.2));
 
-        hand_top_ = new Point((screen_size_.x - card_size_.x * 3),
+        hand_top_ = new Point((screen_size_.x - (int) (card_size_.x * 2.8)),
                 (int) (sectors_.get(2).y + card_size_.y * (-0.6)));
 
         hand_right_ = new Point((int) (screen_size_.x - (card_size_.x * 0.6)),
-                (int) (deck_position_.y + card_size_.y / 6.0));
+                (int) (deck_position_.y + card_size_.y / 3.0));
 
         hand_positions_.add(hand_bottom_);
         hand_positions_.add(hand_left_);
@@ -498,13 +503,13 @@ public class GameLayout {
                 sectors_.get(sectors_.size() - 2).y - player_info_size_.y - offset);
 
         player_info_left_position_ = new Point(offset,
-                hand_left_.y + (int) (1.1 * player_info_size_.y));
+                hand_left_.y + (int) (1.25 * player_info_size_.y));
 
-        player_info_top_position_ = new Point(hand_top_.x - player_info_size_.x,
+        player_info_top_position_ = new Point(hand_top_.x - (int) (player_info_size_.x * 1.2),
                 sectors_.get(2).y + (int) (offset * (2.0 / 3.0)));
 
         player_info_right_position_ = new Point(screen_size_.x - (player_info_size_.x + offset),
-                hand_right_.y - player_info_size_.y);
+                hand_right_.y - (int) (player_info_size_.y * 1.2));
 
         player_info_positions_ = new ArrayList<>();
         player_info_positions_.add(player_info_bottom_position_);
@@ -535,32 +540,32 @@ public class GameLayout {
     //
     private void calculateTrickBidsNumberButtonSize() {
         trick_bids_number_button_size_ = new Point();
-        int size = (int) ((screen_size_.x * 8.0 / 10.0) / TrickBids.MAX_BID_COLS);
-        trick_bids_number_button_size_.x = size;
-        trick_bids_number_button_size_.y = size;
+        int size_x = (int) ((screen_size_.x * 8.0 / 10.0) / MakeBidsAnimation.MAX_BID_COLS);
+        int size_y = (int) sectors_.get(1).y;
+        trick_bids_number_button_size_.x = size_x;
+        trick_bids_number_button_size_.y = size_y;
     }
 
     private void calculateTrickBidsNumberButtonPosition() {
         trick_bids_number_button_position_ = new Point();
         trick_bids_number_button_position_.x = (int) ((screen_size_.x -
-                TrickBids.MAX_BID_COLS * trick_bids_number_button_size_.x) / 2.0);
-        trick_bids_number_button_position_.y = (int) (((sectors_.get(6).y - sectors_.get(2).y) -
-                (TrickBids.MAX_TRUMP_ROWS * trick_bids_trump_button_size.y)) / 2.0) + sectors_.get(2).y;
+                MakeBidsAnimation.MAX_BID_COLS * trick_bids_number_button_size_.x) / 2.0);
+        trick_bids_number_button_position_.y = (int) (sectors_.get(1).y * 2.8);
     }
 
     private void calculateTrickBidsTrumpButtonSize() {
         trick_bids_trump_button_size = new Point();
-        int size = (int) ((screen_size_.x * 8.0 / 10.0) / (TrickBids.MAX_TRUMP_COLS + 0.5));
-        trick_bids_trump_button_size.x = size;
-        trick_bids_trump_button_size.y = size;
+        int size_x = (int) ((screen_size_.x * 8.0 / 10.0) / (ChooseTrumpAnimation.MAX_TRUMP_COLS + 0.5));
+        int size_y = (int) (sectors_.get(1).y * 1.5);
+        trick_bids_trump_button_size.x = size_x;
+        trick_bids_trump_button_size.y = size_y;
     }
 
     private void calculateTrickBidsTrumpButtonPosition() {
         trick_bids_trump_button_position_ = new Point();
         trick_bids_trump_button_position_.x = (int) ((screen_size_.x -
-                TrickBids.MAX_TRUMP_COLS * trick_bids_trump_button_size.x) / 2.0);
-        trick_bids_trump_button_position_.y = (int) (((sectors_.get(6).y - sectors_.get(2).y) -
-                (TrickBids.MAX_TRUMP_ROWS * trick_bids_trump_button_size.y)) / 2.0) + sectors_.get(2).y;
+                ChooseTrumpAnimation.MAX_TRUMP_COLS * trick_bids_trump_button_size.x) / 2.0);
+        trick_bids_trump_button_position_.y = (int) (sectors_.get(1).y * 2.8);
     }
 
     //
