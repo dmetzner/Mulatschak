@@ -1,35 +1,46 @@
 package heroiceraser.mulatschak.game.GamePlay.CardExchange;
 
 import android.graphics.Canvas;
-import android.graphics.Point;
-
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GameView;
 
-/**
- * Created by Daniel Metzner on 03.01.2018.
- */
 
+//--------------------------------------------------------------------------------------------------
+//  Card Exchange Class
+//
 public class CardExchange {
 
+    //----------------------------------------------------------------------------------------------
+    //  Member Variables
+    //
     private CardExchangeLogic card_exchange_logic_;
     private EnemyCardExchangeLogic enemy_card_exchange_logic_;
 
+
+    //----------------------------------------------------------------------------------------------
+    //  Constructor
+    //
     public CardExchange() {
         card_exchange_logic_ = new CardExchangeLogic();
         enemy_card_exchange_logic_ = new EnemyCardExchangeLogic();
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  Init
+    //
     public void init(GameView view) {
         card_exchange_logic_.init(view);
         // enemy_card_exchange_logic_.init(view); Not Needed
     }
 
+
     //----------------------------------------------------------------------------------------------
-    //  cada
+    //  makeCardExchange
+    //                      -> handles the card exchange process
     //
-    public void makeCardExchange(GameController controller) {
+    void makeCardExchange(GameController controller) {
         makeCardExchange(false, controller); // not first call
     }
 
@@ -63,6 +74,10 @@ public class CardExchange {
         }
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  draw
+    //
     public void draw(Canvas canvas, GameController controller) {
 
         if (card_exchange_logic_.isAnimationRunning()) {
@@ -72,6 +87,7 @@ public class CardExchange {
             enemy_card_exchange_logic_.draw(canvas, controller);
         }
     }
+
 
     //----------------------------------------------------------------------------------------------
     //  Getter

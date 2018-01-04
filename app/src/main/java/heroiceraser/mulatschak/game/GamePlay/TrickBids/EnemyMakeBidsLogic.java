@@ -1,7 +1,7 @@
 package heroiceraser.mulatschak.game.GamePlay.TrickBids;
 
 import heroiceraser.mulatschak.game.GameController;
-import heroiceraser.mulatschak.game.MyPlayer;
+import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
 
 
 //----------------------------------------------------------------------------------------------

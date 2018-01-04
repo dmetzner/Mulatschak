@@ -28,7 +28,7 @@ public class PlayACard {
     public void draw(Canvas canvas, GameController controller) {
 
         play_a_card_logic_.draw(canvas, controller);
-        enemy_play_a_card_logic_.draw(canvas);
+        enemy_play_a_card_logic_.draw(canvas, controller);
     }
 
 
@@ -39,8 +39,8 @@ public class PlayACard {
         return enemy_play_a_card_logic_.isAnimationRunning();
     }
 
-    public void setCardMoveable(boolean moveable) {
-        play_a_card_logic_.setCardMoveable(moveable);
+    public void setCardMovable(boolean movable) {
+        play_a_card_logic_.setCardMoveable(movable);
     }
 
     public PlayACardLogic getPlayACardLogic() {

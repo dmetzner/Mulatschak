@@ -91,8 +91,4 @@ public class TextField extends DrawableObject{
     public String getText() {
         return text_;
     }
-
-    public StaticLayout getStaticLayout() {
-        return static_layout_;
-    }
 }

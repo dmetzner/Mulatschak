@@ -16,7 +16,7 @@ import heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.game.MyPlayer;
+import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
 
 /**
  * Created by Daniel Metzner on 20.09.2017.

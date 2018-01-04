@@ -7,7 +7,7 @@ import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.game.NonGamePlayUI.AllCardsPlayedView.AllCardsPlayedView;
 import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBar.ButtonBar;
 import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBar.ButtonBarDecoration;
-import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBar.Windows.GameMenu;
+import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBar.Windows.GameMenu.GameMenu;
 import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBar.Windows.GameStatistics;
 import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBar.Windows.GameTricks;
 import heroiceraser.mulatschak.game.NonGamePlayUI.RoundInfo.RoundInfo;
@@ -79,7 +79,7 @@ public class NonGamePlayUIContainer {
         // Display Overlays with the functionality
         statistics_.draw(canvas);
         tricks_.draw(canvas, controller);
-        menu_.draw(canvas);
+        menu_.draw(canvas, controller);
 
         all_cards_played_view_.draw(canvas, controller);
 

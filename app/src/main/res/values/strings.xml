@@ -48,18 +48,36 @@
 
     <!-- :::::::::::::::::::: Button Bar Windows ::::::::::::::::::::::::::::::::::::::::::::::: -->
 
-    <!-- :::::::::::::::::::: Menu ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
-    <string name="button_bar_menu_title">Menu</string>
+        <!-- :::::::::::::::::::: Menu ::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+        <string name="button_bar_menu_title">Menu</string>
 
-    <!-- :::::::::::::::::::: Tricks ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
-    <string name="button_bar_tricks_title">Stiche</string>
-    <string name="button_bar_tricks_subtitle">Runde</string>
-    <string name="button_bar_tricks_empty_info">Du hast noch keine Stiche gemacht!</string>
+        <!-- :::::::::::::::::::: Tricks ::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+        <string name="button_bar_tricks_title">Stiche</string>
+        <string name="button_bar_tricks_subtitle">Runde</string>
+        <string name="button_bar_tricks_empty_info">Du hast noch keine Stiche gemacht!</string>
 
-    <!-- :::::::::::::::::::: State of the game :::::::::::::::::::::::::::::::::::::::::::::::: -->
-    <string name="button_bar_state_of_the_game_title">Spielstand</string>
+        <!-- :::::::::::::::::::: State of the game :::::::::::::::::::::::::::::::::::::::::::: -->
+        <string name="button_bar_state_of_the_game_title">Spielstand</string>
 
-    <!-- :::::::::::::::::::: NextRoundButton :::::::::::::::::::::::::::::::::::::::::::::::: -->
-    <string name="next_round_button">Nächste Runde</string>
+        <!-- :::::::::::::::::::: NextRoundButton :::::::::::::::::::::::::::::::::::::::::::::: -->
+        <string name="next_round_button">Nächste Runde</string>
+
+    <!-- :::::::::::::::::::: TrickBids :::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+
+
+    <!-- :::::::::::::::::::: Card Exchange :::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+        <!-- :::::::::::::::::::: Card Exchange Buttons :-:::::::::::::::::::::::::::::::::::::: -->
+        <string name="card_exchange_help_text">Berühre alle Karten die du austauschen möchtest.
+            "Du kannst Keine, Eine, Zwei, Drei oder alle Karten austauschen"</string>
+
+
+    <!-- :::::::::::::::::::: Game Menu :::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+    <string name="animation_speed_title">Animations Geschwindigkeit</string>
+    <string name="animation_speed_slow">Langsam</string>
+    <string name="animation_speed_normal">Normal</string>
+    <string name="animation_speed_fast">Schnell</string>
+    <string name="animation_speed_no_animations">Aus</string>
+
+
 
 </resources>

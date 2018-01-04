@@ -10,10 +10,10 @@ public class AnimationSpeed {
     //----------------------------------------------------------------------------------------------
     //  Constants
     //
-    public final int SPEED_SLOW     = 4501;
-    public final int SPEED_NORMAL   = 4502;
-    public final int SPEED_FAST     = 4503;
-    public final int NO_ANIMATION   = 4504;
+    public static final int SPEED_SLOW     = 4501;
+    public static final int SPEED_NORMAL   = 4502;
+    public static final int SPEED_FAST     = 4503;
+    public static final int NO_ANIMATION   = 4504;
 
 
     //----------------------------------------------------------------------------------------------

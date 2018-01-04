@@ -3,7 +3,7 @@ package heroiceraser.mulatschak.game.GamePlay.ChooseTrump;
 import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
 import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.game.MyPlayer;
+import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
 
 /**
  * Created by Daniel Metzner on 03.01.2018.

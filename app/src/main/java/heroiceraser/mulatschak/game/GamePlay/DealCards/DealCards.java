@@ -4,7 +4,7 @@ import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
 import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
-import heroiceraser.mulatschak.game.MyPlayer;
+import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
 
 
 //----------------------------------------------------------------------------------------------

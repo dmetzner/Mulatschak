@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Random;
 
 import heroiceraser.mulatschak.GameSettings.GameSettings;
+import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GamePlay.GamePlay;
 import heroiceraser.mulatschak.game.NonGamePlayUI.NonGamePlayUIContainer;
 import heroiceraser.mulatschak.game.DrawableObjects.Card;
@@ -153,7 +154,7 @@ public class GameController{
 
         logic_.setMulatschakRound(false);
         resetTricksToMake();
-        // getGamePlay().getPlayACard().setCardMoveable(false);
+        // getGamePlay().getPlayACard().setCardMovable(false);
         player_info_.setActivePlayer(NOT_SET);
 
         discardPile_.setVisible(false);
@@ -484,7 +485,7 @@ public class GameController{
 
     private void nextTurn(boolean first_call) {
 
-        getGamePlay().getPlayACard().setCardMoveable(false);
+        getGamePlay().getPlayACard().setCardMovable(false);
         non_game_play_ui_.getRoundInfo().setInfoBoxEmpty();
         non_game_play_ui_.getRoundInfo().getRoundInfoTextField().setVisible(true);
         non_game_play_ui_.getRoundInfo().updateRoundInfo(this);
@@ -528,7 +529,7 @@ public class GameController{
         Log.d("GameController2", "MyPlayer " +logic_.getTurn() + " is playing his card");
 
         if (logic_.getTurn() == 0) {
-            getGamePlay().getPlayACard().setCardMoveable(true);
+            getGamePlay().getPlayACard().setCardMovable(true);
             view_.disableUpdateCanvasThread();
             // touch event calls next turnToNextPlayer & next turn
         }

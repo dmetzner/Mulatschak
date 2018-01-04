@@ -165,8 +165,8 @@ public class TrumpView extends DrawableObject {
     }
 
     private void continueEndingAnimation(GameController controller) {
-
-        double max_time = 750;
+        double animation_factor = controller.getSettings().getAnimationSpeed().getSpeedFactor();
+        double max_time = 750 * animation_factor;
         long time = System.currentTimeMillis();
         long time_since_start = time - start_time_;
 

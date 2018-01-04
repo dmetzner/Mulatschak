@@ -4,10 +4,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.Point;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+
+import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
 
 /**
  * Created by Daniel Metzner on 08.08.2017.

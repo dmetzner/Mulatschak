@@ -115,6 +115,17 @@ class TouchEvents {
         // MyPlayer Info Buttons
         if (ButtonActionDown(X, Y, controller.getNonGamePlayUIContainer()
                 .getAllCardsPlayedView().getNextRoundButton()) ) {}
+
+        //------------------------
+
+        // ------------------ Menu Button Bar Window -----------------------------------------------
+        if (controller.getNonGamePlayUIContainer().getMenu().isVisible()) {
+            controller.getNonGamePlayUIContainer().getMenu().touchEventDown(X, Y);
+        }
+
+        //------------------------
+
+
     }
 
 
@@ -193,6 +204,15 @@ class TouchEvents {
 
         ButtonActionMove(X, Y, controller.getNonGamePlayUIContainer()
                 .getAllCardsPlayedView().getNextRoundButton());
+
+        //-------------------
+
+        // ------------------ Menu Button Bar Window -----------------------------------------------
+        if (controller.getNonGamePlayUIContainer().getMenu().isVisible()) {
+            controller.getNonGamePlayUIContainer().getMenu().touchEventMove(X, Y);
+        }
+
+        //------------------------
 
     }
 
@@ -302,6 +322,16 @@ class TouchEvents {
             controller.getNonGamePlayUIContainer().getMenu().setVisible(false);
             controller.startRound();
         }
+
+        //-------------------
+
+        // ------------------ Menu Button Bar Window -----------------------------------------------
+        if (controller.getNonGamePlayUIContainer().getMenu().isVisible()) {
+            controller.getNonGamePlayUIContainer().getMenu().touchEventUp(X, Y, controller);
+        }
+
+        //------------------------
+
 
     }
 

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.GameController;
-import heroiceraser.mulatschak.game.MyPlayer;
+import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
 
 //--------------------------------------------------------------------------------------------------
@@ -226,7 +226,7 @@ public class EnemyCardExchangeAnimation {
     void recalculateParameters(GameController controller) {
         double animation_factor = controller.getSettings().getAnimationSpeed().getSpeedFactor();
         double max_time_section_1 = 300 * animation_factor;
-
+        double max_time_section_2 = 2500 * animation_factor;
         long time = System.currentTimeMillis();
         long time_since_start = time - start_time_;
 
@@ -259,30 +259,44 @@ public class EnemyCardExchangeAnimation {
 
         if (spinning_) {
             // calculate time interval
-            long timeNow = System.currentTimeMillis();
-            long timeDelta = timeNow - time_prev_;
 
-            if (timeDelta > 300) {
+            double percentage = time_since_start / max_time_section_2;
+            if (percentage > 1) {
+                percentage = 1;
+            }
 
-                // increase speed in the first x rotations
-                if (degree_ / 360.0 < 2.1) {
-                    spin_speed_ *= 2;
-                    if (spin_speed_ > 28) {
-                        spin_speed_ = 28;
-                    }
-                }
-                // decrease speed in the last rotations
-                else {
-                    spin_speed_ /= 2;
-                    if (spin_speed_ < 1) {
-                        spin_speed_ = 1;
-                    }
-                }
-                time_prev_ = System.currentTimeMillis();
+            double t1 = 0.21;
+            double t2 = 0.38;
+            double t3 = 0.62;
+            double t4 = 0.79;
+            double t5 = 0.93;
+
+            // first spin
+            if (percentage <= t1) {
+                degree_ = (int) (180 * ((percentage ) / (t1)));
+            }
+            else if (percentage <= t2) {
+                degree_ = 180 + (int) (180 * ((percentage - t1 ) / (t2 - t1)));
+            }
+
+            // second spin
+            else if (percentage <= t3) {
+                degree_ = (int) (360 * ((percentage - t2 ) / (t3 - t2)));
+            }
+
+            // third spin
+            else if (percentage <= t4) {
+                degree_ = (int) (180 * ((percentage - t3 ) / (t4 - t3)));
+            }
+            else if (percentage <= t5) {
+                degree_ =  180 + (int) (180 * ((percentage - t4 ) / (t5 - t4)));
+            }
+            else {
+                degree_ = 0;
             }
 
             // animation is done after x rotations
-            if (degree_ / 360.0 > 2.5) {
+            if (percentage >= 1) {
                 spin_speed_ = 0;
                 moving_up_ = false;
                 spinning_ = false;

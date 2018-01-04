@@ -33,7 +33,7 @@ public class CardExchangeAnimation {
     //  Member Variables
     //
     private Camera camera_;     // needed for 3D rotation od bitmaps
-    private long timePrev = 0;  // keeps track of the previous timestamp
+    private long time_start_;  // keeps track of the previous timestamp
 
     private boolean animation_spinning_running_;    // is the spinning animation running
     private boolean animation_end_running_; // is the animation ending running
@@ -45,8 +45,6 @@ public class CardExchangeAnimation {
     //                                   handles which container gets displayed
 
     private int degree_;    // at which degree is the card in the moment of drawing
-    private double spin_speed_; // how fast is the rotation spinning
-    private final int MIN_SPIN_SPEED = 1;
 
     private Bitmap backside_bitmap_;    // backside of a card
 
@@ -68,7 +66,6 @@ public class CardExchangeAnimation {
         new_drawn_cards_ = new ArrayList<>();
         cards_changed_ = false;
         degree_ = 0;
-        spin_speed_ = MIN_SPIN_SPEED;
         backside_bitmap_ = HelperFunctions.loadBitmap(controller.getView(), "card_back",
                 controller.getLayout().getCardWidth(), controller.getLayout().getCardHeight());
     }
@@ -77,9 +74,11 @@ public class CardExchangeAnimation {
     //----------------------------------------------------------------------------------------------
     //  startSpinning
     //
-    void startSpinning() {
+    void startSpinning(GameController controller) {
         animation_spinning_running_ = true;
-        recalculateSpinningParameters();
+        time_start_ = System.currentTimeMillis();
+        recalculateSpinningParameters(controller);
+        degree_ = 0;
     }
 
 
@@ -91,8 +90,6 @@ public class CardExchangeAnimation {
         Matrix matrix = new Matrix();
         camera_.save();
 
-        degree_ += spin_speed_;
-        // can't see anything
         if (degree_ % 90 == 0) {
             degree_++;
         }
@@ -142,46 +139,59 @@ public class CardExchangeAnimation {
     //                  -> gets called from draw
     //                  recalculates new spinning speed and degree
     //
-    void recalculateSpinningParameters() {
+    void recalculateSpinningParameters(GameController controller) {
 
         // nothing to do if spinning is over
         if (!animation_spinning_running_) {
             return;
         }
 
-        final int MAX_SPIN_SPEED = 35;
+        double animation_factor = controller.getSettings().getAnimationSpeed().getSpeedFactor();
+        double max_time = 2500 * animation_factor;
+        long time_now = System.currentTimeMillis();
+        long time_since_start = time_now -time_start_;
+        double percentage = time_since_start / max_time;
+        if (percentage > 1) {
+            percentage = 1;
+        }
 
-        // calculate time interval
-        long timeNow = System.currentTimeMillis();
-        long timeDelta = timeNow - timePrev;
+        double t1 = 0.21;
+        double t2 = 0.38;
+        double t3 = 0.62;
+        double t4 = 0.79;
+        double t5 = 0.93;
 
-        if (timeDelta > 300) {
+        // first spin
+        if (percentage <= t1) {
+            degree_ = (int) (180 * ((percentage ) / (t1)));
+        }
+        else if (percentage <= t2) {
+            degree_ = 180 + (int) (180 * ((percentage - t1 ) / (t2 - t1)));
+        }
 
-            // increase speed in the first x rotations
-            if (degree_ / 360.0 < 4.6) {
-                spin_speed_ *= 2;
-                if (spin_speed_ > MAX_SPIN_SPEED) {
-                    spin_speed_ = MAX_SPIN_SPEED;
-                }
-            }
-            // decrease speed in the last rotations
-            else {
-                spin_speed_ /= 2;
-                if (spin_speed_ < MIN_SPIN_SPEED) {
-                    spin_speed_ = MIN_SPIN_SPEED;
-                }
-            }
-            timePrev = System.currentTimeMillis();
+        // second spin
+        else if (percentage <= t3) {
+            degree_ = (int) (360 * ((percentage - t2 ) / (t3 - t2)));
+        }
+
+        // third spin
+        else if (percentage <= t4) {
+            degree_ = (int) (180 * ((percentage - t3 ) / (t4 - t3)));
+        }
+        else if (percentage <= t5) {
+            degree_ =  180 + (int) (180 * ((percentage - t4 ) / (t5 - t4)));
+        }
+        else {
+            degree_ = 0;
         }
 
         // after around 50% switch the cards
-        if (!cards_changed_ && degree_ / 360 > 2) {
+        if (!cards_changed_ && percentage > 0.68) {
             cards_changed_ = true;
         }
 
         // animation is done after x rotations
-        if (degree_ / 360 > 5) {
-            spin_speed_ = 0;
+        if (percentage >= 1) {
             animation_spinning_running_ = false;
             animation_end_running_ = true;
         }
@@ -196,7 +206,6 @@ public class CardExchangeAnimation {
         new_drawn_cards_.clear();
         animation_spinning_running_ = false;
         animation_end_running_ = false;
-        spin_speed_ = MIN_SPIN_SPEED;
         degree_ = 0;
         cards_changed_ = false;
     }

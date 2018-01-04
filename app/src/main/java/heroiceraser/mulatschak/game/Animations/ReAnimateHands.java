@@ -2,7 +2,7 @@ package heroiceraser.mulatschak.game.Animations;
 
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameLogic;
-import heroiceraser.mulatschak.game.MyPlayer;
+import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
 
 /**
  * Created by Daniel Metzner on 18.08.2017.

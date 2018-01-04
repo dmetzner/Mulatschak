@@ -5,15 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.HelpText;
+import heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
-import heroiceraser.mulatschak.game.DrawableObjects.DiscardPile;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameLogic;
-import heroiceraser.mulatschak.game.GamePlay.PlayACard.EnemyPlayACardLogic;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.game.MyPlayer;
+import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
 
 
 //----------------------------------------------------------------------------------------------
@@ -43,7 +42,7 @@ public class CardExchangeLogic {
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
-    public CardExchangeLogic() {
+    CardExchangeLogic() {
         help_text_ = new HelpText();
         exchange_buttons_ = new ArrayList<>();
         card_exchange_animation_ = new CardExchangeAnimation();
@@ -62,17 +61,18 @@ public class CardExchangeLogic {
         int width = layout.getCardExchangeTextWidth();
         int max_height = layout.getCardExchangeButtonPosition().y - layout.getCardExchangeTextPosition().y;
 
-        String help_text = "Berühre alle Karten die du austauschen möchtest. " +
-                "Du kannst Keine, Eine, Zwei, Drei oder alle Karten austauschen";
+        String help_text = view.getResources().getString(R.string.card_exchange_help_text);
         help_text_.init(view, help_text, width, max_height);
 
         Point position = layout.getCardExchangeButtonPosition();
         width = layout.getCardExchangeButtonSize().x;
         int height = layout.getCardExchangeButtonSize().y;
-        for (int i = 0; i < 6; i++) {
+
+        int buttons_size = 6;
+        for (int i = 0; i < buttons_size; i++) {
             MyButton button = new MyButton();
             int id = i;
-            if (i == 4) {
+            if (i == 4) {       //Todo
                 id = i + 1;
             }
             button.init(view, position, width, height, "button_" + id + "_karten");
@@ -172,7 +172,7 @@ public class CardExchangeLogic {
 
         // start a wonderful spinning animation -> enables canvas thread
         controller.getView().enableUpdateCanvasThread();
-        card_exchange_animation_.startSpinning();
+        card_exchange_animation_.startSpinning(controller);
 
         // --> gets continued by draw method
     }
@@ -187,7 +187,7 @@ public class CardExchangeLogic {
         // spinning animation
         if (card_exchange_animation_.isSpinning()) {
             card_exchange_animation_.drawRotation(canvas);
-            card_exchange_animation_.recalculateSpinningParameters();
+            card_exchange_animation_.recalculateSpinningParameters(controller);
         }
 
         // continueAfter the spinning animation
@@ -200,7 +200,7 @@ public class CardExchangeLogic {
         else {
             // Help Text
             Point position = controller.getLayout().getCardExchangeTextPosition();
-            controller.getGamePlay().getCardExchange().getCardExchangeLogic().getHelpText().draw(canvas, position);
+            help_text_.draw(canvas, position);
             // button
             exchange_buttons_.get(active_button_).draw(canvas);
         }
@@ -310,9 +310,5 @@ public class CardExchangeLogic {
 
     public void startAnimation() {
         this.animation_running_ = true;
-    }
-
-    public HelpText getHelpText() {
-        return help_text_;
     }
 }
