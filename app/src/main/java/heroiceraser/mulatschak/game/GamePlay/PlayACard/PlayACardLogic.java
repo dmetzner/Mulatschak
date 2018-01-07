@@ -178,7 +178,7 @@ public class PlayACardLogic {
                 return;
             }
 
-            // check if card is a valid play
+            // checkButton if card is a valid play
             boolean valid = controller.getLogic().isAValidCardPlay(hand.getCardAt(move_card_idx_),
                     hand, controller.getDiscardPile());
 

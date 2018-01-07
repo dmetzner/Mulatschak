@@ -1,9 +1,11 @@
 package heroiceraser.mulatschak.game.NonGamePlayUI.PlayerInfo;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.text.TextPaint;
 import android.view.Gravity;
 import android.widget.PopupWindow;
 
@@ -12,6 +14,8 @@ import java.util.List;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
+import heroiceraser.mulatschak.DrawableBasicObjects.TextField;
 import heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
@@ -26,9 +30,11 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
 
     private GameView view_;
 
+    private MyTextField player0Text;
     private List<Rect> rects_;
     private Paint rect_paint_;
     private int active_player_;
+    private boolean showPlayer0Turn;
 
     private MyButton button_left_;
     private MyButton button_top_;
@@ -62,6 +68,7 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
 
         rects_ = new ArrayList<>();
         rect_paint_ = new Paint();
+        player0Text = new MyTextField();
     }
 
     public void init(GameView view) {
@@ -110,6 +117,20 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
             rects_.add(rect);
         }
 
+        String text = view.getResources().getString(R.string.player_info_active_player_is_0);
+        player0Text.setText(text);
+        TextPaint tp = new TextPaint();
+        tp.setAntiAlias(true);
+        tp.setTextSize(layout.getDealerButtonSize() * (2/3f));
+        tp.setTextAlign(Paint.Align.CENTER);
+        tp.setColor(Color.WHITE);
+        player0Text.setTextPaint(tp);
+        player0Text.setBorder(view.getResources().getColor(R.color.metallic_blue), 0.25f);
+        player0Text.setMaxWidth(layout.getScreenWidth() / 2);
+        player0Text.setPosition(new Point(layout.getScreenWidth() / 2,
+                (int) (layout.getDealerButtonPosition(0).y + layout.getDealerButtonSize() / 2.0) ));
+        player0Text.setVisible(true);
+
         rect_paint_.setStyle(Paint.Style.FILL);
         rect_paint_.setColor(view.getResources().getColor(R.color.metallic_blue));
         setVisible(true);
@@ -137,6 +158,11 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
 
     public void draw(Canvas canvas) {
         if (isVisible()) {
+
+            if (active_player_ == 0 && showPlayer0Turn) {
+                player0Text.draw(canvas);
+            }
+
             if (active_player_ >= 0 && active_player_ < rects_.size()){
                 canvas.drawRect(rects_.get(active_player_), rect_paint_);
             }
@@ -176,6 +202,10 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
                 pos.x  - pop_up_width_ + getWidth(),
                 pos.y);
 
+    }
+
+    public void setShowPlayer0Turn(boolean showPlayer0Turn) {
+        this.showPlayer0Turn = showPlayer0Turn;
     }
 
     @Override

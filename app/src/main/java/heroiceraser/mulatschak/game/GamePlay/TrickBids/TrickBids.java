@@ -2,6 +2,7 @@ package heroiceraser.mulatschak.game.GamePlay.TrickBids;
 
 import java.util.List;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameLogic;
@@ -41,7 +42,7 @@ public class TrickBids {
     public void init(GameView view) {
         makeBidsAnimation.init(view);
         //  enemyMakeBidsLogic    NO init needed!
-        bids_view_.init(view);
+        //  bids_view_.init(view);
     }
 
 
@@ -112,18 +113,16 @@ public class TrickBids {
             logic.setTrumpPlayerId(id);
             logic.setTricksToMake(MakeBidsAnimation.MULATSCHAK);
             controller.getPlayerById(id).setTricksToMake(MakeBidsAnimation.MULATSCHAK);
-            bids_view_.getBidsFieldList().get(logic.getTurn())
-                    .startAnimation("M", controller);
+            bids_view_.startAnimation(controller, logic.getTurn(), "M");
         }
 
         else if (amount == MakeBidsAnimation.MISS_A_TURN) {
             controller.getPlayerById(id).setTricksToMake(amount);
-            bids_view_.getBidsFieldList().get(logic.getTurn())
-                    .startAnimation("X", controller);
+            bids_view_.startAnimation(controller, logic.getTurn(), "X");
         }
 
         else if (amount > logic.getTricksToMake()) {
-            List<MyButton> buttons = makeBidsAnimation.getNumberButtons();
+            List<MyTextButton> buttons = makeBidsAnimation.getNumberButtons();
             // disable lower amount buttons, but button 0 is always clickable // miss a turn
             for (int i = 2; i <= (amount + 1); i++) {
                 buttons.get(i).setEnabled(false);
@@ -131,13 +130,11 @@ public class TrickBids {
             controller.getPlayerById(id).setTricksToMake(amount);
             logic.setTricksToMake(amount);
             logic.setTrumpPlayerId(id);
-            bids_view_.getBidsFieldList().get(logic.getTurn())
-                    .startAnimation("" + amount, controller);
+            bids_view_.startAnimation(controller, logic.getTurn(), "" + amount);
         }
         else {
             controller.getPlayerById(id).setTricksToMake(0);
-            bids_view_.getBidsFieldList().get(logic.getTurn())
-                    .startAnimation("-", controller);
+            bids_view_.startAnimation(controller, logic.getTurn(), "-");
         }
 
         // there have to be at least two active players every round!
@@ -148,7 +145,7 @@ public class TrickBids {
             }
         }
         if (amount_of_playing_players <= 2) {
-            List<MyButton> buttons = makeBidsAnimation.getNumberButtons();
+            List<MyTextButton> buttons = makeBidsAnimation.getNumberButtons();
             buttons.get(0).setEnabled(false);
         }
     }

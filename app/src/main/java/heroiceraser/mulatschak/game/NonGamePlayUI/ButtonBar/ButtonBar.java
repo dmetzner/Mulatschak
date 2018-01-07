@@ -1,29 +1,39 @@
 package heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBar;
 
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Point;
-
-import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
+import heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
 
-/**
- * Created by Daniel Metzner on 25.08.2017.
- */
 
+//--------------------------------------------------------------------------------------------------
+//  ButtonBar Class
+//
 public class ButtonBar extends DrawableObject {
 
-    private MyButton statistics_button_;
-    private MyButton tricks_button_;
-    private MyButton menu_button_;
+    //----------------------------------------------------------------------------------------------
+    //  Member Variables
+    //
+    private MyTextButton statistics_button_;
+    private MyTextButton tricks_button_;
+    private MyTextButton menu_button_;
 
+
+    //----------------------------------------------------------------------------------------------
+    //  Constructor
+    //
     public ButtonBar() {
         super();
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  init
+    //
     public void init(GameView view) {
         setWidth(view.getController().getLayout().getButtonBarWidth());
         setHeight(view.getController().getLayout().getButtonBarHeight());
@@ -35,41 +45,49 @@ public class ButtonBar extends DrawableObject {
         initMenuButton(view);
     }
 
-
+    //----------------------------------------------------------------------------------------------
+    //  init Buttons
+    //
     private void initStatisticButton(GameView view) {
-        statistics_button_ = new MyButton();
+        statistics_button_ = new MyTextButton();
         Point position = view.getController().getLayout().getButtonBarButtonPositionRight();
         int width = view.getController().getLayout().getButtonBarBigButtonWidth();
         int height = view.getController().getLayout().getButtonBarBigButtonHeight();
-        String image_name = "button_spielstand";
-        statistics_button_.init(view, position, width, height, image_name);
+        String image_name = "button_blue_metallic_large";
+        String text = view.getResources().getString(R.string.button_bar_state_of_the_game_title);
+        statistics_button_.init(view, position, width, height, image_name, text);
     }
 
     private void initTricksButton(GameView view) {
-        tricks_button_ = new MyButton();
+        tricks_button_ = new MyTextButton();
         Point position = view.getController().getLayout().getButtonBarButtonPositionMiddle();
         int width = view.getController().getLayout().getButtonBarBigButtonWidth();
         int height = view.getController().getLayout().getButtonBarBigButtonHeight();
-        String image_name = "button_stiche";
-        tricks_button_.init(view, position, width, height, image_name);
+        String image_name = "button_blue_metallic_large";
+        String text = view.getResources().getString(R.string.button_bar_tricks_title);
+        tricks_button_.init(view, position, width, height, image_name, text);
     }
 
     private void initMenuButton(GameView view) {
-        menu_button_ = new MyButton();
+        menu_button_ = new MyTextButton();
         Point position = view.getController().getLayout().getButtonBarButtonPositionLeft();
         int width = view.getController().getLayout().getButtonBarSmallButtonWidth();
         int height = view.getController().getLayout().getButtonBarSmallButtonHeight();
-        String image_name = "button_menu";
-        menu_button_.init(view, position, width, height, image_name);
+        String image_name = "button_blue_metallic";
+        String text = view.getResources().getString(R.string.button_bar_menu_title);
+        menu_button_.init(view, position, width, height, image_name, text);
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  draw
+    //
     public void draw(Canvas canvas) {
         drawBackground(canvas);
         drawButtons(canvas);
     }
 
     private void drawBackground(Canvas canvas) {
-        // background
         canvas.drawBitmap(getBitmap(), getPosition().x, getPosition().y, null);
     }
 
@@ -80,15 +98,18 @@ public class ButtonBar extends DrawableObject {
     }
 
 
-    public MyButton getStatisticsButton() {
+    //----------------------------------------------------------------------------------------------
+    //  Getter
+    //
+    public MyTextButton getStatisticsButton() {
         return statistics_button_;
     }
 
-    public MyButton getTricksButton() {
+    public MyTextButton getTricksButton() {
         return tricks_button_;
     }
 
-    public MyButton getMenuButton() {
+    public MyTextButton getMenuButton() {
         return menu_button_;
     }
 }

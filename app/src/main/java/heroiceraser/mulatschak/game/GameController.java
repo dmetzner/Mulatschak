@@ -28,6 +28,9 @@ import heroiceraser.mulatschak.game.NonGamePlayUI.RoundInfo.RoundInfo;
 
 public class GameController{
 
+    //----------------------------------------------------------------------------------------------
+    //  Constants
+    //
     public static int NOT_SET = -9999;
 
     //----------------------------------------------------------------------------------------------
@@ -156,6 +159,7 @@ public class GameController{
         resetTricksToMake();
         // getGamePlay().getPlayACard().setCardMovable(false);
         player_info_.setActivePlayer(NOT_SET);
+        player_info_.setShowPlayer0Turn(false);
 
         discardPile_.setVisible(false);
         discardPile_.setOverlaysVisible(false);
@@ -174,6 +178,14 @@ public class GameController{
     //
     public void continueAfterDealingAnimation() {
         non_game_play_ui_.getRoundInfo().setInfoBoxEmpty();
+        game_play_.getDecideMulatschak().startMulatschakDecision(this);
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    //  continueAfterDecideMulatschak
+    //
+    public void continueAfterDecideMulatschak() {
         non_game_play_ui_.getRoundInfo().getTrickBidsTextField().setVisible(true);
         game_play_.getTrickBids().startTrickBids(this);
     }
@@ -196,7 +208,7 @@ public class GameController{
             }
         };
 
-        // check the highest bid
+        // checkButton the highest bid
         switch (game_play_.getTrickBids().getHighestBid(controller)) {
             case 0:  // start a new round if every player said 0 tricks
                 // ToDo
@@ -246,6 +258,7 @@ public class GameController{
     //
     public void continueAfterCardExchange() {
         discardPile_.setVisible(true);
+        player_info_.setShowPlayer0Turn(true);
         nextCardRound(); // first call
     }
 

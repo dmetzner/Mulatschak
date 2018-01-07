@@ -831,4 +831,12 @@ public class GameLayout {
     public List<Point> getTrickBidsGamePlayPositions() {
         return trick_bids_game_play_positions_;
     }
+
+    public float getOnePercentOfScreenWidth() {
+        return getScreenWidth() / 100.0f;
+    }
+
+    public float getOnePercentOfScreenHeight() {
+        return getScreenHeight() / 100.0f;
+    }
 }

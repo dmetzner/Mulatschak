@@ -137,7 +137,7 @@ public class EnemyCardExchangeLogic {
                 }
             }
 
-            // check if the card should get sorted out
+            // checkButton if the card should get sorted out
             if (!logic.isCardTrump(hand.get(i)) &&
                     GameLogic.getCardValue(hand.get(i)) < weak_border) {
 

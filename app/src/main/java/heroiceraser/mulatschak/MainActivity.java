@@ -388,7 +388,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     //----------------------------------------------------------------------------------------------
-    // check for Achievements  ToDO
+    // checkButton for Achievements  ToDO
     //
     void checkForAchievements(int requestedScore, int finalScore) {
         // Check if each condition is met; if so, unlock the corresponding
@@ -848,7 +848,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     // We treat most of the room update callbacks in the same way: we update our list of
-    // participants and update the display. In a real game we would also have to check if that
+    // participants and update the display. In a real game we would also have to checkButton if that
     // change requires some action like removing the corresponding player avatar from the screen,
     // etc.
     @Override
@@ -1010,7 +1010,7 @@ public class MainActivity extends AppCompatActivity implements
                     mParticipantScore.get(sender) : 0;
             int thisScore = (int) buf[1];
             if (thisScore > existingScore) {
-                // this check is necessary because packets may arrive out of
+                // this checkButton is necessary because packets may arrive out of
                 // order, so we
                 // should only ever consider the highest score we received, as
                 // we know in our

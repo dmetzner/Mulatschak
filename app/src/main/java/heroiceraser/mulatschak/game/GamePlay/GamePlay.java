@@ -6,6 +6,7 @@ import heroiceraser.mulatschak.game.GamePlay.CardExchange.CardExchange;
 import heroiceraser.mulatschak.game.GamePlay.ChooseTrump.ChooseTrump;
 import heroiceraser.mulatschak.game.GamePlay.DealCards.DealCards;
 import heroiceraser.mulatschak.game.GamePlay.PlayACard.PlayACard;
+import heroiceraser.mulatschak.game.GamePlay.TrickBids.DecideMulatschak.DecideMulatschak;
 import heroiceraser.mulatschak.game.GamePlay.TrickBids.TrickBids;
 import heroiceraser.mulatschak.game.GameView;
 
@@ -20,24 +21,26 @@ public class GamePlay {
     //----------------------------------------------------------------------------------------------
     //  Member Variables
     //
-    private DealCards deal_cards_;
-    private TrickBids trick_bids_;
-    private ChooseTrump choose_trump_;
-    private CardExchange card_exchange_;
-    private PlayACard play_a_card_;
-    private AllCardsPlayed all_cards_played_;
+    private DealCards dealCards;
+    private DecideMulatschak decideMulatschak;
+    private TrickBids trickBids;
+    private ChooseTrump chooseTrump;
+    private CardExchange cardExchange;
+    private PlayACard playACard;
+    private AllCardsPlayed allCardsPlayed;
 
 
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
     public GamePlay() {
-        deal_cards_ = new DealCards();
-        trick_bids_ = new TrickBids();
-        choose_trump_ = new ChooseTrump();
-        card_exchange_ = new CardExchange();
-        all_cards_played_ = new AllCardsPlayed();
-        play_a_card_ = new PlayACard();
+        dealCards = new DealCards();
+        decideMulatschak = new DecideMulatschak();
+        trickBids = new TrickBids();
+        chooseTrump = new ChooseTrump();
+        cardExchange = new CardExchange();
+        allCardsPlayed = new AllCardsPlayed();
+        playACard = new PlayACard();
     }
 
 
@@ -45,12 +48,13 @@ public class GamePlay {
     //  init
     //
     public void init(GameView view) {
-        //  deal_cards_.init(view);   NO init needed
-        trick_bids_.init(view);
-        choose_trump_.init(view);
-        card_exchange_.init(view);
-        play_a_card_.init(view);
-        // all_cards_played_ -> needed only once in a while, generate everything at call
+        //  dealCards.init(view);   NO init needed
+        decideMulatschak.init(view);
+        trickBids.init(view);
+        chooseTrump.init(view);
+        cardExchange.init(view);
+        playACard.init(view);
+        // allCardsPlayed -> needed only once in a while, generate everything at call
     }
 
 
@@ -58,8 +62,8 @@ public class GamePlay {
     //  init
     //
     public void startRound(GameController controller) {
-        trick_bids_.startRound(controller);
-        choose_trump_.startRound(controller);
+        trickBids.startRound(controller);
+        chooseTrump.startRound(controller);
         // clean up ToDo for the rest
     }
 
@@ -68,26 +72,30 @@ public class GamePlay {
     //  Getter
     //
     public DealCards getDealCards() {
-        return deal_cards_;
+        return dealCards;
+    }
+
+    public DecideMulatschak getDecideMulatschak() {
+        return decideMulatschak;
     }
 
     public TrickBids getTrickBids() {
-        return trick_bids_;
+        return trickBids;
     }
 
     public ChooseTrump getChooseTrump() {
-        return choose_trump_;
+        return chooseTrump;
     }
 
     public CardExchange getCardExchange() {
-        return card_exchange_;
+        return cardExchange;
     }
 
     public PlayACard getPlayACard() {
-        return play_a_card_;
+        return playACard;
     }
 
     public AllCardsPlayed getAllCardsPlayed() {
-        return all_cards_played_;
+        return allCardsPlayed;
     }
 }

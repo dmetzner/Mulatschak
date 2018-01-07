@@ -60,7 +60,7 @@ public class AllCardsPlayed {
         // update lives for statistic tab
         ui.getStatistics().updatePlayerLives(controller);
 
-        // check if game over
+        // checkButton if game over
         if (go.isGameOver(controller)) {
             logic.setGameOver(true);
             ui.getRoundInfo().setInfoBoxEmpty();
@@ -68,6 +68,10 @@ public class AllCardsPlayed {
             go.setVisible(true);                                // ToDo start animation??
             return;
         }
+
+        // round is over, can't be the turn of anyone
+        controller.getPlayerInfo().setActivePlayer(GameController.NOT_SET);
+        controller.getPlayerInfo().setShowPlayer0Turn(false);
 
         // else prepare a new round
         ui.getRoundInfo().setInfoBoxEmpty();

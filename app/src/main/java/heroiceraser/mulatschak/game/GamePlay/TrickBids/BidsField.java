@@ -22,181 +22,75 @@ public class BidsField extends DrawableObject{
     //  Member Variables
     //
     //---- circle
-    private float radius_;
-    private int stroke_width_;
-    private Paint circle_paint_border_;
-    private Paint circle_paint_default_;
+    private float radius;
+    private int strokeWidth;
+    private Paint circlePaintBorder;
+    private Paint circlePaintDefault;
 
     //---- Text
-    private TextPaint text_paint_;
-    private String text_;
+    private TextPaint textPaint;
+    private String text;
 
     //---- Animation
-    private boolean animation_running_;
-    private long start_time_;
-
-    private Point start_pos_;               // position movement
-    private Point end_pos_;
-    private Point saved_start_pos_;
-    private Point offset_;
-
+    private boolean animationRunning;
+    private Point startPos;
+    private Point offset;
     private float min_radius_;              // size changes
     private float max_radius_;
-
 
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
-    BidsField() {
+    public BidsField() {
         super();
+        radius = 0;
     }
 
 
     //----------------------------------------------------------------------------------------------
     //  Init
     //
-    public void init(GameView view, final Point start_pos, final Point end_pos) {
+    public void init(GameView view, String text, final Point position) {
 
         //---- position
-        start_pos_ = start_pos;
-        saved_start_pos_= new Point(start_pos);
-        end_pos_ = end_pos;
-        calculatePositionOffset();
+        setPosition(new Point(position));
 
         //---- size
         // dealerButton <= radius <= min(cardWidth, cardHeight)
         max_radius_ = Math.min(view.getController().getLayout().getCardWidth(),
         view.getController().getLayout().getCardHeight()) / 2.03f;
         min_radius_ = view.getController().getLayout().getDealerButtonSize() / 2;
-        radius_ = min_radius_;
+        radius = min_radius_;
 
         //---- border
-        circle_paint_border_ = new Paint();
-        circle_paint_border_.setColor(Color.BLACK);
-        circle_paint_border_.setAntiAlias(true);
-        stroke_width_ = (int) (radius_ / 10);
-        if (stroke_width_ < 2) {
-            stroke_width_ = 2;
+        circlePaintBorder = new Paint();
+        circlePaintBorder.setColor(Color.BLACK);
+        circlePaintBorder.setAntiAlias(true);
+        strokeWidth = (int) (radius / 10);
+        if (strokeWidth < 2) {
+            strokeWidth = 2;
         }
-        circle_paint_border_.setStrokeWidth(stroke_width_);
-        circle_paint_border_.setStyle(Paint.Style.STROKE);
+        circlePaintBorder.setStrokeWidth(strokeWidth);
+        circlePaintBorder.setStyle(Paint.Style.STROKE);
 
         //---- fill
-        circle_paint_default_ = new Paint();
-        circle_paint_default_.setColor(view.getResources().getColor(R.color.metallic_blue));
-        circle_paint_default_.setAntiAlias(true);
-        circle_paint_default_.setStyle(Paint.Style.FILL);
+        circlePaintDefault = new Paint();
+        circlePaintDefault.setColor(view.getResources().getColor(R.color.metallic_blue));
+        circlePaintDefault.setAntiAlias(true);
+        circlePaintDefault.setStyle(Paint.Style.FILL);
 
         //---- text
-        text_paint_ = new TextPaint();
-        text_paint_.setAntiAlias(true);
-        text_paint_.setTextSize(radius_);
-        text_paint_.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-        text_paint_.setColor(Color.WHITE);
-        text_paint_.setStyle(Paint.Style.FILL);
-        text_paint_.setTextAlign(Paint.Align.CENTER);
-        text_ = "";
+        textPaint = new TextPaint();
+        textPaint.setAntiAlias(true);
+        textPaint.setTextSize(radius);
+        textPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        textPaint.setColor(Color.WHITE);
+        textPaint.setStyle(Paint.Style.FILL);
+        textPaint.setTextAlign(Paint.Align.CENTER);
+        this.text = text;
 
-        animation_running_ = false;
-        setVisible(false);
-    }
-
-
-    //----------------------------------------------------------------------------------------------
-    //  calculatePositionOffset
-    //
-    private void calculatePositionOffset() {
-        offset_ = new Point (end_pos_.x - start_pos_.x, end_pos_.y - start_pos_.y);
-    }
-
-
-    //----------------------------------------------------------------------------------------------
-    //  startEndingAnimation
-    //                          -> starts animation and saves start time
-    //                          -> set field back to origin start position,
-    //                             max alpha, min radius
-    //
-    public void startAnimation(String text, GameController controller) {
-        text_ = text;
-        controller.getView().enableUpdateCanvasThread();
-        setPosition(saved_start_pos_);
-        start_pos_ = saved_start_pos_;
-        calculatePositionOffset();
-        radius_ = min_radius_;
-        text_paint_.setTextSize(radius_);
-        updateAlpha(255);
-        start_time_ = System.currentTimeMillis();
-        animation_running_ = true;
+        animationRunning = false;
         setVisible(true);
-    }
-
-
-    //----------------------------------------------------------------------------------------------
-    //  continueEndingAnimation
-    //                          -> gets called till animation is done
-    //                          -> winner bid field moves to end position
-    //                          -> other field fade out (alpha reduction)
-    //                          -> all field get their size reduced
-    //
-    private void continueAnimation(GameController controller) {
-        double speed_factor = controller.getSettings().getAnimationSpeed().getSpeedFactor();
-        double max_time = 1000 * speed_factor;
-        long time = System.currentTimeMillis();
-        long time_since_start = time - start_time_;
-
-        double percentage = time_since_start / max_time;
-
-        if (percentage > 1) {
-            percentage = 1;
-        }
-
-        changeSizeBasedOnPercentage(percentage);
-
-        moveToFinalPositionBasedOnPercentage(percentage);
-
-        if (percentage >= 1) {
-            animation_running_ = false;
-            controller.getGamePlay().getTrickBids().makeTrickBids(false, controller);
-        }
-    }
-
-
-    //----------------------------------------------------------------------------------------------
-    //  UpdateAlpha value
-    //
-    void updateAlpha(int alpha) {
-        circle_paint_border_.setAlpha(alpha);
-        circle_paint_default_.setAlpha(alpha);
-        text_paint_.setAlpha(alpha);
-    }
-
-
-    //----------------------------------------------------------------------------------------------
-    //  moveToFinalPositionBasedOnPercentage
-    //
-    private void moveToFinalPositionBasedOnPercentage(double percentage) {
-
-        int offset_x = (int) (offset_.x * percentage);
-        int offset_y = (int) (offset_.y * percentage);
-
-        setPosition(new Point(start_pos_.x + offset_x,
-                start_pos_.y + offset_y));
-    }
-
-
-    //----------------------------------------------------------------------------------------------
-    //  changeSizeBasedOnPercentage
-    //                              -> can't be smaller than min radius or bigger than max radius
-    //
-    void changeSizeBasedOnPercentage(double percentage) {
-        radius_ = (float) percentage * max_radius_;
-        if (radius_ < min_radius_) {
-            radius_ = min_radius_;
-        }
-        if (radius_ > max_radius_) {
-            radius_ = max_radius_;
-        }
-        text_paint_.setTextSize((radius_));
     }
 
 
@@ -205,56 +99,117 @@ public class BidsField extends DrawableObject{
     //          -> draws a circle with a border and a text in it
     //          -> continues ending animation if it's running
     //
-    public void draw(Canvas canvas, GameController controller) {
+    public void draw(Canvas canvas) {
         if (isVisible()) {
 
             // reduce radius by the stroke width
-            float radius = radius_ - stroke_width_;
+            float radius = this.radius - strokeWidth;
 
             // draw filling
-            canvas.drawCircle(getPosition().x, getPosition().y, radius, circle_paint_default_);
+            canvas.drawCircle(getPosition().x, getPosition().y, radius, circlePaintDefault);
             // draw border
-            canvas.drawCircle(getPosition().x, getPosition().y, radius, circle_paint_border_);
+            canvas.drawCircle(getPosition().x, getPosition().y, radius, circlePaintBorder);
 
-            canvas.drawText(text_, getPosition().x,
-                    getPosition().y + radius_ / 2.5f, text_paint_);
-
-            //----
-            if (animation_running_) {
-                continueAnimation(controller);
-            }
+            canvas.drawText(text, getPosition().x,
+                    getPosition().y + radius / 2.5f, textPaint);
         }
     }
 
 
     //----------------------------------------------------------------------------------------------
+    //  calculatePositionOffset
+    //
+    private void calculatePositionOffset(Point startPos, Point endPos) {
+        this.offset = new Point (endPos.x - startPos.x, endPos.y - startPos.y);
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    //  startAnAnimation
+    //                          -> starts animation and saves start time
+    //                          -> set field back to origin start position,
+    //                             max alpha, min radius
+    //
+    public void startAnimation(GameController controller, Point startPos, Point endPos) {
+        controller.getView().enableUpdateCanvasThread();
+        calculatePositionOffset(startPos, endPos);
+        this.startPos = startPos;
+        animationRunning = true;
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    //  UpdateAlpha value
+    //
+    public void updateAlpha(int alpha) {
+        circlePaintBorder.setAlpha(alpha);
+        circlePaintDefault.setAlpha(alpha);
+        textPaint.setAlpha(alpha);
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    //  moveToFinalPositionBasedOnPercentage
+    //
+    public void moveToFinalPositionBasedOnPercentage(double percentage) {
+
+        int offset_x = (int) (offset.x * percentage);
+        int offset_y = (int) (offset.y * percentage);
+
+        setPosition(new Point(startPos.x + offset_x,
+                startPos.y + offset_y));
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    //  changeSizeBasedOnPercentage
+    //                              -> can't be smaller than min radius or bigger than max radius
+    //
+    public void changeSizeBasedOnPercentage(double percentage) {
+        radius = (float) percentage * max_radius_;
+        if (radius < min_radius_) {
+            radius = min_radius_;
+        }
+        if (radius > max_radius_) {
+            radius = max_radius_;
+        }
+        textPaint.setTextSize((radius));
+    }
+
+
+
+    //----------------------------------------------------------------------------------------------
     // Getter & Setter
     //
-    void reset() {
-        setVisible(false);
+    public void setOffset(Point offset) {
+        this.offset = offset;
     }
 
-    void setStartPosition(Point start_pos) {
-        start_pos_ = start_pos;
-    }
-
-    Point getStartPosition() {
-        return start_pos_;
-    }
-
-    void setOffset(Point offset) {
-        offset_ = offset;
-    }
-
-    Point getOffset() {
-        return offset_;
+    public Point getOffset() {
+        return offset;
     }
 
     public String getText() {
-        return text_;
+        return text;
     }
 
     public void setText(String text) {
-        text_ = text;
+        this.text = text;
+    }
+
+    public boolean isAnimationRunning() {
+        return animationRunning;
+    }
+
+    public void setAnimationRunning(boolean animationRunning) {
+        this.animationRunning = animationRunning;
+    }
+
+    public Point getStartPos() {
+        return startPos;
+    }
+
+    public void setStartPos(Point startPos) {
+        this.startPos = startPos;
     }
 }

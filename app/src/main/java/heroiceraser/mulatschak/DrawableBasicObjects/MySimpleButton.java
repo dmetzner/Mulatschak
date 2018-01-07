@@ -28,7 +28,7 @@ public class MySimpleButton extends DrawableObject{
     private Rect border_rect_;
     private Paint border_paint_;
 
-    // Background
+    // Background4Player0Animations
     private Rect background_rect_;
     private Paint background_paint_;
 

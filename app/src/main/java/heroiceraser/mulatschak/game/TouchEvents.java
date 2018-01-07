@@ -27,12 +27,6 @@ class TouchEvents {
 
         //------------------------
 
-
-
-        //------------------ Play a Card -----------------------------------------------------------
-        controller.getGamePlay().getPlayACard().getPlayACardLogic().touchActionDown(controller, X, Y);
-
-
         // ------------------ ButtonBar ------------------------------------------------------------
 
         // Statistic Button
@@ -47,20 +41,38 @@ class TouchEvents {
         else if (ButtonActionDown(X, Y, controller.getNonGamePlayUIContainer()
                 .getButtonBar().getMenuButton()) ) {}
 
-        //------------------------
-
         // ------------------ ButtonBar Tricks Window ----------------------------------------------
         else if (ButtonActionDown(X, Y, controller.getNonGamePlayUIContainer()
                 .getTricks().getArrowButtonLeft()) ) {}
         else if (ButtonActionDown(X, Y, controller.getNonGamePlayUIContainer()
                 .getTricks().getArrowButtonRight()) ) {}
 
+        // ------------------ Menu Button Bar Window -----------------------------------------------
+        if (controller.getNonGamePlayUIContainer().getMenu().isVisible()) {
+            controller.getNonGamePlayUIContainer().getMenu().touchEventDown(X, Y);
+        }
+        //------------------------
+
+        // other UI elements not touchable while ButtonBar window is active
+        if (controller.getNonGamePlayUIContainer().isAWindowActive()) {
+            return;
+        }
+
+
+
+
+
+        //------------------ Play a Card -----------------------------------------------------------
+        controller.getGamePlay().getPlayACard().getPlayACardLogic().touchActionDown(controller, X, Y);
+
+        //------------------- DecideMulatschak -----------------------------------------------------
+        controller.getGamePlay().getDecideMulatschak().touchEventDown(X, Y);
         //------------------------
 
 
         //------------------- Card Exchange --------------------------------------------------------
 
-        else if (controller.getGamePlay().getCardExchange().getCardExchangeLogic().isAnimationRunning() &&
+        if (controller.getGamePlay().getCardExchange().getCardExchangeLogic().isAnimationRunning() &&
         !controller.getNonGamePlayUIContainer().isAWindowActive()) {
             for (int i = 0; i < controller.getPlayerById(0).getAmountOfCardsInHand(); i++) {
                 Card card = controller.getPlayerById(0).getHand().getCardAt(i);
@@ -82,7 +94,7 @@ class TouchEvents {
         //  Buttons to make Trick Bids
         else if (controller.getGamePlay().getTrickBids().getMakeBidsAnimation().getAnimationNumbers() &&
                 !controller.getNonGamePlayUIContainer().isAWindowActive()) {
-            List<MyButton> buttons = controller.getGamePlay().getTrickBids().getMakeBidsAnimation().getNumberButtons();
+            List<MyTextButton> buttons = controller.getGamePlay().getTrickBids().getMakeBidsAnimation().getNumberButtons();
             for (int i = 0; i < buttons.size(); i++) {
                 ButtonActionDown(X, Y, buttons.get(i));
             }
@@ -117,15 +129,6 @@ class TouchEvents {
                 .getAllCardsPlayedView().getNextRoundButton()) ) {}
 
         //------------------------
-
-        // ------------------ Menu Button Bar Window -----------------------------------------------
-        if (controller.getNonGamePlayUIContainer().getMenu().isVisible()) {
-            controller.getNonGamePlayUIContainer().getMenu().touchEventDown(X, Y);
-        }
-
-        //------------------------
-
-
     }
 
 
@@ -161,13 +164,17 @@ class TouchEvents {
 
         //------------------------
 
-        // ------------------ MyPlayer Info ----------------------------------------------------------
+        // ------------------ MyPlayer Info --------------------------------------------------------
 
         // MyPlayer Info Buttons
         ButtonActionMove(X, Y, controller.getPlayerInfo().getButtonLeft());
         ButtonActionMove(X, Y, controller.getPlayerInfo().getButtonTop());
         ButtonActionMove(X, Y, controller.getPlayerInfo().getButtonRight());
 
+        //------------------------
+
+        //------------------- DecideMulatschak -----------------------------------------------------
+        controller.getGamePlay().getDecideMulatschak().touchEventMove(X, Y);
         //------------------------
 
         //------------------- Card Exchange --------------------------------------------------------
@@ -181,7 +188,7 @@ class TouchEvents {
         //------------------- Trick Bids -----------------------------------------------------------
 
         if (controller.getGamePlay().getTrickBids().getMakeBidsAnimation().getAnimationNumbers()) {
-            List<MyButton> buttons = controller.getGamePlay().getTrickBids().getMakeBidsAnimation().getNumberButtons();
+            List<MyTextButton> buttons = controller.getGamePlay().getTrickBids().getMakeBidsAnimation().getNumberButtons();
             for (int i = 0; i < buttons.size(); i++) {
                 if (controller.getGamePlay().getTrickBids().getMakeBidsAnimation().getAnimationNumbers()) {
                     ButtonActionMove(X, Y, buttons.get(i));
@@ -274,10 +281,15 @@ class TouchEvents {
         }
 
         //------------------------
+
+        //------------------- DecideMulatschak -----------------------------------------------------
+        controller.getGamePlay().getDecideMulatschak().touchEventUp(X, Y, controller);
+        //------------------------
+
         //------------------- Trick Bids -----------------------------------------------------------
 
         if (controller.getGamePlay().getTrickBids().getMakeBidsAnimation().getAnimationNumbers()) {
-            List<MyButton> buttons = controller.getGamePlay().getTrickBids().getMakeBidsAnimation().getNumberButtons();
+            List<MyTextButton> buttons = controller.getGamePlay().getTrickBids().getMakeBidsAnimation().getNumberButtons();
             for (int button_id = 0; button_id < buttons.size(); button_id++) {
                 if (ButtonActionUp(X, Y, buttons.get(button_id))) {
                     controller.getGamePlay().getTrickBids().getMakeBidsAnimation().setTricks(controller, button_id);
@@ -341,7 +353,7 @@ class TouchEvents {
     // Button Actions
     //
     private boolean ButtonActionDown(int X, int Y, MyTextButton button) {
-        if (button.isVisible() && button.IsEnabled() &&
+        if (button.isVisible() && button.isEnabled() &&
                 X >= button.getPosition().x && X < button.getPosition().x + button.getWidth() &&
                 Y >= button.getPosition().y && Y < button.getPosition().y + button.getHeight()) {
             button.setPressed(true);
@@ -360,7 +372,7 @@ class TouchEvents {
     }
 
     private void ButtonActionMove(int X, int Y, MyTextButton button) {
-        if (button.isVisible() && button.IsEnabled() && button.IsPressed()) {
+        if (button.isVisible() && button.isEnabled() && button.isPressed()) {
             if ( X >= button.getPosition().x && X < button.getPosition().x + button.getWidth() &&
                     Y >= button.getPosition().y && Y < button.getPosition().y + button.getHeight()) {
                 button.setPressed(true);
@@ -383,7 +395,7 @@ class TouchEvents {
     }
 
     private boolean ButtonActionUp(int X, int Y, MyTextButton button) {
-        if (button.isVisible() && button.IsEnabled() && button.IsPressed()) {
+        if (button.isVisible() && button.isEnabled() && button.isPressed()) {
             if (X >= button.getPosition().x && X < button.getPosition().x + button.getWidth() &&
                     Y >= button.getPosition().y && Y < button.getPosition().y + button.getHeight()) {
                 button.setPressed(false);

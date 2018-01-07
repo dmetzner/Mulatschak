@@ -2,6 +2,7 @@ package heroiceraser.mulatschak.helpers;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.util.Log;
 import android.view.View;
@@ -82,5 +83,19 @@ public final class HelperFunctions {
                 bm, 0, 0, width, height, matrix, false);
         bm.recycle();
         return resizedBitmap;
+    }
+
+    public static Bitmap createBitmapOverlay(Bitmap bitmap) {
+        int [] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
+        bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+        for( int i = 0; i < pixels.length; i++ ) {
+            //  shift to right to get rid of rgb(each 8 bit) & mask out sign part
+            if ((pixels[i] >> 24  & 0xff) < 0xFF) {
+                continue;
+            }
+            pixels[i] = Color.DKGRAY;
+        }
+        return Bitmap.createBitmap( pixels, bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888 );
     }
 }

@@ -38,10 +38,10 @@ class UpdatePlayerLives {
 
         GameLogic logic = controller.getLogic();
 
-        // check if it's a Mulatschak round
+        // checkButton if it's a Mulatschak round
         if (logic.isMulatschakRound()) {
 
-            // check if the Mulatschak was successful
+            // checkButton if the Mulatschak was successful
             boolean muli_succeeded = wasMuliSuccessful(controller);
 
             if (muli_succeeded) {
@@ -89,9 +89,6 @@ class UpdatePlayerLives {
             if (i == trump_player_id) {
                 add_lives = (-1) * POINTS_MULI_ * multiplier;
             }
-            else if (controller.getPlayerById(i).getMissATurn()) {
-                add_lives = POINTS_MISS_A_TURN_ * multiplier;
-            }
             else {
                 add_lives = POINTS_MULI_ * multiplier;
             }
@@ -116,9 +113,6 @@ class UpdatePlayerLives {
         for (int i = 0; i < controller.getAmountOfPlayers(); i++) {
             if (i == trump_player_id) {
                 add_lives = POINTS_MULI_ * multiplier;
-            }
-            else if (controller.getPlayerById(i).getMissATurn()) {
-                add_lives = POINTS_MISS_A_TURN_ * multiplier;
             }
             else {
                 add_lives = (-1) * POINTS_MULI_ * multiplier;

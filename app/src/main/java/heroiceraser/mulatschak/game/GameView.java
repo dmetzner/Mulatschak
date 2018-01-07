@@ -64,6 +64,7 @@ public class GameView extends View {
 
         drawHandCards(canvas);
 
+        drawDecideMulatschak(canvas);
         drawMakeTrickBidsAnimation(canvas);
         drawChooseTrumpAnimation(canvas);
         drawDealingAnimation(canvas);
@@ -85,21 +86,19 @@ public class GameView extends View {
     }
 
     private void drawDealingAnimation(Canvas canvas) {
-        if (controller_.getGamePlay().getDealCards().getDealingAnimation().isAnimationRunning()) {
-            controller_.getGamePlay().getDealCards().getDealingAnimation().draw(canvas, controller_);
-        }
+        controller_.getGamePlay().getDealCards().getDealingAnimation().draw(canvas, controller_);
+    }
+
+    private void drawDecideMulatschak(Canvas canvas) {
+        controller_.getGamePlay().getDecideMulatschak().draw(canvas, controller_);
     }
 
     private void drawMakeTrickBidsAnimation(Canvas canvas) {
-        if (controller_.getGamePlay().getTrickBids().getMakeBidsAnimation().getAnimationNumbers()) {
-            controller_.getGamePlay().getTrickBids().getMakeBidsAnimation().draw(canvas);
-        }
+        controller_.getGamePlay().getTrickBids().getMakeBidsAnimation().draw(canvas, controller_);
     }
 
     private void drawChooseTrumpAnimation(Canvas canvas) {
-        if (controller_.getGamePlay().getChooseTrump().getChooseTrumpAnimation().getAnimationSymbols()) {
-            controller_.getGamePlay().getChooseTrump().getChooseTrumpAnimation().draw(canvas);
-        }
+        controller_.getGamePlay().getChooseTrump().getChooseTrumpAnimation().draw(canvas, controller_);
     }
 
     private void drawExchangeCardsAnimation(Canvas canvas) {

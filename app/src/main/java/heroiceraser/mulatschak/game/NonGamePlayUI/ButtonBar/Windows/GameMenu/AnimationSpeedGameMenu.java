@@ -1,12 +1,9 @@
 package heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBar.Windows.GameMenu;
 
-
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.text.TextPaint;
-
 import heroiceraser.mulatschak.DrawableBasicObjects.MyRadioButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyRadioButtonGroup;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
@@ -17,15 +14,23 @@ import heroiceraser.mulatschak.game.GameLayout;
 
 
 //--------------------------------------------------------------------------------------------------
+//  Animation Speed Menu Class
+//                              -> shows a textField title
+//                              -> shows RadioButtons to select AnimationSpeed
 //
-//
-public class AnimationSpeedRadioButtons {
+public class AnimationSpeedGameMenu {
 
+    //----------------------------------------------------------------------------------------------
+    //  Member Variables
+    //
     private MyTextField title;
-
     private MyRadioButtonGroup radioButtonGroup;
 
-    AnimationSpeedRadioButtons() {
+
+    //----------------------------------------------------------------------------------------------
+    //  Constructor
+    //
+    AnimationSpeedGameMenu() {
        radioButtonGroup = new MyRadioButtonGroup();
        for (int i = 0; i < 4; i++) {
            MyRadioButton rb = new MyRadioButton();
@@ -34,8 +39,14 @@ public class AnimationSpeedRadioButtons {
        title = new MyTextField();
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  Init
+    //
     public void init(GameController controller) {
         GameLayout layout = controller.getLayout();
+
+        // init radio buttons
         for (MyRadioButton rb : radioButtonGroup.getRadioButtons()) {
             rb.setRadius(layout.getSectors().get(1).y / 8);
             rb.setBorderSize(rb.getRadius() / 10);
@@ -69,6 +80,8 @@ public class AnimationSpeedRadioButtons {
         radioButtonGroup.getRadioButtons().get(2).setId(AnimationSpeed.SPEED_FAST);
         radioButtonGroup.getRadioButtons().get(3).setId(AnimationSpeed.NO_ANIMATION);
 
+
+        // init title
         title.setPosition(new Point((int) (x_p * 50), (int) (layout.getSectors().get(1).y * 3.7)) );
         title.setText(controller.getView().getResources().getString(R.string.animation_speed_title));
         title.getTextPaint().setColor(Color.WHITE);
@@ -77,16 +90,22 @@ public class AnimationSpeedRadioButtons {
         title.getTextPaint().setTextAlign(Paint.Align.CENTER);
         title.setMaxWidth((int)(x_p * 90));
         title.setVisible(true);
-
     }
 
-    // draw
+
+    //----------------------------------------------------------------------------------------------
+    //  draw
+    //
     public void draw(Canvas canvas) {
         radioButtonGroup.draw(canvas);
         title.draw(canvas);
     }
 
+
+    //----------------------------------------------------------------------------------------------
     // Touch Events
+    //              -> Touch up sets the correct Speed in the Game Settings
+    //
     void touchEventDown(int X, int Y) {
         radioButtonGroup.touchEventDown(X, Y);
     }
@@ -95,13 +114,29 @@ public class AnimationSpeedRadioButtons {
         radioButtonGroup.touchEventMove(X, Y);
     }
 
-    boolean touchEventUp(int X, int Y) {
-        return radioButtonGroup.touchEventUp(X, Y);
-    }
+    void touchEventUp(int X, int Y, GameController controller) {
+        if (radioButtonGroup.touchEventUp(X, Y)) {
 
-    public MyRadioButtonGroup getRadioButtonGroup() {
-        return radioButtonGroup;
-    }
+            int id = radioButtonGroup.getCheckedButton().getId();
 
+            switch (id) {
+                case AnimationSpeed.NO_ANIMATION:
+                    controller.getSettings().setAnimationSpeed(AnimationSpeed.NO_ANIMATION);
+                    break;
+                case AnimationSpeed.SPEED_SLOW:
+                    controller.getSettings().setAnimationSpeed(AnimationSpeed.SPEED_SLOW);
+                    break;
+                case AnimationSpeed.SPEED_NORMAL:
+                    controller.getSettings().setAnimationSpeed(AnimationSpeed.SPEED_NORMAL);
+                    break;
+                case AnimationSpeed.SPEED_FAST:
+                    controller.getSettings().setAnimationSpeed(AnimationSpeed.SPEED_FAST);
+                    break;
+                default:
+                    controller.getSettings().setAnimationSpeed(AnimationSpeed.SPEED_NORMAL);
+                    break;
+            }
+        }
+    }
 }
 

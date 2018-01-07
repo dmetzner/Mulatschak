@@ -17,8 +17,11 @@
     <string name="sign_in_to_upload_this_score">Sign in now to upload this score, save your achievements and share your progress with friends.</string>
     <string name="signin_other_error">There was an issue with sign in.  Please try again later.</string>
 
-    <!-- :::::::::::::::::MyPlayerayer Info Pop Up ::::::::::::::::::::::::::::::::::::::::::::::: -->
+    <!-- :::::::::::::::: Player Info Pop Up ::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="player_info_title_bar_name">Spieler Profil</string>
+
+    <!-- ::::::::::::::::::::::: Player Info ::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+    <string name="player_info_active_player_is_0">Du bist am Zug</string>
 
 
     <!-- :::::::::::::::::::: SinglePlayer Settings :::::::::::::::::::::::::::::::::::::::::::: -->
@@ -63,12 +66,24 @@
         <string name="next_round_button">Nächste Runde</string>
 
     <!-- :::::::::::::::::::: TrickBids :::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+    <string name="muli_text">Mulatschak?</string>
+    <string name="yes_button">Ja</string>
+    <string name="no_button">Nein</string>
 
+    <!-- :::::::::::::::::::: TrickBids :::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+    <string name="miss_a_turn_button">Diese Runde aussetzen</string>
 
     <!-- :::::::::::::::::::: Card Exchange :::::::::::::::::::::::::::::::::::::::::::::::::::: -->
         <!-- :::::::::::::::::::: Card Exchange Buttons :-:::::::::::::::::::::::::::::::::::::: -->
         <string name="card_exchange_help_text">Berühre alle Karten die du austauschen möchtest.
             "Du kannst Keine, Eine, Zwei, Drei oder alle Karten austauschen"</string>
+
+        <string name="card_exchange_button_0">Keine Karten tauschen</string>
+        <string name="card_exchange_button_1"> Eine Karte  tauschen</string>
+        <string name="card_exchange_button_2"> Zwei Karten tauschen</string>
+        <string name="card_exchange_button_3"> Drei Karten tauschen</string>
+        <string name="card_exchange_button_4"> Vier Karten tauschen</string>
+        <string name="card_exchange_button_5"> Alle Karten tauschen</string>
 
 
     <!-- :::::::::::::::::::: Game Menu :::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->

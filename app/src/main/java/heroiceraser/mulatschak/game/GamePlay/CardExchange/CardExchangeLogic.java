@@ -1,10 +1,13 @@
 package heroiceraser.mulatschak.game.GamePlay.CardExchange;
 import android.graphics.Canvas;
 import android.graphics.Point;
+import android.support.annotation.StringRes;
+
 import java.util.ArrayList;
 import java.util.List;
-import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.HelpText;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
 import heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
@@ -31,7 +34,7 @@ public class CardExchangeLogic {
     //
     private boolean animation_running_; // should be true while the card exchange process is active
 
-    private List<MyButton> exchange_buttons_; // container for all card exchange buttons
+    private List<MyTextButton> exchange_buttons_; // container for all card exchange buttons
     private int active_button_; // keeps track of which button should be displayed
 
     private HelpText help_text_;    // shows an information text
@@ -70,12 +73,19 @@ public class CardExchangeLogic {
 
         int buttons_size = 6;
         for (int i = 0; i < buttons_size; i++) {
-            MyButton button = new MyButton();
-            int id = i;
-            if (i == 4) {       //Todo
-                id = i + 1;
+            MyTextButton button = new MyTextButton();
+
+            String xmlName = "card_exchange_button_" + i;
+            // Get the identifier of the resource by its name.
+            @StringRes int resId = view.getResources().getIdentifier(xmlName, "string",
+                    view.getContext().getPackageName());
+            // Use the value of the resource.
+            String buttonText = view.getContext().getString(resId);
+            button.init(view, position, width, height, "button_blue_metallic_large", buttonText);
+            if (i == 4) {
+                button.setEnabled(false);
             }
-            button.init(view, position, width, height, "button_" + id + "_karten");
+
             exchange_buttons_.add(button);
         }
     }
@@ -287,7 +297,7 @@ public class CardExchangeLogic {
     //----------------------------------------------------------------------------------------------
     //  Getter & Setter
     //
-    public MyButton getButton() {
+    public MyTextButton getButton() {
         if (active_button_ < 0 || active_button_ > exchange_buttons_.size() - 1) {
             active_button_ = 0;
         }

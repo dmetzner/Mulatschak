@@ -6,12 +6,11 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.text.TextPaint;
 
-import org.w3c.dom.Text;
 
-/**
- * Created by Daniel Metzner on 04.01.2018.
- */
-
+//--------------------------------------------------------------------------------------------------
+//  My Radio Button Class
+//                          -> ToDo , can be improved but works for now
+//
 public class MyRadioButton {
 
     private int id_;

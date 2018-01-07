@@ -3,11 +3,14 @@ package heroiceraser.mulatschak.DrawableBasicObjects;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.text.TextPaint;
+
+import java.nio.IntBuffer;
 
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
@@ -26,11 +29,13 @@ public class MyTextButton extends DrawableObject{
     //----------------------------------------------------------------------------------------------
     //  Member Variables
     //
-    private boolean enabled_;
-    private boolean pressed_;
-    private String text_;
-    private Point text_position_;
-    private TextPaint text_paint_;
+    private boolean enabled;
+    private boolean pressed;
+    private String text;
+    private Point textPosition;
+    private TextPaint textPaint;
+    private Bitmap bitmapOverlay;
+    private Paint overlay;
 
     //----------------------------------------------------------------------------------------------
     //  Constructor
@@ -48,31 +53,37 @@ public class MyTextButton extends DrawableObject{
         setWidth(width);
         setHeight(height);
         setBitmap(HelperFunctions.loadBitmap(view, image_name, width, height));
-        text_ = text;
-        text_paint_ = new TextPaint();
-        text_paint_.setColor(Color.WHITE);
-        text_paint_.setAntiAlias(true);
-        text_paint_.setTextSize(getHeight() / 2.5f);
-        text_paint_.setTextAlign(Paint.Align.CENTER);
-        text_paint_.setTextScaleX(0.8f);
+        this.text = text;
+        textPaint = new TextPaint();
+        textPaint.setColor(Color.WHITE);
+        textPaint.setAntiAlias(true);
+        textPaint.setTextSize(getHeight() / 2.5f);
+        textPaint.setTextAlign(Paint.Align.CENTER);
+        textPaint.setTextScaleX(0.8f);
         Rect text_bounds_ = new Rect();
-        text_paint_.getTextBounds(text_, 0, text_.length(), text_bounds_);
+        textPaint.getTextBounds(text, 0, text.length(), text_bounds_);
 
         while (text_bounds_.width() > 0.8 * getWidth()) {
-            text_paint_.setTextSize(text_paint_.getTextSize() * 0.95f);
-            text_paint_.getTextBounds(text_, 0, text_.length(), text_bounds_);
+            textPaint.setTextSize(textPaint.getTextSize() * 0.95f);
+            textPaint.getTextBounds(text, 0, text.length(), text_bounds_);
         }
 
         Point center = new Point(getPosition().x + getWidth() / 2, getPosition().y + getHeight() / 2);
-        text_position_ = new Point(center.x, center.y + (int) text_paint_.getTextSize() / 4);
-        enabled_ = true;
-        pressed_= false;
+        textPosition = new Point(center.x, center.y + (int) textPaint.getTextSize() / 4);
+
+        // Overlay
+        overlay = new Paint();
+        overlay.setAlpha(125);
+        bitmapOverlay = HelperFunctions.createBitmapOverlay(getBitmap());
+
+        enabled = true;
+        pressed= false;
         setVisible(true);
     }
 
 
     //----------------------------------------------------------------------------------------------
-    // Draw
+    //  Draw
     //
     public void draw(Canvas canvas) {
         if (!isVisible()) {
@@ -83,10 +94,8 @@ public class MyTextButton extends DrawableObject{
         float pressed_scale_ = 1;
 
         Bitmap bitmap = getBitmap();
-        if (!IsEnabled()) {
-            // bitmap = getBitmapDisabled();
-        }
-        else if (IsPressed()) {
+
+        if (isPressed()) {
             canvas.scale(0.96f, 0.96f);
             pressed_scale_ = 1.043f;
         }
@@ -100,31 +109,78 @@ public class MyTextButton extends DrawableObject{
                 getPosition().y * pressed_scale_, null);
 
         // text
-        canvas.drawText(text_, text_position_.x * pressed_scale_,
-                text_position_.y * pressed_scale_ + offset_y,
-                text_paint_);
+        canvas.drawText(text, textPosition.x * pressed_scale_,
+                textPosition.y * pressed_scale_ + offset_y,
+                textPaint);
 
+
+        if (!isEnabled()) {
+
+            canvas.drawBitmap(bitmapOverlay,
+                    getPosition().x * pressed_scale_ - offset_x,
+                    getPosition().y * pressed_scale_, overlay);
+
+        }
         canvas.restore();
     }
 
 
     //----------------------------------------------------------------------------------------------
+    //  Touch Events
+    //
+    public boolean touchEventDown(int X, int Y) {
+        if (isVisible() && isEnabled() &&
+                X >= getPosition().x && X < getPosition().x + getWidth() &&
+                Y >= getPosition().y && Y < getPosition().y + getHeight()) {
+            setPressed(true);
+            return true;
+        }
+        return false;
+    }
+
+    public void touchEventMove(int X, int Y) {
+        if (isVisible() && isEnabled() && isPressed()) {
+            if ( X >= getPosition().x && X < getPosition().x + getWidth() &&
+                    Y >= getPosition().y && Y < getPosition().y + getHeight()) {
+                setPressed(true);
+            }
+            else {
+                setPressed(false);
+            }
+        }
+    }
+
+    public boolean touchEventUp(int X, int Y) {
+        if (isVisible() && isEnabled() && isPressed()) {
+            if (X >= getPosition().x && X < getPosition().x + getWidth() &&
+                    Y >= getPosition().y && Y < getPosition().y + getHeight()) {
+                setPressed(false);
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
+
+    //----------------------------------------------------------------------------------------------
     // Getter & Setter
     //
-    public boolean IsPressed() {
-        return pressed_;
+    public boolean isPressed() {
+        return pressed;
     }
 
     public void setPressed(boolean is_pressed) {
-        this.pressed_ = is_pressed;
+        this.pressed = is_pressed;
     }
 
-    public boolean IsEnabled() {
-        return enabled_;
+    public boolean isEnabled() {
+        return enabled;
     }
 
     public void setEnabled(boolean enabled) {
-        this.enabled_ = enabled; }
+        this.enabled = enabled; }
 
 
 }

@@ -2,6 +2,7 @@ package heroiceraser.mulatschak.DrawableBasicObjects;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.text.TextPaint;
 
@@ -19,6 +20,8 @@ public class MyTextField {
     private Point position;
     private boolean visible;
     private int maxWidth;
+    private float borderPercent;
+    private TextPaint borderPaint;
 
 
     //----------------------------------------------------------------------------------------------
@@ -30,6 +33,7 @@ public class MyTextField {
         textPaint.setTextSize(10);
         textPaint.setColor(Color.BLACK);
         text = "";
+        borderPercent = 0;
         visible = false;
     }
 
@@ -41,7 +45,14 @@ public class MyTextField {
         if (visible) {
             TextPaint tmpPaint = new TextPaint(textPaint);
             while (tmpPaint.measureText(text) > maxWidth) {
-                tmpPaint.setTextSize(tmpPaint.getTextSize() * 0.95f);
+                tmpPaint.setTextSize(tmpPaint.getTextSize() * 0.98f);
+            }
+            if (borderPercent != 0) {
+                TextPaint tmpBorder = new TextPaint(borderPaint);
+                tmpBorder.setTextSize(tmpPaint.getTextSize());
+                tmpBorder.setStrokeWidth(tmpPaint.getTextSize() * borderPercent);
+                tmpPaint.setStrokeWidth(textPaint.getTextSize() * borderPercent);
+                canvas.drawText(text, position.x, position.y, tmpBorder);
             }
             canvas.drawText(text, position.x, position.y, tmpPaint);
         }
@@ -90,4 +101,15 @@ public class MyTextField {
     public void setMaxWidth(int maxWidth) {
         this.maxWidth = maxWidth;
     }
+
+    public void setBorder(int color, float borderPercent) {
+        this.borderPercent = borderPercent;
+        borderPaint = new TextPaint(textPaint);
+        borderPaint.setColor(color);
+        borderPaint.setStyle(Paint.Style.STROKE);
+        borderPaint.setStrokeWidth(textPaint.getTextSize() * borderPercent);
+        textPaint.setStrokeWidth(textPaint.getTextSize() * borderPercent);
+        textPaint.setStyle(Paint.Style.FILL);
+    }
+
 }
