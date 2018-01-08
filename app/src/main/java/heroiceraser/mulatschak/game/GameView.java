@@ -70,6 +70,7 @@ public class GameView extends View {
         drawDealingAnimation(canvas);
         drawPlayACardAnimation(canvas);
         drawExchangeCardsAnimation(canvas);
+        drawMulatschakResult(canvas);
 
         drawGameOver(canvas);
         drawRoundInfo(canvas);
@@ -83,6 +84,10 @@ public class GameView extends View {
             thread_.framesCount = 0;
             thread_.framesCount = 0;
         }
+    }
+
+    private void drawMulatschakResult(Canvas canvas) {
+        controller_.getGamePlay().getMulatschakResultAnimation().draw(canvas, controller_);
     }
 
     private void drawDealingAnimation(Canvas canvas) {
@@ -106,13 +111,12 @@ public class GameView extends View {
     }
 
     private void drawPlayACardAnimation(Canvas canvas) {
-        controller_.getGamePlay().getPlayACard().draw(canvas, controller_);
+        controller_.getGamePlay().getPlayACardRound().draw(canvas, controller_);
     }
 
     private void drawPlayerInfo(Canvas canvas) {
         controller_.getPlayerInfo().draw(canvas);
     }
-
 
     private void drawGameOver(Canvas canvas) {
         controller_.getGameOver().draw(canvas, controller_);
@@ -130,92 +134,22 @@ public class GameView extends View {
         controller_.getNonGamePlayUIContainer().draw(canvas, controller_);
     }
 
-
-    //----------------------------------------------------------------------------------------------
-    //  drawDiscardPile
-    //
     private void drawDiscardPile(Canvas canvas) {
         controller_.getDiscardPile().draw(canvas);
         controller_.getDiscardPile().drawOverlays(canvas, controller_.getLogic());
     }
 
-
-    //----------------------------------------------------------------------------------------------
-    //  drawBidsView
-    //
     private void drawBidsView(Canvas canvas) {
         controller_.getGamePlay().getTrickBids().getBidsView().draw(canvas, controller_);
     }
 
-
-    //----------------------------------------------------------------------------------------------
-    //  drawBidsView
-    //
     private void drawTrumpView(Canvas canvas) {
         controller_.getGamePlay().getChooseTrump().getTrumpView().draw(canvas, controller_);
     }
 
-    //----------------------------------------------------------------------------------------------
-    //  drawHandCards()
-    //
     private void drawHandCards(Canvas canvas) {
-        for (int i = 0; i < controller_.getPlayerList().size(); i++) {
-            MyPlayer myPlayer = controller_.getPlayerById(i);
-
-            if (i == 0) {
-                for (int j = 0; j < myPlayer.getAmountOfCardsInHand(); j++) {
-                    if (myPlayer.getHand().getCardAt(j).getPosition() == null) {
-                        break;
-                    }
-                    if (myPlayer.getHand().getCardAt(j).getPosition().
-                            equals(controller_.getLayout().getDeckPosition())) {
-                        break;
-                    }
-                    if (myPlayer.getHand().getCardAt(j).isVisible()) {
-                        canvas.drawBitmap(myPlayer.getHand().getCardAt(j).getBitmap(),
-                                myPlayer.getHand().getCardAt(j).getPosition().x,
-                                myPlayer.getHand().getCardAt(j).getPosition().y, null);
-                    }
-
-                }
-            } else if (i == 1 || i == 3) {
-                for (int j = 0; j < myPlayer.getAmountOfCardsInHand(); j++) {
-                    if (myPlayer.getHand().getCardAt(j).getPosition() == null) {
-                        break;
-                    }
-                    if (myPlayer.getHand().getCardAt(j).getPosition().
-                            equals(controller_.getLayout().getDeckPosition())) {
-                        break;
-                    }
-                    Matrix matrix = new Matrix();
-                    matrix.postRotate(90);
-                    Bitmap backside = controller_.getDeck().getBacksideBitmap();
-                    Bitmap rotatedBitmap = Bitmap.createBitmap(backside, 0, 0,
-                            backside.getWidth(), backside.getHeight(), matrix, true);
-                    if (myPlayer.getHand().getCardAt(j).isVisible()) {
-                        canvas.drawBitmap(rotatedBitmap,
-                                myPlayer.getHand().getCardAt(j).getPosition().x,
-                                myPlayer.getHand().getCardAt(j).getPosition().y, null);
-                    }
-                    rotatedBitmap.recycle();
-                }
-            } else if (i == 2) {
-                for (int j = 0; j < myPlayer.getAmountOfCardsInHand(); j++) {
-                    if (myPlayer.getHand().getCardAt(j).getPosition() == null) {
-                        break;
-                    }
-                    if (myPlayer.getHand().getCardAt(j).getPosition().
-                            equals(controller_.getLayout().getDeckPosition())) {
-                        break;
-                    }
-                    if (myPlayer.getHand().getCardAt(j).isVisible()) {
-                        canvas.drawBitmap(controller_.getDeck().getBacksideBitmap(),
-                                myPlayer.getHand().getCardAt(j).getPosition().x,
-                                myPlayer.getHand().getCardAt(j).getPosition().y, null);
-                    }
-                }
-            }
-        }
+        controller_.getAnimateHands().drawHandCards(canvas, controller_);
+        controller_.getAnimateHands().drawMissATurn(canvas);
     }
 
 
@@ -239,10 +173,13 @@ public class GameView extends View {
                 controller_.getTouchEvents().ActionUp(controller_, X, Y);
                 break;
         }
-
         return true;
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  Thread Handling
+    //
     public GameThread getThread() {
         return thread_;
     }
@@ -252,7 +189,6 @@ public class GameView extends View {
     }
 
     public synchronized void enableUpdateCanvasThread() {
-
         disableUpdateCanvasThread();
         setThread(new GameThread(this));
         getThread().setRunning(true);

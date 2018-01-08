@@ -4,45 +4,68 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
-import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
+import heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
+import heroiceraser.mulatschak.game.GamePlay.Background4Player0Animations;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
 
-/**
- * Created by Daniel Metzner on 08.09.2017.
- */
 
-public class GameOver extends DrawableObject {
+//--------------------------------------------------------------------------------------------------
+//  Game Over Class
+//
+public class GameOver {
 
-    private MyButton back_button_;
+    //----------------------------------------------------------------------------------------------
+    //  Member Variables
+    //
+    private boolean visible;
+    private Background4Player0Animations background;
+    private MyTextButton endGameButton;
 
+
+    //----------------------------------------------------------------------------------------------
+    //  Constructor
+    //
     public GameOver() {
         super();
-        back_button_ = new MyButton();
+        background = new Background4Player0Animations();
+        endGameButton = new MyTextButton();
+        visible = false;
     }
 
+    //----------------------------------------------------------------------------------------------
+    //  Constructor
+    //
     public void init(GameView view) {
         GameLayout layout = view.getController().getLayout();
 
         // background
-        setWidth(layout.getScreenWidth());
-        setHeight(layout.getSectors().get(7).y - layout.getSectors().get(2).y);
-        setPosition(layout.getSectors().get(2));
-        setBitmap(HelperFunctions.loadBitmap(view, "game_over", getWidth(), getHeight()));
+        background.init(layout);
 
-        // backbutton
-        back_button_.init(view, layout.getSectors().get(6), new Point(200, 100), "lil_robo");
+        // button
+        Point endGameButtonSize = new Point((int)(layout.getButtonBarBigButtonWidth() * 1.5),
+                layout.getButtonBarBigButtonHeight());
+
+        Point endGameButtonPosition = new Point(layout.getScreenWidth() / 2 - endGameButtonSize.x / 2,
+                layout.getSectors().get(6).y);
+
+        String text = view.getResources().getString(R.string.game_over_button);
+        endGameButton.init(view, endGameButtonPosition,
+                endGameButtonSize.x, endGameButtonSize.y, "button_blue_metallic_large", text);
+        endGameButton.setVisible(false);
 
     }
 
     public void draw(Canvas canvas, GameController controller) {
         if (isVisible()) {
-            // canvas.drawBitmap(getBitmap(), getPosition().x, getPosition().y, null);
-            controller.getNonGamePlayUIContainer().getStatistics().setVisible(true);
-            back_button_.draw(canvas);
+            background.draw(canvas, controller);
+            //controller.getNonGamePlayUIContainer().getStatistics().setVisible(true);
+            endGameButton.draw(canvas);
         }
     }
 
@@ -58,4 +81,16 @@ public class GameOver extends DrawableObject {
         }
         return false;
     }
+
+    //----------------------------------------------------------------------------------------------
+    //  Getter & Setter
+    //
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+
 }

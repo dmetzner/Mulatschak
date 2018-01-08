@@ -1,4 +1,4 @@
-package heroiceraser.mulatschak.game.GamePlay.TrickBids.DecideMulatschak;
+package heroiceraser.mulatschak.game.GamePlay.Mulatschak;
 
 import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;

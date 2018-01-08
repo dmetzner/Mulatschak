@@ -18,9 +18,8 @@ import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
 import heroiceraser.mulatschak.game.DrawableObjects.DealerButton;
 import heroiceraser.mulatschak.game.DrawableObjects.DiscardPile;
 import heroiceraser.mulatschak.game.NonGamePlayUI.GameOver.GameOver;
-import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBar.Windows.GameTricks;
 import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
-import heroiceraser.mulatschak.game.Animations.GameAnimation;
+import heroiceraser.mulatschak.game.Animations.AnimateHands;
 import heroiceraser.mulatschak.game.NonGamePlayUI.PlayerInfo.PlayerInfo;
 import heroiceraser.mulatschak.game.NonGamePlayUI.RoundInfo.RoundInfo;
 
@@ -50,7 +49,7 @@ public class GameController{
     private GameLogic logic_;
     private GameSettings settings_;
 
-    private GameAnimation animations_;
+    private AnimateHands animateHands;
 
     private NonGamePlayUIContainer non_game_play_ui_;
     private GamePlay game_play_;
@@ -65,9 +64,6 @@ public class GameController{
     private CardStack trash_;
     private DealerButton dealer_button_;
 
-    private boolean wait_for_end_card_round_;
-    // ToDo
-
 
     //----------------------------------------------------------------------------------------------
     //  Constructor
@@ -78,7 +74,7 @@ public class GameController{
 
         logic_ = new GameLogic();
         layout_ = new GameLayout();
-        animations_ = new GameAnimation(view);
+        animateHands = new AnimateHands();
         touch_events_ = new TouchEvents();
         settings_ = new GameSettings();
 
@@ -95,10 +91,6 @@ public class GameController{
         discardPile_ = new DiscardPile();
 
         dealer_button_ = new DealerButton();
-
-
-        wait_for_end_card_round_ = false;
-
     }
 
     //----------------------------------------------------------------------------------------------
@@ -133,7 +125,7 @@ public class GameController{
         deck_.initDeck(view_);
         dealer_button_.init(view_);
         game_over_.init(view_);
-
+        animateHands.init(view_);
         enable_drawing_ = true;
         chooseFirstDealerRandomly();
         startRound();
@@ -157,7 +149,7 @@ public class GameController{
 
         logic_.setMulatschakRound(false);
         resetTricksToMake();
-        // getGamePlay().getPlayACard().setCardMovable(false);
+        // getGamePlay().getPlayACardRound().setCardMovable(false);
         player_info_.setActivePlayer(NOT_SET);
         player_info_.setShowPlayer0Turn(false);
 
@@ -165,6 +157,10 @@ public class GameController{
         discardPile_.setOverlaysVisible(false);
 
         game_play_.startRound(this);
+
+        for (MyPlayer player : getPlayerList()) {
+            player.setMissATurn(false);
+        }
 
         view_.enableUpdateCanvasThread();
         dealer_button_.startMoveAnimation(this, logic_.getDealer());
@@ -197,6 +193,10 @@ public class GameController{
     public void continueAfterTrickBids() {
         non_game_play_ui_.getRoundInfo().setInfoBoxEmpty();
         non_game_play_ui_.getRoundInfo().getChooseTrumpTextField().setVisible(true);
+
+        if (getPlayerById(0).getMissATurn()) {
+            getAnimateHands().setMissATurnInfoVisible(true);
+        }
 
         final GameController controller = this;
         Handler mHandler = new Handler();
@@ -262,6 +262,26 @@ public class GameController{
         nextCardRound(); // first call
     }
 
+    //----------------------------------------------------------------------------------------------
+    //  nextCardRound
+    //                      -> playACard gets called for ever player once
+    //                          then nextCard Round should get called again
+    //
+    public void nextCardRound() {
+
+        // if all card got played -> this Round is over
+        // update player lives, game over? or new round?
+        // starts the animations if needed
+        if (game_play_.getAllCardsPlayed().areAllCardsPlayed(this)) {
+            getAnimateHands().setMissATurnInfoVisible(false);
+            game_play_.getAllCardsPlayed().allCardsArePlayedLogic(this);
+            return;
+        }
+
+        // next round
+        non_game_play_ui_.getRoundInfo().updateRoundInfo(this);
+        getGamePlay().getPlayACardRound().playACard(true, this);
+    }
 
     //----------------------- Game Flow
 
@@ -415,30 +435,21 @@ public class GameController{
     }
 
     //----------------------------------------------------------------------------------------------
-    //  cada
+    //  turn to next player
+    //                          -> passes turn to the next player
+    //                          -> updates the active player for the player info
     //
     public void turnToNextPlayer() {
         logic_.turnToNextPlayer(getAmountOfPlayers());
-        player_info_.setActivePlayer(logic_.getTurn());
-    }
-
-
-    public void nextTurn() {
-        nextTurn(false);
-    }
-
-    private void nextCardRound() {
-
-        // update player lives, game over? or new round?
-        // starts the animations if needed
-        if (game_play_.getAllCardsPlayed().areAllCardsPlayed(this)) {
-            game_play_.getAllCardsPlayed().allCardsArePlayedLogic(this);
-            return;
+        int players = 0;
+        while (getPlayerById(logic_.getTurn()).getMissATurn()) {
+            logic_.turnToNextPlayer(getAmountOfPlayers());
+            if (players > getAmountOfPlayers()) {
+                Log.e("miss a turn fail?", "turn to next player");
+            }
+            players++;
         }
-
-        // next round
-        non_game_play_ui_.getRoundInfo().updateRoundInfo(this);
-        nextTurn(true);
+        player_info_.setActivePlayer(logic_.getTurn());
     }
 
 
@@ -489,94 +500,6 @@ public class GameController{
 
     }
 
-
-    private void endCardRound() {
-        discardPile_.setOverlaysVisible(false);
-        discardPile_.clear();
-        nextCardRound();
-    }
-
-    private void nextTurn(boolean first_call) {
-
-        getGamePlay().getPlayACard().setCardMovable(false);
-        non_game_play_ui_.getRoundInfo().setInfoBoxEmpty();
-        non_game_play_ui_.getRoundInfo().getRoundInfoTextField().setVisible(true);
-        non_game_play_ui_.getRoundInfo().updateRoundInfo(this);
-
-        if (!first_call && logic_.getTurn() == logic_.getStartingPlayer()) {
-            logic_.chooseCardRoundWinner(this, this.getDiscardPile());
-            addTricksToWinner();
-            setTurn(logic_.getRoundWinnerId());
-            logic_.setStartingPlayer(logic_.getRoundWinnerId());
-
-            non_game_play_ui_.getRoundInfo().setInfoBoxEmpty();
-            non_game_play_ui_.getRoundInfo().updateEndOfCardRound(this);
-            non_game_play_ui_.getRoundInfo().getEndOfCardRound().setVisible(true);
-
-            wait_for_end_card_round_ = true;
-
-            // ToDO show winner of the round, click to next round button
-            discardPile_.setOverlaysVisible(true);
-
-            Handler end_round_handler = new Handler();
-            Runnable end_round_runnable = new Runnable() {
-                @Override
-                public void run() {
-                    if (wait_for_end_card_round_) {
-                        endCardRound();
-                    }
-                }
-            };
-            int max_waiting_time = 2000;
-            end_round_handler.postDelayed(end_round_runnable, max_waiting_time);
-            return;
-        }
-
-        if (getPlayerById(logic_.getTurn()).getMissATurn()) {
-            Log.d("GameController2", "MyPlayer " + logic_.getTurn() + " is MISSING his turn");
-            turnToNextPlayer();
-            nextTurn();
-            return;
-        }
-
-        Log.d("GameController2", "MyPlayer " +logic_.getTurn() + " is playing his card");
-
-        if (logic_.getTurn() == 0) {
-            getGamePlay().getPlayACard().setCardMovable(true);
-            view_.disableUpdateCanvasThread();
-            // touch event calls next turnToNextPlayer & next turn
-        }
-        else if (logic_.getTurn() != 0) {
-            view_.enableUpdateCanvasThread();
-            game_play_.getPlayACard().getEnemyPlayACardLogic()
-                    .playACard(logic_, getPlayerById(logic_.getTurn()), discardPile_);
-        }
-    }
-
-
-    public void continueAfterEnemeyPlayedACard() {
-        turnToNextPlayer();
-        nextTurn();
-    }
-
-
-    private void addTricksToWinner() {
-
-        GameTricks tricks = non_game_play_ui_.getTricks();
-        tricks.addDiscardPile(DiscardPile.copy(discardPile_), logic_.getRoundWinnerId());
-        int index = tricks.getDiscardPiles().size() - 1;
-        tricks.setVisibleRoundId(index);
-        tricks.updateVisibleRound();
-
-
-        for (int i = 0; i < discardPile_.SIZE; i++) {
-            if (discardPile_.getCard(i) != null) {
-                getPlayerById(logic_.getRoundWinnerId()).getTricks().addCard(discardPile_.getCard(i));
-            }
-        }
-    }
-
-
     public void moveCardToTrash(Card card) {
         trash_.addCard(card);
     }
@@ -589,7 +512,7 @@ public class GameController{
 
     public GameLayout getLayout() { return layout_; }
 
-    public GameAnimation getAnimation() { return  animations_; }
+    public AnimateHands getAnimateHands() { return  animateHands; }
 
     public GameLogic getLogic() { return logic_; }
 

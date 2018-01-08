@@ -1,17 +1,15 @@
-package heroiceraser.mulatschak.game.GamePlay.TrickBids.DecideMulatschak;
+package heroiceraser.mulatschak.game.GamePlay.Mulatschak;
 
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.Rect;
 import android.text.TextPaint;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
 import heroiceraser.mulatschak.R;
-import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GamePlay.Background4Player0Animations;
@@ -101,6 +99,7 @@ class DecideMulatschakAnimation {
     public void draw(Canvas canvas, GameController controller) {
         if (animationRunning) {
             background.draw(canvas, controller);
+            controller.getAnimateHands().drawPlayer0Hand(canvas, controller);
             muliText.draw(canvas);
             yesButton.draw(canvas);
             noButton.draw(canvas);

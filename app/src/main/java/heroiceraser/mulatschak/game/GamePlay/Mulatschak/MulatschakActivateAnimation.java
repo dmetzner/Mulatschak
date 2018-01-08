@@ -1,4 +1,4 @@
-package heroiceraser.mulatschak.game.GamePlay.TrickBids.DecideMulatschak;
+package heroiceraser.mulatschak.game.GamePlay.Mulatschak;
 
 
 import android.graphics.Canvas;
@@ -12,7 +12,7 @@ import heroiceraser.mulatschak.game.GamePlay.TrickBids.BidsField;
 //--------------------------------------------------------------------------------------------------
 //  Mulatschak Round
 //
-public class MulatschakAnimation {
+public class MulatschakActivateAnimation {
 
     //----------------------------------------------------------------------------------------------
     //  Member Variables
@@ -27,8 +27,8 @@ public class MulatschakAnimation {
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
-    MulatschakAnimation() {
-        bidsField = new BidsField();
+    MulatschakActivateAnimation() {
+        bidsField = null;
         startAnimation = false;
         endAnimation = false;
     }
@@ -36,6 +36,7 @@ public class MulatschakAnimation {
 
     public void setUp(GameController controller) {
         GameLayout layout = controller.getLayout();
+        bidsField = new BidsField();
         Point startPos = new Point(layout.getPlayerInfoPositions().get(controller.getLogic().getTrumpPlayerId()));
         startPos.x += layout.getCardWidth() / 2;
         startPos.y += layout.getCardHeight() / 2;      // offsets to center 'em
@@ -118,5 +119,15 @@ public class MulatschakAnimation {
                 controller.getGamePlay().getDecideMulatschak().makeMulatschakDecision(false, controller);
             }
         }
+    }
+
+    //----------------------------------------------------------------------------------------------
+    //  clear
+    //
+    public void clear() {
+        bidsField = null;
+        active = false;
+        startAnimation = false;
+        endAnimation = false;
     }
 }

@@ -22,6 +22,7 @@ public class Background4Player0Animations {
     //
     private Rect background;
     private Paint backgroundPaint;
+    private final int ALPHA_MAX = 150;
 
 
     //----------------------------------------------------------------------------------------------
@@ -40,7 +41,18 @@ public class Background4Player0Animations {
         background.set(0, layout.getSectors().get(2).y, layout.getScreenWidth(),
                 (int) (layout.getSectors().get(7).y));
         backgroundPaint.setColor(Color.BLACK);
-        backgroundPaint.setAlpha(150);
+        backgroundPaint.setAlpha(ALPHA_MAX);
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    //  updateAlpha
+    //
+    public void updateAlpha(int alpha) {
+        if (alpha > ALPHA_MAX) {
+            alpha = ALPHA_MAX;
+        }
+        backgroundPaint.setAlpha(alpha);
     }
 
 
@@ -49,10 +61,6 @@ public class Background4Player0Animations {
     //
     public void draw(Canvas canvas, GameController controller) {
         canvas.drawRect(background, backgroundPaint);
-
-        for (Card card : controller.getPlayerById(0).getHand().getCardStack()) {
-            canvas.drawBitmap(card.getBitmap(), card.getPosition().x, card.getPosition().y, null);
-        }
     }
 
 

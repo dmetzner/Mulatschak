@@ -78,6 +78,7 @@ public class ChooseTrumpAnimation {
         }
 
         background.draw(canvas, controller);
+        controller.getAnimateHands().drawPlayer0Hand(canvas, controller);
 
         for (MyButton button : trumpButtons) {
             Bitmap bitmap = button.getBitmap();

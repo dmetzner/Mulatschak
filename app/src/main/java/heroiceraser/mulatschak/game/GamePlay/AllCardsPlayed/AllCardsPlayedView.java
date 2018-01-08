@@ -1,4 +1,4 @@
-package heroiceraser.mulatschak.game.NonGamePlayUI.AllCardsPlayedView;
+package heroiceraser.mulatschak.game.GamePlay.AllCardsPlayed;
 
 import android.graphics.Canvas;
 import android.graphics.Point;

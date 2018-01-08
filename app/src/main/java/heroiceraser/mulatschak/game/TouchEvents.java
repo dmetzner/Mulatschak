@@ -53,6 +53,12 @@ class TouchEvents {
         }
         //------------------------
 
+        // ------------------ All Cards Played -----------------------------------------------------
+        // MyPlayer Info Buttons
+        if (ButtonActionDown(X, Y, controller.getNonGamePlayUIContainer()
+                .getAllCardsPlayedView().getNextRoundButton()) ) {}
+
+
         // other UI elements not touchable while ButtonBar window is active
         if (controller.getNonGamePlayUIContainer().isAWindowActive()) {
             return;
@@ -61,9 +67,6 @@ class TouchEvents {
 
 
 
-
-        //------------------ Play a Card -----------------------------------------------------------
-        controller.getGamePlay().getPlayACard().getPlayACardLogic().touchActionDown(controller, X, Y);
 
         //------------------- DecideMulatschak -----------------------------------------------------
         controller.getGamePlay().getDecideMulatschak().touchEventDown(X, Y);
@@ -123,10 +126,8 @@ class TouchEvents {
 
         //------------------------
 
-        // ------------------ All Cards Played -----------------------------------------------------
-        // MyPlayer Info Buttons
-        if (ButtonActionDown(X, Y, controller.getNonGamePlayUIContainer()
-                .getAllCardsPlayedView().getNextRoundButton()) ) {}
+        // ------------------ Play A Card Round ----------------------------------------------------
+        controller.getGamePlay().getPlayACardRound().touchEventDown(X, Y, controller);
 
         //------------------------
     }
@@ -138,7 +139,7 @@ class TouchEvents {
     void ActionMove(GameController controller, int X, int Y) {
 
         // ------------------ Play a Card ----------------------------------------------------------
-        controller.getGamePlay().getPlayACard().getPlayACardLogic().touchActionMove(controller, X, Y);
+        controller.getGamePlay().getPlayACardRound().getPlayACardLogic().touchActionMove(controller, X, Y);
 
         // ------------------ ButtonBar ------------------------------------------------------------
 
@@ -206,6 +207,9 @@ class TouchEvents {
             }
         }
 
+        // ------------------ Play A Card Round Ended ----------------------------------------------
+        controller.getGamePlay().getPlayACardRound().touchEventMove(X, Y, controller);
+
         // ------------------ All Cards Played -----------------------------------------------------
         // MyPlayer Info Buttons
 
@@ -237,6 +241,7 @@ class TouchEvents {
             controller.getNonGamePlayUIContainer().getMenu().setVisible(false);
             controller.getNonGamePlayUIContainer().getTricks().setVisible(false);
             controller.getNonGamePlayUIContainer().getStatistics().switchVisibility();
+            controller.getView().postInvalidateOnAnimation();
         }
 
         // Tricks Button
@@ -244,6 +249,7 @@ class TouchEvents {
             controller.getNonGamePlayUIContainer().getMenu().setVisible(false);
             controller.getNonGamePlayUIContainer().getTricks().switchVisibility();
             controller.getNonGamePlayUIContainer().getStatistics().setVisible(false);
+            controller.getView().postInvalidateOnAnimation();
         }
 
         // Menu Button
@@ -251,6 +257,7 @@ class TouchEvents {
             controller.getNonGamePlayUIContainer().getMenu().switchVisibility();
             controller.getNonGamePlayUIContainer().getTricks().setVisible(false);
             controller.getNonGamePlayUIContainer().getStatistics().setVisible(false);
+            controller.getView().postInvalidateOnAnimation();
         }
 
         //------------------------
@@ -318,10 +325,10 @@ class TouchEvents {
         //------------------------
 
         //------------------- Play a Card ----------------------------------------------------------
-        controller.getGamePlay().getPlayACard().getPlayACardLogic().touchActionUp(controller);
+        controller.getGamePlay().getPlayACardRound().getPlayACardLogic().touchActionUp(controller);
 
-        //------------------------
-
+        // ------------------ Play A Card Round Ended ----------------------------------------------
+        controller.getGamePlay().getPlayACardRound().touchEventUp(X, Y, controller);
 
         // ------------------ All Cards Played -----------------------------------------------------
         // MyPlayer Info Buttons
@@ -332,6 +339,7 @@ class TouchEvents {
             controller.getNonGamePlayUIContainer().getStatistics().setVisible(false);
             controller.getNonGamePlayUIContainer().getTricks().setVisible(false);
             controller.getNonGamePlayUIContainer().getMenu().setVisible(false);
+            controller.getView().postInvalidateOnAnimation();
             controller.startRound();
         }
 

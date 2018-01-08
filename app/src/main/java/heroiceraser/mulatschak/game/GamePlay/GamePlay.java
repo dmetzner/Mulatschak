@@ -2,11 +2,12 @@ package heroiceraser.mulatschak.game.GamePlay;
 
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GamePlay.AllCardsPlayed.AllCardsPlayed;
+import heroiceraser.mulatschak.game.GamePlay.Mulatschak.MulatschakResultAnimation;
 import heroiceraser.mulatschak.game.GamePlay.CardExchange.CardExchange;
 import heroiceraser.mulatschak.game.GamePlay.ChooseTrump.ChooseTrump;
 import heroiceraser.mulatschak.game.GamePlay.DealCards.DealCards;
-import heroiceraser.mulatschak.game.GamePlay.PlayACard.PlayACard;
-import heroiceraser.mulatschak.game.GamePlay.TrickBids.DecideMulatschak.DecideMulatschak;
+import heroiceraser.mulatschak.game.GamePlay.PlayACard.PlayACardRound;
+import heroiceraser.mulatschak.game.GamePlay.Mulatschak.DecideMulatschak;
 import heroiceraser.mulatschak.game.GamePlay.TrickBids.TrickBids;
 import heroiceraser.mulatschak.game.GameView;
 
@@ -26,8 +27,9 @@ public class GamePlay {
     private TrickBids trickBids;
     private ChooseTrump chooseTrump;
     private CardExchange cardExchange;
-    private PlayACard playACard;
+    private PlayACardRound playACardRound;
     private AllCardsPlayed allCardsPlayed;
+    private MulatschakResultAnimation mulatschakResultAnimation;
 
 
     //----------------------------------------------------------------------------------------------
@@ -40,7 +42,8 @@ public class GamePlay {
         chooseTrump = new ChooseTrump();
         cardExchange = new CardExchange();
         allCardsPlayed = new AllCardsPlayed();
-        playACard = new PlayACard();
+        playACardRound = new PlayACardRound();
+        mulatschakResultAnimation = new MulatschakResultAnimation();
     }
 
 
@@ -53,7 +56,7 @@ public class GamePlay {
         trickBids.init(view);
         chooseTrump.init(view);
         cardExchange.init(view);
-        playACard.init(view);
+        playACardRound.init(view);
         // allCardsPlayed -> needed only once in a while, generate everything at call
     }
 
@@ -64,6 +67,8 @@ public class GamePlay {
     public void startRound(GameController controller) {
         trickBids.startRound(controller);
         chooseTrump.startRound(controller);
+        mulatschakResultAnimation.remove();
+        decideMulatschak.startRound(controller);
         // clean up ToDo for the rest
     }
 
@@ -91,11 +96,15 @@ public class GamePlay {
         return cardExchange;
     }
 
-    public PlayACard getPlayACard() {
-        return playACard;
+    public PlayACardRound getPlayACardRound() {
+        return playACardRound;
     }
 
     public AllCardsPlayed getAllCardsPlayed() {
         return allCardsPlayed;
+    }
+
+    public MulatschakResultAnimation getMulatschakResultAnimation() {
+        return mulatschakResultAnimation;
     }
 }

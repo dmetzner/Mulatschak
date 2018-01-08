@@ -4,7 +4,7 @@ import android.graphics.Canvas;
 
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.game.NonGamePlayUI.AllCardsPlayedView.AllCardsPlayedView;
+import heroiceraser.mulatschak.game.GamePlay.AllCardsPlayed.AllCardsPlayedView;
 import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBar.ButtonBar;
 import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBar.ButtonBarDecoration;
 import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBar.Windows.GameMenu.GameMenu;
@@ -77,7 +77,7 @@ public class NonGamePlayUIContainer {
         button_bar_.draw(canvas);
 
         // Display Overlays with the functionality
-        statistics_.draw(canvas);
+        statistics_.draw(canvas, controller);
         tricks_.draw(canvas, controller);
         menu_.draw(canvas, controller);
 

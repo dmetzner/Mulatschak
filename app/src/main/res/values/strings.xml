@@ -22,6 +22,12 @@
 
     <!-- ::::::::::::::::::::::: Player Info ::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="player_info_active_player_is_0">Du bist am Zug</string>
+    <string name="player_info_miss_a_turn">Du setzt diese Runde aus</string>
+
+    <!-- :::::::::::::::: Mulatschak Round ::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+    <string name="mulatschak">Mulatschak</string>
+    <string name="mulatschak_failed_2">fehlgeschlagen</string>
+    <string name="mulatschak_succeeded_2">erfolgreich</string>
 
 
     <!-- :::::::::::::::::::: SinglePlayer Settings :::::::::::::::::::::::::::::::::::::::::::: -->
@@ -64,6 +70,9 @@
 
         <!-- :::::::::::::::::::: NextRoundButton :::::::::::::::::::::::::::::::::::::::::::::: -->
         <string name="next_round_button">Nächste Runde</string>
+
+    <!-- :::::::::::::::::::: Game Over :::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+    <string name="game_over_button">Spiel beenden</string>
 
     <!-- :::::::::::::::::::: TrickBids :::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="muli_text">Mulatschak?</string>

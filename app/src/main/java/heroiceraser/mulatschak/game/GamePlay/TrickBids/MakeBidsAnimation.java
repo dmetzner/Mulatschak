@@ -7,6 +7,7 @@ import java.util.List;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
 import heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
+import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameLogic;
@@ -89,6 +90,7 @@ public class MakeBidsAnimation {
     public void draw(Canvas canvas, GameController controller) {
         if (animatingNumbers) {
             background.draw(canvas, controller);
+            controller.getAnimateHands().drawPlayer0Hand(canvas, controller);
 
             for (MyTextButton button : numberButtons) {
                 button.draw(canvas);
@@ -141,14 +143,34 @@ public class MakeBidsAnimation {
     //----------------------------------------------------------------------------------------------
     //  reEnableButtons
     //
-    void reEnableButtons(int amount_of_player) {
+    void reEnableButtons(GameController controller) {
         for (int i = 0; i < numberButtons.size(); i++) {
-            if (amount_of_player <= 2 && i == 0) {
+            // there have to be more than 2 players to pass this round
+            // also it is not possible to miss a turn if the last round was missed
+            if (i == 0 && (controller.getAmountOfPlayers() <= 2 ||
+                            controller.getPlayerById(0).getMissATurn() ) ) {
                 numberButtons.get(i).setEnabled(false);
             }
             else {
                 numberButtons.get(i).setEnabled(true);
             }
+        }
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    //  prepareAnimation
+    //                          -> checks if there are enough player to enable skipp round button
+    //
+    void prepareAnimation(GameController controller) {
+        int players = controller.getAmountOfPlayers();
+        for (MyPlayer player : controller.getPlayerList()) {
+            if (player.getMissATurn()) {
+                players--;
+            }
+        }
+        if (players <= 2) {
+            numberButtons.get(0).setEnabled(false);
         }
     }
 

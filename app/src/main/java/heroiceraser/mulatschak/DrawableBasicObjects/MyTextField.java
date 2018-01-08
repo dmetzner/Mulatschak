@@ -112,4 +112,9 @@ public class MyTextField {
         textPaint.setStyle(Paint.Style.FILL);
     }
 
+    public void updateAlpha(int alpha) {
+        textPaint.setAlpha(alpha);
+        borderPaint.setAlpha(alpha);
+    }
+
 }

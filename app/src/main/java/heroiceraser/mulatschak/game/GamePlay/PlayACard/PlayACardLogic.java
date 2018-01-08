@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.util.Log;
 
 import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
@@ -189,20 +188,18 @@ public class PlayACardLogic {
                 return;
             }
 
-            // valid card play -> move card to discard pile and give turn to the next player
+            // valid card play -> move card to discard pile call playACard again
             if (valid) {
                 moveCardFromHandToDiscardPile(controller);
 
                 // recalculate hand positions!
-                controller.getAnimation().getReAnimateHands()
-                        .redrawHands(controller.getLayout(), controller.getPlayerById(0));
+                controller.getAnimateHands().redrawHands(controller.getLayout(), controller.getPlayerById(0));
 
                 // give turn to next player
                 move_card_idx_ = GameController.NOT_SET;
                 invalid_move_symbol_running_ = false;
                 invalid_symbol_alpha_ = 0;
-                controller.turnToNextPlayer();
-                controller.nextTurn();
+                controller.getGamePlay().getPlayACardRound().playACard(false, controller);
             }
         }
     }

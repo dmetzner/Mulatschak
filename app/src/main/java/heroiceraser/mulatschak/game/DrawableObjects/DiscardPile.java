@@ -46,7 +46,8 @@ public class DiscardPile extends DrawableObject {
     public void init(GameView view) {
         setWidth(view.getController().getLayout().getDiscardPileWidth());
         setHeight(view.getController().getLayout().getDiscardPileHeight());
-        setPosition(new Point(0, 0));
+        setPosition(new Point(view.getController().getLayout().getDiscardPilePositions().get(1).x,
+                view.getController().getLayout().getDiscardPilePositions().get(2).y));
         finishInit(view);
     }
 

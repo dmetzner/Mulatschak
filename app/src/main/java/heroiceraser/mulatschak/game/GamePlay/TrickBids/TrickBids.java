@@ -50,7 +50,7 @@ public class TrickBids {
     //  startRound
     //
     public void startRound(GameController controller) {
-        makeBidsAnimation.reEnableButtons(controller.getAmountOfPlayers());
+        makeBidsAnimation.reEnableButtons(controller);
         bids_view_.reset();
         bids_view_.setVisible(false);
     }
@@ -87,9 +87,7 @@ public class TrickBids {
         }
 
         if (logic.getTurn() == 0) {
-            if (controller.getPlayerById(0).getMissATurn()) {
-                makeBidsAnimation.getNumberButtons().get(0).setEnabled(false);
-            }
+            makeBidsAnimation.prepareAnimation(controller);
             makeBidsAnimation.turnOnAnimationNumbers();
             controller.getView().disableUpdateCanvasThread();
             // makeTrickBids should get called when player chooses his tricks

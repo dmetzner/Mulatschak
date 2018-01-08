@@ -6,8 +6,11 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import java.util.ArrayList;
+import java.util.List;
+
 import heroiceraser.mulatschak.DrawableBasicObjects.MySimpleTextField;
 import heroiceraser.mulatschak.R;
+import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
@@ -22,6 +25,7 @@ public class GameStatistics extends ButtonBarWindow {
     //  Member Variables
     //
     private int players_;
+    private List<MyPlayer> playerList;
     private TextPaint text_paint_;
     private ArrayList<StaticLayout> display_name_layouts_;
     private Point display_name_text_pos_;
@@ -34,6 +38,7 @@ public class GameStatistics extends ButtonBarWindow {
     //
     public GameStatistics() {
         super();
+        playerList = new ArrayList<>();
     }
 
     //----------------------------------------------------------------------------------------------
@@ -59,6 +64,7 @@ public class GameStatistics extends ButtonBarWindow {
         display_name_text_pos_ = new Point((int) (layout.getScreenWidth() * (1.0/10.0)),
                 (int) (layout.getSectors().get(1).y * 3.5));
 
+        setPlayerList(view.getController());
         initDisplayNameLayouts(view.getController());
         initPlayerLivesLayouts(view.getController());
         setPlayerLivesPosition(layout);
@@ -71,21 +77,23 @@ public class GameStatistics extends ButtonBarWindow {
     //  UpdatePlayerLives
     //
     public void updatePlayerLives(GameController controller) {
+        setPlayerList(controller);
         initPlayerLivesLayouts(controller);
+        initDisplayNameLayouts(controller);
     }
 
 
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas) {
+    public void draw(Canvas canvas, GameController controller) {
         if (isVisible()) {
 
             super.drawBackground(canvas);
             super.drawTitle(canvas);
 
             // display names & lives
-            drawStateOfTheGame(canvas, players_);
+            drawStateOfTheGame(canvas, controller, players_);
         }
     }
 
@@ -99,11 +107,12 @@ public class GameStatistics extends ButtonBarWindow {
     //                                    name_3      *lives*
     //                                    ...
     //
-    private void drawStateOfTheGame(Canvas canvas, int players) {
-        Point pos = new Point(display_name_text_pos_);
+    private void drawStateOfTheGame(Canvas canvas, GameController controller, int players) {
 
         for (int i = 0; i < players; i++) {
             canvas.save();
+            Point pos = new Point(display_name_text_pos_);
+            pos.y += (int) (text_paint_.getTextSize() * 2) * i;
 
             canvas.translate(pos.x, pos.y);
             if (display_name_layouts_.size() > i && display_name_layouts_.get(i) != null) {
@@ -116,20 +125,40 @@ public class GameStatistics extends ButtonBarWindow {
             }
 
             canvas.restore();
-            pos.y += (int) (text_paint_.getTextSize() * 2);
         }
     }
 
+
+    private void setPlayerList(GameController controller) {
+
+        playerList.clear();
+
+        List<MyPlayer> unsorted = new ArrayList<>();
+        unsorted.addAll(controller.getPlayerList());
+
+        for (int i = 0; i < unsorted.size(); i++) {
+            int min = 0;
+            for (int j = i; j < unsorted.size(); j++) {
+                if (unsorted.get(j).getLives() < unsorted.get(i).getLives()) {
+                    min = j;
+                }
+            }
+            playerList.add(unsorted.get(min));
+            unsorted.remove(min);
+            i--;
+        }
+    }
 
     //----------------------------------------------------------------------------------------------
     //  initDisplayNameLayouts
     //
     private void initDisplayNameLayouts(GameController controller) {
         display_name_layouts_ = new ArrayList<>();
-        int max_width = (int) (controller.getLayout().getScreenWidth() * (7.0/10.0));
+        int max_width = (int) (controller.getLayout().getOnePercentOfScreenWidth() * 60);
 
         for (int i = 0; i < controller.getAmountOfPlayers(); i++) {
-            String text = controller.getPlayerById(i).getDisplayName() + ":";
+
+            String text = (i + 1) + ". " + playerList.get(i).getDisplayName() + ":";
 
             // reduce too large names!
             while (text_paint_.measureText(text) > max_width) {
@@ -156,10 +185,10 @@ public class GameStatistics extends ButtonBarWindow {
     //
     private void initPlayerLivesLayouts(GameController controller) {
         player_lives_layouts_ = new ArrayList<>();
-        int max_width = (int) (controller.getLayout().getScreenWidth() * (2/10.0));
+        int max_width = (int) (controller.getLayout().getOnePercentOfScreenWidth() * 20);
 
         for (int i = 0; i < controller.getAmountOfPlayers(); i++) {
-            String player_lives_text = "" + controller.getPlayerById(i).getLives();
+            String player_lives_text = "" + playerList.get(i).getLives();
 
             StaticLayout player_lives_layout = new StaticLayout(player_lives_text, text_paint_,
                     max_width, Layout.Alignment.ALIGN_OPPOSITE, 1.0f, 0, false);

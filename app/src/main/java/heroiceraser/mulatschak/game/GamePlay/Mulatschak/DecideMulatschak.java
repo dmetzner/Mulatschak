@@ -1,4 +1,4 @@
-package heroiceraser.mulatschak.game.GamePlay.TrickBids.DecideMulatschak;
+package heroiceraser.mulatschak.game.GamePlay.Mulatschak;
 
 import android.graphics.Canvas;
 import android.os.Handler;
@@ -19,7 +19,7 @@ public class DecideMulatschak {
     //
     private EnemyDecideMulatschakLogic enemyDecideMulatschakLogic;
     private DecideMulatschakAnimation decideMulatschakAnimation;
-    private MulatschakAnimation mulatschakRound;
+    private MulatschakActivateAnimation mulatschakRound;
 
 
     //----------------------------------------------------------------------------------------------
@@ -28,7 +28,7 @@ public class DecideMulatschak {
     public DecideMulatschak() {
         enemyDecideMulatschakLogic = new EnemyDecideMulatschakLogic();
         decideMulatschakAnimation = new DecideMulatschakAnimation();
-        mulatschakRound = new MulatschakAnimation();
+        mulatschakRound = new MulatschakActivateAnimation();
     }
 
 
@@ -99,6 +99,13 @@ public class DecideMulatschak {
         }
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  startRound
+    //
+    public void startRound(GameController controller) {
+        mulatschakRound.clear();
+    }
 
     //----------------------------------------------------------------------------------------------
     //  setMulatschakUp

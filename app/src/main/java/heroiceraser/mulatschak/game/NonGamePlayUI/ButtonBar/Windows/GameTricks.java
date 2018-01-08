@@ -184,6 +184,19 @@ public class GameTricks extends ButtonBarWindow {
 
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  add Tricks and update
+    //                          -> should get called after ever player played a card
+    //                              and we know the round winner
+    //
+    public void addTricksAndUpdate(DiscardPile discardPile, int winner_id) {
+        addDiscardPile(DiscardPile.copy(discardPile), winner_id);
+        int index = discard_piles_.size() - 1;
+        setVisibleRoundId(index);
+        updateVisibleRound();
+    }
+
     //----------------------------------------------------------------------------------------------
     //  showNextRound
     //                  -> called by click on the right arrow
