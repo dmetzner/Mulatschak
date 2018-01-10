@@ -65,18 +65,13 @@ public class PlayACardRound {
             logic.setStartingPlayer(logic.getTurn());
         }
         else {
-            controller.turnToNextPlayer();
+            controller.turnToNextPlayer(true);
         }
 
         Log.d("PlayACard", logic.getTurn() + "");
 
         // only allowed if turn is player 0
         controller.getGamePlay().getPlayACardRound().setCardMovable(false);
-
-        // update round info box
-        controller.getNonGamePlayUIContainer().getRoundInfo().setInfoBoxEmpty();
-        controller.getNonGamePlayUIContainer().getRoundInfo().getRoundInfoTextField().setVisible(true);
-        controller.getNonGamePlayUIContainer().getRoundInfo().updateRoundInfo(controller);
 
         // ever player played played a card
         if (!first_call && logic.getTurn() == logic.getStartingPlayer()) {
@@ -86,7 +81,7 @@ public class PlayACardRound {
 
         // player skips this round
         if (controller.getPlayerById(logic.getTurn()).getMissATurn()) {
-            controller.turnToNextPlayer();
+            controller.turnToNextPlayer(true);
             playACard(false, controller);
             return;
         }
@@ -155,11 +150,6 @@ public class PlayACardRound {
         // the winner can play the fist card next Round
         controller.setTurn(logic.getRoundWinnerId());
         logic.setStartingPlayer(logic.getRoundWinnerId());
-
-        // update Roundinfo box
-        controller.getNonGamePlayUIContainer().getRoundInfo().setInfoBoxEmpty();
-        controller.getNonGamePlayUIContainer().getRoundInfo().updateEndOfCardRound(controller);
-        controller.getNonGamePlayUIContainer().getRoundInfo().getEndOfCardRound().setVisible(true);
 
         // start new round
         roundEnded = true;
@@ -240,10 +230,16 @@ public class PlayACardRound {
             return;
         }
 
-        if (isDiscardPileTouched(X, Y, controller.getDiscardPile()) ||
-                isAHandCardTouched(X, Y, controller.getPlayerById(0))) {
+        if (isDiscardPileTouched(X, Y, controller.getDiscardPile())) {
             touched = true;
         }
+
+        // down on the hand cards is enough (feels more natural in this case)
+        if (isAHandCardTouched(X, Y, controller.getPlayerById(0))) {
+            discardPileClicked = true;
+            prepareNextCardRound(controller, false);
+        }
+
     }
 
     public void touchEventMove(int X, int Y, GameController controller) {
@@ -251,8 +247,7 @@ public class PlayACardRound {
             return;
         }
 
-        if (isDiscardPileTouched(X, Y, controller.getDiscardPile()) ||
-                isAHandCardTouched(X, Y, controller.getPlayerById(0))) {
+        if (isDiscardPileTouched(X, Y, controller.getDiscardPile())) {
             touched = true;
         }
         else {
@@ -265,8 +260,7 @@ public class PlayACardRound {
         if (!roundEnded) {
             return;
         }
-        if (isDiscardPileTouched(X, Y, controller.getDiscardPile()) ||
-                isAHandCardTouched(X, Y, controller.getPlayerById(0))) {
+        if (isDiscardPileTouched(X, Y, controller.getDiscardPile())) {
             touched = false;
             discardPileClicked = true;
             prepareNextCardRound(controller, false);

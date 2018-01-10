@@ -62,7 +62,7 @@ public class DecideMulatschak {
         }
 
         // player next to the dealer starts
-        controller.turnToNextPlayer();
+        controller.turnToNextPlayer(false);
 
         // all players had their chance to try a mulatschak  --> return
         if (!first_call && logic.getTurn() == logic.getFirstBidder(controller.getAmountOfPlayers())) {

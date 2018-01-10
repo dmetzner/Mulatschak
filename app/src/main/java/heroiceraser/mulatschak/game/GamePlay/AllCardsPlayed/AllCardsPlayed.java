@@ -62,21 +62,13 @@ public class AllCardsPlayed {
 
         // checkButton if game over
         if (go.isGameOver(controller)) {
-            logic.setGameOver(true);
-            ui.getRoundInfo().setInfoBoxEmpty();
-            ui.getRoundInfo().getGameOver().setVisible(true);
-            go.setVisible(true);                                // ToDo start animation??
+            go.setGameGameOver(controller);                         // ToDo start animation??
             return;
         }
 
         // round is over, can't be the turn of anyone
         controller.getPlayerInfo().setActivePlayer(GameController.NOT_SET);
         controller.getPlayerInfo().setShowPlayer0Turn(false);
-
-        // else prepare a new round
-        ui.getRoundInfo().setInfoBoxEmpty();
-        ui.getRoundInfo().getEndOfRound().setVisible(true);
-        ui.getRoundInfo().updateEndOfRound(controller);
 
         controller.getNonGamePlayUIContainer().getAllCardsPlayedView().startAnimation(controller);
         controller.prepareNewRound();

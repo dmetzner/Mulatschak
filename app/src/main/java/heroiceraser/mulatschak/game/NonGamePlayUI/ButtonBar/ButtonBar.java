@@ -21,7 +21,7 @@ public class ButtonBar extends DrawableObject {
     private MyTextButton statistics_button_;
     private MyTextButton tricks_button_;
     private MyTextButton menu_button_;
-
+    private MyTextButton chatButton;
 
     //----------------------------------------------------------------------------------------------
     //  Constructor
@@ -43,40 +43,57 @@ public class ButtonBar extends DrawableObject {
         initStatisticButton(view);
         initTricksButton(view);
         initMenuButton(view);
+        initChatButton(view);
     }
 
     //----------------------------------------------------------------------------------------------
     //  init Buttons
     //
-    private void initStatisticButton(GameView view) {
-        statistics_button_ = new MyTextButton();
-        Point position = view.getController().getLayout().getButtonBarButtonPositionRight();
-        int width = view.getController().getLayout().getButtonBarBigButtonWidth();
-        int height = view.getController().getLayout().getButtonBarBigButtonHeight();
-        String image_name = "button_blue_metallic_large";
-        String text = view.getResources().getString(R.string.button_bar_state_of_the_game_title);
-        statistics_button_.init(view, position, width, height, image_name, text);
-    }
-
-    private void initTricksButton(GameView view) {
-        tricks_button_ = new MyTextButton();
-        Point position = view.getController().getLayout().getButtonBarButtonPositionMiddle();
-        int width = view.getController().getLayout().getButtonBarBigButtonWidth();
-        int height = view.getController().getLayout().getButtonBarBigButtonHeight();
-        String image_name = "button_blue_metallic_large";
-        String text = view.getResources().getString(R.string.button_bar_tricks_title);
-        tricks_button_.init(view, position, width, height, image_name, text);
-    }
 
     private void initMenuButton(GameView view) {
         menu_button_ = new MyTextButton();
-        Point position = view.getController().getLayout().getButtonBarButtonPositionLeft();
-        int width = view.getController().getLayout().getButtonBarSmallButtonWidth();
+        Point position = new Point(view.getController().getLayout().getButtonBarButtonPosition());
+        position.x = (int) (view.getController().getLayout().getOnePercentOfScreenWidth() * 2);
+        int width = (int) (view.getController().getLayout().getOnePercentOfScreenWidth() * 23.75);
         int height = view.getController().getLayout().getButtonBarSmallButtonHeight();
         String image_name = "button_blue_metallic";
         String text = view.getResources().getString(R.string.button_bar_menu_title);
         menu_button_.init(view, position, width, height, image_name, text);
     }
+
+    private void initChatButton(GameView view) {
+        chatButton = new MyTextButton();
+        Point position = new Point(view.getController().getLayout().getButtonBarButtonPosition());
+        position.x = (int) (view.getController().getLayout().getOnePercentOfScreenWidth() * 26.083);
+        int width = (int) (view.getController().getLayout().getOnePercentOfScreenWidth() * 23.75);
+        int height = view.getController().getLayout().getButtonBarSmallButtonHeight();
+        String image_name = "button_blue_metallic";
+        String text = view.getResources().getString(R.string.button_bar_chat_title);
+        chatButton.init(view, position, width, height, image_name, text);
+    }
+
+    private void initTricksButton(GameView view) {
+        tricks_button_ = new MyTextButton();
+        Point position = new Point(view.getController().getLayout().getButtonBarButtonPosition());
+        position.x = (int) (view.getController().getLayout().getOnePercentOfScreenWidth() * 50.083);
+        int width = (int) (view.getController().getLayout().getOnePercentOfScreenWidth() * 23.75);
+        int height = view.getController().getLayout().getButtonBarSmallButtonHeight();
+        String image_name = "button_blue_metallic";
+        String text = view.getResources().getString(R.string.button_bar_tricks_title);
+        tricks_button_.init(view, position, width, height, image_name, text);
+    }
+
+    private void initStatisticButton(GameView view) {
+        statistics_button_ = new MyTextButton();
+        Point position = new Point(view.getController().getLayout().getButtonBarButtonPosition());
+        position.x = (int) (view.getController().getLayout().getOnePercentOfScreenWidth() * 74.083);
+        int width = (int) (view.getController().getLayout().getOnePercentOfScreenWidth() * 23.75);
+        int height = view.getController().getLayout().getButtonBarBigButtonHeight();
+        String image_name = "button_blue_metallic";
+        String text = view.getResources().getString(R.string.button_bar_state_of_the_game_title);
+        statistics_button_.init(view, position, width, height, image_name, text);
+    }
+
 
 
     //----------------------------------------------------------------------------------------------
@@ -95,6 +112,7 @@ public class ButtonBar extends DrawableObject {
         menu_button_.draw(canvas);
         tricks_button_.draw(canvas);
         statistics_button_.draw(canvas);
+        chatButton.draw(canvas);
     }
 
 
@@ -111,5 +129,9 @@ public class ButtonBar extends DrawableObject {
 
     public MyTextButton getMenuButton() {
         return menu_button_;
+    }
+
+    public MyTextButton getChatButton() {
+        return chatButton;
     }
 }

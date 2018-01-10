@@ -1,9 +1,11 @@
 package heroiceraser.mulatschak.game.NonGamePlayUI.PlayerInfo;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -21,8 +23,6 @@ public class PlayerInfoPopUpView extends LinearLayout {
 
     PlayerInfoPopUpView.Listener mListener = null;
 
-    private TextView player_name_;
-
     public PlayerInfoPopUpView(Context context) {
         super(context);
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -30,7 +30,7 @@ public class PlayerInfoPopUpView extends LinearLayout {
         addView(v);
     }
 
-    public void init(String display_name) {
+    public void init(String display_name, String text, Bitmap bitmap) {
         ((Button) findViewById(R.id.player_info_pop_up_back_button))
                 .setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -38,7 +38,11 @@ public class PlayerInfoPopUpView extends LinearLayout {
             }
         });
 
+        ((ImageView) findViewById(R.id.player_info_pop_up_image)).setImageBitmap(bitmap);
+
         ((TextView) findViewById(R.id.player_info_pop_up_display_name)).setText(display_name);
+
+        ((TextView) findViewById(R.id.player_info_pop_up_text)).setText(text);
 
     }
 

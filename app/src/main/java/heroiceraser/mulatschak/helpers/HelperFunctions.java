@@ -2,8 +2,10 @@ package heroiceraser.mulatschak.helpers;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.PorterDuff;
 import android.util.Log;
 import android.view.View;
 
@@ -97,5 +99,13 @@ public final class HelperFunctions {
             pixels[i] = Color.DKGRAY;
         }
         return Bitmap.createBitmap( pixels, bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888 );
+    }
+
+    public static Bitmap adjustOpacity(Bitmap bitmap, int opacity) {
+        Bitmap mutableBitmap = bitmap.isMutable() ? bitmap : bitmap.copy(Bitmap.Config.ARGB_8888, true);
+        Canvas canvas = new Canvas(mutableBitmap);
+        int colour = (opacity & 0xFF) << 24;
+        canvas.drawColor(colour, PorterDuff.Mode.DST_IN);
+        return mutableBitmap;
     }
 }

@@ -74,6 +74,7 @@ public class PlayACardLogic {
             canvas.drawBitmap(invalid_move_symbol_, invalid_move_symbol_position_.x,
                     invalid_move_symbol_position_.y, alphaPaint);
             reduceInvalidSymbolAlpha(controller);
+            controller.getView().postInvalidateOnAnimation();
         }
     }
 

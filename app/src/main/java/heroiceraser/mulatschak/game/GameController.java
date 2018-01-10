@@ -21,8 +21,6 @@ import heroiceraser.mulatschak.game.NonGamePlayUI.GameOver.GameOver;
 import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
 import heroiceraser.mulatschak.game.Animations.AnimateHands;
 import heroiceraser.mulatschak.game.NonGamePlayUI.PlayerInfo.PlayerInfo;
-import heroiceraser.mulatschak.game.NonGamePlayUI.RoundInfo.RoundInfo;
-
 
 
 public class GameController{
@@ -57,12 +55,48 @@ public class GameController{
     private List<MyPlayer> myPlayer_list_;
     private PlayerInfo player_info_;
 
-    private GameOver game_over_;
-
     private MulatschakDeck deck_;
     private DiscardPile discardPile_;
     private CardStack trash_;
     private DealerButton dealer_button_;
+
+
+    //----------------------------------------------------------------------------------------------
+    //  clear
+    //
+    public void clear() {
+
+        if (participants_ != null) {
+            participants_.clear();
+            participants_ = null;
+        }
+        host_ = null;
+        my_display_name_ = null;
+        my_participant_id_ = null;
+
+        view_ = null;
+        layout_ = null;
+        touch_events_ = null;
+        logic_ = null;
+        settings_= null;
+
+        animateHands = null;
+
+        non_game_play_ui_ = null;
+        game_play_ = null;
+
+        if (myPlayer_list_ != null) {
+            myPlayer_list_.clear();
+            myPlayer_list_ = null;
+        }
+
+        player_info_ = null;
+
+        deck_ = null;
+        discardPile_ = null;
+        trash_ = null;
+        dealer_button_ = null;
+    }
 
 
     //----------------------------------------------------------------------------------------------
@@ -84,8 +118,6 @@ public class GameController{
         myPlayer_list_ = new ArrayList<>();
         player_info_ = new PlayerInfo();
 
-        game_over_ = new GameOver();
-
         deck_ = new MulatschakDeck();
         trash_ = new CardStack();
         discardPile_ = new DiscardPile();
@@ -96,39 +128,46 @@ public class GameController{
     //----------------------------------------------------------------------------------------------
     //  start
     //
-    public void start(int start_lives, final int enemies, final int difficulty, boolean multiplayer,
-                      final String myName, String my_id, ArrayList<Participant> participants) {
-        multiplayer_ = multiplayer;
+    public void start(final int start_lives, final int enemies, final int difficulty, final boolean multiplayer,
+                      final String myName, final String my_id, final ArrayList<Participant> participants) {
 
-        my_display_name_ = myName;
-        if (my_display_name_ == null) {
-            my_display_name_ = "notSignedIn";
-        }
+        Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                multiplayer_ = multiplayer;
 
-        // if singlePlayer -> == null
-        my_participant_id_ = my_id;
-        participants_ = participants;
-        if (participants != null && participants.size() > 0) {
-            host_ = participants.get(0);
-        }
+                my_display_name_ = myName;
+                if (my_display_name_ == null) {
+                    my_display_name_ = "notSignedIn";
+                }
 
-        logic_.init(start_lives, difficulty);
-        layout_.init(view_);
-        settings_.init(view_);
-        initPlayers(my_id, enemies);
-        resetPlayerLives();
-        setPlayerPositions();
-        player_info_.init(view_);
-        non_game_play_ui_.init(view_);
-        discardPile_.init(view_);
-        game_play_.init(view_);
-        deck_.initDeck(view_);
-        dealer_button_.init(view_);
-        game_over_.init(view_);
-        animateHands.init(view_);
-        enable_drawing_ = true;
-        chooseFirstDealerRandomly();
-        startRound();
+                // if singlePlayer -> == null
+                my_participant_id_ = my_id;
+                participants_ = participants;
+                if (participants != null && participants.size() > 0) {
+                    host_ = participants.get(0);
+                }
+
+                logic_.init(start_lives, difficulty);
+                layout_.init(view_);
+                settings_.init(view_);
+                initPlayers(my_id, enemies);
+                resetPlayerLives();
+                setPlayerPositions();
+                player_info_.init(view_);
+                non_game_play_ui_.init(view_);
+                discardPile_.init(view_);
+                game_play_.init(view_);
+                deck_.initDeck(view_);
+                dealer_button_.init(view_);
+                animateHands.init(view_);
+                enable_drawing_ = true;
+                chooseFirstDealerRandomly();
+                startRound();
+            }
+        };
+        handler.postDelayed(runnable, 10);
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -139,10 +178,6 @@ public class GameController{
     //
     public void startRound() {
         player_info_.setVisible(true);
-        non_game_play_ui_.getRoundInfo().setVisible(true);
-        non_game_play_ui_.getRoundInfo().setInfoBoxEmpty();
-        non_game_play_ui_.getRoundInfo().updateNewRound(this);
-        non_game_play_ui_.getRoundInfo().getNewRound().setVisible(true);
         non_game_play_ui_.getTricks().clear();
 
         allCardsBackToTheDeck();
@@ -173,7 +208,10 @@ public class GameController{
     //  continueAfterDealingAnimation
     //
     public void continueAfterDealingAnimation() {
-        non_game_play_ui_.getRoundInfo().setInfoBoxEmpty();
+        non_game_play_ui_.getChatView().addMessage(getPlayerById(0), "yo yo yo");
+        non_game_play_ui_.getChatView().addMessage(getPlayerById(1), "was up");
+        non_game_play_ui_.getChatView().addMessage(getPlayerById(2), "jeei");
+        non_game_play_ui_.getChatView().addMessage(getPlayerById(3), "I'm fine");
         game_play_.getDecideMulatschak().startMulatschakDecision(this);
     }
 
@@ -182,7 +220,8 @@ public class GameController{
     //  continueAfterDecideMulatschak
     //
     public void continueAfterDecideMulatschak() {
-        non_game_play_ui_.getRoundInfo().getTrickBidsTextField().setVisible(true);
+        non_game_play_ui_.getChatView().addMessage(getPlayerById(0), "xD");
+        non_game_play_ui_.getChatView().addMessage(getPlayerById(1), "nice one but what if message is too long");
         game_play_.getTrickBids().startTrickBids(this);
     }
 
@@ -191,9 +230,8 @@ public class GameController{
     //  continueAfterTrickBids
     //
     public void continueAfterTrickBids() {
-        non_game_play_ui_.getRoundInfo().setInfoBoxEmpty();
-        non_game_play_ui_.getRoundInfo().getChooseTrumpTextField().setVisible(true);
-
+        non_game_play_ui_.getChatView().addMessage(getPlayerById(0), "xD");
+        non_game_play_ui_.getChatView().addMessage(getPlayerById(1), "nice one but what if message is too long");
         if (getPlayerById(0).getMissATurn()) {
             getAnimateHands().setMissATurnInfoVisible(true);
         }
@@ -214,14 +252,12 @@ public class GameController{
                 // ToDo
                 logic_.raiseMultiplier();
                 setTurn(NOT_SET);
-                non_game_play_ui_.getRoundInfo().updateChooseTrump(this, 0);
                 mHandler.postDelayed(case_0, 3000);
                 break;
 
             case 1: // heart round -> no trumps to choose
                 logic_.setTrump(MulatschakDeck.HEART);
                 setTurn(logic_.getTrumpPlayerId());
-                non_game_play_ui_.getRoundInfo().updateChooseTrump(this, 1);
                 game_play_.getChooseTrump().getTrumpView()
                         .startAnimation(MulatschakDeck.HEART, logic_.getTrumpPlayerId(), controller);
                 break;
@@ -239,9 +275,6 @@ public class GameController{
     //
     public void continueAfterTrumpWasChosen() {
         game_play_.getTrickBids().getBidsView().setVisible(true);
-        non_game_play_ui_.getRoundInfo().setInfoBoxEmpty();
-        non_game_play_ui_.getRoundInfo().updateRoundInfo(this);
-        non_game_play_ui_.getRoundInfo().getRoundInfoTextField().setVisible(true);
         setTurn(logic_.getTrumpPlayerId());
         logic_.setStartingPlayer(logic_.getTrumpPlayerId());
         if (logic_.isMulatschakRound()) {
@@ -279,7 +312,6 @@ public class GameController{
         }
 
         // next round
-        non_game_play_ui_.getRoundInfo().updateRoundInfo(this);
         getGamePlay().getPlayACardRound().playACard(true, this);
     }
 
@@ -439,15 +471,17 @@ public class GameController{
     //                          -> passes turn to the next player
     //                          -> updates the active player for the player info
     //
-    public void turnToNextPlayer() {
+    public void turnToNextPlayer(boolean skipMissATurns) {
         logic_.turnToNextPlayer(getAmountOfPlayers());
-        int players = 0;
-        while (getPlayerById(logic_.getTurn()).getMissATurn()) {
-            logic_.turnToNextPlayer(getAmountOfPlayers());
-            if (players > getAmountOfPlayers()) {
-                Log.e("miss a turn fail?", "turn to next player");
+        if (skipMissATurns) {
+            int players = 0;
+            while (getPlayerById(logic_.getTurn()).getMissATurn()) {
+                logic_.turnToNextPlayer(getAmountOfPlayers());
+                if (players > getAmountOfPlayers()) {
+                    Log.e("miss a turn fail?", "turn to next player");
+                }
+                players++;
             }
-            players++;
         }
         player_info_.setActivePlayer(logic_.getTurn());
     }
@@ -555,11 +589,7 @@ public class GameController{
     }
 
     public GameOver getGameOver() {
-        return game_over_;
-    }
-
-    public RoundInfo getRoundInfo() {
-        return non_game_play_ui_.getRoundInfo();
+        return non_game_play_ui_.getGameOver();
     }
 
     public PlayerInfo getPlayerInfo() { return player_info_; }

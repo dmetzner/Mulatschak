@@ -1,11 +1,16 @@
 package heroiceraser.mulatschak.game.NonGamePlayUI.GameOver;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
-
+import android.os.Handler;
+import android.text.TextPaint;
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
+import heroiceraser.mulatschak.MainActivity;
 import heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
@@ -25,6 +30,7 @@ public class GameOver {
     //
     private boolean visible;
     private Background4Player0Animations background;
+    private MyTextField textField;
     private MyTextButton endGameButton;
 
 
@@ -35,6 +41,7 @@ public class GameOver {
         super();
         background = new Background4Player0Animations();
         endGameButton = new MyTextButton();
+        textField = new MyTextField();
         visible = false;
     }
 
@@ -46,6 +53,18 @@ public class GameOver {
 
         // background
         background.init(layout);
+
+        textField.setPosition(new Point(layout.getScreenWidth() / 2, layout.getScreenHeight() / 2));
+        textField.setText(view.getResources().getString(R.string.game_over_text));
+        textField.setVisible(false);
+        TextPaint textPaint = new TextPaint();
+        textPaint.setColor(Color.WHITE);
+        textPaint.setAntiAlias(true);
+        textPaint.setTextSize(layout.getSectors().get(1).y);
+        textPaint.setTextAlign(Paint.Align.CENTER);
+        textField.setTextPaint(textPaint);
+        textField.setBorder(view.getResources().getColor(R.color.metallic_blue), 0.2f);
+        textField.setMaxWidth((int) layout.getOnePercentOfScreenWidth() * 80);
 
         // button
         Point endGameButtonSize = new Point((int)(layout.getButtonBarBigButtonWidth() * 1.5),
@@ -61,11 +80,43 @@ public class GameOver {
 
     }
 
+    public void setGameGameOver(GameController controller) {
+        setVisible(true);
+        controller.getLogic().setGameOver(true);
+
+        // disable things
+        controller.getGamePlay().getChooseTrump().getTrumpView().setVisible(false);
+        controller.getDiscardPile().setVisible(false);
+        controller.getPlayerInfo().setVisible(false);
+        controller.getGamePlay().getTrickBids().getBidsView().setVisible(false);
+        controller.getGamePlay().getMulatschakResultAnimation().remove();
+        controller.getGamePlay().getDecideMulatschak().startRound(controller);
+        controller.getDealerButton().setVisible(false);
+        controller.getPlayerInfo().setActivePlayer(GameController.NOT_SET);
+        controller.getPlayerInfo().setShowPlayer0Turn(false);
+
+        // show things
+        String text;
+        if (controller.getPlayerById(0).getLives() <= 0) {
+            text = controller.getView().getResources().getString(R.string.game_over_won);
+        }
+        else {
+            text = controller.getView().getResources().getString(R.string.game_over_lost);
+        }
+        textField.setVisible(true);
+        controller.getNonGamePlayUIContainer().getStatistics().setTitle(controller, text);
+        endGameButton.setVisible(true);
+        endGameButton.setEnabled(true);
+        controller.getNonGamePlayUIContainer().getStatistics().setVisible(true);
+    }
+
+
     public void draw(Canvas canvas, GameController controller) {
         if (isVisible()) {
             background.draw(canvas, controller);
-            //controller.getNonGamePlayUIContainer().getStatistics().setVisible(true);
-            endGameButton.draw(canvas);
+            background.draw(canvas, controller);
+            textField.draw(canvas);
+            // button should get call on top of button bar windows!!
         }
     }
 
@@ -82,6 +133,53 @@ public class GameOver {
         return false;
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  Touch Events
+    //
+    public void touchEventDown(int X, int Y) {
+        if (!isVisible()) {
+             return;
+        }
+
+        endGameButton.touchEventDown(X, Y);
+
+    }
+
+    public void touchEventMove(int X, int Y) {
+        if (!isVisible()) {
+            return;
+        }
+
+        endGameButton.touchEventMove(X, Y);
+    }
+
+    public void touchEventUp(int X, int Y, GameController controller) {
+        if (!isVisible()) {
+            return;
+        }
+        if (endGameButton.touchEventUp(X, Y)) {
+            backToMainMenu(controller);
+        }
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    //  endGame
+    //
+    private void backToMainMenu(final GameController controller) {
+        controller.getView().stopAll = true;
+        Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                MainActivity mainActivity = (MainActivity) controller.getView().getContext();
+                mainActivity.endGame();
+            }
+        };
+       handler.postDelayed(runnable, 500);
+    }
+
     //----------------------------------------------------------------------------------------------
     //  Getter & Setter
     //
@@ -93,4 +191,7 @@ public class GameOver {
         this.visible = visible;
     }
 
+    public MyTextButton getEndGameButton() {
+        return endGameButton;
+    }
 }

@@ -19,9 +19,9 @@ public class GameView extends View {
     //----------------------------------------------------------------------------------------------
     //  Member Variables
     //
-    private Context context_;
     private GameController controller_;
     private GameThread thread_;
+    public boolean stopAll;
 
 
     //----------------------------------------------------------------------------------------------
@@ -29,11 +29,30 @@ public class GameView extends View {
     //
     public GameView(Context context) {
         super(context);
-        context_ = context;
         controller_ = new GameController(this);
         thread_ = new GameThread(this);
         thread_.setRunning(true);
         thread_.start();
+        stopAll = false;
+    }
+
+
+
+    //----------------------------------------------------------------------------------------------
+    //  clear
+    //
+    public void clear() {
+        if (thread_ != null) {
+            getThread().setRunning(false);
+            try {
+                thread_.join();
+            }
+            catch (Exception e) {
+                Log.w("GameThread", "Join Excpetion");
+            }
+        }
+
+        controller_.clear();
     }
 
 
@@ -52,7 +71,7 @@ public class GameView extends View {
     protected synchronized void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if (controller_ == null || !controller_.isDrawingEnabled()) {
+        if (stopAll || controller_ == null || !controller_.isDrawingEnabled()) {
             return;
         }
 
@@ -72,8 +91,6 @@ public class GameView extends View {
         drawExchangeCardsAnimation(canvas);
         drawMulatschakResult(canvas);
 
-        drawGameOver(canvas);
-        drawRoundInfo(canvas);
         drawNonGamePlayUI(canvas);
 
         thread_.now = System.currentTimeMillis();
@@ -118,14 +135,6 @@ public class GameView extends View {
         controller_.getPlayerInfo().draw(canvas);
     }
 
-    private void drawGameOver(Canvas canvas) {
-        controller_.getGameOver().draw(canvas, controller_);
-    }
-
-    private void drawRoundInfo(Canvas canvas) {
-        controller_.getRoundInfo().draw(canvas);
-    }
-
     private void drawDealerButton(Canvas canvas) {
         controller_.getDealerButton().draw(canvas, controller_);
     }
@@ -158,6 +167,9 @@ public class GameView extends View {
     //
     @Override
     public synchronized boolean onTouchEvent(MotionEvent event) {
+        if (stopAll) {
+            return false;
+        }
         int eventAction = event.getAction();
         int X = (int) event.getX();
         int Y = (int) event.getY();

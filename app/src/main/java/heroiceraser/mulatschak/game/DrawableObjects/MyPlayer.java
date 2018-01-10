@@ -155,6 +155,5 @@ public class MyPlayer {
     public String getDisplayName() {
         return display_name_;
     }
-
 }
 

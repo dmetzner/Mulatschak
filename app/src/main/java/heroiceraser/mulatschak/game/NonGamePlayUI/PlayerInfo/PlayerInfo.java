@@ -1,5 +1,6 @@
 package heroiceraser.mulatschak.game.NonGamePlayUI.PlayerInfo;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -8,6 +9,8 @@ import android.graphics.Rect;
 import android.text.TextPaint;
 import android.view.Gravity;
 import android.widget.PopupWindow;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,19 +90,19 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
 
         if (view.getController().getAmountOfPlayers() > 1) {
             button_top_.init(view, layout.getPlayerInfoTopPos(),
-                    layout.getPlayerInfoSize(), "lil_robo");
+                    layout.getPlayerInfoSize(), "lil_robo_0");
             pop_up_top_ = makePopupWindow(pop_up_top_view_, GameLayout.POSITION_TOP);
         }
 
         if (view.getController().getAmountOfPlayers() > 2) {
             button_left_.init(view, layout.getPlayerInfoLeftPos(),
-                    layout.getPlayerInfoSize(), "lil_robo");
+                    layout.getPlayerInfoSize(), "lil_robo_1");
             pop_up_left_ = makePopupWindow(pop_up_left_view_, GameLayout.POSITION_LEFT);
         }
 
         if (view.getController().getAmountOfPlayers() > 3) {
             button_right_.init(view, layout.getPlayerInfoRightPos(),
-                    layout.getPlayerInfoSize(), "lil_robo");
+                    layout.getPlayerInfoSize(), "lil_robo_2");
             pop_up_right_ = makePopupWindow(pop_up_right_view_, GameLayout.POSITION_RIGHT);
         }
 
@@ -108,11 +111,19 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
             Rect rect = new Rect();
             if (i != 0) {
 
-                rect.set(buttons_.get(i).getPosition().x - padding,
-                        buttons_.get(i).getPosition().y - padding,
-                        buttons_.get(i).getPosition().x + layout.getPlayerInfoSize().x + padding,
-                        buttons_.get(i).getPosition().y + layout.getPlayerInfoSize().y + padding);
-
+                // second player is on top pos if only 2 players
+                if (view.getController().getAmountOfPlayers() == 2) {
+                    rect.set(buttons_.get(2).getPosition().x - padding,
+                            buttons_.get(2).getPosition().y - padding,
+                            buttons_.get(2).getPosition().x + layout.getPlayerInfoSize().x + padding,
+                            buttons_.get(2).getPosition().y + layout.getPlayerInfoSize().y + padding);
+                }
+                else {
+                    rect.set(buttons_.get(i).getPosition().x - padding,
+                            buttons_.get(i).getPosition().y - padding,
+                            buttons_.get(i).getPosition().x + layout.getPlayerInfoSize().x + padding,
+                            buttons_.get(i).getPosition().y + layout.getPlayerInfoSize().y + padding);
+                }
             }
             rects_.add(rect);
         }
@@ -148,7 +159,23 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
         view.setListener(this);
         MyPlayer p = view_.getController().getPlayerByPosition(pos);
         String top_display_name = p.getDisplayName();
-        view.init(top_display_name);
+        Bitmap bitmap = null;
+        String text = "";
+        switch (pos) {
+            case 1:
+                bitmap = button_left_.getBitmap();
+                text = "Beep, beep.";
+                break;
+            case 2:
+                bitmap = button_top_.getBitmap();
+                text = "Beep, beep, beep?";
+                break;
+            case 3:
+                text = "Beeeeeep!";
+                bitmap = button_right_.getBitmap();
+                break;
+        }
+        view.init(top_display_name, text, bitmap);
         return new PopupWindow(view, pop_up_width_, pop_up_height_, true);
     }
 

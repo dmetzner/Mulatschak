@@ -69,6 +69,9 @@ public class EnemyCardExchangeLogic {
         moveWeakCards(myPlayer.getHand().getCardStack(), card_exchange_animation_.getExchangedCards(),
                 controller.getLogic(), weak_border, randomness);
 
+        // can't exchange 4 cards
+        handle4Cards(card_exchange_animation_.getExchangedCards(), myPlayer);
+
         // if deck has to less cards to draw
         //      -> give back the best cards from move cards to the players hand
         handleToLessCardsInDeck(card_exchange_animation_.getExchangedCards(), myPlayer,
@@ -149,6 +152,24 @@ public class EnemyCardExchangeLogic {
     }
 
 
+    private void handle4Cards(List<Card> cards_to_remove, MyPlayer myPlayer) {
+        if (cards_to_remove.size() == 4) {
+            int highest_id = -1;
+            int highest_val = -1;
+            for (int j = 0; j < cards_to_remove.size(); j++) {
+                int card_value = GameLogic.getCardValue(cards_to_remove.get(j));
+                if (GameLogic.getCardValue(cards_to_remove.get(j)) < highest_val) {
+                    highest_id = j;
+                    highest_val = card_value;
+                }
+            }
+            if (highest_id != -1) {
+                myPlayer.getHand().addCard(cards_to_remove.get(highest_id));
+                cards_to_remove.remove(highest_id);
+            }
+        }
+    }
+
     //----------------------------------------------------------------------------------------------
     // if deck has to less cards to draw
     //      -> give back the best cards from cards to remove list to the players hand
@@ -160,7 +181,7 @@ public class EnemyCardExchangeLogic {
             int highest_id = -1;
             int highest_val = -1;
             for (int j = 0; j < cards_to_remove.size(); j++) {
-                int card_value = GameLogic.getCardValue(cards_to_remove.get(i));
+                int card_value = GameLogic.getCardValue(cards_to_remove.get(j));
                 if (GameLogic.getCardValue(cards_to_remove.get(j)) < highest_val) {
                     highest_id = j;
                     highest_val = card_value;

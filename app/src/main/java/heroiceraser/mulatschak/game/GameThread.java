@@ -52,8 +52,6 @@ public class GameThread extends Thread {
     public void run() {
 
         while (run) {
-            Log.d("Thread", "canvas update request by" + this.toString());
-
             //limit frame rate to max 24fps
             timeNow = System.currentTimeMillis();
             timeDelta = timeNow - timePrevFrame;

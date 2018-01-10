@@ -73,8 +73,7 @@ public class TrickBids {
         GameLogic logic = controller.getLogic();
         GameLayout layout = controller.getLayout();
 
-        controller.turnToNextPlayer();
-        controller.getNonGamePlayUIContainer().getRoundInfo().updateBids(controller.getView());
+        controller.turnToNextPlayer(false);
 
         if (logic.getTricksToMake() == MakeBidsAnimation.MULATSCHAK) {
             bids_view_.startEndingAnimation(logic.getTrumpPlayerId(), layout);
@@ -87,7 +86,7 @@ public class TrickBids {
         }
 
         if (logic.getTurn() == 0) {
-            makeBidsAnimation.prepareAnimation(controller);
+            makeBidsAnimation.prepareAnimationButtons(controller);
             makeBidsAnimation.turnOnAnimationNumbers();
             controller.getView().disableUpdateCanvasThread();
             // makeTrickBids should get called when player chooses his tricks
@@ -119,7 +118,9 @@ public class TrickBids {
             bids_view_.startAnimation(controller, logic.getTurn(), "X");
         }
 
-        else if (amount > logic.getTricksToMake()) {
+        // amount have to be bigger, except dealers turn
+        else if (amount > logic.getTricksToMake() ||
+                amount == logic.getTricksToMake() && logic.getTurn() == logic.getDealer()) {
             List<MyTextButton> buttons = makeBidsAnimation.getNumberButtons();
             // disable lower amount buttons, but button 0 is always clickable // miss a turn
             for (int i = 2; i <= (amount + 1); i++) {
@@ -130,6 +131,7 @@ public class TrickBids {
             logic.setTrumpPlayerId(id);
             bids_view_.startAnimation(controller, logic.getTurn(), "" + amount);
         }
+
         else {
             controller.getPlayerById(id).setTricksToMake(0);
             bids_view_.startAnimation(controller, logic.getTurn(), "-");

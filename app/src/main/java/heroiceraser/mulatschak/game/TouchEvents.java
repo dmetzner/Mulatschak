@@ -41,6 +41,10 @@ class TouchEvents {
         else if (ButtonActionDown(X, Y, controller.getNonGamePlayUIContainer()
                 .getButtonBar().getMenuButton()) ) {}
 
+        // Chat Button
+        else if (ButtonActionDown(X, Y, controller.getNonGamePlayUIContainer()
+                .getButtonBar().getChatButton()) ) {}
+
         // ------------------ ButtonBar Tricks Window ----------------------------------------------
         else if (ButtonActionDown(X, Y, controller.getNonGamePlayUIContainer()
                 .getTricks().getArrowButtonLeft()) ) {}
@@ -58,6 +62,8 @@ class TouchEvents {
         if (ButtonActionDown(X, Y, controller.getNonGamePlayUIContainer()
                 .getAllCardsPlayedView().getNextRoundButton()) ) {}
 
+        // ------------------ Game Over  -----------------------------------------------------------
+        controller.getNonGamePlayUIContainer().getGameOver().touchEventDown(X, Y);
 
         // other UI elements not touchable while ButtonBar window is active
         if (controller.getNonGamePlayUIContainer().isAWindowActive()) {
@@ -130,6 +136,8 @@ class TouchEvents {
         controller.getGamePlay().getPlayACardRound().touchEventDown(X, Y, controller);
 
         //------------------------
+
+        controller.getView().postInvalidateOnAnimation();
     }
 
 
@@ -155,6 +163,10 @@ class TouchEvents {
         ButtonActionMove(X, Y, controller.getNonGamePlayUIContainer()
                 .getButtonBar().getMenuButton());
 
+        // ChatView Button
+        ButtonActionMove(X, Y, controller.getNonGamePlayUIContainer()
+                .getButtonBar().getChatButton());
+        
         //------------------------
 
         // ------------------ ButtonBar Tricks Window ----------------------------------------------
@@ -218,12 +230,18 @@ class TouchEvents {
 
         //-------------------
 
+        // ------------------ Game Over  -----------------------------------------------------------
+        controller.getNonGamePlayUIContainer().getGameOver().touchEventMove(X, Y);
+
+
+
         // ------------------ Menu Button Bar Window -----------------------------------------------
         if (controller.getNonGamePlayUIContainer().getMenu().isVisible()) {
             controller.getNonGamePlayUIContainer().getMenu().touchEventMove(X, Y);
         }
-
         //------------------------
+
+        controller.getView().postInvalidateOnAnimation();
 
     }
 
@@ -239,25 +257,33 @@ class TouchEvents {
         // Statistic Button
         if (ButtonActionUp(X, Y, controller.getNonGamePlayUIContainer().getButtonBar().getStatisticsButton())) {
             controller.getNonGamePlayUIContainer().getMenu().setVisible(false);
+            controller.getNonGamePlayUIContainer().getChat().setVisible(false);
             controller.getNonGamePlayUIContainer().getTricks().setVisible(false);
             controller.getNonGamePlayUIContainer().getStatistics().switchVisibility();
-            controller.getView().postInvalidateOnAnimation();
         }
 
         // Tricks Button
         if (ButtonActionUp(X, Y, controller.getNonGamePlayUIContainer().getButtonBar().getTricksButton())) {
             controller.getNonGamePlayUIContainer().getMenu().setVisible(false);
+            controller.getNonGamePlayUIContainer().getChat().setVisible(false);
             controller.getNonGamePlayUIContainer().getTricks().switchVisibility();
             controller.getNonGamePlayUIContainer().getStatistics().setVisible(false);
-            controller.getView().postInvalidateOnAnimation();
         }
 
         // Menu Button
         if (ButtonActionUp(X, Y, controller.getNonGamePlayUIContainer().getButtonBar().getMenuButton())) {
             controller.getNonGamePlayUIContainer().getMenu().switchVisibility();
+            controller.getNonGamePlayUIContainer().getChat().setVisible(false);
             controller.getNonGamePlayUIContainer().getTricks().setVisible(false);
             controller.getNonGamePlayUIContainer().getStatistics().setVisible(false);
-            controller.getView().postInvalidateOnAnimation();
+        }
+
+        // ChatView Button
+        if (ButtonActionUp(X, Y, controller.getNonGamePlayUIContainer().getButtonBar().getChatButton())) {
+            controller.getNonGamePlayUIContainer().getMenu().setVisible(false);
+            controller.getNonGamePlayUIContainer().getChat().switchVisibility();
+            controller.getNonGamePlayUIContainer().getTricks().setVisible(false);
+            controller.getNonGamePlayUIContainer().getStatistics().setVisible(false);
         }
 
         //------------------------
@@ -352,7 +378,11 @@ class TouchEvents {
 
         //------------------------
 
+        controller.getView().postInvalidateOnAnimation();
 
+        // ------------------ Game Over  -----------------------------------------------------------
+        controller.getNonGamePlayUIContainer().getGameOver().touchEventUp(X, Y, controller);
+        // nothing behind!!
     }
 
     //-----------------------

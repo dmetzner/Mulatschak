@@ -10,12 +10,11 @@
     <application
         android:allowBackup="true"
         android:configChanges="orientation|keyboardHidden"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_m1"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_launcher_m1_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:debuggable="true"
         >
         <meta-data
             android:name="com.google.android.gms.appstate.APP_ID"

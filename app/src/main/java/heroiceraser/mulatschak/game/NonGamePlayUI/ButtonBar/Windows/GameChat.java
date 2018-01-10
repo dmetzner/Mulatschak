@@ -1,29 +1,30 @@
-package heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBar.Windows.GameMenu;
+package heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBar.Windows;
 
 import android.graphics.Canvas;
+
+import heroiceraser.mulatschak.GameKeyBoard.MyKeyBoard;
 import heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBar.Windows.ButtonBarWindow;
 
 
 //--------------------------------------------------------------------------------------------------
 //  GameMenu - ButtonBarWindow
 //
-public class GameMenu extends ButtonBarWindow {
+public class GameChat extends ButtonBarWindow {
 
     //----------------------------------------------------------------------------------------------
     //  Member Variables
     //
-    private AnimationSpeedGameMenu animationSpeedGameMenu;
+    private MyKeyBoard keyBoard;
 
 
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
-    public GameMenu() {
+    public GameChat() {
         super();
-        animationSpeedGameMenu = new AnimationSpeedGameMenu();
+        keyBoard = new MyKeyBoard();
     }
 
 
@@ -36,26 +37,26 @@ public class GameMenu extends ButtonBarWindow {
         super.init(view);
 
         //---- title
-        String title_text = "Menu";
+        String title_text = view.getResources().getString(R.string.button_bar_chat_title);
         super.titleInit(view.getController(), title_text);
 
-        animationSpeedGameMenu.init(view.getController());
+        keyBoard.init(view);
+
     }
 
 
     //----------------------------------------------------------------------------------------------
     //  Touch Events
     //
-    public void touchEventDown(int X, int Y) {
-        animationSpeedGameMenu.touchEventDown(X, Y);
+    public void touchEventDown(int X, int Y){
     }
 
     public void touchEventMove(int X, int Y) {
-        animationSpeedGameMenu.touchEventMove(X, Y);
+
     }
 
     public void touchEventUp(int X, int Y, GameController controller) {
-        animationSpeedGameMenu.touchEventUp(X, Y, controller);
+
     }
 
 
@@ -68,7 +69,7 @@ public class GameMenu extends ButtonBarWindow {
             super.drawBackground(canvas);
             super.drawTitle(canvas);
 
-            animationSpeedGameMenu.draw(canvas);
+            keyBoard.draw(canvas);
         }
     }
 

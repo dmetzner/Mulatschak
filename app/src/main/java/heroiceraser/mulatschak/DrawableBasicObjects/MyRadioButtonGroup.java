@@ -62,11 +62,14 @@ public class MyRadioButtonGroup {
     //----------------------------------------------------------------------------------------------
     //  Touch Events
     //
+
+    private static final int BR = 3;
+
     public void touchEventDown(int X, int Y) {
         for (MyRadioButton button : getRadioButtons()) {
             if (button.isVisible() && button.isEnabled() &&
-                    X >= button.getPosition().x - button.getRadius() && X < button.getPosition().x + button.getRadius() &&
-                    Y >= button.getPosition().y - button.getRadius() && Y < button.getPosition().y + button.getRadius() ) {
+                    X >= button.getPosition().x - BR * button.getRadius() && X < button.getPosition().x + BR * button.getRadius() &&
+                    Y >= button.getPosition().y - BR * button.getRadius() && Y < button.getPosition().y + BR * button.getRadius() ) {
                 button.setPressed(true);
             }
         }
@@ -75,8 +78,8 @@ public class MyRadioButtonGroup {
     public void touchEventMove(int X, int Y) {
         for (MyRadioButton button : getRadioButtons()) {
             if (button.isVisible() && button.isEnabled() && button.isPressed()) {
-                if ( X >= button.getPosition().x - button.getRadius() && X < button.getPosition().x + button.getRadius() &&
-                        Y >= button.getPosition().y - button.getRadius() && Y < button.getPosition().y + button.getRadius()) {
+                if ( X >= button.getPosition().x - BR * button.getRadius() && X < button.getPosition().x + BR * button.getRadius() &&
+                        Y >= button.getPosition().y - BR * button.getRadius() && Y < button.getPosition().y + BR * button.getRadius()) {
                     button.setPressed(true);
                 }
                 else {
@@ -90,8 +93,8 @@ public class MyRadioButtonGroup {
         int i = 0;
         for (MyRadioButton button : getRadioButtons()) {
             if (button.isVisible() && button.isEnabled() && button.isPressed()) {
-                if ( X >= button.getPosition().x - button.getRadius() && X < button.getPosition().x + button.getRadius() &&
-                        Y >= button.getPosition().y - button.getRadius() && Y < button.getPosition().y + button.getRadius()) {
+                if ( X >= button.getPosition().x - BR * button.getRadius() && X < button.getPosition().x + BR * button.getRadius() &&
+                        Y >= button.getPosition().y - BR * button.getRadius() && Y < button.getPosition().y + BR * button.getRadius()) {
                     button.setPressed(false);
                     checkButton(i);
                     return true;

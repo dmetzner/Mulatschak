@@ -91,7 +91,7 @@ public class GameLayout {
     private Point player_info_size_;
 
 
-    //---- RoundInfo -> Sector 0,1 --------------
+    //---- RoundInfoOld -> Sector 0,1 --------------
     private Point round_info_size_;
     private Point round_info_position_;
 
@@ -101,9 +101,7 @@ public class GameLayout {
     private Point button_bar_position_;
     private Point button_bar_big_button_size_;
     private Point button_bar_small_button_size_;
-    private Point button_bar_button_position_right_;
-    private Point button_bar_button_position_middle_;
-    private Point button_bar_button_position_left_;
+    private Point button_bar_button_position_;
 
     //---- ButtonBar Windows
     private Point button_bar_window_position_;
@@ -215,10 +213,7 @@ public class GameLayout {
         // Button Bar Buttons
         calculateButtonBarSmallButtonSize();
         calculateButtonBarBigButtonSize();
-        initButtonBarButtonPositionRight();
-        initButtonBarButtonPositionMiddle(); // relative to right one
-        initButtonBarButtonPositionLeft();   // relative to the middle one
-
+        initButtonBarButtonPosition();
         //Button Bar Windows
         calculateButtonBarWindowPosition();
         calculateButtonBarWindowSize();
@@ -255,25 +250,12 @@ public class GameLayout {
         button_bar_small_button_size_.y = (int) (button_bar_size_.y * (7.0 / 9.0));
     }
 
-    private void initButtonBarButtonPositionRight() {
-        button_bar_button_position_right_ = new Point();
-        button_bar_button_position_right_.x = (int)
-                (button_bar_position_.x + button_bar_size_.x - button_bar_big_button_size_.x * 1.1);
-        button_bar_button_position_right_.y = (int)
+    private void initButtonBarButtonPosition() {
+        button_bar_button_position_ = new Point();
+        button_bar_button_position_.x = (int)
+                (button_bar_position_.x);
+        button_bar_button_position_.y = (int)
                 (button_bar_position_.y + (button_bar_size_.y * (1 / 9.0)));
-    }
-
-    private void initButtonBarButtonPositionMiddle() {
-        button_bar_button_position_middle_ = new Point();
-        button_bar_button_position_middle_.x = (int) (button_bar_button_position_right_.x -
-                button_bar_big_button_size_.x * 1.1);
-        button_bar_button_position_middle_.y = button_bar_button_position_right_.y;
-    }
-
-    private void initButtonBarButtonPositionLeft() {
-        button_bar_button_position_left_ = new Point();
-        button_bar_button_position_left_.x = (int) (button_bar_small_button_size_.x * 0.15);
-        button_bar_button_position_left_.y = button_bar_button_position_right_.y;
     }
 
     private void calculateButtonBarWindowPosition() {
@@ -296,9 +278,9 @@ public class GameLayout {
 
     private void calculateButtonBarWindowTitlePosition() {
         button_bar_window_title_position_ = new Point();
-        button_bar_window_title_position_.x = 0;
+        button_bar_window_title_position_.x = getScreenWidth() / 2;
         button_bar_window_title_position_.y = (int)
-                (sectors_.get(1).y * 2.65);
+                (sectors_.get(1).y * 3.15);
     }
 
     private void calculateButtonBarWindowTricksArrowSize() {
@@ -376,21 +358,23 @@ public class GameLayout {
         int midpoint_x = (int) (deck_position_.x + card_size_.x / 2.0);
         int midpoint_y = (int) (deck_position_.y + card_size_.y / 2.0);
 
+        int offset = (int) (((getOnePercentOfScreenWidth() + getCardHeight()) / 2) / 10);
+
         // down
-        discard_pile_positions_.add(new Point((int) (midpoint_x - (card_size_.x / 1.97)),
-                (midpoint_y)));
+        discard_pile_positions_.add(new Point((int) (midpoint_x - (card_size_.x / 2)),
+                (midpoint_y + offset / 2)));
 
         // left
-        discard_pile_positions_.add(new Point((int) (midpoint_x - (card_size_.x * 1.53)),
-                (int) (midpoint_y - (card_size_.y / 1.97))));
+        discard_pile_positions_.add(new Point((int) (midpoint_x - (card_size_.x * 1.50) - offset),
+                (int) (midpoint_y - (card_size_.y / 2))));
 
         // top
-        discard_pile_positions_.add(new Point((int) (midpoint_x - (card_size_.x / 1.97)),
-                (midpoint_y - (card_size_.y))));
+        discard_pile_positions_.add(new Point((int) (midpoint_x - (card_size_.x / 2)),
+                (midpoint_y - (card_size_.y) - offset / 2)));
 
-        // bottom
-        discard_pile_positions_.add(new Point((int) (midpoint_x + (card_size_.x / 2.03)),
-                (int) (midpoint_y - (card_size_.y / 1.97))));
+        // right
+        discard_pile_positions_.add(new Point((int) (midpoint_x + (card_size_.x / 2) + offset),
+                (int) (midpoint_y - (card_size_.y / 2))));
     }
 
     //
@@ -693,12 +677,8 @@ public class GameLayout {
         return button_bar_big_button_size_.y;
     }
 
-    public Point getButtonBarButtonPositionRight() {
-        return button_bar_button_position_right_;
-    }
-
-    public Point getButtonBarButtonPositionMiddle() {
-        return button_bar_button_position_middle_;
+    public Point getButtonBarButtonPosition() {
+        return button_bar_button_position_;
     }
 
     public int getButtonBarSmallButtonWidth() {
@@ -709,9 +689,6 @@ public class GameLayout {
         return button_bar_small_button_size_.y;
     }
 
-    public Point getButtonBarButtonPositionLeft() {
-        return button_bar_button_position_left_;
-    }
 
     public Point getButtonBarWindowTitlePosition() {
         return button_bar_window_title_position_;

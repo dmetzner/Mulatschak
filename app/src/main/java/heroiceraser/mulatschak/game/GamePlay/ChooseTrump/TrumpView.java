@@ -160,7 +160,7 @@ public class TrumpView extends DrawableObject {
                     ending_animation_running_ = true;
                 }
             };
-            myHandler.postDelayed(startEndingAnimation, 750);
+            myHandler.postDelayed(startEndingAnimation, (int) (750 * speed_factor));
         }
     }
 

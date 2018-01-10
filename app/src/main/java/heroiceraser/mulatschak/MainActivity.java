@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements
         RoomUpdateListener, OnInvitationReceivedListener {
 
     // Fragments
+    List<Fragment> fragList = new ArrayList<Fragment>();
     StartScreenFragment mStartScreenFragment;
     SinglePlayerFragment mSinglePlayerFragment;
     MultiPlayerFragment mMultiPlayerFragment;
@@ -176,12 +177,19 @@ public class MainActivity extends AppCompatActivity implements
                 .commit();
     }
 
+
+    @Override
+    public void onAttachFragment (Fragment fragment) {
+        fragList.add(fragment);
+    }
+
     //----------------------------------------------------------------------------------------------
     // getVisibleFragment
     //
     public Fragment getVisibleFragment(){
         FragmentManager fragmentManager = MainActivity.this.getSupportFragmentManager();
-        List<Fragment> fragments = fragmentManager.getFragments();
+        List<Fragment> fragments = new ArrayList<>();
+        fragments.addAll(fragList);   //fragmentManager.getFragments();
         if(fragments != null){
             for(Fragment fragment : fragments){
                 if(fragment != null && fragment.isVisible())
@@ -190,7 +198,6 @@ public class MainActivity extends AppCompatActivity implements
         }
         return null;
     }
-
 
     //----------------------------------------------------------------------------------------------
     // isSignedIn
@@ -205,15 +212,19 @@ public class MainActivity extends AppCompatActivity implements
     // this flow simply succeeds and is imperceptible).
     @Override
     public void onStart() {
-        if (mGoogleApiClient == null) {
-            switchToFragment(mStartScreenFragment, "mStartScreenFragment");
-        } else if (!mGoogleApiClient.isConnected()) {
-            Log.d(TAG,"Connecting client.");
-            switchToFragment(mStartScreenFragment, "mStartScreenFragment");
-            mGoogleApiClient.connect();
-        } else {
-            Log.w(TAG,
-                    "GameHelper: client was already connected on onStart()");
+        Log.d(TAG, "**** got onSart");
+        if (!game_running_) {
+
+            if (mGoogleApiClient == null) {
+                switchToFragment(mStartScreenFragment, "mStartScreenFragment");
+            } else if (!mGoogleApiClient.isConnected()) {
+                Log.d(TAG, "Connecting client.");
+                switchToFragment(mStartScreenFragment, "mStartScreenFragment");
+                mGoogleApiClient.connect();
+            } else {
+                Log.w(TAG,
+                        "GameHelper: client was already connected on onStart()");
+            }
         }
         super.onStart();
     }
@@ -223,9 +234,11 @@ public class MainActivity extends AppCompatActivity implements
     //
     @Override
     protected void onResume() {
+
         super.onResume();
+        Log.d(TAG, "**** got onResume");
         Fragment frag = getVisibleFragment();
-        if (frag != null && frag.equals(mGameScreenFragment) && game_running_) {
+        if (frag != null && frag.equals(mGameScreenFragment) && !game_running_) {
             onStartMenuRequested();
         }
     }
@@ -243,11 +256,11 @@ public class MainActivity extends AppCompatActivity implements
         // stop trying to keep the screen on
         stopKeepingScreenOn();
 
-        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
-        } else {
-            switchToFragment(mStartScreenFragment, "mStartScreenFragment");
-        }
+        //if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            //mGoogleApiClient.disconnect();
+        //} else {
+            //switchToFragment(mStartScreenFragment, "mStartScreenFragment");
+        //}
         super.onStop();
     }
 
@@ -486,10 +499,7 @@ public class MainActivity extends AppCompatActivity implements
                     .setPositiveButton("Ja", new DialogInterface.OnClickListener(){
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            ViewGroup viewHolder = (ViewGroup) mGameView.getParent();
-                            viewHolder.removeView(mGameView);
-                            onStartMenuRequested();
-                            game_running_ = false;
+                            endGame();
                         }
                     })
                     .setNegativeButton("Nein", null)
@@ -926,7 +936,33 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     // Start the gameplay phase of the game.
-    void startGame(boolean multiplayer) {
+    void startGame(final boolean multiplayer) {
+
+        switchToFragment(mLoadingScreenFragment, "mLoadingScreenFragment");
+        Handler myHandler = new Handler();
+        Runnable myRunnable = new Runnable() {
+            @Override
+            public void run() {
+                continueStartGame(multiplayer);
+            }
+        };
+        myHandler.postDelayed(myRunnable, 100);
+    }
+    void continueStartGame(final boolean multiplayer) {
+
+        //  create the Game View
+        if (waitForNewGame) {
+            Handler handler = new Handler();
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    startGame(multiplayer);
+                }
+            };
+            handler.postDelayed(runnable, 200);
+            return;
+        }
+
         mMultiplayer = multiplayer;
 
         //updateScoreDisplay();
@@ -953,31 +989,61 @@ public class MainActivity extends AppCompatActivity implements
             // may enable setting
         }
 
-        //  create the Game View
-        mGameView = new GameView(this);
-        mGameView.setKeepScreenOn(true);
-        switchToFragment(mGameScreenFragment, "mGameScreenFragment");
-
         // start the game via the game controller of our game view
         final int player_lives_final = player_lives;
         final int enemies_final = enemies;
         final int difficulty_final = difficulty;
         final String my_name_final = my_name;
 
+        mGameView = new GameView(this);
+        mGameView.setKeepScreenOn(true);
+
         Handler mHandler = new Handler();
         Runnable showGameScreenThenContinue = new Runnable() {
             @Override
             public void run() {
-                addContentView(mGameView,  new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
-                        FrameLayout.LayoutParams.WRAP_CONTENT));
                 game_running_ = true;
-                mGameView.getController().start(player_lives_final, enemies_final, difficulty_final,
-                        mMultiplayer, my_name_final,  mMyId, mParticipants);
+                try {
+                    switchToFragment(mGameScreenFragment, "mGameScreenFragment");
+                    mGameView.getController().start(player_lives_final, enemies_final, difficulty_final,
+                            mMultiplayer, my_name_final,  mMyId, mParticipants);
+                }
+                catch (Exception e) {
+                    Log.e(TAG, "game error: " + e);
+                    endGame();
+                }
             }
         };
-        mHandler.postDelayed(showGameScreenThenContinue, 10);
+        addContentView(mGameView,  new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT));
+        mHandler.postDelayed(showGameScreenThenContinue, 100);
 
     }
+
+    public void endGame() {
+        switchToFragment(mStartScreenFragment, "mStartScreenFragment");
+        ((ViewGroup) mGameView.getParent()).removeView(mGameView);
+        mGameView.stopAll = true;
+        game_running_ = false;
+        waitForNewGame = true;
+        Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (mGameView != null) {
+                    mGameView.clear();
+                    mGameView = null;
+                }
+                waitForNewGame = false;
+                System.gc();
+            }
+        };
+        handler.postDelayed(runnable, 2000);
+
+
+    }
+
+    private boolean waitForNewGame;
 
 
     /*

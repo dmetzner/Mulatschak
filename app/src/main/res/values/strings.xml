@@ -46,6 +46,9 @@
     <string name="single_player_settings_player_lives_text">Anzahl der Startleben:   </string>
     <string name="single_player_settings_player_lives_text_default">Anzahl der Startleben:\u0020\u0020\u0020 21</string>
 
+    <string name="single_player_settings_animation_default">Animations Geschwindigkeit: Normal</string>
+    <string name="single_player_settings_animation_text">Animations Geschwindigkeit:</string>
+
     <string name="single_player_settings_start_button">Spiel Starten</string>
 
     <!-- :::::::::::::::::::: MultiPlayer Settings ::::::::::::::::::::::::::::::::::::::::::::: -->
@@ -58,7 +61,10 @@
     <!-- :::::::::::::::::::: Button Bar Windows ::::::::::::::::::::::::::::::::::::::::::::::: -->
 
         <!-- :::::::::::::::::::: Menu ::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
-        <string name="button_bar_menu_title">Menu</string>
+        <string name="button_bar_menu_title">Menü</string>
+
+    <!-- :::::::::::::::::ChatViewChat ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+        <string name="button_bar_chat_title">Chat</string>
 
         <!-- :::::::::::::::::::: Tricks ::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
         <string name="button_bar_tricks_title">Stiche</string>
@@ -72,7 +78,10 @@
         <string name="next_round_button">Nächste Runde</string>
 
     <!-- :::::::::::::::::::: Game Over :::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
-    <string name="game_over_button">Spiel beenden</string>
+    <string name="game_over_text">Spiel beendet</string>
+    <string name="game_over_button">Zurück in Menü</string>
+    <string name="game_over_won">Du hast gewonnen</string>
+    <string name="game_over_lost">Du hast verloren</string>
 
     <!-- :::::::::::::::::::: TrickBids :::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="muli_text">Mulatschak?</string>

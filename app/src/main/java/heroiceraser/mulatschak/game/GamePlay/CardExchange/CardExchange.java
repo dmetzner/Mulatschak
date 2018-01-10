@@ -48,7 +48,7 @@ public class CardExchange {
         GameLogic logic = controller.getLogic();
         
         if (!first_call) {
-            controller.turnToNextPlayer();
+            controller.turnToNextPlayer(true);
         }
 
         if (!first_call && logic.getTurn() == logic.getStartingPlayer()) {

@@ -40,8 +40,6 @@ public class ChooseTrump {
         final GameView view = controller.getView();
         final GameLogic logic = controller.getLogic();
 
-        controller.getNonGamePlayUIContainer().getRoundInfo().updateChooseTrump(controller);
-
         if (logic.getTrumpPlayerId() == 0) {
             choose_trump_animation_.turnOnAnimationTrumps();
             view.disableUpdateCanvasThread();

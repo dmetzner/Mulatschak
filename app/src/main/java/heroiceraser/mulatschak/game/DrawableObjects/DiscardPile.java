@@ -62,7 +62,15 @@ public class DiscardPile extends DrawableObject {
     private void finishInit(GameView view) {
         this.positions_ = view.getController().getLayout().getDiscardPilePositions();
         setBitmap(HelperFunctions.loadBitmap(view, BMP_DISCARD_PILE, getWidth(), getHeight()));
-        overlay_lost_ = HelperFunctions.loadBitmap(view, BMP_OVERLAY_LOST, getWidth(), getHeight());
+        Bitmap backside = HelperFunctions.loadBitmap(view, "card_back", getWidth(), getHeight());
+        Bitmap overlay = HelperFunctions.createBitmapOverlay(backside);
+        overlay_lost_ = HelperFunctions.adjustOpacity(overlay, 120);
+        if (backside != null) {
+            backside.recycle();
+        }
+        if (overlay != null) {
+            overlay.recycle();
+        }
         setVisible(true);
     }
 
@@ -152,12 +160,7 @@ public class DiscardPile extends DrawableObject {
         if (overlays_visible_) {
             // draw discard pile
             for (int j = 0; j < positions_.size(); j++) {
-                if (j == logic.getRoundWinnerId()) {
-                    // Todo??
-                    //canvas.drawBitmap(overlay_won_,
-                    //        getPoint(j).x,
-                    //        getPoint(j).y, null);
-                } else {
+                if (j != logic.getRoundWinnerId()) {
                     canvas.drawBitmap(overlay_lost_,
                             getPoint(j).x,
                             getPoint(j).y, null);

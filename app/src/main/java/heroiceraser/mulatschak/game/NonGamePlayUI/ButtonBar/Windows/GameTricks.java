@@ -179,7 +179,6 @@ public class GameTricks extends ButtonBarWindow {
             Point dp_center = new Point(dp.getPoint(0).x + card_back_bitmap_.getWidth() / 2,
                     dp.getPoint(0).y + bounds.height() / 2 );
             canvas.drawText(winner_name, dp_center.x, dp_center.y, winner_name_text_paint_);
-
         }
 
     }

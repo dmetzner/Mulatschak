@@ -57,12 +57,12 @@ public class GameStatistics extends ButtonBarWindow {
 
         //---- state of the game
         String font = "fonts/nk57-monospace-no-rg.ttf";
-        int text_size = (int) (layout.getSectors().get(1).y * 0.30);
+        int text_size = (int) (layout.getSectors().get(1).y * 0.23);
         int text_color = view.getResources().getColor(R.color.button_bar_window_text_color);
         text_paint_ = MySimpleTextField.createTextPaint(view, text_size, text_color, font);
 
-        display_name_text_pos_ = new Point((int) (layout.getScreenWidth() * (1.0/10.0)),
-                (int) (layout.getSectors().get(1).y * 3.5));
+        display_name_text_pos_ = new Point((int) (layout.getOnePercentOfScreenWidth() * 10),
+                (int) (layout.getSectors().get(1).y * 3.7));
 
         setPlayerList(view.getController());
         initDisplayNameLayouts(view.getController());
@@ -72,6 +72,12 @@ public class GameStatistics extends ButtonBarWindow {
         players_ = view.getController().getAmountOfPlayers();
     }
 
+    //----------------------------------------------------------------------------------------------
+    //  setTitle
+    //
+    public void setTitle(GameController controller, String text) {
+        super.titleInit(controller, text);
+    }
 
     //----------------------------------------------------------------------------------------------
     //  UpdatePlayerLives
@@ -154,7 +160,7 @@ public class GameStatistics extends ButtonBarWindow {
     //
     private void initDisplayNameLayouts(GameController controller) {
         display_name_layouts_ = new ArrayList<>();
-        int max_width = (int) (controller.getLayout().getOnePercentOfScreenWidth() * 60);
+        int max_width = (int) (controller.getLayout().getOnePercentOfScreenWidth() * 65);
 
         for (int i = 0; i < controller.getAmountOfPlayers(); i++) {
 
@@ -162,7 +168,7 @@ public class GameStatistics extends ButtonBarWindow {
 
             // reduce too large names!
             while (text_paint_.measureText(text) > max_width) {
-                text = text.substring(1, text.length() - 2) + ":";
+                text = text.substring(0, text.length() - 2) + ":";
             }
             StaticLayout display_name_layout = new StaticLayout(text, text_paint_,
                     max_width, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0, false);

@@ -19,6 +19,7 @@ public class MyTextField {
     private TextPaint textPaint;
     private Point position;
     private boolean visible;
+    private boolean fitTextSizeForMaxWidth;
     private int maxWidth;
     private float borderPercent;
     private TextPaint borderPaint;
@@ -34,7 +35,9 @@ public class MyTextField {
         textPaint.setColor(Color.BLACK);
         text = "";
         borderPercent = 0;
+        maxWidth = 0;
         visible = false;
+        fitTextSizeForMaxWidth = true;
     }
 
 
@@ -43,18 +46,23 @@ public class MyTextField {
     //
     public void draw(Canvas canvas) {
         if (visible) {
-            TextPaint tmpPaint = new TextPaint(textPaint);
-            while (tmpPaint.measureText(text) > maxWidth) {
-                tmpPaint.setTextSize(tmpPaint.getTextSize() * 0.98f);
+            if (fitTextSizeForMaxWidth && maxWidth != 0) {
+                TextPaint tmpPaint = new TextPaint(textPaint);
+                while (tmpPaint.measureText(text) > maxWidth) {
+                    tmpPaint.setTextSize(tmpPaint.getTextSize() * 0.98f);
+                }
+                if (borderPercent != 0) {
+                    TextPaint tmpBorder = new TextPaint(borderPaint);
+                    tmpBorder.setTextSize(tmpPaint.getTextSize());
+                    tmpBorder.setStrokeWidth(tmpPaint.getTextSize() * borderPercent);
+                    tmpPaint.setStrokeWidth(textPaint.getTextSize() * borderPercent);
+                    canvas.drawText(text, position.x, position.y, tmpBorder);
+                }
+                canvas.drawText(text, position.x, position.y, tmpPaint);
             }
-            if (borderPercent != 0) {
-                TextPaint tmpBorder = new TextPaint(borderPaint);
-                tmpBorder.setTextSize(tmpPaint.getTextSize());
-                tmpBorder.setStrokeWidth(tmpPaint.getTextSize() * borderPercent);
-                tmpPaint.setStrokeWidth(textPaint.getTextSize() * borderPercent);
-                canvas.drawText(text, position.x, position.y, tmpBorder);
+            else {
+                canvas.drawText(text, position.x, position.y, textPaint);
             }
-            canvas.drawText(text, position.x, position.y, tmpPaint);
         }
     }
 

@@ -162,7 +162,9 @@ public class MakeBidsAnimation {
     //  prepareAnimation
     //                          -> checks if there are enough player to enable skipp round button
     //
-    void prepareAnimation(GameController controller) {
+    void prepareAnimationButtons(GameController controller) {
+
+        // miss a turn handler
         int players = controller.getAmountOfPlayers();
         for (MyPlayer player : controller.getPlayerList()) {
             if (player.getMissATurn()) {
@@ -171,6 +173,26 @@ public class MakeBidsAnimation {
         }
         if (players <= 2) {
             numberButtons.get(0).setEnabled(false);
+        }
+
+        // always possible to make 0 tricks
+        numberButtons.get(1).setEnabled(true);
+
+        for (int i = 2; i < numberButtons.size(); i++) {
+            // button
+            if ((i - 1) > controller.getLogic().getTricksToMake()) {
+                numberButtons.get(i).setEnabled(true);
+            }
+
+            // except dealer can outbid with same amount
+            else if (i == controller.getLogic().getTricksToMake() &&
+                    controller.getLogic().getDealer() == 0) {
+                numberButtons.get(i).setEnabled(true);
+            }
+            // disable rest
+            else {
+                numberButtons.get(i).setEnabled(false);
+            }
         }
     }
 

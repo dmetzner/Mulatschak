@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimaryDark">#434343</color>
     <color name="colorAccent">#ff4081</color>
     <color name="button_bar_window_title_color">#E0FFFF</color>
     <color name="button_bar_window_text_color">#E0FFFF</color>
@@ -9,4 +9,6 @@
 
     <color name="game_play_button_border">#FFFFFF</color>
     <color name="game_play_button_background">#3842ae</color>
+
+    <color name="my_dark_gray">#393939</color>
 </resources>
