@@ -77,7 +77,8 @@
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:text="@string/single_player_settings_enemies_3" />
+                    android:text="@string/single_player_settings_enemies_3"
+                    android:textColorLink="@color/metallic_blue" />
             </RadioGroup>
 
             <!-- . . . . . . . . Difficulty of Enemies . . . . . . . . . . . . . . . . . . . . . . . -->
@@ -133,7 +134,8 @@
                 android:layout_height="20dp"
                 android:layout_marginTop="5dp"
                 android:max="99"
-                android:progress="20" />
+                android:progress="20"
+                android:progressBackgroundTint="@color/colorPrimary" />
 
             <!-- . . . . . . .  . Start Game Button  . . . . . . . . . . . . . . . . . . . . . . -->
             <Button

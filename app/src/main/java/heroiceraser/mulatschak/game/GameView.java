@@ -1,14 +1,13 @@
 package heroiceraser.mulatschak.game;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
+import android.graphics.PointF;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
 
-import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
 
 /**
  * Created by Daniel Metzner on 08.08.2017.
@@ -22,6 +21,7 @@ public class GameView extends View {
     private GameController controller_;
     private GameThread thread_;
     public boolean stopAll;
+    private SparseArray<PointF> mActivePointers;
 
 
     //----------------------------------------------------------------------------------------------
@@ -34,6 +34,7 @@ public class GameView extends View {
         thread_.setRunning(true);
         thread_.start();
         stopAll = false;
+        mActivePointers = new SparseArray<PointF>();
     }
 
 
@@ -166,24 +167,65 @@ public class GameView extends View {
     //  onTouchEvent
     //
     @Override
-    public synchronized boolean onTouchEvent(MotionEvent event) {
+    public synchronized boolean onTouchEvent(final MotionEvent event) {
         if (stopAll) {
             return false;
         }
-        int eventAction = event.getAction();
-        int X = (int) event.getX();
-        int Y = (int) event.getY();
 
-        switch (eventAction) {
-            case MotionEvent.ACTION_DOWN:
-                controller_.getTouchEvents().ActionDown(controller_, X, Y);
-                break;
-            case MotionEvent.ACTION_MOVE:
-                controller_.getTouchEvents().ActionMove(controller_, X, Y);
-                break;
-            case MotionEvent.ACTION_UP:
-                controller_.getTouchEvents().ActionUp(controller_, X, Y);
-                break;
+        try {
+
+            // get pointer index from the event object
+            int pointerIndex = event.getActionIndex();
+
+            // get pointer ID
+            int pointerId = event.getPointerId(pointerIndex);
+
+            // get masked (not specific to a pointer) action
+            int maskedAction = event.getActionMasked();
+
+            switch (maskedAction) {
+                case MotionEvent.ACTION_DOWN:
+                case MotionEvent.ACTION_POINTER_DOWN:
+                    PointF f = new PointF();
+                    f.x = event.getX(pointerIndex);
+                    f.y = event.getY(pointerIndex);
+                    mActivePointers.put(pointerId, f);
+                    controller_.getTouchEvents().ActionDown(controller_, (int) f.x, (int) f.y);
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    for (int size = event.getPointerCount(), i = 0; i < size; i++) {
+                        PointF point = mActivePointers.get(event.getPointerId(i));
+                        if (point != null) {
+                            point.x = event.getX(i);
+                            point.y = event.getY(i);
+                            controller_.getTouchEvents().ActionMove(controller_,
+                                    (int) point.x, (int) point.y);
+                        }
+                    }
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_POINTER_UP:
+                case MotionEvent.ACTION_CANCEL:
+
+                    try {
+                        PointF point = mActivePointers.get(event.getPointerId(pointerId));
+
+                        if (point != null) {
+                            point.x = event.getX(pointerId);
+                            point.y = event.getY(pointerId);
+                            controller_.getTouchEvents().ActionUp(controller_,
+                                    (int) point.x, (int) point.y);
+                        }
+
+                        mActivePointers.remove(pointerId);
+                    } catch (Exception e) {
+                        //can happen quite often
+                        //Log.e("Action Up", "" + e);
+                    }
+                    break;
+            }
+        } catch (Exception e) {
+            //
         }
         return true;
     }

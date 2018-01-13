@@ -8,6 +8,7 @@ import java.util.List;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 
+import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
 
@@ -65,6 +66,8 @@ public class MyKeyBoard extends DrawableObject {
         number_buttons[1] = "@+-*~=#><:;";
         number_buttons[2] = "!\"^$%&/()='°";
 
+        String lastRow = "!123, .SEND↵";
+
         for (int row = 0; row < 3; row++) {
             Point pos = new Point(position);
             pos.y += buttonHeight * row;
@@ -79,7 +82,7 @@ public class MyKeyBoard extends DrawableObject {
                     width *= 2;
                 }
                 tmp.init(view, new Point(pos), width, buttonHeight,
-                        "" , "" + upper_buttons[row].charAt(col));
+                        "" , "" + lower_buttons[row].charAt(col));
                 lowerKeyBoard.add(tmp);
                 if (row == 2 && col == 9) {
                     break;
@@ -101,7 +104,7 @@ public class MyKeyBoard extends DrawableObject {
                     width *= 2;
                 }
                 tmp.init(view, new Point(pos), width, buttonHeight,
-                        "" , "" + lower_buttons[row].charAt(col));
+                        "" , "" + upper_buttons[row].charAt(col));
                 upperKeyBoard.add(tmp);
                 if (row == 2 && col == 9) {
                     break;
@@ -125,19 +128,17 @@ public class MyKeyBoard extends DrawableObject {
             }
         }
 
-        String lastRow = "!123, .↵";
-
 
         MyKeyBoardButton tmp = new MyKeyBoardButton();
         Point pos = new Point(position);
         pos.y += buttonHeight * 3;
         pos.x += 0;
-        tmp.init(view, new Point(pos), buttonWidth * 3, buttonHeight,
+        tmp.init(view, new Point(pos), buttonWidth * 2, buttonHeight,
                 "" , "" + lastRow.substring(0, 4));
         lastRowKeyBoard.add(tmp);
 
         tmp = new MyKeyBoardButton();
-        pos.x += buttonWidth * 3;
+        pos.x += buttonWidth * 2;
         tmp.init(view, new Point(pos), buttonWidth, buttonHeight,
                 "" , "" + lastRow.charAt(4));
         lastRowKeyBoard.add(tmp);
@@ -156,8 +157,8 @@ public class MyKeyBoard extends DrawableObject {
 
         tmp = new MyKeyBoardButton();
         pos.x += buttonWidth;
-        tmp.init(view, new Point(pos), buttonWidth * 2, buttonHeight,
-                "" , "" + lastRow.charAt(7));
+        tmp.init(view, new Point(pos), buttonWidth * 3, buttonHeight,
+                "" , "SEND");
         lastRowKeyBoard.add(tmp);
 
         setVisible(true);
@@ -192,8 +193,158 @@ public class MyKeyBoard extends DrawableObject {
     }
 
 
-    // ToDo  touch event
+    //----------------------------------------------------------------------------------------------
+    //  Touch Events
+    //
+    public void touchEventDown(int X, int Y) {
+        if (!isVisible()) {
+            return;
+        }
+        if (lower) {
+            for (MyKeyBoardButton button : lowerKeyBoard) {
+                if (button.touchEventDown(X, Y)) {
+                    //break;
+                }
+            }
+        }
+        else if (upper) {
+            for (MyKeyBoardButton button : upperKeyBoard) {
+                if (button.touchEventDown(X, Y)) {
+                    //break;
+                }
+            }
+        }
+        else if (number) {
+            for (MyKeyBoardButton button : numberKeyBoard) {
+                if (button.touchEventDown(X, Y)) {
+                    //break;
+                }
+            }
+        }
 
+        for (MyKeyBoardButton button : lastRowKeyBoard) {
+            if (button.touchEventDown(X, Y)) {
+                //break;
+            }
+        }
+    }
+
+    public void touchEventMove(int X, int Y) {
+        if (!isVisible()) {
+            return;
+        }
+
+        if (lower) {
+            for (MyKeyBoardButton button : lowerKeyBoard) {
+                if (button.touchEventMove(X, Y)) {
+                    //break;
+                }
+            }
+        }
+        else if (upper) {
+            for (MyKeyBoardButton button : upperKeyBoard) {
+                if (button.touchEventMove(X, Y)) {
+                    //break;
+                }
+            }
+        }
+        else if (number) {
+            for (MyKeyBoardButton button : numberKeyBoard) {
+                if (button.touchEventMove(X, Y)) {
+                    //break;
+                }
+            }
+        }
+
+        for (MyKeyBoardButton button : lastRowKeyBoard) {
+            if (button.touchEventMove(X, Y)) {
+                //break;
+            }
+        }
+    }
+
+    public List<String> touchEventUp(int X, int Y, GameController controller) {
+        if (!isVisible()) {
+            return null;
+        }
+
+        List<String> keys = new ArrayList<>();
+
+        if (lower) {
+            for (MyKeyBoardButton button : lowerKeyBoard) {
+                if (button.touchEventUp(X, Y)){
+                    keys.add(button.getText());
+                }
+            }
+        }
+        else if (upper) {
+            for (MyKeyBoardButton button : upperKeyBoard) {
+                if (button.touchEventUp(X, Y)){
+                    keys.add(button.getText());
+                }
+            }
+        }
+        else if (number) {
+            for (MyKeyBoardButton button : numberKeyBoard) {
+                if (button.touchEventUp(X, Y)){
+                    keys.add(button.getText());
+                }
+            }
+        }
+
+        for (MyKeyBoardButton button : lastRowKeyBoard) {
+            if (button.touchEventUp(X, Y)){
+                keys.add(button.getText());
+            }
+        }
+
+        int i = 0;
+        for (String key : keys) {
+            switch (key) {
+                // change keyBoard
+                case "⇧":
+                    lower = false;
+                    upper = true;
+                    number = false;
+                    keys.remove(i);
+                    i--;
+                    break;
+                case "⇩":
+                    lower = true;
+                    upper = false;
+                    number = false;
+                    keys.remove(i);
+                    i--;
+                    break;
+                case "!123":
+                    if (number) {
+                        lower = true;
+                        upper = false;
+                        number = false;
+                    }
+                    else {
+                        lower = false;
+                        upper = false;
+                        number = true;
+                    }
+                    keys.remove(i);
+                    i--;
+                    break;
+                case "⇦":
+                    keys.remove(i);
+                    key = "del";
+                    keys.add(i, key);
+                    break;
+                case "SEND":
+                    keys.remove(i);
+                    key = "send";
+                    keys.add(i, key);
+                    break;
+            }
+            i++;
+        }
+        return keys;
+    }
 
 
 }

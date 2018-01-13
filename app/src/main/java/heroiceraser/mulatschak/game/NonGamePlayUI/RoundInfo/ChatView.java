@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.text.TextPaint;
 
 import java.util.ArrayList;
@@ -70,7 +71,11 @@ public class ChatView extends DrawableObject {
         textPaint = new TextPaint();
         textPaint.setAntiAlias(true);
         textPaint.setColor(Color.WHITE);
+        String font = "fonts/nk57-monospace-no-rg.ttf";
+        Typeface tf = Typeface.createFromAsset(view.getContext().getAssets(), font);
+        textPaint.setTypeface(tf);
         textPaint.setTextAlign(Paint.Align.LEFT);
+        textPaint.setTextScaleX(0.7f);
         textPaint.setTextSize( (int) ((monitor_size_.y / 100.0) * 15));
 
         trash = null;
@@ -82,9 +87,16 @@ public class ChatView extends DrawableObject {
 
         String player_name = player.getDisplayName();
 
-        if (player_name.length() > 15) {
-            player_name = player_name.substring(0, 14);
+        if (player_name.length() > 9) {
+            player_name = player_name.substring(0, 9);
         }
+
+        StringBuffer sb = new StringBuffer();
+        while (player_name.length() < 9) {
+            sb.append("");
+        }
+
+        player_name += sb;
 
         String text = player_name + ": " + message;
 
@@ -130,6 +142,11 @@ public class ChatView extends DrawableObject {
     public void clearChat() {
         trash = null;
         messageQueue.clear();
+    }
+
+
+    public TextPaint getTextPaint() {
+        return textPaint;
     }
 
 }

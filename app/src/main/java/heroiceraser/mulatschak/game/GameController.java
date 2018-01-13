@@ -208,10 +208,6 @@ public class GameController{
     //  continueAfterDealingAnimation
     //
     public void continueAfterDealingAnimation() {
-        non_game_play_ui_.getChatView().addMessage(getPlayerById(0), "yo yo yo");
-        non_game_play_ui_.getChatView().addMessage(getPlayerById(1), "was up");
-        non_game_play_ui_.getChatView().addMessage(getPlayerById(2), "jeei");
-        non_game_play_ui_.getChatView().addMessage(getPlayerById(3), "I'm fine");
         game_play_.getDecideMulatschak().startMulatschakDecision(this);
     }
 
@@ -220,8 +216,6 @@ public class GameController{
     //  continueAfterDecideMulatschak
     //
     public void continueAfterDecideMulatschak() {
-        non_game_play_ui_.getChatView().addMessage(getPlayerById(0), "xD");
-        non_game_play_ui_.getChatView().addMessage(getPlayerById(1), "nice one but what if message is too long");
         game_play_.getTrickBids().startTrickBids(this);
     }
 
@@ -230,8 +224,6 @@ public class GameController{
     //  continueAfterTrickBids
     //
     public void continueAfterTrickBids() {
-        non_game_play_ui_.getChatView().addMessage(getPlayerById(0), "xD");
-        non_game_play_ui_.getChatView().addMessage(getPlayerById(1), "nice one but what if message is too long");
         if (getPlayerById(0).getMissATurn()) {
             getAnimateHands().setMissATurnInfoVisible(true);
         }

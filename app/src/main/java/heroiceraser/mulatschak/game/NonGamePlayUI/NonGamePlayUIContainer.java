@@ -55,8 +55,8 @@ public class NonGamePlayUIContainer {
         all_cards_played_view_ = new AllCardsPlayedView();
         gameOver = new GameOver();
 
-        chat = new GameChat();
         chatView = new ChatView();
+        chat = new GameChat();
 
     }
 
@@ -65,7 +65,6 @@ public class NonGamePlayUIContainer {
     //  init
     //
     public void init(GameView view) {
-        chat.init(view);
         chatView.init(view);
         side_borders_.init(view);
         decoration_.init(view);
@@ -73,6 +72,7 @@ public class NonGamePlayUIContainer {
         statistics_.init(view);
         tricks_.init(view);
         menu_.init(view);
+        chat.init(view);
         all_cards_played_view_.init(view);
         gameOver.init(view);
     }
@@ -87,13 +87,14 @@ public class NonGamePlayUIContainer {
         gameOver.draw(canvas, controller);
 
         // Display Overlays with the functionality
-        chat.draw(canvas, controller);
         statistics_.draw(canvas, controller);
         tricks_.draw(canvas, controller);
         menu_.draw(canvas, controller);
 
         all_cards_played_view_.draw(canvas, controller);
         gameOver.getEndGameButton().draw(canvas);
+
+        chat.draw(canvas, controller);
 
         // additional layout decoration
         side_borders_.draw(canvas);

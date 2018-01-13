@@ -56,6 +56,9 @@ class TouchEvents {
             controller.getNonGamePlayUIContainer().getMenu().touchEventDown(X, Y);
         }
         //------------------------
+        // --------------------- Chat --------------------------------------------------------------
+        controller.getNonGamePlayUIContainer().getChat().touchEventDown(X, Y, controller);
+
 
         // ------------------ All Cards Played -----------------------------------------------------
         // MyPlayer Info Buttons
@@ -176,6 +179,10 @@ class TouchEvents {
                 .getTricks().getArrowButtonRight());
 
         //------------------------
+
+
+        // --------------------- Chat --------------------------------------------------------------
+        controller.getNonGamePlayUIContainer().getChat().touchEventMove(X, Y);
 
         // ------------------ MyPlayer Info --------------------------------------------------------
 
@@ -299,6 +306,9 @@ class TouchEvents {
         }
 
         //------------------------
+
+        // --------------------- Chat --------------------------------------------------------------
+        controller.getNonGamePlayUIContainer().getChat().touchEventUp(X, Y, controller);
 
         // ------------------ MyPlayer Info ----------------------------------------------------------
 

@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.text.TextPaint;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
+import heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
 
@@ -32,6 +33,7 @@ public class MyKeyBoardButton extends DrawableObject{
     private TextPaint textPaint;
     private Rect background;
     private Paint bgPaint;
+    private Paint bgPaintPressed;
 
     //----------------------------------------------------------------------------------------------
     //  Constructor
@@ -55,9 +57,9 @@ public class MyKeyBoardButton extends DrawableObject{
         textPaint = new TextPaint();
         textPaint.setColor(Color.WHITE);
         textPaint.setAntiAlias(true);
-        textPaint.setTextSize(getHeight() / 1.25f);
+        textPaint.setTextSize(getHeight() / 1.8f);
         textPaint.setTextAlign(Paint.Align.CENTER);
-        textPaint.setTextScaleX(0.8f);
+        textPaint.setTextScaleX(0.75f);
         Rect text_bounds_ = new Rect();
         textPaint.getTextBounds(text, 0, text.length(), text_bounds_);
 
@@ -78,6 +80,10 @@ public class MyKeyBoardButton extends DrawableObject{
         bgPaint.setAntiAlias(true);
         bgPaint.setStyle(Paint.Style.STROKE);
 
+        bgPaintPressed = new Paint(bgPaint);
+        bgPaintPressed.setStyle(Paint.Style.FILL);
+        bgPaintPressed.setColor(view.getResources().getColor(R.color.metallic_blue));
+
         pressed= false;
         setVisible(true);
     }
@@ -95,14 +101,24 @@ public class MyKeyBoardButton extends DrawableObject{
         float pressed_scale_ = 1;
 
         Bitmap bitmap = getBitmap();
+        Paint paint = bgPaint;
+        Rect rect = new Rect(background);
 
         if (isPressed()) {
             canvas.scale(0.96f, 0.96f);
             pressed_scale_ = 1.043f;
+            paint = bgPaintPressed;
         }
 
         float offset_x = (getWidth() - getWidth() * pressed_scale_) / 2;
         float offset_y = (getHeight() - getHeight() * pressed_scale_) / 2;
+
+        if (isPressed()) {
+            rect.set((int) (background.left * pressed_scale_ - offset_x),
+                    (int) (background.top * pressed_scale_),
+                    (int) (background.right * pressed_scale_),
+                    (int) (background.bottom * pressed_scale_) );
+        }
 
         // background bitmap
         if (bitmap != null) {
@@ -111,7 +127,7 @@ public class MyKeyBoardButton extends DrawableObject{
                     getPosition().y * pressed_scale_, null);
         }
         else {
-            canvas.drawRect(background, bgPaint);
+            canvas.drawRect(rect, paint);
         }
 
         // text
@@ -137,20 +153,25 @@ public class MyKeyBoardButton extends DrawableObject{
         return false;
     }
 
-    public void touchEventMove(int X, int Y) {
+    public boolean touchEventMove(int X, int Y) {
         if (isVisible() && isPressed()) {
             if ( X >= getPosition().x && X < getPosition().x + getWidth() &&
                     Y >= getPosition().y && Y < getPosition().y + getHeight()) {
                 setPressed(true);
+                return true;
             }
             else {
-                setPressed(false);
+                if (isPressed()) {
+                    setPressed(false);
+                    return true;
+                }
             }
         }
+        return false;
     }
 
     public boolean touchEventUp(int X, int Y) {
-        if (isVisible() && isPressed()) {
+        if (isVisible()) { // && is pressed
             if (X >= getPosition().x && X < getPosition().x + getWidth() &&
                     Y >= getPosition().y && Y < getPosition().y + getHeight()) {
                 setPressed(false);
@@ -172,6 +193,10 @@ public class MyKeyBoardButton extends DrawableObject{
 
     public void setPressed(boolean is_pressed) {
         this.pressed = is_pressed;
+    }
+
+    public String getText() {
+        return text;
     }
 
 }
