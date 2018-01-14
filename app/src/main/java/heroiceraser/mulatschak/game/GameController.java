@@ -4,11 +4,9 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.google.android.gms.games.multiplayer.Participant;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
 import heroiceraser.mulatschak.GameSettings.GameSettings;
 import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GamePlay.GamePlay;
@@ -149,19 +147,33 @@ public class GameController{
                     host_ = participants.get(0);
                 }
 
+                long start = System.currentTimeMillis();
                 logic_.init(start_lives, difficulty);
+                Log.d("--", 1 + " - " + System.currentTimeMillis());
                 layout_.init(view_);
+                Log.d("--", 2 + " - " + System.currentTimeMillis());
                 settings_.init(view_);
+                Log.d("--", 3 + " - " + System.currentTimeMillis());
                 initPlayers(my_id, enemies);
+                Log.d("--", 4 + " - " + System.currentTimeMillis());
                 resetPlayerLives();
                 setPlayerPositions();
                 player_info_.init(view_);
+                Log.d("--", 5 + " - " + System.currentTimeMillis());
                 non_game_play_ui_.init(view_);
+                Log.d("--", 6 + " - " + System.currentTimeMillis());
                 discardPile_.init(view_);
+                Log.d("--", 7 + " - " + System.currentTimeMillis());
                 game_play_.init(view_);
+                Log.d("--", 8 + " - " + System.currentTimeMillis());
                 deck_.initDeck(view_);
+                Log.d("--", 9 + " - " + System.currentTimeMillis());
                 dealer_button_.init(view_);
+                Log.d("--", 10 + " - " + System.currentTimeMillis());
                 animateHands.init(view_);
+                Log.d("--", 11 + " - " + System.currentTimeMillis());
+                long time = System.currentTimeMillis() - start;
+                Log.d("Start time: ", time + "");
                 enable_drawing_ = true;
                 chooseFirstDealerRandomly();
                 startRound();
@@ -386,7 +398,6 @@ public class GameController{
             text = text.substring(0, 15);
         }
 
-        Log.d("PlayerInfo", "MyPlayer " + myPlayer.getId() + " -> " + text);
         myPlayer.setDisplayName(text);
     }
 
@@ -466,13 +477,8 @@ public class GameController{
     public void turnToNextPlayer(boolean skipMissATurns) {
         logic_.turnToNextPlayer(getAmountOfPlayers());
         if (skipMissATurns) {
-            int players = 0;
             while (getPlayerById(logic_.getTurn()).getMissATurn()) {
                 logic_.turnToNextPlayer(getAmountOfPlayers());
-                if (players > getAmountOfPlayers()) {
-                    Log.e("miss a turn fail?", "turn to next player");
-                }
-                players++;
             }
         }
         player_info_.setActivePlayer(logic_.getTurn());
@@ -520,8 +526,10 @@ public class GameController{
             deck_.getCardAt(i).setVisible(false);
         }
 
+        // something went wrong, generate a new deck -> better than a crash
         if (deck_.getCardStack().size() != MulatschakDeck.CARDS_PER_DECK) {
-            Log.e("DECK", " not large enough");
+            deck_ = new MulatschakDeck();
+            deck_.initDeck(view_);
         }
 
     }
@@ -562,7 +570,6 @@ public class GameController{
                 return getPlayerById(i);
             }
         }
-        Log.d("GameController", "getPlayerByPosition: wrong pos!");
         return getPlayerByPosition(0);
     }
 

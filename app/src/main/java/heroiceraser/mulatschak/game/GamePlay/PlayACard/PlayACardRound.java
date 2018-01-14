@@ -68,8 +68,6 @@ public class PlayACardRound {
             controller.turnToNextPlayer(true);
         }
 
-        Log.d("PlayACard", logic.getTurn() + "");
-
         // only allowed if turn is player 0
         controller.getGamePlay().getPlayACardRound().setCardMovable(false);
 
@@ -95,7 +93,6 @@ public class PlayACardRound {
 
         // enemies
         else if (logic.getTurn() != 0) {
-            Log.d("dddddd", logic.getTurn() + "");
             controller.getView().enableUpdateCanvasThread();
             enemy_play_a_card_logic_.playACard(controller,
                     controller.getPlayerById(logic.getTurn()));

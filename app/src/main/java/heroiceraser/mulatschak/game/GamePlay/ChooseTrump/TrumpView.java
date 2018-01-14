@@ -38,7 +38,7 @@ public class TrumpView extends DrawableObject {
     private String multi_text_;
 
 
-    public TrumpView() {
+    TrumpView() {
         offset_ = new Point();
         end_position_ = new Point();
         start_position_ = new Point();
@@ -122,7 +122,7 @@ public class TrumpView extends DrawableObject {
 
     private void continueAnimation(GameController controller) {
         double speed_factor = controller.getSettings().getAnimationSpeed().getSpeedFactor();
-        double max_time = 1000 * speed_factor;
+        double max_time = 750 * speed_factor;
         long time = System.currentTimeMillis();
         long time_since_start = time - start_time_;
 

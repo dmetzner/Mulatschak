@@ -745,7 +745,6 @@ public class GameLayout {
             case POSITION_RIGHT:
                 return dealer_button_right_;
         }
-        Log.e("GameLayout", "getDealerButtonPosition() was called with: " + position +" ,but ony 0-4 is valid");
         return new Point(0, 0);
     }
 

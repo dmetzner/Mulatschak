@@ -3,21 +3,14 @@ package heroiceraser.mulatschak.DrawableBasicObjects;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.text.TextPaint;
 
-import java.nio.IntBuffer;
-
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
 
-/**
- * Created by Daniel Metzner on 19.08.2017.
- */
 
 //----------------------------------------------------------------------------------------------
 //  A Button is a drawable object with
@@ -48,6 +41,10 @@ public class MyTextButton extends DrawableObject{
     //----------------------------------------------------------------------------------------------
     //  init
     //
+    public void init(GameView view, Point position, Point size, String image_name, String text) {
+        init(view, position, size.x, size.y, image_name, text);
+    }
+
     public void init(GameView view, Point position, int width, int height, String image_name, String text) {
         setPosition(position);
         setWidth(width);

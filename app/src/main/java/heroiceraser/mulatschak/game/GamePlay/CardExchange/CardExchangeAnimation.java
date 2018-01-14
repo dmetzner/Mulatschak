@@ -147,7 +147,7 @@ public class CardExchangeAnimation {
         }
 
         double animation_factor = controller.getSettings().getAnimationSpeed().getSpeedFactor();
-        double max_time = 2500 * animation_factor;
+        double max_time = 2000 * animation_factor;
         long time_now = System.currentTimeMillis();
         long time_since_start = time_now -time_start_;
         double percentage = time_since_start / max_time;

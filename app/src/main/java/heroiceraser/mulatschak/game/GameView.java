@@ -9,10 +9,14 @@ import android.view.MotionEvent;
 import android.view.View;
 
 
-/**
- * Created by Daniel Metzner on 08.08.2017.
- */
-
+//--------------------------------------------------------------------------------------------------
+//  The Game View Class
+//                         ->   extends the View class
+//                         ->   everything that gets drawn has to be called from the game views
+//                              draw function
+//                         ->   handles single touch, and a weakly implemented form of multi touch
+//                              So all touch actions have to be called from this touch events
+//
 public class GameView extends View {
 
     //----------------------------------------------------------------------------------------------
@@ -20,8 +24,9 @@ public class GameView extends View {
     //
     private GameController controller_;
     private GameThread thread_;
-    public boolean stopAll;
-    private SparseArray<PointF> mActivePointers;
+    public boolean stopAll;                         // if true, no more actions are allowed to
+    //                                                  allow a safe deletion of the game view
+    private SparseArray<PointF> mActivePointers;    // multiTouch
 
 
     //----------------------------------------------------------------------------------------------
@@ -38,7 +43,6 @@ public class GameView extends View {
     }
 
 
-
     //----------------------------------------------------------------------------------------------
     //  clear
     //
@@ -49,10 +53,9 @@ public class GameView extends View {
                 thread_.join();
             }
             catch (Exception e) {
-                Log.w("GameThread", "Join Excpetion");
+                Log.w("GameThread", "Join Excpetion" + e);
             }
         }
-
         controller_.clear();
     }
 
@@ -220,7 +223,6 @@ public class GameView extends View {
                         mActivePointers.remove(pointerId);
                     } catch (Exception e) {
                         //can happen quite often
-                        //Log.e("Action Up", "" + e);
                     }
                     break;
             }

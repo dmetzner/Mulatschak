@@ -225,8 +225,8 @@ public class EnemyCardExchangeAnimation {
     //
     void recalculateParameters(GameController controller) {
         double animation_factor = controller.getSettings().getAnimationSpeed().getSpeedFactor();
-        double max_time_section_1 = 300 * animation_factor;
-        double max_time_section_2 = 2500 * animation_factor;
+        double max_time_section_1 = 250 * animation_factor;
+        double max_time_section_2 = 1750 * animation_factor;
         long time = System.currentTimeMillis();
         long time_since_start = time - start_time_;
 

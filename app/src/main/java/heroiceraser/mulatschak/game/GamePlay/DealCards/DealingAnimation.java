@@ -74,7 +74,7 @@ public class DealingAnimation {
     //
     private void continueAnimation(GameController controller) {
         double animation_factor = controller.getSettings().getAnimationSpeed().getSpeedFactor();
-        double max_time = 250 * animation_factor;
+        double max_time = 150 * animation_factor;
         long time = System.currentTimeMillis();
         long time_since_start = time - start_time_;
 
@@ -127,7 +127,6 @@ public class DealingAnimation {
                 controller.getDeck().getPosition().y, null);
 
         // draw the card that gets moved to a players hand
-
         Bitmap bitmap = controller.getDeck().getBacksideBitmap();
 
         if (rotation_ != 0) {
@@ -215,13 +214,5 @@ public class DealingAnimation {
                         (layout.getCardHeight() * card_number) / layout.getOverlapFactor(player.getPosition()) );
                 break;
         }
-    }
-
-
-    //----------------------------------------------------------------------------------------------
-    //  Getter
-    //
-    public boolean isAnimationRunning() {
-        return animation_running_;
     }
 }

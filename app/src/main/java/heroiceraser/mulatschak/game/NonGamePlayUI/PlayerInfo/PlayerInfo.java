@@ -15,8 +15,9 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 import java.util.List;
 
-import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
 import heroiceraser.mulatschak.DrawableBasicObjects.TextField;
 import heroiceraser.mulatschak.R;
@@ -39,32 +40,28 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
     private int active_player_;
     private boolean showPlayer0Turn;
 
-    private MyButton button_left_;
-    private MyButton button_top_;
-    private MyButton button_right_;
-    private List<MyButton> buttons_;
+    private MyTextButton button_left_;
+    private MyTextButton button_top_;
+    private MyTextButton button_right_;
+    private List<MyTextButton> buttons_;
 
     private int pop_up_width_;
     private int pop_up_height_;
     private PopupWindow pop_up_top_;
-    private PlayerInfoPopUpView pop_up_top_view_;
     private PopupWindow pop_up_left_;
-    private PlayerInfoPopUpView pop_up_left_view_;
     private PopupWindow pop_up_right_;
-    private PlayerInfoPopUpView pop_up_right_view_;
-
 
 
     public PlayerInfo() {
         super();
         setVisible(false);
 
-        button_left_ = new MyButton();
-        button_top_ = new MyButton();
-        button_right_ = new MyButton();
+        button_left_ = new MyTextButton();
+        button_top_ = new MyTextButton();
+        button_right_ = new MyTextButton();
         buttons_ = new ArrayList<>();
 
-        buttons_.add(new MyButton());
+        buttons_.add(new MyTextButton());
         buttons_.add(button_left_);
         buttons_.add(button_top_);
         buttons_.add(button_right_);
@@ -90,20 +87,20 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
 
         if (view.getController().getAmountOfPlayers() > 1) {
             button_top_.init(view, layout.getPlayerInfoTopPos(),
-                    layout.getPlayerInfoSize(), "lil_robo_0");
-            pop_up_top_ = makePopupWindow(pop_up_top_view_, GameLayout.POSITION_TOP);
+                    layout.getPlayerInfoSize(), "lil_robo_0", "");
+            pop_up_top_ = makePopupWindow(GameLayout.POSITION_TOP);
         }
 
         if (view.getController().getAmountOfPlayers() > 2) {
             button_left_.init(view, layout.getPlayerInfoLeftPos(),
-                    layout.getPlayerInfoSize(), "lil_robo_1");
-            pop_up_left_ = makePopupWindow(pop_up_left_view_, GameLayout.POSITION_LEFT);
+                    layout.getPlayerInfoSize(), "lil_robo_1", "");
+            pop_up_left_ = makePopupWindow(GameLayout.POSITION_LEFT);
         }
 
         if (view.getController().getAmountOfPlayers() > 3) {
             button_right_.init(view, layout.getPlayerInfoRightPos(),
-                    layout.getPlayerInfoSize(), "lil_robo_2");
-            pop_up_right_ = makePopupWindow(pop_up_right_view_, GameLayout.POSITION_RIGHT);
+                    layout.getPlayerInfoSize(), "lil_robo_2", "");
+            pop_up_right_ = makePopupWindow(GameLayout.POSITION_RIGHT);
         }
 
         // active player rects
@@ -154,8 +151,8 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
                 .getDimension(R.dimen.player_info_pop_up_height);
     }
 
-    private PopupWindow makePopupWindow(PlayerInfoPopUpView view, int pos) {
-        view = new PlayerInfoPopUpView(view_.getContext());
+    private PopupWindow makePopupWindow(int pos) {
+        PlayerInfoPopUpView view = new PlayerInfoPopUpView(view_.getContext());
         view.setListener(this);
         MyPlayer p = view_.getController().getPlayerByPosition(pos);
         String top_display_name = p.getDisplayName();
@@ -194,21 +191,21 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
                 canvas.drawRect(rects_.get(active_player_), rect_paint_);
             }
 
-            for (MyButton b : buttons_) {
+            for (MyTextButton b : buttons_) {
                 b.draw(canvas);
             }
         }
     }
 
-    public MyButton getButtonLeft() {
+    public MyTextButton getButtonLeft() {
         return button_left_;
     }
 
-    public MyButton getButtonTop() {
+    public MyTextButton getButtonTop() {
         return button_top_;
     }
 
-    public MyButton getButtonRight() {
+    public MyTextButton getButtonRight() {
         return button_right_;
     }
 

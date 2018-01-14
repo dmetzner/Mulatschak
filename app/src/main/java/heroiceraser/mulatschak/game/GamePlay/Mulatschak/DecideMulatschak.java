@@ -2,8 +2,6 @@ package heroiceraser.mulatschak.game.GamePlay.Mulatschak;
 
 import android.graphics.Canvas;
 import android.os.Handler;
-import android.util.Log;
-import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GamePlay.TrickBids.MakeBidsAnimation;
@@ -112,11 +110,6 @@ public class DecideMulatschak {
     //
     void setMulatschakUp(GameController controller) {
         GameLogic logic = controller.getLogic();
-
-        for (Card card : controller.getPlayerById(logic.getTurn()).getHand().getCardStack()) {
-            Log.d("MULATSCHAK:", card.getId() + "");
-        }
-
         logic.setMulatschakRound(true);
         controller.getPlayerById(logic.getTurn()).setTricksToMake(MakeBidsAnimation.MULATSCHAK);
         logic.setTricksToMake(MakeBidsAnimation.MULATSCHAK);

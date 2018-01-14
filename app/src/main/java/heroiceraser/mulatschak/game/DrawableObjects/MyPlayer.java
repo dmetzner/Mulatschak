@@ -84,9 +84,6 @@ public class MyPlayer {
         if (players != 0) {
             amount /= players;
         }
-        else {
-            Log.d("MyPlayer", "0 Players?");
-        }
 
         return amount;
     }
