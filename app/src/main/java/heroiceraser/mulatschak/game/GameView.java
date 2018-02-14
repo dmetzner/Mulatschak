@@ -75,7 +75,17 @@ public class GameView extends View {
     protected synchronized void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if (stopAll || controller_ == null || !controller_.isDrawingEnabled()) {
+        if (stopAll || controller_ == null) {
+            return;
+        }
+
+        if (controller_.isPlayerPresentationRunning()) {
+            drawNonGamePlayUI(canvas);
+            drawPlayerInfoPresentation(canvas);
+            return;
+        }
+
+        if (!controller_.isDrawingEnabled()) {
             return;
         }
 
@@ -137,6 +147,10 @@ public class GameView extends View {
 
     private void drawPlayerInfo(Canvas canvas) {
         controller_.getPlayerInfo().draw(canvas);
+    }
+
+    private void drawPlayerInfoPresentation(Canvas canvas) {
+        controller_.getPlayerInfo().drawPresentation(canvas, controller_);
     }
 
     private void drawDealerButton(Canvas canvas) {

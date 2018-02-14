@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Random;
 import heroiceraser.mulatschak.GameSettings.GameSettings;
 import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
+import heroiceraser.mulatschak.game.GameModerator.GameModerator;
 import heroiceraser.mulatschak.game.GamePlay.GamePlay;
 import heroiceraser.mulatschak.game.NonGamePlayUI.NonGamePlayUIContainer;
 import heroiceraser.mulatschak.game.DrawableObjects.Card;
@@ -32,6 +33,7 @@ public class GameController{
     //  Member Variables
     //
     private boolean enable_drawing_;
+    private boolean playerPresentation;
 
     public boolean multiplayer_;
     public ArrayList<Participant> participants_;
@@ -47,6 +49,7 @@ public class GameController{
 
     private AnimateHands animateHands;
 
+    private GameModerator gameModerator;
     private NonGamePlayUIContainer non_game_play_ui_;
     private GamePlay game_play_;
 
@@ -79,7 +82,7 @@ public class GameController{
         settings_= null;
 
         animateHands = null;
-
+        gameModerator = null;
         non_game_play_ui_ = null;
         game_play_ = null;
 
@@ -103,6 +106,7 @@ public class GameController{
     public GameController(GameView view) {
         view_ = view;
         enable_drawing_ = false;
+        playerPresentation = false;
 
         logic_ = new GameLogic();
         layout_ = new GameLayout();
@@ -121,46 +125,51 @@ public class GameController{
         discardPile_ = new DiscardPile();
 
         dealer_button_ = new DealerButton();
+        gameModerator = new GameModerator();
     }
 
     //----------------------------------------------------------------------------------------------
     //  start
     //
-    public void start(final int start_lives, final int enemies, final int difficulty, final boolean multiplayer,
+    public void init(final int start_lives, final int enemies, final int difficulty, final boolean multiplayer,
                       final String myName, final String my_id, final ArrayList<Participant> participants) {
 
+        multiplayer_ = multiplayer;
+
+        my_display_name_ = myName;
+        if (my_display_name_ == null) {
+            my_display_name_ = "notSignedIn";
+        }
+
+        // if singlePlayer -> == null
+        my_participant_id_ = my_id;
+        participants_ = participants;
+        if (participants != null && participants.size() > 0) {
+            host_ = participants.get(0);
+        }
+
+
+        long start = System.currentTimeMillis();
+        // essential inits
+        logic_.init(start_lives, difficulty);
+        layout_.init(view_);
+        settings_.init(view_);
+        initPlayers(my_id, enemies);
+        resetPlayerLives();
+        setPlayerPositions();
+        player_info_.init(view_);
+        non_game_play_ui_.init(view_);
+        player_info_.startPresentation(this);
+
+        long time = System.currentTimeMillis() - start;
+        Log.d("gebrauchte start zeit: ", time + "");
+
+        // init the rest while the players get presented
         Handler handler = new Handler();
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                multiplayer_ = multiplayer;
-
-                my_display_name_ = myName;
-                if (my_display_name_ == null) {
-                    my_display_name_ = "notSignedIn";
-                }
-
-                // if singlePlayer -> == null
-                my_participant_id_ = my_id;
-                participants_ = participants;
-                if (participants != null && participants.size() > 0) {
-                    host_ = participants.get(0);
-                }
-
                 long start = System.currentTimeMillis();
-                logic_.init(start_lives, difficulty);
-                Log.d("--", 1 + " - " + System.currentTimeMillis());
-                layout_.init(view_);
-                Log.d("--", 2 + " - " + System.currentTimeMillis());
-                settings_.init(view_);
-                Log.d("--", 3 + " - " + System.currentTimeMillis());
-                initPlayers(my_id, enemies);
-                Log.d("--", 4 + " - " + System.currentTimeMillis());
-                resetPlayerLives();
-                setPlayerPositions();
-                player_info_.init(view_);
-                Log.d("--", 5 + " - " + System.currentTimeMillis());
-                non_game_play_ui_.init(view_);
                 Log.d("--", 6 + " - " + System.currentTimeMillis());
                 discardPile_.init(view_);
                 Log.d("--", 7 + " - " + System.currentTimeMillis());
@@ -172,15 +181,32 @@ public class GameController{
                 Log.d("--", 10 + " - " + System.currentTimeMillis());
                 animateHands.init(view_);
                 Log.d("--", 11 + " - " + System.currentTimeMillis());
-                long time = System.currentTimeMillis() - start;
-                Log.d("Start time: ", time + "");
                 enable_drawing_ = true;
-                chooseFirstDealerRandomly();
-                startRound();
+                long time = System.currentTimeMillis() - start;
+                Log.d("gebrauchte zeit init2:", time + "");
             }
         };
-        handler.postDelayed(runnable, 10);
+        handler.postDelayed(runnable, 100);
     }
+
+    public void startGame() {
+        if (enable_drawing_) {
+            playerPresentation = false;
+            chooseFirstDealerRandomly();
+            startRound();
+        }
+        else {
+            Handler handler = new Handler();
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    startGame();
+                }
+            };
+            handler.postDelayed(runnable, 100);
+        }
+    }
+
 
     // ---------------------------------------------------------------------------------------------
     // ----------------------  Game Flow
@@ -189,27 +215,28 @@ public class GameController{
     //  startRound
     //
     public void startRound() {
+
         player_info_.setVisible(true);
+
+        // clean up last round
         non_game_play_ui_.getTricks().clear();
-
         allCardsBackToTheDeck();
-
         logic_.setMulatschakRound(false);
         resetTricksToMake();
         // getGamePlay().getPlayACardRound().setCardMovable(false);
         player_info_.setActivePlayer(NOT_SET);
         player_info_.setShowPlayer0Turn(false);
-
         discardPile_.setVisible(false);
         discardPile_.setOverlaysVisible(false);
-
         game_play_.startRound(this);
-
         for (MyPlayer player : getPlayerList()) {
             player.setMissATurn(false);
         }
 
+        // start round -> move dealer button, and deal the cards
         view_.enableUpdateCanvasThread();
+        //gameModerator.startRoundMessage(non_game_play_ui_.getChatView(),
+        //        getPlayerById(logic_.getDealer()).getDisplayName());
         dealer_button_.startMoveAnimation(this, logic_.getDealer());
         deck_.shuffleDeck();
         game_play_.getDealCards().dealCards(this);  // starts an dealing animation
@@ -595,6 +622,14 @@ public class GameController{
 
     public boolean isDrawingEnabled() {
         return enable_drawing_;
+    }
+
+    public boolean isPlayerPresentationRunning() {
+        return playerPresentation;
+    }
+
+    public void setPlayerPresentation(boolean playerPresentation) {
+        this.playerPresentation = playerPresentation;
     }
 
     public GamePlay getGamePlay() {

@@ -20,6 +20,18 @@ import static android.R.id.message;
 public final class HelperFunctions {
     private HelperFunctions() {}
 
+    public static String getStringOfFixedLength(String s, int length) {
+        if (s.length() > length) {
+            s = s.substring(0, length);
+        }
+        StringBuffer sb = new StringBuffer();
+        while (s.length() < length) {
+            sb.append(" ");
+        }
+        s += sb;
+        return s;
+    }
+
     public static Bitmap loadBitmap(GameView view, String image_name, int width, int height) {
 
         String package_name = "drawable";

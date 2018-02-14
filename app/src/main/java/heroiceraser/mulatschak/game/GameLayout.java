@@ -1,7 +1,6 @@
 package heroiceraser.mulatschak.game;
 
 import android.graphics.Point;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,10 +8,6 @@ import java.util.List;
 import heroiceraser.mulatschak.game.GamePlay.ChooseTrump.ChooseTrumpAnimation;
 import heroiceraser.mulatschak.game.GamePlay.TrickBids.MakeBidsAnimation;
 import heroiceraser.mulatschak.helpers.DisplayDimension;
-
-/**
- * Created by Daniel Metzner on 11.08.2017.
- */
 
 
 // -----------------------------------------------------------------

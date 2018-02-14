@@ -1005,7 +1005,7 @@ public class MainActivity extends AppCompatActivity implements
                 game_running_ = true;
                 try {
                     switchToFragment(mGameScreenFragment, "mGameScreenFragment");
-                    mGameView.getController().start(player_lives_final, enemies_final, difficulty_final,
+                    mGameView.getController().init(player_lives_final, enemies_final, difficulty_final,
                             mMultiplayer, my_name_final,  mMyId, mParticipants);
                 }
                 catch (Exception e) {

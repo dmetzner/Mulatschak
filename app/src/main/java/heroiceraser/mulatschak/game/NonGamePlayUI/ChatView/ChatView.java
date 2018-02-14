@@ -1,4 +1,4 @@
-package heroiceraser.mulatschak.game.NonGamePlayUI.RoundInfo;
+package heroiceraser.mulatschak.game.NonGamePlayUI.ChatView;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -13,11 +13,7 @@ import java.util.List;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
-import heroiceraser.mulatschak.DrawableBasicObjects.TextField;
-import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
 import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
-import heroiceraser.mulatschak.game.GameController;
-import heroiceraser.mulatschak.game.GamePlay.TrickBids.MakeBidsAnimation;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
 
@@ -81,24 +77,16 @@ public class ChatView extends DrawableObject {
         trash = null;
     }
 
-    public void addMessage(MyPlayer player, String message) {
+    public void addMessage(String player_name, String message) {
+
         MyTextField textField = new MyTextField();
         textField.setVisible(true);
 
-        String player_name = player.getDisplayName();
-
-        if (player_name.length() > 9) {
-            player_name = player_name.substring(0, 9);
-        }
-
-        StringBuffer sb = new StringBuffer();
-        while (player_name.length() < 9) {
-            sb.append("");
-        }
-
-        player_name += sb;
-
         String text = player_name + ": " + message;
+        // no name? only print message!
+        if (player_name.equals("")) {
+            text = message;
+        }
 
         textField.setText(text);
         textField.setTextPaint(textPaint);
@@ -109,6 +97,20 @@ public class ChatView extends DrawableObject {
             messageQueue.remove(0);
         }
         messageQueue.add(textField);
+    }
+
+    public void addMessage(MyPlayer player, String message) {
+
+        String player_name = "";
+
+        if (player != null) {
+            player_name = player.getDisplayName();
+        }
+
+        // make the player name fit a fixed size!
+        player_name = HelperFunctions.getStringOfFixedLength(player_name, 9);
+
+        addMessage(player_name, message);
     }
 
 

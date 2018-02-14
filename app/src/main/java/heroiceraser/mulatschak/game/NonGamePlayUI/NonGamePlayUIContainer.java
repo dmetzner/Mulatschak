@@ -12,7 +12,7 @@ import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBar.Windows.GameMenu.Gam
 import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBar.Windows.GameStatistics;
 import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBar.Windows.GameTricks;
 import heroiceraser.mulatschak.game.NonGamePlayUI.GameOver.GameOver;
-import heroiceraser.mulatschak.game.NonGamePlayUI.RoundInfo.ChatView;
+import heroiceraser.mulatschak.game.NonGamePlayUI.ChatView.ChatView;
 import heroiceraser.mulatschak.game.NonGamePlayUI.SideBorders.SideBorders;
 
 

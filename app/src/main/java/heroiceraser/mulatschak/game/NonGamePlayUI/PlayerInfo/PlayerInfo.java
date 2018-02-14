@@ -9,68 +9,91 @@ import android.graphics.Rect;
 import android.text.TextPaint;
 import android.view.Gravity;
 import android.widget.PopupWindow;
-
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
-import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
-import heroiceraser.mulatschak.DrawableBasicObjects.TextField;
 import heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
 
-/**
- * Created by Daniel Metzner on 20.09.2017.
- */
 
+//--------------------------------------------------------------------------------------------------
+//  Player Info Class
+//                      -> every player has a button with his profile image on the game field
+//                      -> those buttons open a pop up if clicked
+//                          * pop up contains player information
+//                      -> there is a blue rectangle around the player image if it's his turn
+//                      -> or an info text field for player 0
+//
+//
 public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Listener{
 
+    //----------------------------------------------------------------------------------------------
+    //  Member Variables
+    //
     private GameView view_;
 
-    private MyTextField player0Text;
-    private List<Rect> rects_;
-    private Paint rect_paint_;
-    private int active_player_;
-    private boolean showPlayer0Turn;
+    // The player profile image buttons; onclick they open a information pop up
+    // bottom position (player 0) has no such image button
+    private MyTextButton buttonLeft;
+    private MyTextButton buttonTop;
+    private MyTextButton buttonRight;
+    private List<MyTextButton> buttons;
 
-    private MyTextButton button_left_;
-    private MyTextButton button_top_;
-    private MyTextButton button_right_;
-    private List<MyTextButton> buttons_;
+    // highlight the player who has the turn with a colored rectangle
+    // player 0 has a text field instead, that tells the players it's his turn
+    private List<Rect> playersTurnRectangles;
+    private Paint rectanglePaint;
+    private MyTextField player0sTurnTextField;
+    private int activePlayer;         // which player has the turn and should get highlighted
+    private boolean showPlayer0Turn;    // needed if the players 0 turn info should be provided
+    
+    // the pop ups with the player info, if the buttons get clicked
+    private int popUpWidth;
+    private int popUpHeight;
+    private PopupWindow popUp;
 
-    private int pop_up_width_;
-    private int pop_up_height_;
-    private PopupWindow pop_up_top_;
-    private PopupWindow pop_up_left_;
-    private PopupWindow pop_up_right_;
+    // presentation
+    private long startTime;
+    private Point endPos;
+    private MyTextField presentationTextField;
+    private int presentationId;
 
 
+    //----------------------------------------------------------------------------------------------
+    //  Constructor
+    //
     public PlayerInfo() {
         super();
         setVisible(false);
 
-        button_left_ = new MyTextButton();
-        button_top_ = new MyTextButton();
-        button_right_ = new MyTextButton();
-        buttons_ = new ArrayList<>();
+        // buttons
+        buttonLeft = new MyTextButton();
+        buttonTop = new MyTextButton();
+        buttonRight = new MyTextButton();
+        buttons = new ArrayList<>();
+        buttons.add(new MyTextButton());
+        buttons.add(buttonLeft);
+        buttons.add(buttonTop);
+        buttons.add(buttonRight);
 
-        buttons_.add(new MyTextButton());
-        buttons_.add(button_left_);
-        buttons_.add(button_top_);
-        buttons_.add(button_right_);
+        // active player
+        playersTurnRectangles = new ArrayList<>();
+        rectanglePaint = new Paint();
+        player0sTurnTextField = new MyTextField();
 
-        rects_ = new ArrayList<>();
-        rect_paint_ = new Paint();
-        player0Text = new MyTextField();
+        // presentation
+        presentationTextField = new MyTextField();
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  init
+    //
     public void init(GameView view) {
         view_ = view;
         GameLayout layout = view.getController().getLayout();
@@ -86,68 +109,80 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
         setPopDimensions();
 
         if (view.getController().getAmountOfPlayers() > 1) {
-            button_top_.init(view, layout.getPlayerInfoTopPos(),
+            buttonTop.init(view, layout.getPlayerInfoTopPos(),
                     layout.getPlayerInfoSize(), "lil_robo_0", "");
-            pop_up_top_ = makePopupWindow(GameLayout.POSITION_TOP);
         }
 
         if (view.getController().getAmountOfPlayers() > 2) {
-            button_left_.init(view, layout.getPlayerInfoLeftPos(),
+            buttonLeft.init(view, layout.getPlayerInfoLeftPos(),
                     layout.getPlayerInfoSize(), "lil_robo_1", "");
-            pop_up_left_ = makePopupWindow(GameLayout.POSITION_LEFT);
         }
 
         if (view.getController().getAmountOfPlayers() > 3) {
-            button_right_.init(view, layout.getPlayerInfoRightPos(),
+            buttonRight.init(view, layout.getPlayerInfoRightPos(),
                     layout.getPlayerInfoSize(), "lil_robo_2", "");
-            pop_up_right_ = makePopupWindow(GameLayout.POSITION_RIGHT);
         }
 
-        // active player rects
+        // active player playersTurnRectangles
         for (int i = 0; i < view.getController().getAmountOfPlayers(); i++) {
             Rect rect = new Rect();
             if (i != 0) {
 
                 // second player is on top pos if only 2 players
                 if (view.getController().getAmountOfPlayers() == 2) {
-                    rect.set(buttons_.get(2).getPosition().x - padding,
-                            buttons_.get(2).getPosition().y - padding,
-                            buttons_.get(2).getPosition().x + layout.getPlayerInfoSize().x + padding,
-                            buttons_.get(2).getPosition().y + layout.getPlayerInfoSize().y + padding);
+                    rect.set(buttons.get(2).getPosition().x - padding,
+                            buttons.get(2).getPosition().y - padding,
+                            buttons.get(2).getPosition().x + layout.getPlayerInfoSize().x + padding,
+                            buttons.get(2).getPosition().y + layout.getPlayerInfoSize().y + padding);
                 }
                 else {
-                    rect.set(buttons_.get(i).getPosition().x - padding,
-                            buttons_.get(i).getPosition().y - padding,
-                            buttons_.get(i).getPosition().x + layout.getPlayerInfoSize().x + padding,
-                            buttons_.get(i).getPosition().y + layout.getPlayerInfoSize().y + padding);
+                    rect.set(buttons.get(i).getPosition().x - padding,
+                            buttons.get(i).getPosition().y - padding,
+                            buttons.get(i).getPosition().x + layout.getPlayerInfoSize().x + padding,
+                            buttons.get(i).getPosition().y + layout.getPlayerInfoSize().y + padding);
                 }
             }
-            rects_.add(rect);
+            playersTurnRectangles.add(rect);
         }
 
         String text = view.getResources().getString(R.string.player_info_active_player_is_0);
-        player0Text.setText(text);
+        player0sTurnTextField.setText(text);
         TextPaint tp = new TextPaint();
         tp.setAntiAlias(true);
         tp.setTextSize(layout.getDealerButtonSize() * (2/3f));
         tp.setTextAlign(Paint.Align.CENTER);
         tp.setColor(Color.WHITE);
-        player0Text.setTextPaint(tp);
-        player0Text.setBorder(view.getResources().getColor(R.color.metallic_blue), 0.25f);
-        player0Text.setMaxWidth(layout.getScreenWidth() / 2);
-        player0Text.setPosition(new Point(layout.getScreenWidth() / 2,
+        player0sTurnTextField.setTextPaint(tp);
+        player0sTurnTextField.setBorder(view.getResources().getColor(R.color.metallic_blue), 0.25f);
+        player0sTurnTextField.setMaxWidth(layout.getScreenWidth() / 2);
+        player0sTurnTextField.setPosition(new Point(layout.getScreenWidth() / 2,
                 (int) (layout.getDealerButtonPosition(0).y + layout.getDealerButtonSize() / 2.0) ));
-        player0Text.setVisible(true);
+        player0sTurnTextField.setVisible(true);
 
-        rect_paint_.setStyle(Paint.Style.FILL);
-        rect_paint_.setColor(view.getResources().getColor(R.color.metallic_blue));
+        rectanglePaint.setStyle(Paint.Style.FILL);
+        rectanglePaint.setColor(view.getResources().getColor(R.color.metallic_blue));
+
+        // presentation
+        presentationTextField.setText("Test Feld");
+        TextPaint tp2 = new TextPaint();
+        tp2.setAntiAlias(true);
+        tp2.setTextSize(layout.getDealerButtonSize());
+        tp2.setTextAlign(Paint.Align.CENTER);
+        tp2.setColor(Color.WHITE);
+        presentationTextField.setTextPaint(tp2);
+        presentationTextField.setBorder(view.getResources().getColor(R.color.metallic_blue), 0.15f);
+        presentationTextField.setMaxWidth(layout.getScreenWidth() / 2);
+        presentationTextField.setPosition(new Point((int) (layout.getScreenWidth() / 2.0),
+                (int) (layout.getScreenHeight() / 2.0)) );
+        presentationTextField.setVisible(true);
+
         setVisible(true);
     }
 
     private void setPopDimensions() {
-        pop_up_width_ = (int) view_.getResources()
+        popUpWidth = (int) view_.getResources()
                 .getDimension(R.dimen.player_info_pop_up_width);
-        pop_up_height_ = (int) view_.getResources()
+        popUpHeight = (int) view_.getResources()
                 .getDimension(R.dimen.player_info_pop_up_height);
     }
 
@@ -160,89 +195,169 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
         String text = "";
         switch (pos) {
             case 1:
-                bitmap = button_left_.getBitmap();
+                bitmap = buttonLeft.getBitmap();
                 text = "Beep, beep.";
                 break;
             case 2:
-                bitmap = button_top_.getBitmap();
+                bitmap = buttonTop.getBitmap();
                 text = "Beep, beep, beep?";
                 break;
             case 3:
                 text = "Beeeeeep!";
-                bitmap = button_right_.getBitmap();
+                bitmap = buttonRight.getBitmap();
                 break;
         }
         view.init(top_display_name, text, bitmap);
-        return new PopupWindow(view, pop_up_width_, pop_up_height_, true);
+        return new PopupWindow(view, popUpWidth, popUpHeight, true);
     }
 
-    public void setActivePlayer(int id) {
-        active_player_ = id;
-    }
 
+    //----------------------------------------------------------------------------------------------
+    //  draw
+    //
     public void draw(Canvas canvas) {
         if (isVisible()) {
 
-            if (active_player_ == 0 && showPlayer0Turn) {
-                player0Text.draw(canvas);
+            if (activePlayer == 0 && showPlayer0Turn) {
+                player0sTurnTextField.draw(canvas);
             }
 
-            if (active_player_ >= 0 && active_player_ < rects_.size()){
-                canvas.drawRect(rects_.get(active_player_), rect_paint_);
+            if (activePlayer >= 0 && activePlayer < playersTurnRectangles.size()){
+                canvas.drawRect(playersTurnRectangles.get(activePlayer), rectanglePaint);
             }
 
-            for (MyTextButton b : buttons_) {
+            for (MyTextButton b : buttons) {
                 b.draw(canvas);
             }
         }
     }
 
-    public MyTextButton getButtonLeft() {
-        return button_left_;
+
+    // ToDo
+    public void startPresentation(final GameController controller) {
+        startTime = System.currentTimeMillis();
+        controller.setPlayerPresentation(true);
+        presentationId = 0;
     }
 
-    public MyTextButton getButtonTop() {
-        return button_top_;
+    // ToDo
+    public void drawPresentation(Canvas canvas, final GameController controller) {
+
+        double maxTime = 2500;
+        long timeNow = System.currentTimeMillis();
+        long timeSinceStart = timeNow - startTime;
+
+        for (int i = 0; i <= presentationId; i++) {
+            if (buttons != null && buttons.size() > i && i != presentationId) {
+                if (buttons.get(i) != null) {
+                    buttons.get(i).draw(canvas);
+                }
+            }
+        }
+
+        // player 0 not important
+        if (presentationId == 0) {
+            if (timeSinceStart < maxTime / 2) {
+                presentationTextField.setText("Hi " + controller.getPlayerById(0).getDisplayName());
+            }
+            else {
+                presentationTextField.setText("Deine Gegner sind");
+            }
+        }
+        else {
+            presentationTextField.setText(controller.getPlayerById(presentationId).getDisplayName());
+            double percentage = timeSinceStart / (maxTime / 4.0);
+
+            if (percentage > 3) {
+                percentage = 0;
+            }
+            else if (percentage > 2) {
+                percentage = 3 - percentage;
+            }
+            else if (percentage > 1) {
+                percentage = 1;
+            }
+            int alpha = (int) (255 * percentage);
+            presentationTextField.updateAlpha(alpha);
+        }
+
+        presentationTextField.draw(canvas);
+
+        if (presentationId != 0) {
+            double p = timeSinceStart / (maxTime / 3.0);
+            if (p > 1) {
+                p = 1;
+            }
+            Point center = new Point(controller.getLayout().getScreenWidth() / 2,
+                    controller.getLayout().getScreenHeight() / 2);
+
+            buttons.get(controller.getPlayerById(presentationId).getPosition()).setPosition(
+                    new Point((int) (center.x + (endPos.x - center.x) * p),
+                    (int) (center.y + (endPos.y - center.y) * p)));
+            buttons.get(controller.getPlayerById(presentationId).getPosition()).draw(canvas);
+        }
+
+        if (timeSinceStart > maxTime) {
+            presentationId++;
+            // presentations done
+            if (presentationId >= controller.getAmountOfPlayers()) {
+                controller.setPlayerPresentation(false);
+                controller.startGame();
+                return;
+            }
+            startTime = System.currentTimeMillis();
+            endPos = new Point(buttons.get(controller.getPlayerById(presentationId).getPosition()).getPosition());
+        }
     }
 
-    public MyTextButton getButtonRight() {
-        return button_right_;
-    }
 
+    //----------------------------------------------------------------------------------------------
+    //  Pop up Fun
+    //
     public void popUpInfoLeft() {
+        popUp = makePopupWindow(GameLayout.POSITION_LEFT);
         Point pos = view_.getController().getLayout().getPlayerInfoLeftPos();
-        pop_up_left_.showAtLocation(view_, Gravity.NO_GRAVITY,
-                pos.x, pos.y - (int) (pop_up_height_ / 3.0) + (getHeight() / 2));
+        popUp.showAtLocation(view_, Gravity.NO_GRAVITY,
+                pos.x, pos.y - (int) (popUpHeight / 3.0) + (getHeight() / 2));
     }
     public void popUpInfoTop() {
+        popUp = makePopupWindow(GameLayout.POSITION_TOP);
         Point pos = view_.getController().getLayout().getPlayerInfoTopPos();
-        pop_up_top_.showAtLocation(view_, Gravity.NO_GRAVITY,
-                pos.x - (int) (pop_up_width_ / 3.0) + (getWidth() / 2), pos.y);
-
+        popUp.showAtLocation(view_, Gravity.NO_GRAVITY,
+                pos.x - (int) (popUpWidth / 3.0) + (getWidth() / 2), pos.y);
     }
     public void popUpInfoRight() {
+        popUp = makePopupWindow(GameLayout.POSITION_RIGHT);
         Point pos = view_.getController().getLayout().getPlayerInfoRightPos();
-        pop_up_right_.showAtLocation(view_, Gravity.NO_GRAVITY,
-                pos.x  - pop_up_width_ + getWidth(),
-                pos.y);
-
+        popUp.showAtLocation(view_, Gravity.NO_GRAVITY,
+                pos.x  - popUpWidth + getWidth(), pos.y);
     }
 
+    // closes the back button if the x is clicked
+    @Override
+    public void onBackButtonRequested() {
+        if (popUp != null) {
+            popUp.dismiss();
+        }
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    //  Getter & Setter
+    //
     public void setShowPlayer0Turn(boolean showPlayer0Turn) {
         this.showPlayer0Turn = showPlayer0Turn;
     }
 
-    @Override
-    public void onBackButtonRequested() {
-        if (pop_up_top_ != null) {
-            pop_up_top_.dismiss();
-        }
-        if (pop_up_left_ != null) {
-            pop_up_left_.dismiss();
-        }
-        if (pop_up_right_ != null) {
-            pop_up_right_.dismiss();
-        }
+    public MyTextButton getButtonLeft() {
+        return buttonLeft;
     }
 
+    public MyTextButton getButtonTop() {
+        return buttonTop;
+    }
+
+    public MyTextButton getButtonRight() {
+        return buttonRight;
+    }
 }
