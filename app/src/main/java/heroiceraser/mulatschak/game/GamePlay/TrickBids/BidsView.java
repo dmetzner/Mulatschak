@@ -195,10 +195,8 @@ public class BidsView extends DrawableObject{
     //  reset
     //
     public void reset() {
-        for (BidsField bf : bids_field_list_) {
-            if (bf != null) {
-                bf = null;
-            }
+        for (int i = 0; i < bids_field_list_.length; i++) {
+            bids_field_list_[i] = null;
         }
         winner_id_ = GameController.NOT_SET;
         ending_animation_ = false;

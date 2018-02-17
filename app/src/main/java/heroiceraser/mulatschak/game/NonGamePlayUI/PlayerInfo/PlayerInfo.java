@@ -349,6 +349,10 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
         this.showPlayer0Turn = showPlayer0Turn;
     }
 
+    public void setActivePlayer(int id) {
+        this.activePlayer = id;
+    }
+
     public MyTextButton getButtonLeft() {
         return buttonLeft;
     }

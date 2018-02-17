@@ -5,12 +5,13 @@ import android.graphics.Canvas;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.game.GamePlay.AllCardsPlayed.AllCardsPlayedView;
+import heroiceraser.mulatschak.game.NonGamePlayUI.Background.Background;
 import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBar.ButtonBar;
 import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBar.ButtonBarDecoration;
-import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBar.Windows.GameChat;
-import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBar.Windows.GameMenu.GameMenu;
-import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBar.Windows.GameStatistics;
-import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBar.Windows.GameTricks;
+import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBarWindows.GameChat.GameChat;
+import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBarWindows.GameMenu.GameMenu;
+import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBarWindows.GameStatistics.GameStatistics;
+import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBarWindows.GameTricks.GameTricks;
 import heroiceraser.mulatschak.game.NonGamePlayUI.GameOver.GameOver;
 import heroiceraser.mulatschak.game.NonGamePlayUI.ChatView.ChatView;
 import heroiceraser.mulatschak.game.NonGamePlayUI.SideBorders.SideBorders;
@@ -24,6 +25,7 @@ public class NonGamePlayUIContainer {
     //----------------------------------------------------------------------------------------------
     //  Member Variables
     //
+    private Background background;
     private ChatView chatView;
     private SideBorders side_borders_;              // decorative borders on the left/right side
     private ButtonBarDecoration decoration_;
@@ -45,6 +47,7 @@ public class NonGamePlayUIContainer {
     //  Constructor
     //
     public NonGamePlayUIContainer() {
+        background = new Background();
         side_borders_ = new SideBorders();
         decoration_ = new ButtonBarDecoration();
         button_bar_ = new ButtonBar();
@@ -65,6 +68,7 @@ public class NonGamePlayUIContainer {
     //  init
     //
     public void init(GameView view) {
+        background.init(view.getController().getLayout());
         chatView.init(view);
         side_borders_.init(view);
         decoration_.init(view);
@@ -82,25 +86,30 @@ public class NonGamePlayUIContainer {
     //  draw
     //
     public void draw(Canvas canvas, GameController controller) {
+
         chatView.draw(canvas);
         button_bar_.draw(canvas);
+
         gameOver.draw(canvas, controller);
 
         // Display Overlays with the functionality
-        statistics_.draw(canvas, controller);
+        statistics_.draw(canvas);
         tricks_.draw(canvas, controller);
-        menu_.draw(canvas, controller);
+        menu_.draw(canvas);
 
         all_cards_played_view_.draw(canvas, controller);
         gameOver.getEndGameButton().draw(canvas);
 
-        chat.draw(canvas, controller);
+        chat.draw(canvas);
 
         // additional layout decoration
         side_borders_.draw(canvas);
         decoration_.draw(canvas);
     }
 
+    public void drawBackground(Canvas canvas) {
+        background.draw(canvas);
+    }
 
     //----------------------------------------------------------------------------------------------
     //  isAWindowActive
@@ -112,6 +121,16 @@ public class NonGamePlayUIContainer {
                 chat.isVisible();
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  Close all windows
+    //
+    public void closeAllButtonBarWindows() {
+        statistics_.setVisible(false);
+        chat.setVisible(false);
+        tricks_.setVisible(false);
+        menu_.setVisible(false);
+    }
 
     //----------------------------------------------------------------------------------------------
     //  Getter & Setter

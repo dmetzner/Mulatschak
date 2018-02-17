@@ -39,7 +39,7 @@ public class GameView extends View {
         thread_.setRunning(true);
         thread_.start();
         stopAll = false;
-        mActivePointers = new SparseArray<PointF>();
+        mActivePointers = new SparseArray<>();
     }
 
 
@@ -80,8 +80,9 @@ public class GameView extends View {
         }
 
         if (controller_.isPlayerPresentationRunning()) {
-            drawNonGamePlayUI(canvas);
+            drawBackground(canvas);
             drawPlayerInfoPresentation(canvas);
+            drawNonGamePlayUI(canvas); // order matters
             return;
         }
 
@@ -89,6 +90,7 @@ public class GameView extends View {
             return;
         }
 
+        drawBackground(canvas);
         drawDiscardPile(canvas);
         drawBidsView(canvas);
         drawTrumpView(canvas);
@@ -115,6 +117,10 @@ public class GameView extends View {
             thread_.framesCount = 0;
             thread_.framesCount = 0;
         }
+    }
+
+    private void drawBackground(Canvas canvas) {
+        controller_.getNonGamePlayUIContainer().drawBackground(canvas);
     }
 
     private void drawMulatschakResult(Canvas canvas) {

@@ -7,6 +7,8 @@ import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.GameView;
+import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBarWindows.ButtonBarWindow;
+import heroiceraser.mulatschak.game.NonGamePlayUI.NonGamePlayUIContainer;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
 
 
@@ -18,10 +20,11 @@ public class ButtonBar extends DrawableObject {
     //----------------------------------------------------------------------------------------------
     //  Member Variables
     //
-    private MyTextButton statistics_button_;
-    private MyTextButton tricks_button_;
-    private MyTextButton menu_button_;
+    private MyTextButton statisticsButton;
+    private MyTextButton tricksButton;
+    private MyTextButton menuButton;
     private MyTextButton chatButton;
+
 
     //----------------------------------------------------------------------------------------------
     //  Constructor
@@ -49,16 +52,15 @@ public class ButtonBar extends DrawableObject {
     //----------------------------------------------------------------------------------------------
     //  init Buttons
     //
-
     private void initMenuButton(GameView view) {
-        menu_button_ = new MyTextButton();
+        menuButton = new MyTextButton();
         Point position = new Point(view.getController().getLayout().getButtonBarButtonPosition());
         position.x = (int) (view.getController().getLayout().getOnePercentOfScreenWidth() * 2);
         int width = (int) (view.getController().getLayout().getOnePercentOfScreenWidth() * 23.75);
         int height = view.getController().getLayout().getButtonBarSmallButtonHeight();
         String image_name = "button_blue_metallic";
         String text = view.getResources().getString(R.string.button_bar_menu_title);
-        menu_button_.init(view, position, width, height, image_name, text);
+        menuButton.init(view, position, width, height, image_name, text);
     }
 
     private void initChatButton(GameView view) {
@@ -73,33 +75,35 @@ public class ButtonBar extends DrawableObject {
     }
 
     private void initTricksButton(GameView view) {
-        tricks_button_ = new MyTextButton();
+        tricksButton = new MyTextButton();
         Point position = new Point(view.getController().getLayout().getButtonBarButtonPosition());
         position.x = (int) (view.getController().getLayout().getOnePercentOfScreenWidth() * 50.083);
         int width = (int) (view.getController().getLayout().getOnePercentOfScreenWidth() * 23.75);
         int height = view.getController().getLayout().getButtonBarSmallButtonHeight();
         String image_name = "button_blue_metallic";
         String text = view.getResources().getString(R.string.button_bar_tricks_title);
-        tricks_button_.init(view, position, width, height, image_name, text);
+        tricksButton.init(view, position, width, height, image_name, text);
     }
 
     private void initStatisticButton(GameView view) {
-        statistics_button_ = new MyTextButton();
+        statisticsButton = new MyTextButton();
         Point position = new Point(view.getController().getLayout().getButtonBarButtonPosition());
         position.x = (int) (view.getController().getLayout().getOnePercentOfScreenWidth() * 74.083);
         int width = (int) (view.getController().getLayout().getOnePercentOfScreenWidth() * 23.75);
         int height = view.getController().getLayout().getButtonBarBigButtonHeight();
         String image_name = "button_blue_metallic";
         String text = view.getResources().getString(R.string.button_bar_state_of_the_game_title);
-        statistics_button_.init(view, position, width, height, image_name, text);
+        statisticsButton.init(view, position, width, height, image_name, text);
     }
-
 
 
     //----------------------------------------------------------------------------------------------
     //  draw
     //
     public void draw(Canvas canvas) {
+        if (!isVisible()) {
+            return;
+        }
         drawBackground(canvas);
         drawButtons(canvas);
     }
@@ -109,29 +113,75 @@ public class ButtonBar extends DrawableObject {
     }
 
     private void drawButtons(Canvas canvas) {
-        menu_button_.draw(canvas);
-        tricks_button_.draw(canvas);
-        statistics_button_.draw(canvas);
+        menuButton.draw(canvas);
+        tricksButton.draw(canvas);
+        statisticsButton.draw(canvas);
         chatButton.draw(canvas);
     }
 
 
     //----------------------------------------------------------------------------------------------
-    //  Getter
+    //  Touch Events
+    //                 button open/close corresponding windows
+    //                  only one button can be clicked at once
     //
-    public MyTextButton getStatisticsButton() {
-        return statistics_button_;
+    public void touchEventDown(int X, int Y){
+        if (!isVisible()) {
+            return;
+        }
+        if (statisticsButton.touchEventDown(X, Y) ) {
+            return;
+        }
+        if (tricksButton.touchEventDown(X, Y) ) {
+            return;
+        }
+        if (menuButton.touchEventDown(X, Y) ) {
+            return;
+        }
+        chatButton.touchEventDown(X, Y);
     }
 
-    public MyTextButton getTricksButton() {
-        return tricks_button_;
+    public void touchEventMove(int X, int Y) {
+        if (!isVisible()) {
+            return;
+        }
+
+        statisticsButton.touchEventMove(X, Y);
+
+        tricksButton.touchEventMove(X, Y);
+
+        menuButton.touchEventMove(X, Y);
+
+        chatButton.touchEventMove(X, Y);
     }
 
-    public MyTextButton getMenuButton() {
-        return menu_button_;
+    public void touchEventUp(int X, int Y, NonGamePlayUIContainer ui) {
+        if (!isVisible()) {
+            return;
+        }
+
+        if (statisticsButton.touchEventUp(X, Y) ) {
+            handleClickedButton(ui, ui.getStatistics());
+        }
+        else if (tricksButton.touchEventUp(X, Y) ) {
+            handleClickedButton(ui, ui.getTricks());
+        }
+        else if (menuButton.touchEventUp(X, Y) ) {
+            handleClickedButton(ui, ui.getMenu());
+        }
+        else if (chatButton.touchEventUp(X, Y) ) {
+            handleClickedButton(ui, ui.getChat());
+        }
     }
 
-    public MyTextButton getChatButton() {
-        return chatButton;
+
+    //----------------------------------------------------------------------------------------------
+    //  handle clicked button
+    //                          closes all windows and switches visibility of clicked one
+    //
+    private void handleClickedButton(NonGamePlayUIContainer ui, ButtonBarWindow window) {
+        boolean bool = window.isVisible();
+        ui.closeAllButtonBarWindows();
+        window.setVisible(!bool);
     }
 }

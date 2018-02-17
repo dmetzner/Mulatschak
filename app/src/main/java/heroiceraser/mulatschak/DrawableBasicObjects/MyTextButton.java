@@ -49,7 +49,9 @@ public class MyTextButton extends DrawableObject{
         setPosition(position);
         setWidth(width);
         setHeight(height);
-        setBitmap(HelperFunctions.loadBitmap(view, image_name, width, height));
+        if (!image_name.equals("")) {
+            setBitmap(HelperFunctions.loadBitmap(view, image_name, width, height));
+        }
         this.text = text;
         textPaint = new TextPaint();
         textPaint.setColor(Color.WHITE);
@@ -69,9 +71,11 @@ public class MyTextButton extends DrawableObject{
         textPosition = new Point(center.x, center.y + (int) textPaint.getTextSize() / 4);
 
         // Overlay
-        overlay = new Paint();
-        overlay.setAlpha(125);
-        bitmapOverlay = HelperFunctions.createBitmapOverlay(getBitmap());
+        if (getBitmap() != null) {
+            overlay = new Paint();
+            overlay.setAlpha(125);
+            bitmapOverlay = HelperFunctions.createBitmapOverlay(getBitmap());
+        }
 
         enabled = true;
         pressed= false;
@@ -90,8 +94,6 @@ public class MyTextButton extends DrawableObject{
 
         float pressed_scale_ = 1;
 
-        Bitmap bitmap = getBitmap();
-
         if (isPressed()) {
             canvas.scale(0.96f, 0.96f);
             pressed_scale_ = 1.043f;
@@ -101,9 +103,11 @@ public class MyTextButton extends DrawableObject{
         float offset_y = (getHeight() - getHeight() * pressed_scale_) / 2;
 
         // background bitmap
-        canvas.drawBitmap(bitmap,
-                getPosition().x * pressed_scale_ - offset_x,
-                getPosition().y * pressed_scale_, null);
+        if (getBitmap() != null) {
+            canvas.drawBitmap(getBitmap(),
+                    getPosition().x * pressed_scale_ - offset_x,
+                    getPosition().y * pressed_scale_, null);
+        }
 
         // text
         canvas.drawText(text, textPosition.x * pressed_scale_,
@@ -112,11 +116,11 @@ public class MyTextButton extends DrawableObject{
 
 
         if (!isEnabled()) {
-
-            canvas.drawBitmap(bitmapOverlay,
-                    getPosition().x * pressed_scale_ - offset_x,
-                    getPosition().y * pressed_scale_, overlay);
-
+            if (getBitmap() != null) {
+                canvas.drawBitmap(bitmapOverlay,
+                        getPosition().x * pressed_scale_ - offset_x,
+                        getPosition().y * pressed_scale_, overlay);
+            }
         }
         canvas.restore();
     }
@@ -178,6 +182,24 @@ public class MyTextButton extends DrawableObject{
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled; }
+
+    public TextPaint getTextPaint() {
+        return this.textPaint;
+    }
+
+    public void changeTextPaint(TextPaint textPaint) {
+        this.textPaint = textPaint;
+        Rect text_bounds_ = new Rect();
+        textPaint.getTextBounds(text, 0, text.length(), text_bounds_);
+
+        while (text_bounds_.width() > 0.8 * getWidth()) {
+            textPaint.setTextSize(textPaint.getTextSize() * 0.95f);
+            textPaint.getTextBounds(text, 0, text.length(), text_bounds_);
+        }
+
+        Point center = new Point(getPosition().x + getWidth() / 2, getPosition().y + getHeight() / 2);
+        textPosition = new Point(center.x, center.y + (int) textPaint.getTextSize() / 4);
+    }
 
 
 }

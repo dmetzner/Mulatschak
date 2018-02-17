@@ -8,6 +8,8 @@ import heroiceraser.mulatschak.game.DrawableObjects.Card;
 
 //----------------------------------------------------------------------------------------------
 //  TouchEvents
+//                  handles in game touch events (down/move/up)
+//                  Action down enables update the canvas thread!
 //
 class TouchEvents {
 
@@ -26,40 +28,23 @@ class TouchEvents {
         controller.getView().enableUpdateCanvasThreadOnly4TouchEvents();
 
         //------------------------
-
-        // ------------------ ButtonBar ------------------------------------------------------------
-
-        // Statistic Button
-        if (ButtonActionDown(X, Y, controller.getNonGamePlayUIContainer()
-                .getButtonBar().getStatisticsButton()) )  {}
-
-        // Tricks Button
-        else if (ButtonActionDown(X, Y, controller.getNonGamePlayUIContainer()
-                .getButtonBar().getTricksButton()) ) {}
-
-        // Menu Button
-        else if (ButtonActionDown(X, Y, controller.getNonGamePlayUIContainer()
-                .getButtonBar().getMenuButton()) ) {}
-
-        // Chat Button
-        else if (ButtonActionDown(X, Y, controller.getNonGamePlayUIContainer()
-                .getButtonBar().getChatButton()) ) {}
-
-        // ------------------ ButtonBar Tricks Window ----------------------------------------------
-        else if (ButtonActionDown(X, Y, controller.getNonGamePlayUIContainer()
-                .getTricks().getArrowButtonLeft()) ) {}
-        else if (ButtonActionDown(X, Y, controller.getNonGamePlayUIContainer()
-                .getTricks().getArrowButtonRight()) ) {}
+        // ------------------ ButtonBar Buttons ----------------------------------------------------
+        controller.getNonGamePlayUIContainer().getButtonBar().touchEventDown(X, Y);
 
         // ------------------ Menu Button Bar Window -----------------------------------------------
-        if (controller.getNonGamePlayUIContainer().getMenu().isVisible()) {
-            controller.getNonGamePlayUIContainer().getMenu().touchEventDown(X, Y);
-        }
-        //------------------------
-        // --------------------- Chat --------------------------------------------------------------
-        controller.getNonGamePlayUIContainer().getChat().touchEventDown(X, Y, controller);
+        controller.getNonGamePlayUIContainer().getMenu().touchEventDown(X, Y);
+
+        // ------------------ Chat Button Bar Window -----------------------------------------------
+        controller.getNonGamePlayUIContainer().getChat().touchEventDown(X, Y);
+
+        // ------------------ Tricks Button Bar Window ---------------------------------------------
+        controller.getNonGamePlayUIContainer().getTricks().touchEventDown(X, Y);
+
+        // ------------------ State of the Game Button Bar Window ----------------------------------
+        controller.getNonGamePlayUIContainer().getStatistics().touchEventDown(X, Y);
 
 
+        //--------------------
         // ------------------ All Cards Played -----------------------------------------------------
         // MyPlayer Info Buttons
         if (ButtonActionDown(X, Y, controller.getNonGamePlayUIContainer()
@@ -72,9 +57,6 @@ class TouchEvents {
         if (controller.getNonGamePlayUIContainer().isAWindowActive()) {
             return;
         }
-
-
-
 
 
         //------------------- DecideMulatschak -----------------------------------------------------
@@ -150,40 +132,27 @@ class TouchEvents {
     void ActionMove(GameController controller, int X, int Y) {
 
         // ------------------ Play a Card ----------------------------------------------------------
-        controller.getGamePlay().getPlayACardRound().getPlayACardLogic().touchActionMove(controller, X, Y);
+        controller.getGamePlay().getPlayACardRound().getPlayACardLogic()
+                .touchActionMove(controller, X, Y);
 
+        //------------------------
         // ------------------ ButtonBar ------------------------------------------------------------
+        controller.getNonGamePlayUIContainer().getButtonBar().touchEventMove(X, Y);
 
-        // Statistic Button
-        ButtonActionMove(X, Y, controller.getNonGamePlayUIContainer()
-                .getButtonBar().getStatisticsButton());
+        // ------------------ Menu ButtonBar Window ------------------------------------------------
+        controller.getNonGamePlayUIContainer().getMenu().touchEventMove(X, Y);
 
-        // Tricks Button
-        ButtonActionMove(X, Y, controller.getNonGamePlayUIContainer()
-                .getButtonBar().getTricksButton());
-
-        // Menu Button
-        ButtonActionMove(X, Y, controller.getNonGamePlayUIContainer()
-                .getButtonBar().getMenuButton());
-
-        // ChatView Button
-        ButtonActionMove(X, Y, controller.getNonGamePlayUIContainer()
-                .getButtonBar().getChatButton());
-        
-        //------------------------
-
-        // ------------------ ButtonBar Tricks Window ----------------------------------------------
-        ButtonActionMove(X, Y, controller.getNonGamePlayUIContainer()
-                .getTricks().getArrowButtonLeft());
-        ButtonActionMove(X, Y, controller.getNonGamePlayUIContainer()
-                .getTricks().getArrowButtonRight());
-
-        //------------------------
-
-
-        // --------------------- Chat --------------------------------------------------------------
+        // ------------------ Chat ButtonBar Window ------------------------------------------------
         controller.getNonGamePlayUIContainer().getChat().touchEventMove(X, Y);
 
+        // ------------------ Tricks ButtonBar Window ----------------------------------------------
+        controller.getNonGamePlayUIContainer().getTricks().touchEventMove(X, Y);
+
+        // ------------------ State of the Game ButtonBar Window -----------------------------------
+        controller.getNonGamePlayUIContainer().getStatistics().touchEventMove(X, Y);
+
+
+        //------------------------
         // ------------------ MyPlayer Info --------------------------------------------------------
 
         // MyPlayer Info Buttons
@@ -241,11 +210,6 @@ class TouchEvents {
         controller.getNonGamePlayUIContainer().getGameOver().touchEventMove(X, Y);
 
 
-
-        // ------------------ Menu Button Bar Window -----------------------------------------------
-        if (controller.getNonGamePlayUIContainer().getMenu().isVisible()) {
-            controller.getNonGamePlayUIContainer().getMenu().touchEventMove(X, Y);
-        }
         //------------------------
 
         controller.getView().postInvalidateOnAnimation();
@@ -259,57 +223,25 @@ class TouchEvents {
 
         controller.getView().disableUpdateCanvasThreadOnly4TouchEvents();
 
-        // ----------------------- ButtonBar -------------------------------------------------------
-
-        // Statistic Button
-        if (ButtonActionUp(X, Y, controller.getNonGamePlayUIContainer().getButtonBar().getStatisticsButton())) {
-            controller.getNonGamePlayUIContainer().getMenu().setVisible(false);
-            controller.getNonGamePlayUIContainer().getChat().setVisible(false);
-            controller.getNonGamePlayUIContainer().getTricks().setVisible(false);
-            controller.getNonGamePlayUIContainer().getStatistics().switchVisibility();
-        }
-
-        // Tricks Button
-        if (ButtonActionUp(X, Y, controller.getNonGamePlayUIContainer().getButtonBar().getTricksButton())) {
-            controller.getNonGamePlayUIContainer().getMenu().setVisible(false);
-            controller.getNonGamePlayUIContainer().getChat().setVisible(false);
-            controller.getNonGamePlayUIContainer().getTricks().switchVisibility();
-            controller.getNonGamePlayUIContainer().getStatistics().setVisible(false);
-        }
-
-        // Menu Button
-        if (ButtonActionUp(X, Y, controller.getNonGamePlayUIContainer().getButtonBar().getMenuButton())) {
-            controller.getNonGamePlayUIContainer().getMenu().switchVisibility();
-            controller.getNonGamePlayUIContainer().getChat().setVisible(false);
-            controller.getNonGamePlayUIContainer().getTricks().setVisible(false);
-            controller.getNonGamePlayUIContainer().getStatistics().setVisible(false);
-        }
-
-        // ChatView Button
-        if (ButtonActionUp(X, Y, controller.getNonGamePlayUIContainer().getButtonBar().getChatButton())) {
-            controller.getNonGamePlayUIContainer().getMenu().setVisible(false);
-            controller.getNonGamePlayUIContainer().getChat().switchVisibility();
-            controller.getNonGamePlayUIContainer().getTricks().setVisible(false);
-            controller.getNonGamePlayUIContainer().getStatistics().setVisible(false);
-        }
-
         //------------------------
+        // ------------------ ButtonBar ------------------------------------------------------------
+        controller.getNonGamePlayUIContainer().getButtonBar()
+                .touchEventUp(X, Y, controller.getNonGamePlayUIContainer());
 
-        // ------------------ ButtonBar Tricks Window ----------------------------------------------
-        if (ButtonActionUp(X, Y, controller.getNonGamePlayUIContainer()
-                .getTricks().getArrowButtonLeft())) {
-            controller.getNonGamePlayUIContainer().getTricks().showPrevRound();
-        }
-        if (ButtonActionUp(X, Y, controller.getNonGamePlayUIContainer()
-                .getTricks().getArrowButtonRight())) {
-            controller.getNonGamePlayUIContainer().getTricks().showNextRound();
-        }
+        // ------------------ Menu Button Bar Window -----------------------------------------------
+        controller.getNonGamePlayUIContainer().getMenu().touchEventUp(X, Y, controller);
 
-        //------------------------
-
-        // --------------------- Chat --------------------------------------------------------------
+        // ------------------ Chat -----------------------------------------------------------------
         controller.getNonGamePlayUIContainer().getChat().touchEventUp(X, Y, controller);
 
+        // ------------------ ButtonBar Tricks Window ----------------------------------------------
+        controller.getNonGamePlayUIContainer().getTricks().touchEventUp(X, Y);
+
+        // ------------------ ButtonBar Tricks Window ----------------------------------------------
+        controller.getNonGamePlayUIContainer().getStatistics().touchEventUp(X, Y);
+
+
+        //------------------------
         // ------------------ MyPlayer Info ----------------------------------------------------------
 
         // MyPlayer Info Buttons
@@ -324,7 +256,6 @@ class TouchEvents {
         }
 
         //------------------------
-
         //------------------- DecideMulatschak -----------------------------------------------------
         controller.getGamePlay().getDecideMulatschak().touchEventUp(X, Y, controller);
         //------------------------
@@ -372,18 +303,10 @@ class TouchEvents {
                     .getAllCardsPlayedView().getNextRoundButton()) ) {
             controller.getNonGamePlayUIContainer()
                     .getAllCardsPlayedView().getNextRoundButton().setVisible(false);
-            controller.getNonGamePlayUIContainer().getStatistics().setVisible(false);
-            controller.getNonGamePlayUIContainer().getTricks().setVisible(false);
-            controller.getNonGamePlayUIContainer().getMenu().setVisible(false);
+            controller.getNonGamePlayUIContainer().closeAllButtonBarWindows();
             controller.getView().postInvalidateOnAnimation();
             controller.startRound();
-        }
-
-        //-------------------
-
-        // ------------------ Menu Button Bar Window -----------------------------------------------
-        if (controller.getNonGamePlayUIContainer().getMenu().isVisible()) {
-            controller.getNonGamePlayUIContainer().getMenu().touchEventUp(X, Y, controller);
+            return;
         }
 
         //------------------------

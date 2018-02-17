@@ -269,7 +269,7 @@ public class GameController{
 
         final GameController controller = this;
         Handler mHandler = new Handler();
-        Runnable case_0 = new Runnable() {
+        Runnable newRoundRunnable = new Runnable() {
             @Override
             // Todo
             public void run() {
@@ -283,7 +283,7 @@ public class GameController{
                 // ToDo
                 logic_.raiseMultiplier();
                 setTurn(NOT_SET);
-                mHandler.postDelayed(case_0, 3000);
+                mHandler.postDelayed(newRoundRunnable, 3000);
                 break;
 
             case 1: // heart round -> no trumps to choose
