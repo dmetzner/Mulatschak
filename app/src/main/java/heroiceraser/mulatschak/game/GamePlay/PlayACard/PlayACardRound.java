@@ -1,9 +1,7 @@
 package heroiceraser.mulatschak.game.GamePlay.PlayACard;
 
 import android.graphics.Canvas;
-import android.graphics.Point;
 import android.os.Handler;
-import android.util.Log;
 
 import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.DrawableObjects.DiscardPile;

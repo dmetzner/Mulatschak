@@ -2,9 +2,7 @@ package heroiceraser.mulatschak.DrawableBasicObjects;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Point;
-import android.text.TextPaint;
 
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.helpers.HelperFunctions;

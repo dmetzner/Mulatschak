@@ -8,7 +8,7 @@ import heroiceraser.mulatschak.DrawableBasicObjects.MyRadioButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyRadioButtonGroup;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
 import heroiceraser.mulatschak.GameSettings.AnimationSpeed;
-import heroiceraser.mulatschak.R;
+import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 

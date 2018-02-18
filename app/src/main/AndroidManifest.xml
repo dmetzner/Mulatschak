@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="heroiceraser.mulatschak"
+    package="at.heroiceraser.mulatschak"
     >
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -24,7 +24,7 @@
             android:value="@integer/google_play_services_version"/>
 
         <activity
-            android:name=".MainActivity"
+            android:name="heroiceraser.mulatschak.MainActivity"
             android:theme="@style/AppTheme.Fullscreen"
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden">

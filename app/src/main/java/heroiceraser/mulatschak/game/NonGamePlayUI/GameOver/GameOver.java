@@ -6,18 +6,16 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.os.Handler;
 import android.text.TextPaint;
-import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
-import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
+
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
 import heroiceraser.mulatschak.MainActivity;
-import heroiceraser.mulatschak.R;
+import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GamePlay.Background4Player0Animations;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
-import heroiceraser.mulatschak.helpers.HelperFunctions;
 
 
 //--------------------------------------------------------------------------------------------------

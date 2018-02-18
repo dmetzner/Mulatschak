@@ -9,7 +9,7 @@ import java.util.List;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
 import heroiceraser.mulatschak.GameKeyBoard.MyKeyBoard;
-import heroiceraser.mulatschak.R;
+import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBarWindows.ButtonBarWindow;

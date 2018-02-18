@@ -5,7 +5,7 @@ import android.graphics.Point;
 import java.util.ArrayList;
 import java.util.List;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
-import heroiceraser.mulatschak.R;
+import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
 import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GameController;
@@ -185,7 +185,7 @@ public class MakeBidsAnimation {
             }
 
             // except dealer can outbid with same amount
-            else if (i == controller.getLogic().getTricksToMake() &&
+            else if ((i - 1) == controller.getLogic().getTricksToMake() &&
                     controller.getLogic().getDealer() == 0) {
                 numberButtons.get(i).setEnabled(true);
             }

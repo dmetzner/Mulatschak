@@ -7,7 +7,7 @@ import android.graphics.Point;
 import android.graphics.Typeface;
 import android.text.TextPaint;
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
-import heroiceraser.mulatschak.R;
+import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameView;
 

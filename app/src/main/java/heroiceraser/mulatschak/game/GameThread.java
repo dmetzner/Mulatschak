@@ -1,6 +1,5 @@
 package heroiceraser.mulatschak.game;
 
-import android.util.Log;
 import android.view.View;
 
 /**

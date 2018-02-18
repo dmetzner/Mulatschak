@@ -5,13 +5,10 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.view.View;
-
-import heroiceraser.mulatschak.game.GameView;
 
 /**
  * Created by Daniel Metzner on 01.09.2017.

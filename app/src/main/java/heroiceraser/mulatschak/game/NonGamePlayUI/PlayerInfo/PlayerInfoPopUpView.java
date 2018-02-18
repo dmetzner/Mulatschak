@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import heroiceraser.mulatschak.R;
+import at.heroiceraser.mulatschak.R;
 
 /**
  * Created by Daniel Metzner on 22.09.2017.

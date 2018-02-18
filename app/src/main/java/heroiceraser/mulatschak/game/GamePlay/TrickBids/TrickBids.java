@@ -1,7 +1,7 @@
 package heroiceraser.mulatschak.game.GamePlay.TrickBids;
 
 import java.util.List;
-import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
+
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;

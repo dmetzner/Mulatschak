@@ -7,11 +7,8 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.PorterDuff;
 import android.util.Log;
-import android.view.View;
 
 import heroiceraser.mulatschak.game.GameView;
-
-import static android.R.id.message;
 
 /**
  * Created by Daniel Metzner on 14.08.2017.

@@ -1,7 +1,6 @@
 package heroiceraser.mulatschak.game.DrawableObjects;
 
 import android.graphics.Point;
-import android.util.Log;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.game.GameView;

@@ -3,12 +3,10 @@ package heroiceraser.mulatschak.game.DrawableObjects;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.util.Log;
 
 import com.google.android.gms.games.multiplayer.Participant;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.TextField;
-import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameView;
 

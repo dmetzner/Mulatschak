@@ -3,11 +3,10 @@ package heroiceraser.mulatschak.DrawableBasicObjects;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.RadialGradient;
 import android.graphics.Rect;
 import android.text.TextPaint;
 
-import heroiceraser.mulatschak.R;
+import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.GameView;
 
 /**

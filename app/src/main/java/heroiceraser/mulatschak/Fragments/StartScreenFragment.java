@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import heroiceraser.mulatschak.R;
+import at.heroiceraser.mulatschak.R;
 
 public class StartScreenFragment extends Fragment implements OnClickListener {
     String mGreeting = "Hello, anonymous user (not signed in)";

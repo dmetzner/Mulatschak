@@ -14,7 +14,7 @@ import java.util.List;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
-import heroiceraser.mulatschak.R;
+import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
@@ -243,7 +243,7 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
     // ToDo
     public void drawPresentation(Canvas canvas, final GameController controller) {
 
-        double maxTime = 2500;
+        double maxTime = 2500 * controller.getSettings().getAnimationSpeed().getSpeedFactor();
         long timeNow = System.currentTimeMillis();
         long timeSinceStart = timeNow - startTime;
 

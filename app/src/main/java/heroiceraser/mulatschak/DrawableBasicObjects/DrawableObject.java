@@ -3,8 +3,6 @@ package heroiceraser.mulatschak.DrawableBasicObjects;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 
-import heroiceraser.mulatschak.game.GameController;
-
 /**
  * Created by Daniel Metzner on 26.08.2017.
  */

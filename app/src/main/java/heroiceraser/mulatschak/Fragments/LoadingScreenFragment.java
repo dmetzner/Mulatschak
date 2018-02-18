@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import heroiceraser.mulatschak.R;
+import at.heroiceraser.mulatschak.R;
 
 /**
  * Created by Daniel Metzner on 17.09.2017.
