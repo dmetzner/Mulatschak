@@ -19,6 +19,7 @@ import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
+import heroiceraser.mulatschak.game.NonGamePlayUI.NonGamePlayUIContainer;
 
 
 //--------------------------------------------------------------------------------------------------
@@ -57,11 +58,7 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
     private int popUpHeight;
     private PopupWindow popUp;
 
-    // presentation
-    private long startTime;
-    private Point endPos;
-    private MyTextField presentationTextField;
-    private int presentationId;
+    private PlayerPresentation presentation;
 
 
     //----------------------------------------------------------------------------------------------
@@ -86,8 +83,7 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
         rectanglePaint = new Paint();
         player0sTurnTextField = new MyTextField();
 
-        // presentation
-        presentationTextField = new MyTextField();
+        presentation = new PlayerPresentation();
     }
 
 
@@ -162,23 +158,15 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
         rectanglePaint.setStyle(Paint.Style.FILL);
         rectanglePaint.setColor(view.getResources().getColor(R.color.metallic_blue));
 
-        // presentation
-        presentationTextField.setText("Test Feld");
-        TextPaint tp2 = new TextPaint();
-        tp2.setAntiAlias(true);
-        tp2.setTextSize(layout.getDealerButtonSize());
-        tp2.setTextAlign(Paint.Align.CENTER);
-        tp2.setColor(Color.WHITE);
-        presentationTextField.setTextPaint(tp2);
-        presentationTextField.setBorder(view.getResources().getColor(R.color.metallic_blue), 0.15f);
-        presentationTextField.setMaxWidth(layout.getScreenWidth() / 2);
-        presentationTextField.setPosition(new Point((int) (layout.getScreenWidth() / 2.0),
-                (int) (layout.getScreenHeight() / 2.0)) );
-        presentationTextField.setVisible(true);
+        presentation.init(view);
 
         setVisible(true);
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  setPopDimensions
+    //
     private void setPopDimensions() {
         popUpWidth = (int) view_.getResources()
                 .getDimension(R.dimen.player_info_pop_up_width);
@@ -186,6 +174,10 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
                 .getDimension(R.dimen.player_info_pop_up_height);
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  makePopupWindow
+    //
     private PopupWindow makePopupWindow(int pos) {
         PlayerInfoPopUpView view = new PlayerInfoPopUpView(view_.getContext());
         view.setListener(this);
@@ -233,81 +225,71 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
     }
 
 
-    // ToDo
-    public void startPresentation(final GameController controller) {
-        startTime = System.currentTimeMillis();
-        controller.setPlayerPresentation(true);
-        presentationId = 0;
+    //----------------------------------------------------------------------------------------------
+    //  start Presentation
+    //
+    public void startPresentation(GameController controller) {
+        presentation.start(controller);
     }
 
-    // ToDo
+
+    //----------------------------------------------------------------------------------------------
+    //  draw Presentation
+    //
     public void drawPresentation(Canvas canvas, final GameController controller) {
+        presentation.draw(canvas, buttons, controller);
+    }
 
-        double maxTime = 2500 * controller.getSettings().getAnimationSpeed().getSpeedFactor();
-        long timeNow = System.currentTimeMillis();
-        long timeSinceStart = timeNow - startTime;
 
-        for (int i = 0; i <= presentationId; i++) {
-            if (buttons != null && buttons.size() > i && i != presentationId) {
-                if (buttons.get(i) != null) {
-                    buttons.get(i).draw(canvas);
-                }
-            }
+    //----------------------------------------------------------------------------------------------
+    // Touch Events
+    //
+    public void touchEventDown(int X, int Y, NonGamePlayUIContainer ui) {
+        if (!isVisible()) {
+            return;
+        }
+        if (ui.isAWindowActive()) {
+            return;                     // not clickable if it's overlaid
+        }
+        buttonLeft.touchEventDown(X, Y);
+        buttonTop.touchEventDown(X, Y);
+        buttonRight.touchEventDown(X, Y);
+
+        presentation.touchEventDown(X, Y, ui);
+    }
+
+    public void touchEventMove(int X, int Y, NonGamePlayUIContainer ui) {
+        if (!isVisible()) {
+            return;
+        }
+        if (ui.isAWindowActive()) {
+            return;
+        }
+        buttonLeft.touchEventMove(X, Y);
+        buttonTop.touchEventMove(X, Y);
+        buttonRight.touchEventMove(X, Y);
+
+        // presentation.touchEventMove(X, Y, ui);
+    }
+
+    public void touchEventUp(int X, int Y, NonGamePlayUIContainer ui) {
+        if (!isVisible()) {
+            return;
+        }
+        if (ui.isAWindowActive()) {
+            return;
+        }
+        if (buttonLeft.touchEventDown(X, Y)) {
+            popUpInfoLeft();
+        }
+        else if (buttonTop.touchEventDown(X, Y)) {
+            popUpInfoTop();
+        }
+        else if (buttonRight.touchEventDown(X, Y)) {
+            popUpInfoRight();
         }
 
-        // player 0 not important
-        if (presentationId == 0) {
-            if (timeSinceStart < maxTime / 2) {
-                presentationTextField.setText("Hi " + controller.getPlayerById(0).getDisplayName());
-            }
-            else {
-                presentationTextField.setText("Deine Gegner sind");
-            }
-        }
-        else {
-            presentationTextField.setText(controller.getPlayerById(presentationId).getDisplayName());
-            double percentage = timeSinceStart / (maxTime / 4.0);
-
-            if (percentage > 3) {
-                percentage = 0;
-            }
-            else if (percentage > 2) {
-                percentage = 3 - percentage;
-            }
-            else if (percentage > 1) {
-                percentage = 1;
-            }
-            int alpha = (int) (255 * percentage);
-            presentationTextField.updateAlpha(alpha);
-        }
-
-        presentationTextField.draw(canvas);
-
-        if (presentationId != 0) {
-            double p = timeSinceStart / (maxTime / 3.0);
-            if (p > 1) {
-                p = 1;
-            }
-            Point center = new Point(controller.getLayout().getScreenWidth() / 2,
-                    controller.getLayout().getScreenHeight() / 2);
-
-            buttons.get(controller.getPlayerById(presentationId).getPosition()).setPosition(
-                    new Point((int) (center.x + (endPos.x - center.x) * p),
-                    (int) (center.y + (endPos.y - center.y) * p)));
-            buttons.get(controller.getPlayerById(presentationId).getPosition()).draw(canvas);
-        }
-
-        if (timeSinceStart > maxTime) {
-            presentationId++;
-            // presentations done
-            if (presentationId >= controller.getAmountOfPlayers()) {
-                controller.setPlayerPresentation(false);
-                controller.startGame();
-                return;
-            }
-            startTime = System.currentTimeMillis();
-            endPos = new Point(buttons.get(controller.getPlayerById(presentationId).getPosition()).getPosition());
-        }
+        presentation.touchEventUp(X, Y, ui);
     }
 
 
@@ -320,12 +302,14 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
         popUp.showAtLocation(view_, Gravity.NO_GRAVITY,
                 pos.x, pos.y - (int) (popUpHeight / 3.0) + (getHeight() / 2));
     }
+
     public void popUpInfoTop() {
         popUp = makePopupWindow(GameLayout.POSITION_TOP);
         Point pos = view_.getController().getLayout().getPlayerInfoTopPos();
         popUp.showAtLocation(view_, Gravity.NO_GRAVITY,
                 pos.x - (int) (popUpWidth / 3.0) + (getWidth() / 2), pos.y);
     }
+
     public void popUpInfoRight() {
         popUp = makePopupWindow(GameLayout.POSITION_RIGHT);
         Point pos = view_.getController().getLayout().getPlayerInfoRightPos();
@@ -333,7 +317,9 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
                 pos.x  - popUpWidth + getWidth(), pos.y);
     }
 
-    // closes the back button if the x is clicked
+
+    //----------------------------------------------------------------------------------------------
+    // closes pop up if the x is clicked
     @Override
     public void onBackButtonRequested() {
         if (popUp != null) {

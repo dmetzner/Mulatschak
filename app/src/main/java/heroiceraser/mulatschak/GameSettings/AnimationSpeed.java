@@ -43,11 +43,11 @@ public class AnimationSpeed {
     public void setSpeed(int speed) {
         switch (speed) {
             case SPEED_SLOW:
-                speed_setting_factor_ = 2;
+                speed_setting_factor_ = 1.3;
                 break;
 
             case SPEED_NORMAL:
-                speed_setting_factor_ = 1;
+                speed_setting_factor_ = 0.9;
                 break;
 
             case SPEED_FAST:

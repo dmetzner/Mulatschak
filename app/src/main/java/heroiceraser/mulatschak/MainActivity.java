@@ -214,11 +214,12 @@ public class MainActivity extends AppCompatActivity implements
         if (!game_running_) {
 
             if (mGoogleApiClient == null) {
-                switchToFragment(mStartScreenFragment, "mStartScreenFragment");
+                // switchToFragment(mStartScreenFragment, "mStartScreenFragment");
             } else if (!mGoogleApiClient.isConnected()) {
-                Log.d(TAG, "Connecting client.");
-                switchToFragment(mStartScreenFragment, "mStartScreenFragment");
-                mGoogleApiClient.connect();
+                // AUTO LOG IN
+                //Log.d(TAG, "Connecting client.");
+                //switchToFragment(mStartScreenFragment, "mStartScreenFragment");
+                //mGoogleApiClient.connect();
             } else {
                 Log.w(TAG,
                         "GameHelper: client was already connected on onStart()");

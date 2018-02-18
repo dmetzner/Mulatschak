@@ -43,6 +43,11 @@ class TouchEvents {
         // ------------------ State of the Game Button Bar Window ----------------------------------
         controller.getNonGamePlayUIContainer().getStatistics().touchEventDown(X, Y);
 
+        //------------------------
+        // ------------------ Player Info ----------------------------------------------------------
+        controller.getPlayerInfo().touchEventDown(X, Y, controller.getNonGamePlayUIContainer());
+
+
 
         //--------------------
         // ------------------ All Cards Played -----------------------------------------------------
@@ -106,15 +111,6 @@ class TouchEvents {
             }
         }
 
-        // ------------------ MyPlayer Info --------------------------------------------------------
-
-        // MyPlayer Info Buttons
-        else if (!controller.getNonGamePlayUIContainer().isAWindowActive()) {
-            if (ButtonActionDown(X, Y, controller.getPlayerInfo().getButtonLeft()) ) {}
-            else if (ButtonActionDown(X, Y, controller.getPlayerInfo().getButtonTop()) ) {}
-            else if (ButtonActionDown(X, Y, controller.getPlayerInfo().getButtonRight()) ) {}
-        }
-
         //------------------------
 
         // ------------------ Play A Card Round ----------------------------------------------------
@@ -151,14 +147,11 @@ class TouchEvents {
         // ------------------ State of the Game ButtonBar Window -----------------------------------
         controller.getNonGamePlayUIContainer().getStatistics().touchEventMove(X, Y);
 
-
         //------------------------
-        // ------------------ MyPlayer Info --------------------------------------------------------
+        // ------------------ Player Info ----------------------------------------------------------
+        controller.getPlayerInfo().touchEventMove(X, Y, controller.getNonGamePlayUIContainer());
 
-        // MyPlayer Info Buttons
-        ButtonActionMove(X, Y, controller.getPlayerInfo().getButtonLeft());
-        ButtonActionMove(X, Y, controller.getPlayerInfo().getButtonTop());
-        ButtonActionMove(X, Y, controller.getPlayerInfo().getButtonRight());
+
 
         //------------------------
 
@@ -240,20 +233,10 @@ class TouchEvents {
         // ------------------ ButtonBar Tricks Window ----------------------------------------------
         controller.getNonGamePlayUIContainer().getStatistics().touchEventUp(X, Y);
 
-
         //------------------------
-        // ------------------ MyPlayer Info ----------------------------------------------------------
+        // ------------------ Player Info ----------------------------------------------------------
+        controller.getPlayerInfo().touchEventUp(X, Y, controller.getNonGamePlayUIContainer());
 
-        // MyPlayer Info Buttons
-        if (ButtonActionUp(X, Y, controller.getPlayerInfo().getButtonLeft())) {
-            controller.getPlayerInfo().popUpInfoLeft();
-        }
-        else if (ButtonActionUp(X, Y, controller.getPlayerInfo().getButtonTop())) {
-            controller.getPlayerInfo().popUpInfoTop();
-        }
-        else if (ButtonActionUp(X, Y, controller.getPlayerInfo().getButtonRight())) {
-            controller.getPlayerInfo().popUpInfoRight();
-        }
 
         //------------------------
         //------------------- DecideMulatschak -----------------------------------------------------
