@@ -102,13 +102,16 @@ public class CardExchange {
         }
 
         // prepare -> cards touchable
-        for (int i = 0; i < controller.getPlayerById(0).getAmountOfCardsInHand(); i++) {
-            Card card = controller.getPlayerById(0).getHand().getCardAt(i);
-            if (X >= card.getPosition().x &&  X < card.getPosition().x + card.getWidth() &&
-                    Y >= card.getPosition().y &&  Y < card.getPosition().y + card.getHeight()) {
-                card_exchange_logic_.prepareCardExchange(card);
+        if (card_exchange_logic_.isPreparationRunning()) {
+            for (int i = 0; i < controller.getPlayerById(0).getAmountOfCardsInHand(); i++) {
+                Card card = controller.getPlayerById(0).getHand().getCardAt(i);
+                if (X >= card.getPosition().x &&  X < card.getPosition().x + card.getWidth() &&
+                        Y >= card.getPosition().y &&  Y < card.getPosition().y + card.getHeight()) {
+                    card_exchange_logic_.prepareCardExchange(card);
+                }
             }
         }
+
 
         card_exchange_logic_.getButton().touchEventDown(X, Y);
     }
