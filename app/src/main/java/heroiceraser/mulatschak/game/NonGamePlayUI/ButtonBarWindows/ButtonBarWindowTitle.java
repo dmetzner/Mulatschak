@@ -32,7 +32,7 @@ public class ButtonBarWindowTitle extends MyTextField {
         GameView view = controller.getView();
         GameLayout layout = controller.getLayout();
 
-        int title_size = (int) (layout.getSectors().get(1).y);
+        int title_size = layout.getSectors().get(1).y;
         int title_color = view.getResources().getColor(R.color.button_bar_window_title_color);
         Point title_position = layout.getButtonBarWindowTitlePosition();
 

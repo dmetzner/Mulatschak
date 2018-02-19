@@ -9,17 +9,18 @@ import android.graphics.Rect;
 import android.text.TextPaint;
 import android.view.Gravity;
 import android.widget.PopupWindow;
+
 import java.util.ArrayList;
 import java.util.List;
-import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
-import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
-import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
+
 import at.heroiceraser.mulatschak.R;
+import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
+import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
-import heroiceraser.mulatschak.game.NonGamePlayUI.NonGamePlayUIContainer;
 
 
 //--------------------------------------------------------------------------------------------------
@@ -93,7 +94,6 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
     public void init(GameView view) {
         view_ = view;
         GameLayout layout = view.getController().getLayout();
-        int active_player = GameController.NOT_SET;
 
         int padding = layout.getPlayerInfoSize().x / 12;
         if (padding < 1) {
@@ -244,25 +244,19 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
     //----------------------------------------------------------------------------------------------
     // Touch Events
     //
-    public void touchEventDown(int X, int Y, NonGamePlayUIContainer ui) {
+    public void touchEventDown(int X, int Y) {
         if (!isVisible()) {
             return;
-        }
-        if (ui.isAWindowActive()) {
-            return;                     // not clickable if it's overlaid
         }
         buttonLeft.touchEventDown(X, Y);
         buttonTop.touchEventDown(X, Y);
         buttonRight.touchEventDown(X, Y);
 
-        presentation.touchEventDown(X, Y, ui);
+        presentation.touchEventDown(X, Y);
     }
 
-    public void touchEventMove(int X, int Y, NonGamePlayUIContainer ui) {
+    public void touchEventMove(int X, int Y) {
         if (!isVisible()) {
-            return;
-        }
-        if (ui.isAWindowActive()) {
             return;
         }
         buttonLeft.touchEventMove(X, Y);
@@ -272,11 +266,8 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
         // presentation.touchEventMove(X, Y, ui);
     }
 
-    public void touchEventUp(int X, int Y, NonGamePlayUIContainer ui) {
+    public void touchEventUp(int X, int Y) {
         if (!isVisible()) {
-            return;
-        }
-        if (ui.isAWindowActive()) {
             return;
         }
         if (buttonLeft.touchEventDown(X, Y)) {
@@ -289,28 +280,28 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
             popUpInfoRight();
         }
 
-        presentation.touchEventUp(X, Y, ui);
+        presentation.touchEventUp(X, Y);
     }
 
 
     //----------------------------------------------------------------------------------------------
     //  Pop up Fun
     //
-    public void popUpInfoLeft() {
+    private void popUpInfoLeft() {
         popUp = makePopupWindow(GameLayout.POSITION_LEFT);
         Point pos = view_.getController().getLayout().getPlayerInfoLeftPos();
         popUp.showAtLocation(view_, Gravity.NO_GRAVITY,
                 pos.x, pos.y - (int) (popUpHeight / 3.0) + (getHeight() / 2));
     }
 
-    public void popUpInfoTop() {
+    private void popUpInfoTop() {
         popUp = makePopupWindow(GameLayout.POSITION_TOP);
         Point pos = view_.getController().getLayout().getPlayerInfoTopPos();
         popUp.showAtLocation(view_, Gravity.NO_GRAVITY,
                 pos.x - (int) (popUpWidth / 3.0) + (getWidth() / 2), pos.y);
     }
 
-    public void popUpInfoRight() {
+    private void popUpInfoRight() {
         popUp = makePopupWindow(GameLayout.POSITION_RIGHT);
         Point pos = view_.getController().getLayout().getPlayerInfoRightPos();
         popUp.showAtLocation(view_, Gravity.NO_GRAVITY,
@@ -337,17 +328,5 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
 
     public void setActivePlayer(int id) {
         this.activePlayer = id;
-    }
-
-    public MyTextButton getButtonLeft() {
-        return buttonLeft;
-    }
-
-    public MyTextButton getButtonTop() {
-        return buttonTop;
-    }
-
-    public MyTextButton getButtonRight() {
-        return buttonRight;
     }
 }

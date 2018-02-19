@@ -52,9 +52,9 @@ public class MulatschakResultAnimation {
         textField2 = new MyTextField();
 
         textField.setPosition(new Point(layout.getScreenWidth() / 2,
-                layout.getDiscardPilePositions().get(0).y - (int)(layout.getCardHeight() / 3)));
+                layout.getDiscardPilePositions().get(0).y - layout.getCardHeight() / 3));
         textField2.setPosition(new Point(layout.getScreenWidth() / 2,
-                layout.getDiscardPilePositions().get(0).y + (int)(layout.getCardHeight() / 3)));
+                layout.getDiscardPilePositions().get(0).y + layout.getCardHeight() / 3));
         TextPaint tmp = new TextPaint();
         tmp.setAntiAlias(true);
         tmp.setTextSize(layout.getCardHeight());

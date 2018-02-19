@@ -247,8 +247,7 @@ public class GameLayout {
 
     private void initButtonBarButtonPosition() {
         button_bar_button_position_ = new Point();
-        button_bar_button_position_.x = (int)
-                (button_bar_position_.x);
+        button_bar_button_position_.x = button_bar_position_.x;
         button_bar_button_position_.y = (int)
                 (button_bar_position_.y + (button_bar_size_.y * (1 / 9.0)));
     }
@@ -306,7 +305,7 @@ public class GameLayout {
     private void calculateButtonBarWindowTricksSubtitleMaxSize() {
         button_bar_window_tricks_subtitle_max_size_ = new Point();
         button_bar_window_tricks_subtitle_max_size_.x = (int) (getScreenWidth() * (8.0/10.0));
-        button_bar_window_tricks_subtitle_max_size_.y = (int) (sectors_.get(1).y);
+        button_bar_window_tricks_subtitle_max_size_.y = sectors_.get(1).y;
     }
 
     private void calculateButtonBarWindowTricksDiscardPilePositions() {
@@ -356,20 +355,20 @@ public class GameLayout {
         int offset = (int) (((getOnePercentOfScreenWidth() + getCardHeight()) / 2) / 10);
 
         // down
-        discard_pile_positions_.add(new Point((int) (midpoint_x - (card_size_.x / 2)),
+        discard_pile_positions_.add(new Point(midpoint_x - (card_size_.x / 2),
                 (midpoint_y + offset / 2)));
 
         // left
         discard_pile_positions_.add(new Point((int) (midpoint_x - (card_size_.x * 1.50) - offset),
-                (int) (midpoint_y - (card_size_.y / 2))));
+                midpoint_y - (card_size_.y / 2)));
 
         // top
-        discard_pile_positions_.add(new Point((int) (midpoint_x - (card_size_.x / 2)),
+        discard_pile_positions_.add(new Point(midpoint_x - (card_size_.x / 2),
                 (midpoint_y - (card_size_.y) - offset / 2)));
 
         // right
-        discard_pile_positions_.add(new Point((int) (midpoint_x + (card_size_.x / 2) + offset),
-                (int) (midpoint_y - (card_size_.y / 2))));
+        discard_pile_positions_.add(new Point(midpoint_x + (card_size_.x / 2) + offset,
+                midpoint_y - (card_size_.y / 2)));
     }
 
     //
@@ -379,7 +378,7 @@ public class GameLayout {
         hand_positions_ = new ArrayList<>();
 
         hand_bottom_ = new Point((int) ((screen_size_.x - card_size_.x * 5) / 2.0),
-                (int) (sectors_.get(6).y));
+                sectors_.get(6).y);
 
         hand_left_ = new Point((int) (card_size_.x * -0.6),
                 (int) (deck_position_.y - card_size_.y / 3.2));
@@ -422,6 +421,7 @@ public class GameLayout {
         dealer_button_size_ = new Point();
         dealer_button_size_.x = getCardWidth() / 2;
         //dealer_button_size_.x = (int) (card_size_.x / 3.0 * 2.0);
+        //noinspection SuspiciousNameCombination
         dealer_button_size_.y = dealer_button_size_.x;
     }
 
@@ -520,7 +520,7 @@ public class GameLayout {
     private void calculateTrickBidsNumberButtonSize() {
         trick_bids_number_button_size_ = new Point();
         int size_x = (int) ((screen_size_.x * 8.0 / 10.0) / MakeBidsAnimation.MAX_BID_COLS);
-        int size_y = (int) sectors_.get(1).y;
+        int size_y = sectors_.get(1).y;
         trick_bids_number_button_size_.x = size_x;
         trick_bids_number_button_size_.y = size_y;
     }

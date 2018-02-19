@@ -2,6 +2,7 @@ package heroiceraser.mulatschak.game.GamePlay.TrickBids;
 
 import android.graphics.Canvas;
 import android.graphics.Point;
+import android.os.Handler;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.game.GameController;
@@ -29,7 +30,7 @@ public class BidsView extends DrawableObject{
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
-    public BidsView() {
+    BidsView() {
         super();
         bids_field_list_ = new BidsField[4];
         bids_field_list_[0] = null;
@@ -118,22 +119,32 @@ public class BidsView extends DrawableObject{
 
     //----------------------------------------------------------------------------------------------
     //  startEndingAnimation
+    //                          -> wait half a second
     //                          -> starts ending animation and saves start time
     //                          -> sets the end position for the winner bid field
     //
-    public void startEndingAnimation(int winner_pos, GameLayout layout) {
-        ending_animation_ = true;
-        winner_id_ = winner_pos;
-        if (winner_pos >= 0 && winner_pos < bids_field_list_.length) {
-            Point end_position = layout.getTrickBidsGamePlayPositions().get(winner_pos);
-            Point offset = new Point (end_position);
-            offset.x -= bids_field_list_[winner_pos].getPosition().x;
-            offset.y -= bids_field_list_[winner_pos].getPosition().y;
-            bids_field_list_[winner_pos].setOffset(offset);
-            bids_field_list_[winner_pos].setStartPos(
-                    bids_field_list_[winner_pos].getPosition());
-        }
-        start_time_ = System.currentTimeMillis();
+    void startEndingAnimation(final int winner_pos, GameLayout layout) {
+        final GameLayout layoutF = layout;
+        Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                ending_animation_ = true;
+                winner_id_ = winner_pos;
+                if (winner_pos >= 0 && winner_pos < bids_field_list_.length) {
+                    Point end_position = layoutF.getTrickBidsGamePlayPositions().get(winner_pos);
+                    Point offset = new Point (end_position);
+                    offset.x -= bids_field_list_[winner_pos].getPosition().x;
+                    offset.y -= bids_field_list_[winner_pos].getPosition().y;
+                    bids_field_list_[winner_pos].setOffset(offset);
+                    bids_field_list_[winner_pos].setStartPos(
+                            bids_field_list_[winner_pos].getPosition());
+                }
+                start_time_ = System.currentTimeMillis();
+            }
+        };
+        handler.postDelayed(runnable, 500);
+
     }
 
 
@@ -201,13 +212,5 @@ public class BidsView extends DrawableObject{
         winner_id_ = GameController.NOT_SET;
         ending_animation_ = false;
         setVisible(false);
-    }
-
-
-    //----------------------------------------------------------------------------------------------
-    //  Getter & Setter
-    //
-    public BidsField[] getBidsFieldList() {
-        return bids_field_list_;
     }
 }

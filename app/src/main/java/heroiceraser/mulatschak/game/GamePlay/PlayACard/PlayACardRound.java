@@ -221,13 +221,11 @@ public class PlayACardRound {
 
         // else the round just skips to the next round if player 0 is the last one to play a card
         if (!roundEnded) {
-            controller.getGamePlay().getPlayACardRound().getPlayACardLogic().touchActionDown(controller, X, Y);
+            play_a_card_logic_.touchActionDown(controller, X, Y);
             return;
         }
 
-        if (isDiscardPileTouched(X, Y, controller.getDiscardPile())) {
-            touched = true;
-        }
+        touched = isDiscardPileTouched(X, Y, controller.getDiscardPile());
 
         // down on the hand cards is enough (feels more natural in this case)
         if (isAHandCardTouched(X, Y, controller.getPlayerById(0))) {
@@ -238,29 +236,24 @@ public class PlayACardRound {
     }
 
     public void touchEventMove(int X, int Y, GameController controller) {
-        if (!roundEnded && touched) {
+        if (!roundEnded) {
+            play_a_card_logic_.touchActionMove(controller, X, Y);
             return;
         }
 
-        if (isDiscardPileTouched(X, Y, controller.getDiscardPile())) {
-            touched = true;
-        }
-        else {
-            touched = false;
-        }
-
+        touched = touched && isDiscardPileTouched(X, Y, controller.getDiscardPile());
     }
 
     public void touchEventUp(int X, int Y, GameController controller) {
         if (!roundEnded) {
+            play_a_card_logic_.touchActionUp(controller);
             return;
         }
-        if (isDiscardPileTouched(X, Y, controller.getDiscardPile())) {
+        if (touched && isDiscardPileTouched(X, Y, controller.getDiscardPile())) {
             touched = false;
             discardPileClicked = true;
             prepareNextCardRound(controller, false);
         }
-
     }
 
 

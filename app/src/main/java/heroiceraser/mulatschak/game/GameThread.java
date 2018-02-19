@@ -58,7 +58,7 @@ public class GameThread extends Thread {
                 try {
                     Thread.sleep(38 - timeDelta);
                 }
-                catch(InterruptedException e) {
+                catch(InterruptedException ignored) {
 
                 }
             }

@@ -1,10 +1,5 @@
 package heroiceraser.mulatschak.game;
 
-import java.util.List;
-import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
-import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
-import heroiceraser.mulatschak.game.DrawableObjects.Card;
-
 
 //----------------------------------------------------------------------------------------------
 //  TouchEvents
@@ -26,6 +21,8 @@ class TouchEvents {
 
         // enables a update thread for the canvas, in case there is no running update thread
         controller.getView().enableUpdateCanvasThreadOnly4TouchEvents();
+        //------------------------
+        controller.getView().postInvalidateOnAnimation();
 
         //------------------------
         // ------------------ ButtonBar Buttons ----------------------------------------------------
@@ -43,82 +40,47 @@ class TouchEvents {
         // ------------------ State of the Game Button Bar Window ----------------------------------
         controller.getNonGamePlayUIContainer().getStatistics().touchEventDown(X, Y);
 
-        //------------------------
-        // ------------------ Player Info ----------------------------------------------------------
-        controller.getPlayerInfo().touchEventDown(X, Y, controller.getNonGamePlayUIContainer());
-
-
-
         //--------------------
-        // ------------------ All Cards Played -----------------------------------------------------
-        // MyPlayer Info Buttons
-        if (ButtonActionDown(X, Y, controller.getNonGamePlayUIContainer()
-                .getAllCardsPlayedView().getNextRoundButton()) ) {}
+        // ------------------ All Cards Played -> next Round button --------------------------------
+        controller.getNonGamePlayUIContainer().getAllCardsPlayedView().touchEventDown(X, Y);
 
+        //------------------------
         // ------------------ Game Over  -----------------------------------------------------------
         controller.getNonGamePlayUIContainer().getGameOver().touchEventDown(X, Y);
 
-        // other UI elements not touchable while ButtonBar window is active
-        if (controller.getNonGamePlayUIContainer().isAWindowActive()) {
-            return;
-        }
+        // X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X
+        // touchBreak:
+        //             elements under this line not touchable while ButtonBar window is active
+        if (controller.getNonGamePlayUIContainer().isAWindowActive()) { return; }
+        // X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X
+
+        //------------------------
+        // ------------------ Player Info ----------------------------------------------------------
+        controller.getPlayerInfo().touchEventDown(X, Y);
 
 
+        //~~~~~~~~~~~~~~~~~~~~~~~~
+        // ~~~~~~~~~~~~~~~~~~ GAME PLAY ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        //------------------------
         //------------------- DecideMulatschak -----------------------------------------------------
         controller.getGamePlay().getDecideMulatschak().touchEventDown(X, Y);
-        //------------------------
-
-
-        //------------------- Card Exchange --------------------------------------------------------
-
-        if (controller.getGamePlay().getCardExchange().getCardExchangeLogic().isAnimationRunning() &&
-        !controller.getNonGamePlayUIContainer().isAWindowActive()) {
-            for (int i = 0; i < controller.getPlayerById(0).getAmountOfCardsInHand(); i++) {
-                Card card = controller.getPlayerById(0).getHand().getCardAt(i);
-                if (X >= card.getPosition().x &&
-                        X < card.getPosition().x + card.getWidth() &&
-                        Y >= card.getPosition().y &&
-                        Y < card.getPosition().y + card.getHeight()) {
-                    controller.getGamePlay().getCardExchange().getCardExchangeLogic().prepareCardExchange(card);
-                }
-            }
-            ButtonActionDown(X, Y, controller.getGamePlay().getCardExchange().getCardExchangeLogic().getButton());
-        }
-
 
         //------------------------
+        //------------------- Trick Bids -----------------------------------------------------------
+        controller.getGamePlay().getTrickBids().getMakeBidsAnimation().touchEventDown(X, Y);
 
-        //------------------- Trick Bids --------------------------------------------------------
-
-        //  Buttons to make Trick Bids
-        else if (controller.getGamePlay().getTrickBids().getMakeBidsAnimation().getAnimationNumbers() &&
-                !controller.getNonGamePlayUIContainer().isAWindowActive()) {
-            List<MyTextButton> buttons = controller.getGamePlay().getTrickBids().getMakeBidsAnimation().getNumberButtons();
-            for (int i = 0; i < buttons.size(); i++) {
-                ButtonActionDown(X, Y, buttons.get(i));
-            }
-        }
-
-
+        //------------------------
         //------------------- Choose Trump ---------------------------------------------------------
-
-        //Buttons to choose the trump of the round
-        else if (controller.getGamePlay().getChooseTrump().getChooseTrumpAnimation().getAnimationSymbols() &&
-                !controller.getNonGamePlayUIContainer().isAWindowActive()) {
-            List<MyButton> buttons = controller.getGamePlay().getChooseTrump().getChooseTrumpAnimation().getTrumpButtons();
-            for (int i = 0; i < buttons.size(); i++) {
-                ButtonActionDown(X, Y, buttons.get(i));
-            }
-        }
+        controller.getGamePlay().getChooseTrump().getChooseTrumpAnimation().touchEventDown(X, Y);
 
         //------------------------
+        //------------------- Card Exchange --------------------------------------------------------
+        controller.getGamePlay().getCardExchange().touchEventDown(X, Y, controller);
 
+        //------------------------
         // ------------------ Play A Card Round ----------------------------------------------------
         controller.getGamePlay().getPlayACardRound().touchEventDown(X, Y, controller);
-
-        //------------------------
-
-        controller.getView().postInvalidateOnAnimation();
     }
 
 
@@ -127,9 +89,8 @@ class TouchEvents {
     //
     void ActionMove(GameController controller, int X, int Y) {
 
-        // ------------------ Play a Card ----------------------------------------------------------
-        controller.getGamePlay().getPlayACardRound().getPlayACardLogic()
-                .touchActionMove(controller, X, Y);
+        //------------------------
+        controller.getView().postInvalidateOnAnimation();
 
         //------------------------
         // ------------------ ButtonBar ------------------------------------------------------------
@@ -147,66 +108,47 @@ class TouchEvents {
         // ------------------ State of the Game ButtonBar Window -----------------------------------
         controller.getNonGamePlayUIContainer().getStatistics().touchEventMove(X, Y);
 
-        //------------------------
-        // ------------------ Player Info ----------------------------------------------------------
-        controller.getPlayerInfo().touchEventMove(X, Y, controller.getNonGamePlayUIContainer());
-
-
-
-        //------------------------
-
-        //------------------- DecideMulatschak -----------------------------------------------------
-        controller.getGamePlay().getDecideMulatschak().touchEventMove(X, Y);
-        //------------------------
-
-        //------------------- Card Exchange --------------------------------------------------------
-
-        if (controller.getGamePlay().getCardExchange().getCardExchangeLogic().isAnimationRunning()) {
-            ButtonActionMove(X, Y, controller.getGamePlay().getCardExchange().getCardExchangeLogic().getButton());
-        }
-
-        //------------------------
-
-        //------------------- Trick Bids -----------------------------------------------------------
-
-        if (controller.getGamePlay().getTrickBids().getMakeBidsAnimation().getAnimationNumbers()) {
-            List<MyTextButton> buttons = controller.getGamePlay().getTrickBids().getMakeBidsAnimation().getNumberButtons();
-            for (int i = 0; i < buttons.size(); i++) {
-                if (controller.getGamePlay().getTrickBids().getMakeBidsAnimation().getAnimationNumbers()) {
-                    ButtonActionMove(X, Y, buttons.get(i));
-                }
-            }
-        }
-
-
-        else if (controller.getGamePlay().getChooseTrump().getChooseTrumpAnimation().getAnimationSymbols()) {
-            List<MyButton> buttons = controller.getGamePlay().getChooseTrump().getChooseTrumpAnimation().getTrumpButtons();
-            for (int i = 0; i < buttons.size(); i++) {
-                if (controller.getGamePlay().getChooseTrump().getChooseTrumpAnimation().getAnimationSymbols()) {
-                    ButtonActionMove(X, Y, buttons.get(i));
-                }
-            }
-        }
-
-        // ------------------ Play A Card Round Ended ----------------------------------------------
-        controller.getGamePlay().getPlayACardRound().touchEventMove(X, Y, controller);
-
-        // ------------------ All Cards Played -----------------------------------------------------
-        // MyPlayer Info Buttons
-
-        ButtonActionMove(X, Y, controller.getNonGamePlayUIContainer()
-                .getAllCardsPlayedView().getNextRoundButton());
-
         //-------------------
-
         // ------------------ Game Over  -----------------------------------------------------------
         controller.getNonGamePlayUIContainer().getGameOver().touchEventMove(X, Y);
 
+        //------------------------
+        // ------------------ All Cards Played -> next Round button --------------------------------
+        controller.getNonGamePlayUIContainer().getAllCardsPlayedView().touchEventMove(X, Y);
+
+        // X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X
+        // touchBreak:
+        //             elements under this line not touchable while ButtonBar window is active
+        if (controller.getNonGamePlayUIContainer().isAWindowActive()) { return; }
+        // X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X
 
         //------------------------
+        // ------------------ Player Info ----------------------------------------------------------
+        controller.getPlayerInfo().touchEventMove(X, Y);
 
-        controller.getView().postInvalidateOnAnimation();
 
+        //~~~~~~~~~~~~~~~~~~~~~~~~
+        // ~~~~~~~~~~~~~~~~~~ GAME PLAY ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        //------------------------
+        //------------------- DecideMulatschak -----------------------------------------------------
+        controller.getGamePlay().getDecideMulatschak().touchEventMove(X, Y);
+
+        //------------------------
+        //------------------- Trick Bids -----------------------------------------------------------
+        controller.getGamePlay().getTrickBids().getMakeBidsAnimation().touchEventMove(X, Y);
+
+        //------------------------
+        //------------------- Choose Trump ---------------------------------------------------------
+        controller.getGamePlay().getChooseTrump().getChooseTrumpAnimation().touchEventMove(X, Y);
+
+        //------------------------
+        //------------------- Card Exchange --------------------------------------------------------
+        controller.getGamePlay().getCardExchange().touchEventMove(X, Y);
+
+        //------------------------
+        // ------------------ Play A Card Round Ended ----------------------------------------------
+        controller.getGamePlay().getPlayACardRound().touchEventMove(X, Y, controller);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -215,6 +157,8 @@ class TouchEvents {
     void ActionUp(GameController controller, int X, int Y) {
 
         controller.getView().disableUpdateCanvasThreadOnly4TouchEvents();
+        //------------------------
+        controller.getView().postInvalidateOnAnimation();
 
         //------------------------
         // ------------------ ButtonBar ------------------------------------------------------------
@@ -234,139 +178,50 @@ class TouchEvents {
         controller.getNonGamePlayUIContainer().getStatistics().touchEventUp(X, Y);
 
         //------------------------
-        // ------------------ Player Info ----------------------------------------------------------
-        controller.getPlayerInfo().touchEventUp(X, Y, controller.getNonGamePlayUIContainer());
+        // ------------------ All Cards Played -> next Round button --------------------------------
+        controller.getNonGamePlayUIContainer()
+                .getAllCardsPlayedView().touchEventUp(X, Y, controller);
 
+        // -----------------------
+        // ------------------ Game Over  -----------------------------------------------------------
+        if (controller.getNonGamePlayUIContainer().getGameOver().touchEventUp(X, Y, controller)) {
+            return; // destroys game! better just do nothing after clicked end game button
+        }
+
+        // X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X
+        // touchBreak:
+        //             elements under this line not touchable while ButtonBar window is active
+        if (controller.getNonGamePlayUIContainer().isAWindowActive()) { return; }
+        // X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X
+
+        //------------------------
+        // ------------------ Player Info ----------------------------------------------------------
+        controller.getPlayerInfo().touchEventUp(X, Y);
+
+
+        //~~~~~~~~~~~~~~~~~~~~~~~~
+        // ~~~~~~~~~~~~~~~~~~ GAME PLAY ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         //------------------------
         //------------------- DecideMulatschak -----------------------------------------------------
         controller.getGamePlay().getDecideMulatschak().touchEventUp(X, Y, controller);
-        //------------------------
 
+        //------------------------
         //------------------- Trick Bids -----------------------------------------------------------
-
-        if (controller.getGamePlay().getTrickBids().getMakeBidsAnimation().getAnimationNumbers()) {
-            List<MyTextButton> buttons = controller.getGamePlay().getTrickBids().getMakeBidsAnimation().getNumberButtons();
-            for (int button_id = 0; button_id < buttons.size(); button_id++) {
-                if (ButtonActionUp(X, Y, buttons.get(button_id))) {
-                    controller.getGamePlay().getTrickBids().getMakeBidsAnimation().setTricks(controller, button_id);
-                }
-            }
-        }
-
-        else if (controller.getGamePlay().getChooseTrump().getChooseTrumpAnimation().getAnimationSymbols()) {
-            List<MyButton> buttons = controller.getGamePlay().getChooseTrump().getChooseTrumpAnimation().getTrumpButtons();
-            for (int i = 0; i < buttons.size(); i++) {
-                if (ButtonActionUp(X, Y, buttons.get(i))) {
-                    controller.getGamePlay().getChooseTrump().getChooseTrumpAnimation().setTrump(controller, i);
-                }
-            }
-        }
+        controller.getGamePlay().getTrickBids().getMakeBidsAnimation()
+                .touchEventUp(X, Y, controller);
 
         //------------------------
+        //------------------- Choose Trump ---------------------------------------------------------
+        controller.getGamePlay().getChooseTrump().getChooseTrumpAnimation()
+                .touchEventUp(X, Y,controller);
 
+        //------------------------
         //------------------- Card Exchange --------------------------------------------------------
+        controller.getGamePlay().getCardExchange().touchEventUp(X, Y, controller);
 
-        if (controller.getGamePlay().getCardExchange().getCardExchangeLogic().isAnimationRunning()) {
-            if (ButtonActionUp(X, Y, controller.getGamePlay().getCardExchange().getCardExchangeLogic().getButton())) {
-                controller.getGamePlay().getCardExchange().getCardExchangeLogic().exchangeCards(controller);
-            }
-        }
         //------------------------
-
-        //------------------- Play a Card ----------------------------------------------------------
-        controller.getGamePlay().getPlayACardRound().getPlayACardLogic().touchActionUp(controller);
-
         // ------------------ Play A Card Round Ended ----------------------------------------------
         controller.getGamePlay().getPlayACardRound().touchEventUp(X, Y, controller);
-
-        // ------------------ All Cards Played -----------------------------------------------------
-        // MyPlayer Info Buttons
-        if (ButtonActionUp(X, Y, controller.getNonGamePlayUIContainer()
-                    .getAllCardsPlayedView().getNextRoundButton()) ) {
-            controller.getNonGamePlayUIContainer()
-                    .getAllCardsPlayedView().getNextRoundButton().setVisible(false);
-            controller.getNonGamePlayUIContainer().closeAllButtonBarWindows();
-            controller.getView().postInvalidateOnAnimation();
-            controller.startRound();
-            return;
-        }
-
-        //------------------------
-
-        controller.getView().postInvalidateOnAnimation();
-
-        // ------------------ Game Over  -----------------------------------------------------------
-        controller.getNonGamePlayUIContainer().getGameOver().touchEventUp(X, Y, controller);
-        // nothing behind!!
     }
-
-    //-----------------------
-
-    //----------------------------------------------------------------------------------------------
-    // Button Actions
-    //
-    private boolean ButtonActionDown(int X, int Y, MyTextButton button) {
-        if (button.isVisible() && button.isEnabled() &&
-                X >= button.getPosition().x && X < button.getPosition().x + button.getWidth() &&
-                Y >= button.getPosition().y && Y < button.getPosition().y + button.getHeight()) {
-            button.setPressed(true);
-            return true;
-        }
-        return false;
-    }
-    private boolean ButtonActionDown(int X, int Y, MyButton button) {
-        if (button.isVisible() && button.IsEnabled() &&
-                X >= button.getPosition().x && X < button.getPosition().x + button.getWidth() &&
-                Y >= button.getPosition().y && Y < button.getPosition().y + button.getHeight()) {
-            button.setPressed(true);
-            return true;
-        }
-        return false;
-    }
-
-    private void ButtonActionMove(int X, int Y, MyTextButton button) {
-        if (button.isVisible() && button.isEnabled() && button.isPressed()) {
-            if ( X >= button.getPosition().x && X < button.getPosition().x + button.getWidth() &&
-                    Y >= button.getPosition().y && Y < button.getPosition().y + button.getHeight()) {
-                button.setPressed(true);
-            }
-            else {
-                button.setPressed(false);
-            }
-        }
-    }
-    private void ButtonActionMove(int X, int Y, MyButton button) {
-        if (button.isVisible() && button.IsEnabled() && button.IsPressed()) {
-            if ( X >= button.getPosition().x && X < button.getPosition().x + button.getWidth() &&
-                    Y >= button.getPosition().y && Y < button.getPosition().y + button.getHeight()) {
-                button.setPressed(true);
-            }
-            else {
-                button.setPressed(false);
-            }
-        }
-    }
-
-    private boolean ButtonActionUp(int X, int Y, MyTextButton button) {
-        if (button.isVisible() && button.isEnabled() && button.isPressed()) {
-            if (X >= button.getPosition().x && X < button.getPosition().x + button.getWidth() &&
-                    Y >= button.getPosition().y && Y < button.getPosition().y + button.getHeight()) {
-                button.setPressed(false);
-                return true;
-            }
-        }
-        return false;
-    }
-    private boolean ButtonActionUp(int X, int Y, MyButton button) {
-        if (button.isVisible() && button.IsEnabled() && button.IsPressed()) {
-            if (X >= button.getPosition().x && X < button.getPosition().x + button.getWidth() &&
-                    Y >= button.getPosition().y && Y < button.getPosition().y + button.getHeight()) {
-                button.setPressed(false);
-                return true;
-            }
-        }
-        return false;
-    }
-
 }

@@ -37,7 +37,7 @@ public class Background {
     //
     public void init(GameLayout layout) {
         background.set(0, layout.getSectors().get(2).y, layout.getScreenWidth(),
-                (int) (layout.getSectors().get(7).y));
+                layout.getSectors().get(7).y);
         backgroundPaint.setColor(Color.BLACK);
         backgroundPaint.setAlpha(ALPHA_MAX);
     }

@@ -56,8 +56,7 @@ public class AllCardsPlayedView{
     public void startAnimation(GameController controller) {
         init(controller.getView());
         controller.getView().enableUpdateCanvasThread();
-        controller.getNonGamePlayUIContainer().getTricks().setVisible(false);
-        controller.getNonGamePlayUIContainer().getMenu().setVisible(false);
+        controller.getNonGamePlayUIContainer().closeAllButtonBarWindows();
         controller.getNonGamePlayUIContainer().getStatistics().setVisible(true);
         next_round_button_.setVisible(true);
     }
@@ -75,9 +74,23 @@ public class AllCardsPlayedView{
 
 
     //----------------------------------------------------------------------------------------------
-    //  Getter & Setter
+    // Touch Events
+    //                  next round button
     //
-    public MyTextButton getNextRoundButton() {
-        return next_round_button_;
+    public void touchEventDown(int X, int Y) {
+        next_round_button_.touchEventDown(X, Y);
+    }
+
+    public void touchEventMove(int X, int Y) {
+        next_round_button_.touchEventMove(X, Y);
+    }
+
+    public void touchEventUp(int X, int Y, GameController controller) {
+        if (next_round_button_.touchEventUp(X, Y)) {
+            next_round_button_.setVisible(false);
+            controller.getNonGamePlayUIContainer().closeAllButtonBarWindows();
+            controller.getView().postInvalidateOnAnimation();
+            controller.startRound();
+        }
     }
 }

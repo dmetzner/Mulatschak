@@ -33,7 +33,7 @@ public class PlayACardLogic {
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
-    public PlayACardLogic() { }
+    PlayACardLogic() { }
 
 
     //----------------------------------------------------------------------------------------------
@@ -118,10 +118,9 @@ public class PlayACardLogic {
     //  touchActionDOWN
     //                  checks if a hand card gets touched, saved index to move_card_idx
     //
-    public void touchActionDown(GameController controller, int X, int Y) {
+    void touchActionDown(GameController controller, int X, int Y) {
 
         if (isCardMoveable() &&
-            !controller.getNonGamePlayUIContainer().isAWindowActive() &&
              move_card_idx_ == GameController.NOT_SET) {
 
             for (int i = 0; i < controller.getPlayerById(0).getAmountOfCardsInHand(); i++) {
@@ -146,9 +145,9 @@ public class PlayACardLogic {
     //  touchActionMove:
     //                      move card according to the movement
     //
-    public void touchActionMove(GameController controller, int X, int Y) {
+    void touchActionMove(GameController controller, int X, int Y) {
         if (move_card_idx_ >= 0) {
-        controller.getPlayerById(0).getHand().getCardAt(move_card_idx_).setPosition(
+            controller.getPlayerById(0).getHand().getCardAt(move_card_idx_).setPosition(
                 X -  controller.getLayout().getCardWidth() / 2,
                 Y -  controller.getLayout().getCardHeight() / 2);
         }
@@ -158,7 +157,7 @@ public class PlayACardLogic {
     //----------------------------------------------------------------------------------------------
     //  touchActionUP
     //
-    public void touchActionUp(GameController controller) {
+    void touchActionUp(GameController controller) {
         if (move_card_idx_ >= 0) {
             CardStack hand =  controller.getPlayerById(0).getHand();
             int card_y = hand.getCardAt(move_card_idx_).getPosition().y;
@@ -190,18 +189,17 @@ public class PlayACardLogic {
             }
 
             // valid card play -> move card to discard pile call playACard again
-            if (valid) {
-                moveCardFromHandToDiscardPile(controller);
+            moveCardFromHandToDiscardPile(controller);
 
-                // recalculate hand positions!
-                controller.getAnimateHands().redrawHands(controller.getLayout(), controller.getPlayerById(0));
+            // recalculate hand positions!
+            controller.getAnimateHands().redrawHands(controller.getLayout(), controller.getPlayerById(0));
 
-                // give turn to next player
-                move_card_idx_ = GameController.NOT_SET;
-                invalid_move_symbol_running_ = false;
-                invalid_symbol_alpha_ = 0;
-                controller.getGamePlay().getPlayACardRound().playACard(false, controller);
-            }
+            // give turn to next player
+            move_card_idx_ = GameController.NOT_SET;
+            invalid_move_symbol_running_ = false;
+            invalid_symbol_alpha_ = 0;
+            controller.getGamePlay().getPlayACardRound().playACard(false, controller);
+
         }
     }
 
@@ -248,11 +246,7 @@ public class PlayACardLogic {
         return card_movable_;
     }
 
-    public boolean isInvalidMoveSymbolRunning() {
-        return invalid_move_symbol_running_;
-    }
-
-    public void setCardMoveable(boolean card_moveable_) {
+    void setCardMoveable(boolean card_moveable_) {
         this.card_movable_ = card_moveable_;
     }
 }

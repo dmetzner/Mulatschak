@@ -34,7 +34,7 @@ public class DiscardPile extends DrawableObject {
 
     public DiscardPile() {
         super();
-        positions_ = new ArrayList<Point>();
+        positions_ = new ArrayList<>();
         card_bottom_ = null;
         card_left_ = null;
         card_top_ = null;

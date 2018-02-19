@@ -23,6 +23,9 @@
     <!-- ::::::::::::::::::::::: Player Info ::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="player_info_active_player_is_0">Du bist am Zug</string>
     <string name="player_info_miss_a_turn">Du setzt diese Runde aus</string>
+    <string name="player_presentation_greeting">Hi</string>
+    <string name="player_presentation_intro">Deine Gegner sind</string>
+
 
     <!-- :::::::::::::::: Mulatschak Round ::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="mulatschak">Mulatschak</string>

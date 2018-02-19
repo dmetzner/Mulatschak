@@ -31,7 +31,7 @@ public class PlayerInfoPopUpView extends LinearLayout {
     }
 
     public void init(String display_name, String text, Bitmap bitmap) {
-        ((Button) findViewById(R.id.player_info_pop_up_back_button))
+        findViewById(R.id.player_info_pop_up_back_button)
                 .setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mListener.onBackButtonRequested();

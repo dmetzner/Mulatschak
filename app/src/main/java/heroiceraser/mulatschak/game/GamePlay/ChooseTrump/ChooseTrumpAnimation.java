@@ -1,13 +1,11 @@
 package heroiceraser.mulatschak.game.GamePlay.ChooseTrump;
 
-import android.graphics.Bitmap;
+
 import android.graphics.Canvas;
 import android.graphics.Point;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
 import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
@@ -25,7 +23,7 @@ public class ChooseTrumpAnimation {
     public static int MAX_TRUMP_COLS = 2;
     private Background4Player0Animations background;
     private boolean animatingTrumps;
-    private List<MyButton> trumpButtons;
+    private List<MyTextButton> trumpButtons;
 
 
     //----------------------------------------------------------------------------------------------
@@ -49,10 +47,10 @@ public class ChooseTrumpAnimation {
         String image_name = "trick_bids_button_trump_";
 
         for (int id = 1; id < MulatschakDeck.CARD_SUITS; id++) { // start at 1, no Joker
-            MyButton button = new MyButton();
+            MyTextButton button = new MyTextButton();
             int width = layout.getTrickBidsTrumpButtonSize().x;
             int height = layout.getTrickBidsTrumpButtonSize().y;
-            button.init(view, new Point(), width, height, image_name + id);
+            button.init(view, new Point(), width, height, image_name + id, "");
             trumpButtons.add(button);
         }
 
@@ -80,13 +78,8 @@ public class ChooseTrumpAnimation {
         background.draw(canvas, controller);
         controller.getAnimateHands().drawPlayer0Hand(canvas, controller);
 
-        for (MyButton button : trumpButtons) {
-            Bitmap bitmap = button.getBitmap();
-            if (button.IsPressed()) {
-                bitmap = button.getBitmapPressed();
-            }
-            canvas.drawBitmap(bitmap, button.getPosition().x,
-                    button.getPosition().y, null);
+        for (MyTextButton button : trumpButtons) {
+            button.draw(canvas);
         }
     }
 
@@ -96,7 +89,7 @@ public class ChooseTrumpAnimation {
     //                 -> called by Touch events, choose trump animation
     //                 -> ends choose trump animation
     //
-    public void setTrump(GameController controller, int button_id) {
+    private void setTrump(GameController controller, int button_id) {
         controller.getLogic().setTrump(button_id + 1); // No Joker Button (card suit include joker)
         animatingTrumps = false;
         controller.getGamePlay().getChooseTrump().getTrumpView()
@@ -108,7 +101,7 @@ public class ChooseTrumpAnimation {
     //  reEnableButtons
     //
     void reEnableButtons() {
-        List<MyButton> buttons_sym = trumpButtons;
+        List<MyTextButton> buttons_sym = trumpButtons;
         for (int i = 0; i < buttons_sym.size(); i++) {
             buttons_sym.get(i).setEnabled(true);
         }
@@ -116,17 +109,42 @@ public class ChooseTrumpAnimation {
 
 
     //----------------------------------------------------------------------------------------------
+    // Touch Events
+    //                  trump buttons
+    //
+    public void touchEventDown(int X, int Y) {
+        if (!animatingTrumps) {
+            return;
+        }
+        for (int i = 0; i < trumpButtons.size(); i++) {
+            trumpButtons.get(i).touchEventDown(X, Y);
+        }
+    }
+
+    public void touchEventMove(int X, int Y) {
+        if (!animatingTrumps) {
+            return;
+        }
+        for (int i = 0; i < trumpButtons.size(); i++) {
+            trumpButtons.get(i).touchEventMove(X, Y);
+        }
+    }
+
+    public void touchEventUp(int X, int Y, GameController controller) {
+        if (!animatingTrumps) {
+            return;
+        }
+        for (int i = 0; i < trumpButtons.size(); i++) {
+            if (trumpButtons.get(i).touchEventUp(X, Y)) {
+                setTrump(controller, i);
+            }
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------
     // Getter & Setter
     //
-    public boolean getAnimationSymbols() {
-        return animatingTrumps;
-    }
-
     void turnOnAnimationTrumps() {
         animatingTrumps = true;
-    }
-
-    public List<MyButton> getTrumpButtons() {
-        return trumpButtons;
     }
 }

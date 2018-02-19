@@ -14,7 +14,6 @@ import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.game.NonGamePlayUI.NonGamePlayUIContainer;
 
 
 //--------------------------------------------------------------------------------------------------
@@ -29,7 +28,6 @@ public class PlayerPresentation {
     //  Member Variables
     //
     private boolean animationRunning;
-    private double maxTime;
     private long startTime;
     private Point endPos;
     private MyTextField presentationTextField;
@@ -59,13 +57,17 @@ public class PlayerPresentation {
         tp2.setTextAlign(Paint.Align.CENTER);
         tp2.setColor(Color.WHITE);
         presentationTextField.setTextPaint(tp2);
-        presentationTextField.setBorder(view.getResources().getColor(R.color.metallic_blue), 0.15f);
+        presentationTextField.setBorder(view.getResources()
+                .getColor(R.color.metallic_blue), 0.15f);
         presentationTextField.setMaxWidth(layout.getScreenWidth() / 2);
         presentationTextField.setPosition(new Point((int) (layout.getScreenWidth() / 2.0),
                 (int) (layout.getScreenHeight() / 2.0)) );
         presentationTextField.setVisible(true);
+
         animationRunning = false;
-        touchAbleArea.set(0, layout.getRoundInfoSize().y, layout.getScreenWidth(), layout.getButtonBarButtonPosition().y);
+
+        touchAbleArea.set(0, layout.getRoundInfoSize().y, layout.getScreenWidth(),
+                layout.getButtonBarButtonPosition().y);
     }
 
 
@@ -86,29 +88,77 @@ public class PlayerPresentation {
     //
     public void draw(Canvas canvas, List<MyTextButton> buttons, final GameController controller) {
 
-        maxTime = 2500 * controller.getSettings().getAnimationSpeed().getSpeedFactor();
+        double maxTime = 2500 * controller.getSettings().getAnimationSpeed().getSpeedFactor();
         long timeNow = System.currentTimeMillis();
         long timeSinceStart = timeNow - startTime;
 
-        for (int i = 0; i <= presentationId; i++) {
-            if (buttons != null && buttons.size() > i && i != presentationId) {
-                if (buttons.get(i) != null) {
-                    buttons.get(i).draw(canvas);
-                }
+        // player 0 not important -> show greeting + intro
+        // other players show -> name,   changing alpha !!
+        handlePresentationTextFieldAnimation(timeSinceStart, maxTime, controller);
+        presentationTextField.draw(canvas);
+
+        // button movement
+        handleButtonMovement(timeSinceStart, maxTime, controller, buttons);
+
+        // draw already presented buttons
+        drawPresentedButtons(canvas, buttons);
+
+        // time 4 the next animation?
+        if (timeSinceStart > maxTime) {
+            prepareNextAnimation(buttons, controller);
+        }
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    //  prepare next animation
+    //                          called when a presentation is done
+    //
+    private void prepareNextAnimation(List<MyTextButton> buttons, GameController controller) {
+        presentationId++;
+
+        // all presentations done -> start Game!
+        if (presentationId >= controller.getAmountOfPlayers()) {
+            controller.setPlayerPresentation(false);
+            controller.startGame();
+            return;
+        }
+
+        // prep next animation
+        startTime = System.currentTimeMillis();
+        int playerPos = controller.getPlayerById(presentationId).getPosition();
+        if (buttons != null && playerPos < buttons.size()) {
+            endPos = new Point(buttons.get(playerPos).getPosition());
+        }
+        else {
+            endPos = new Point(0, 0);
+        }
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    //  handle textField animation
+    //                                  player 0 not important -> show greeting + intro
+    //                                  other players show -> name,   changing alpha !!
+    //
+    private void handlePresentationTextFieldAnimation(long timeSinceStart, double maxTime,
+                                                      GameController controller) {
+
+        if (presentationId == 0) {
+            if (timeSinceStart < maxTime / 2) {
+                presentationTextField.setText(controller.getView().getResources()
+                        .getString(R.string.player_presentation_greeting) + " " +
+                        controller.getPlayerById(0).getDisplayName());
+            }
+            else {
+                presentationTextField.setText(controller.getView().getResources()
+                        .getString(R.string.player_presentation_intro));
             }
         }
 
-        // player 0 not important
-        if (presentationId == 0) {
-            if (timeSinceStart < maxTime / 2) {
-                presentationTextField.setText("Hi " + controller.getPlayerById(0).getDisplayName());
-            }
-            else {
-                presentationTextField.setText("Deine Gegner sind");
-            }
-        }
         else {
-            presentationTextField.setText(controller.getPlayerById(presentationId).getDisplayName());
+            presentationTextField.setText(
+                    controller.getPlayerById(presentationId).getDisplayName());
             double percentage = timeSinceStart / (maxTime / 4.0);
 
             if (percentage > 3) {
@@ -123,9 +173,15 @@ public class PlayerPresentation {
             int alpha = (int) (255 * percentage);
             presentationTextField.updateAlpha(alpha);
         }
+    }
 
-        presentationTextField.draw(canvas);
 
+    //----------------------------------------------------------------------------------------------
+    //  handle button movement
+    //
+    private void handleButtonMovement(long timeSinceStart, double maxTime,
+                                      GameController controller, List<MyTextButton> buttons) {
+        // button movement
         if (presentationId != 0) {
             double p = timeSinceStart / (maxTime / 3.0);
             if (p > 1) {
@@ -139,39 +195,41 @@ public class PlayerPresentation {
                 buttons.get(playerPos).setPosition(
                         new Point((int) (center.x + (endPos.x - center.x) * p),
                                 (int) (center.y + (endPos.y - center.y) * p)));
-                buttons.get(playerPos).draw(canvas);
-            }
-
-        }
-
-        if (timeSinceStart > maxTime) {
-            presentationId++;
-            // presentations done
-            if (presentationId >= controller.getAmountOfPlayers()) {
-                controller.setPlayerPresentation(false);
-                controller.startGame();
-                return;
-            }
-            startTime = System.currentTimeMillis();
-            int playerPos = controller.getPlayerById(presentationId).getPosition();
-            if (buttons != null && playerPos < buttons.size()) {
-                endPos = new Point(buttons.get(playerPos).getPosition());
-            }
-            else {
-                endPos = new Point(0, 0);
             }
         }
     }
 
 
     //----------------------------------------------------------------------------------------------
-    // Touch Events
+    //  draw presented buttons
     //
-    public void touchEventDown(int X, int Y, NonGamePlayUIContainer ui) {
-        if (!animationRunning) {
-            return;
+    private void drawPresentedButtons(Canvas canvas, List<MyTextButton> buttons) {
+        for (int i = 0; i <= presentationId; i++) {
+            if (buttons != null && buttons.size() > i) {
+                if (buttons.get(i) != null) {
+                    buttons.get(i).draw(canvas);
+                }
+            }
         }
-        if (ui.isAWindowActive()) {
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    //  clear
+    //
+    public void clear() {
+        endPos = null;
+        touchAbleArea = null;
+        presentationTextField = null;
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    // Touch Events
+    //                  allow to skip the presentations
+    //
+    public void touchEventDown(int X, int Y) {
+        if (!animationRunning) {
             return;
         }
         if (X > touchAbleArea.left && X < touchAbleArea.right &&
@@ -180,11 +238,8 @@ public class PlayerPresentation {
         }
     }
 
-    public void touchEventUp(int X, int Y, NonGamePlayUIContainer ui) {
+    public void touchEventUp(int X, int Y) {
         if (!animationRunning) {
-            return;
-        }
-        if (ui.isAWindowActive()) {
             return;
         }
         if (clicked && X > touchAbleArea.left && X < touchAbleArea.right &&

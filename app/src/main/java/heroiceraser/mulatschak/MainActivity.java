@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements
         RoomUpdateListener, OnInvitationReceivedListener {
 
     // Fragments
-    List<Fragment> fragList = new ArrayList<Fragment>();
+    List<Fragment> fragList = new ArrayList<>();
     StartScreenFragment mStartScreenFragment;
     SinglePlayerFragment mSinglePlayerFragment;
     MultiPlayerFragment mMultiPlayerFragment;
@@ -1052,10 +1052,10 @@ public class MainActivity extends AppCompatActivity implements
 
     // Score of other participants. We update this as we receive their scores
     // from the network.
-    Map<String, Integer> mParticipantScore = new HashMap<String, Integer>();
+    Map<String, Integer> mParticipantScore = new HashMap<>();
 
     // Participants who sent us their final score.
-    Set<String> mFinishedParticipants = new HashSet<String>();
+    Set<String> mFinishedParticipants = new HashSet<>();
 
     // Called when we receive a real-time message from the network.
     // Messages in our game are made up of 2 bytes: the first one is 'F' or 'U'

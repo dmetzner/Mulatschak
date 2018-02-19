@@ -152,13 +152,15 @@ public class GameOver {
         endGameButton.touchEventMove(X, Y);
     }
 
-    public void touchEventUp(int X, int Y, GameController controller) {
+    public boolean touchEventUp(int X, int Y, GameController controller) {
         if (!isVisible()) {
-            return;
+            return false;
         }
         if (endGameButton.touchEventUp(X, Y)) {
             backToMainMenu(controller);
+            return true;
         }
+        return false;
     }
 
 

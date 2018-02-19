@@ -6,10 +6,6 @@ import java.util.List;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 
-/**
- * Created by Daniel Metzner on 10.08.2017.
- */
-
 //----------------------------------------------------------------------------------------------
 //  A CardStack consists of an ArrayList of Cards
 //
@@ -25,19 +21,19 @@ public class CardStack extends DrawableObject {
     //
     public CardStack() {
         super();
-        stack_ = new ArrayList<Card>();
+        stack_ = new ArrayList<>();
     }
 
     // Sorting
 
-    public static Comparator<Card> xPosComperator = new Comparator<Card>() {
+    static Comparator<Card> xPosComperator = new Comparator<Card>() {
         @Override
         public int compare(Card c1, Card c2) {
             return (c1.getPosition().x < c2.getPosition().x ? -1 :
                     (c1.getPosition().x == c2.getPosition().x ? 0 : 1));
         }
     };
-    public static Comparator<Card> yPosComperator = new Comparator<Card>() {
+    static Comparator<Card> yPosComperator = new Comparator<Card>() {
         @Override
         public int compare(Card c1, Card c2) {
             return (c1.getPosition().y < c2.getPosition().y ? -1 :
@@ -45,7 +41,7 @@ public class CardStack extends DrawableObject {
         }
     };
 
-    public static CardStack bubblesort(CardStack cs, Comparator<Card> comparator) {
+    static CardStack bubblesort(CardStack cs, Comparator<Card> comparator) {
         Card temp;
         for(int i = 1; i < cs.getCardStack().size(); i++) {
             for(int j = 0; j < cs.getCardStack().size() - i; j++) {
@@ -77,7 +73,10 @@ public class CardStack extends DrawableObject {
     }
 
     public Card getCardAt(int pos) {
-        return stack_.get(pos);
+        if (pos < stack_.size()) {
+            return stack_.get(pos);
+        }
+        return null;
     }
 
 }

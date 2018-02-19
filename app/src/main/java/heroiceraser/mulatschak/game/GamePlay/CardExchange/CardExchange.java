@@ -1,6 +1,8 @@
 package heroiceraser.mulatschak.game.GamePlay.CardExchange;
 
 import android.graphics.Canvas;
+
+import heroiceraser.mulatschak.game.DrawableObjects.Card;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GameView;
@@ -90,9 +92,40 @@ public class CardExchange {
 
 
     //----------------------------------------------------------------------------------------------
-    //  Getter
+    // Touch Events
+    //                  cards touchable, to prepare
+    //                  exchange button
     //
-    public CardExchangeLogic getCardExchangeLogic() {
-        return card_exchange_logic_;
+    public void touchEventDown(int X, int Y, GameController controller) {
+        if (!card_exchange_logic_.isAnimationRunning()) {
+            return;
+        }
+
+        // prepare -> cards touchable
+        for (int i = 0; i < controller.getPlayerById(0).getAmountOfCardsInHand(); i++) {
+            Card card = controller.getPlayerById(0).getHand().getCardAt(i);
+            if (X >= card.getPosition().x &&  X < card.getPosition().x + card.getWidth() &&
+                    Y >= card.getPosition().y &&  Y < card.getPosition().y + card.getHeight()) {
+                card_exchange_logic_.prepareCardExchange(card);
+            }
+        }
+
+        card_exchange_logic_.getButton().touchEventDown(X, Y);
+    }
+
+    public void touchEventMove(int X, int Y) {
+        if (!card_exchange_logic_.isAnimationRunning()) {
+            return;
+        }
+        card_exchange_logic_.getButton().touchEventMove(X, Y);
+    }
+
+    public void touchEventUp(int X, int Y, GameController controller) {
+        if (!card_exchange_logic_.isAnimationRunning()) {
+            return;
+        }
+        if (card_exchange_logic_.getButton().touchEventUp(X, Y)) {
+            card_exchange_logic_.exchangeCards(controller);
+        }
     }
 }

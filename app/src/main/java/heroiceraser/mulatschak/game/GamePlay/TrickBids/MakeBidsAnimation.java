@@ -25,8 +25,7 @@ public class MakeBidsAnimation {
     //
     public static int MAX_BID_COLS = 3;
     public static int MULATSCHAK = 6;
-    public static final int MISS_A_TURN = -1;
-    public static final int NO_CARD = 0;
+    static final int MISS_A_TURN = -1;
 
     //----------------------------------------------------------------------------------------------
     //  Member Variables
@@ -105,7 +104,7 @@ public class MakeBidsAnimation {
     //                  -> ends choose bids animation
     //                  -> sets Bids
     //
-    public void setTricks(GameController controller, int button_id) {
+    private void setTricks(GameController controller, int button_id) {
         animatingNumbers = false;
         button_id--;  // because of miss a turn button
 
@@ -198,17 +197,46 @@ public class MakeBidsAnimation {
 
 
     //----------------------------------------------------------------------------------------------
-    // Getter & Setter
+    // Touch Events
+    //                  trick bid buttons
     //
-    public boolean getAnimationNumbers() {
-        return animatingNumbers;
+    public void touchEventDown(int X, int Y) {
+        if (!animatingNumbers) {
+            return;
+        }
+        for (int i = 0; i < numberButtons.size(); i++) {
+            numberButtons.get(i).touchEventDown(X, Y);
+        }
     }
 
+    public void touchEventMove(int X, int Y) {
+        if (!animatingNumbers) {
+            return;
+        }
+        for (int i = 0; i < numberButtons.size(); i++) {
+            numberButtons.get(i).touchEventMove(X, Y);
+        }
+    }
+
+    public void touchEventUp(int X, int Y, GameController controller) {
+        if (!animatingNumbers) {
+            return;
+        }
+        for (int i = 0; i < numberButtons.size(); i++) {
+            if (numberButtons.get(i).touchEventDown(X, Y)) {
+                setTricks(controller, i);
+            }
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // Getter & Setter
+    //
     void turnOnAnimationNumbers() {
         animatingNumbers = true;
     }
 
-    public List<MyTextButton> getNumberButtons() {
+    List<MyTextButton> getNumberButtons() {
         return numberButtons;
     }
 }

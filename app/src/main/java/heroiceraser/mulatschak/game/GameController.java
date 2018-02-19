@@ -410,7 +410,7 @@ public class GameController{
 
     public void setDisplayName(MyPlayer myPlayer) {
 
-        String text = "";
+        String text;
 
         if (myPlayer.participant_ != null) {
             text = myPlayer.participant_.getDisplayName();
@@ -445,22 +445,22 @@ public class GameController{
     private void setPlayerPositions() {
         switch (getAmountOfPlayers()) {
             case 1:
-                getPlayerById(0).setPosition(layout_.POSITION_BOTTOM);
+                getPlayerById(0).setPosition(GameLayout.POSITION_BOTTOM);
                 break;
             case 2:
-                getPlayerById(0).setPosition(layout_.POSITION_BOTTOM);
-                getPlayerById(1).setPosition(layout_.POSITION_TOP);
+                getPlayerById(0).setPosition(GameLayout.POSITION_BOTTOM);
+                getPlayerById(1).setPosition(GameLayout.POSITION_TOP);
                 break;
             case 3:
-                getPlayerById(0).setPosition(layout_.POSITION_BOTTOM);
-                getPlayerById(1).setPosition(layout_.POSITION_LEFT);
-                getPlayerById(2).setPosition(layout_.POSITION_TOP);
+                getPlayerById(0).setPosition(GameLayout.POSITION_BOTTOM);
+                getPlayerById(1).setPosition(GameLayout.POSITION_LEFT);
+                getPlayerById(2).setPosition(GameLayout.POSITION_TOP);
                 break;
             case 4:
-                getPlayerById(0).setPosition(layout_.POSITION_BOTTOM);
-                getPlayerById(1).setPosition(layout_.POSITION_LEFT);
-                getPlayerById(2).setPosition(layout_.POSITION_TOP);
-                getPlayerById(3).setPosition(layout_.POSITION_RIGHT);
+                getPlayerById(0).setPosition(GameLayout.POSITION_BOTTOM);
+                getPlayerById(1).setPosition(GameLayout.POSITION_LEFT);
+                getPlayerById(2).setPosition(GameLayout.POSITION_TOP);
+                getPlayerById(3).setPosition(GameLayout.POSITION_RIGHT);
                 break;
         }
     }

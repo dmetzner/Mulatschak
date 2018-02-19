@@ -20,11 +20,11 @@ public class StartScreenFragment extends Fragment implements OnClickListener {
 
     public interface Listener {
         void onSinglePlayerSettingsRequested();
-        public void onMultiPlayerRequested();
-        public void onShowAchievementsRequested();
-        public void onShowLeaderboardsRequested();
-        public void onSignInButtonClicked();
-        public void onSignOutButtonClicked();
+        void onMultiPlayerRequested();
+        void onShowAchievementsRequested();
+        void onShowLeaderboardsRequested();
+        void onSignInButtonClicked();
+        void onSignOutButtonClicked();
     }
 
     Listener mListener = null;
