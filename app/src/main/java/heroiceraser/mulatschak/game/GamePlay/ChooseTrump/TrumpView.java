@@ -9,17 +9,19 @@ import android.os.Handler;
 import android.text.TextPaint;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
-import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
+import heroiceraser.mulatschak.game.BaseObjects.MulatschakDeck;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
 
-/**
- * Created by Daniel Metzner on 28.12.2017.
- */
-// ToDo
+//--------------------------------------------------------------------------------------------------
+//  Trump view
+//
 public class TrumpView extends DrawableObject {
 
+    //----------------------------------------------------------------------------------------------
+    //  Member Variables
+    //
     private Bitmap active_bitmap_;
     private String active_id_;
     private int max_height_;
@@ -38,6 +40,9 @@ public class TrumpView extends DrawableObject {
     private String multi_text_;
 
 
+    //----------------------------------------------------------------------------------------------
+    //  Constructor
+    //
     TrumpView() {
         offset_ = new Point();
         end_position_ = new Point();
@@ -50,6 +55,9 @@ public class TrumpView extends DrawableObject {
     }
 
 
+    //----------------------------------------------------------------------------------------------
+    //  init
+    //
     public void init(GameView view) {
 
         setPosition(new Point());
@@ -85,7 +93,8 @@ public class TrumpView extends DrawableObject {
         setVisible(false);
     }
 
-    //----------------------------------------------^^------------------------------------------------
+
+    //----------------------------------------------------------------------------------------------
     //  startAnimation
     //
     public void startAnimation(int active_symbol, int player_id, GameController controller) {
@@ -120,6 +129,10 @@ public class TrumpView extends DrawableObject {
         animation_running_ = true;
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  continue animation
+    //
     private void continueAnimation(GameController controller) {
         double speed_factor = controller.getSettings().getAnimationSpeed().getSpeedFactor();
         double max_time = 750 * speed_factor;
@@ -148,7 +161,8 @@ public class TrumpView extends DrawableObject {
         setPosition(start_position_.x + (int) (offset_.x * percentage),
                 start_position_.y + (int) (offset_.y * percentage));
 
-        active_bitmap_ = HelperFunctions.loadBitmap(controller.getView(), active_id_, getWidth(), getHeight());
+        active_bitmap_ = HelperFunctions.loadBitmap(controller.getView(),
+                active_id_, getWidth(), getHeight());
 
         if (percentage >= 1) {
             animation_running_ = false;
@@ -164,6 +178,10 @@ public class TrumpView extends DrawableObject {
         }
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //   continue ending animation
+    //
     private void continueEndingAnimation(GameController controller) {
         double animation_factor = controller.getSettings().getAnimationSpeed().getSpeedFactor();
         double max_time = 750 * animation_factor;
@@ -190,6 +208,9 @@ public class TrumpView extends DrawableObject {
     }
 
 
+    //----------------------------------------------------------------------------------------------
+    //  draw
+    //
     public void draw(Canvas canvas, GameController controller) {
         if (isVisible()) {
 

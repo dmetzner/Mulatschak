@@ -2,10 +2,10 @@ package heroiceraser.mulatschak.game;
 
 import android.view.View;
 
-/**
- * Created by Daniel Metzner on 12.08.2017.
- */
 
+//--------------------------------------------------------------------------------------------------
+// Game thread class
+//
 public class GameThread extends Thread {
     private View gameView;
     private boolean run = false;

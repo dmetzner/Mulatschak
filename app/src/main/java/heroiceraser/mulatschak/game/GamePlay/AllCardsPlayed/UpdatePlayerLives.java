@@ -2,7 +2,7 @@ package heroiceraser.mulatschak.game.GamePlay.AllCardsPlayed;
 
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
-import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
+import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 
 
 //----------------------------------------------------------------------------------------------

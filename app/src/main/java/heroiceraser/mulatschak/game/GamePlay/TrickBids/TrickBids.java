@@ -2,12 +2,12 @@ package heroiceraser.mulatschak.game.GamePlay.TrickBids;
 
 import java.util.List;
 
-import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
+import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 
 
 //----------------------------------------------------------------------------------------------
@@ -121,7 +121,7 @@ public class TrickBids {
         // amount have to be bigger, except dealers turn
         else if (amount > logic.getTricksToMake() ||
                 amount == logic.getTricksToMake() && logic.getTurn() == logic.getDealer()) {
-            List<MyTextButton> buttons = makeBidsAnimation.getNumberButtons();
+            List<MyButton> buttons = makeBidsAnimation.getNumberButtons();
             // disable lower amount buttons, but button 0 is always clickable // miss a turn
             for (int i = 2; i <= (amount + 1); i++) {
                 buttons.get(i).setEnabled(false);
@@ -145,7 +145,7 @@ public class TrickBids {
             }
         }
         if (amount_of_playing_players <= 2) {
-            List<MyTextButton> buttons = makeBidsAnimation.getNumberButtons();
+            List<MyButton> buttons = makeBidsAnimation.getNumberButtons();
             buttons.get(0).setEnabled(false);
         }
     }

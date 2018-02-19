@@ -7,7 +7,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.text.TextPaint;
 
-import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
@@ -24,7 +24,7 @@ public class ButtonBarWindow {
     private Rect background_;
     private Paint background_paint_;
     private ButtonBarWindowTitle title_;
-    private MyTextButton closeButton;
+    private MyButton closeButton;
 
 
     //----------------------------------------------------------------------------------------------
@@ -34,7 +34,7 @@ public class ButtonBarWindow {
         background_ = new Rect();
         background_paint_ = new Paint();
         title_ = new ButtonBarWindowTitle();
-        closeButton = new MyTextButton();
+        closeButton = new MyButton();
     }
 
 
@@ -68,7 +68,7 @@ public class ButtonBarWindow {
     //----------------------------------------------------------------------------------------------
     //  init
     //
-    public void titleInit(GameController controller, String text) {
+    protected void titleInit(GameController controller, String text) {
         title_.init(controller, text);
     }
 
@@ -76,7 +76,7 @@ public class ButtonBarWindow {
     //----------------------------------------------------------------------------------------------
     //  drawBackground
     //
-    public void drawBackground(Canvas canvas) {
+    protected void drawBackground(Canvas canvas) {
         canvas.drawRect(background_, background_paint_);
         closeButton.draw(canvas);
     }
@@ -85,7 +85,7 @@ public class ButtonBarWindow {
     //----------------------------------------------------------------------------------------------
     //  drawTitle
     //
-    public void drawTitle(Canvas canvas) {
+    protected void drawTitle(Canvas canvas) {
         title_.draw(canvas);
     }
 
@@ -97,15 +97,11 @@ public class ButtonBarWindow {
         return visible_;
     }
 
-    public void switchVisibility() {
-        visible_ = !visible_;
-    }
-
     public void setVisible(boolean visible) {
         visible_ = visible;
     }
 
-    public MyTextButton getCloseButton() {
+    protected MyButton getCloseButton() {
         return closeButton;
     }
 }

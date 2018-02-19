@@ -3,15 +3,16 @@ package heroiceraser.mulatschak.game.GamePlay.AllCardsPlayed;
 import android.graphics.Canvas;
 import android.graphics.Point;
 
-import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
 
 
-//----------------------------------------------------------------------------------------------
-//  New Round Button
+//--------------------------------------------------------------------------------------------------
+//  AllCardsPlayedView
+//                      -> new round button
 //
 public class AllCardsPlayedView{
 
@@ -19,14 +20,14 @@ public class AllCardsPlayedView{
     //----------------------------------------------------------------------------------------------
     //  Member Variables
     //
-    private MyTextButton next_round_button_;
+    private MyButton next_round_button_;
 
 
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
     public AllCardsPlayedView() {
-        next_round_button_ = new MyTextButton();
+        next_round_button_ = new MyButton();
     }
 
 

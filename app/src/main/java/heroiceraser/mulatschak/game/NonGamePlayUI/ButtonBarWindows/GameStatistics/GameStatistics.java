@@ -10,7 +10,7 @@ import java.util.List;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.MySimpleTextField;
 import at.heroiceraser.mulatschak.R;
-import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
+import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;

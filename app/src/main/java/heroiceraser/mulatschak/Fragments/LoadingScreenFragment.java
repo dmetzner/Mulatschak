@@ -8,17 +8,16 @@ import android.view.ViewGroup;
 
 import at.heroiceraser.mulatschak.R;
 
-/**
- * Created by Daniel Metzner on 17.09.2017.
- */
 
+//--------------------------------------------------------------------------------------------------
+//  Loading Screen Fragment
+//
 public class LoadingScreenFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.loading, container, false);
-        return v;
+        return inflater.inflate(R.layout.loading, container, false);
     }
 
     @Override

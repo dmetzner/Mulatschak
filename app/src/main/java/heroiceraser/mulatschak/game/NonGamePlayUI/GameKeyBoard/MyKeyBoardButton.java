@@ -1,4 +1,4 @@
-package heroiceraser.mulatschak.DrawableBasicObjects;
+package heroiceraser.mulatschak.game.NonGamePlayUI.GameKeyBoard;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -8,6 +8,8 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.text.TextPaint;
 
+import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
+import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
 
@@ -17,23 +19,23 @@ import heroiceraser.mulatschak.helpers.HelperFunctions;
 //      2 more states ->  enabled, pressed
 //      for both exist different bitmaps
 //
-public class MyTextButton extends DrawableObject{
+public class MyKeyBoardButton extends DrawableObject{
 
     //----------------------------------------------------------------------------------------------
     //  Member Variables
     //
-    private boolean enabled;
     private boolean pressed;
     private String text;
     private Point textPosition;
     private TextPaint textPaint;
-    private Bitmap bitmapOverlay;
-    private Paint overlay;
+    private Rect background;
+    private Paint bgPaint;
+    private Paint bgPaintPressed;
 
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
-    public MyTextButton() {
+    MyKeyBoardButton() {
         super();
     }
 
@@ -41,10 +43,6 @@ public class MyTextButton extends DrawableObject{
     //----------------------------------------------------------------------------------------------
     //  init
     //
-    public void init(GameView view, Point position, Point size, String image_name, String text) {
-        init(view, position, size.x, size.y, image_name, text);
-    }
-
     public void init(GameView view, Point position, int width, int height, String image_name, String text) {
         setPosition(position);
         setWidth(width);
@@ -56,9 +54,9 @@ public class MyTextButton extends DrawableObject{
         textPaint = new TextPaint();
         textPaint.setColor(Color.WHITE);
         textPaint.setAntiAlias(true);
-        textPaint.setTextSize(getHeight() / 2.5f);
+        textPaint.setTextSize(getHeight() / 1.8f);
         textPaint.setTextAlign(Paint.Align.CENTER);
-        textPaint.setTextScaleX(0.8f);
+        textPaint.setTextScaleX(0.75f);
         Rect text_bounds_ = new Rect();
         textPaint.getTextBounds(text, 0, text.length(), text_bounds_);
 
@@ -70,14 +68,19 @@ public class MyTextButton extends DrawableObject{
         Point center = new Point(getPosition().x + getWidth() / 2, getPosition().y + getHeight() / 2);
         textPosition = new Point(center.x, center.y + (int) textPaint.getTextSize() / 4);
 
-        // Overlay
-        if (getBitmap() != null) {
-            overlay = new Paint();
-            overlay.setAlpha(125);
-            bitmapOverlay = HelperFunctions.createBitmapOverlay(getBitmap());
-        }
 
-        enabled = true;
+        background = new Rect(position.x, position.y,
+                position.x + getWidth(), position.y + getHeight());
+        bgPaint = new Paint();
+        bgPaint.setStrokeWidth(2);
+        bgPaint.setColor(Color.WHITE);
+        bgPaint.setAntiAlias(true);
+        bgPaint.setStyle(Paint.Style.STROKE);
+
+        bgPaintPressed = new Paint(bgPaint);
+        bgPaintPressed.setStyle(Paint.Style.FILL);
+        bgPaintPressed.setColor(view.getResources().getColor(R.color.metallic_blue));
+
         pressed= false;
         setVisible(true);
     }
@@ -94,19 +97,34 @@ public class MyTextButton extends DrawableObject{
 
         float pressed_scale_ = 1;
 
+        Bitmap bitmap = getBitmap();
+        Paint paint = bgPaint;
+        Rect rect = new Rect(background);
+
         if (isPressed()) {
             canvas.scale(0.96f, 0.96f);
             pressed_scale_ = 1.043f;
+            paint = bgPaintPressed;
         }
 
         float offset_x = (getWidth() - getWidth() * pressed_scale_) / 2;
         float offset_y = (getHeight() - getHeight() * pressed_scale_) / 2;
 
+        if (isPressed()) {
+            rect.set((int) (background.left * pressed_scale_ - offset_x),
+                    (int) (background.top * pressed_scale_),
+                    (int) (background.right * pressed_scale_),
+                    (int) (background.bottom * pressed_scale_) );
+        }
+
         // background bitmap
-        if (getBitmap() != null) {
-            canvas.drawBitmap(getBitmap(),
+        if (bitmap != null) {
+            canvas.drawBitmap(bitmap,
                     getPosition().x * pressed_scale_ - offset_x,
                     getPosition().y * pressed_scale_, null);
+        }
+        else {
+            canvas.drawRect(rect, paint);
         }
 
         // text
@@ -115,13 +133,6 @@ public class MyTextButton extends DrawableObject{
                 textPaint);
 
 
-        if (!isEnabled()) {
-            if (getBitmap() != null) {
-                canvas.drawBitmap(bitmapOverlay,
-                        getPosition().x * pressed_scale_ - offset_x,
-                        getPosition().y * pressed_scale_, overlay);
-            }
-        }
         canvas.restore();
     }
 
@@ -130,7 +141,7 @@ public class MyTextButton extends DrawableObject{
     //  Touch Events
     //
     public boolean touchEventDown(int X, int Y) {
-        if (isVisible() && isEnabled() &&
+        if (isVisible() &&
                 X >= getPosition().x && X < getPosition().x + getWidth() &&
                 Y >= getPosition().y && Y < getPosition().y + getHeight()) {
             setPressed(true);
@@ -139,20 +150,25 @@ public class MyTextButton extends DrawableObject{
         return false;
     }
 
-    public void touchEventMove(int X, int Y) {
-        if (isVisible() && isEnabled() && isPressed()) {
+    public boolean touchEventMove(int X, int Y) {
+        if (isVisible() && isPressed()) {
             if ( X >= getPosition().x && X < getPosition().x + getWidth() &&
                     Y >= getPosition().y && Y < getPosition().y + getHeight()) {
                 setPressed(true);
+                return true;
             }
             else {
-                setPressed(false);
+                if (isPressed()) {
+                    setPressed(false);
+                    return true;
+                }
             }
         }
+        return false;
     }
 
     public boolean touchEventUp(int X, int Y) {
-        if (isVisible() && isEnabled() && isPressed()) {
+        if (isVisible()) { // && is pressed
             if (X >= getPosition().x && X < getPosition().x + getWidth() &&
                     Y >= getPosition().y && Y < getPosition().y + getHeight()) {
                 setPressed(false);
@@ -168,38 +184,16 @@ public class MyTextButton extends DrawableObject{
     //----------------------------------------------------------------------------------------------
     // Getter & Setter
     //
-    public boolean isPressed() {
+    private boolean isPressed() {
         return pressed;
     }
 
-    public void setPressed(boolean is_pressed) {
+    private void setPressed(boolean is_pressed) {
         this.pressed = is_pressed;
     }
 
-    public boolean isEnabled() {
-        return enabled;
+    public String getText() {
+        return text;
     }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled; }
-
-    public TextPaint getTextPaint() {
-        return this.textPaint;
-    }
-
-    public void changeTextPaint(TextPaint textPaint) {
-        this.textPaint = textPaint;
-        Rect text_bounds_ = new Rect();
-        textPaint.getTextBounds(text, 0, text.length(), text_bounds_);
-
-        while (text_bounds_.width() > 0.8 * getWidth()) {
-            textPaint.setTextSize(textPaint.getTextSize() * 0.95f);
-            textPaint.getTextBounds(text, 0, text.length(), text_bounds_);
-        }
-
-        Point center = new Point(getPosition().x + getWidth() / 2, getPosition().y + getHeight() / 2);
-        textPosition = new Point(center.x, center.y + (int) textPaint.getTextSize() / 4);
-    }
-
 
 }

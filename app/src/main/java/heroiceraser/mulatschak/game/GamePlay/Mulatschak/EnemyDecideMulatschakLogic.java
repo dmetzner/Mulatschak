@@ -1,8 +1,8 @@
 package heroiceraser.mulatschak.game.GamePlay.Mulatschak;
 
-import heroiceraser.mulatschak.game.DrawableObjects.Card;
-import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
-import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
+import heroiceraser.mulatschak.game.BaseObjects.Card;
+import heroiceraser.mulatschak.game.BaseObjects.MulatschakDeck;
+import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
 

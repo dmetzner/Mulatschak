@@ -7,10 +7,10 @@ import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
 
-/**
- * Created by Daniel Metzner on 22.12.2017.
- */
 
+//--------------------------------------------------------------------------------------------------
+// Button bar decoration
+//
 public class ButtonBarDecoration extends DrawableObject{
 
     public ButtonBarDecoration() {

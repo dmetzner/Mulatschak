@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
-import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 
 
@@ -58,7 +57,7 @@ public class Background4Player0Animations {
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas, GameController controller) {
+    public void draw(Canvas canvas) {
         canvas.drawRect(background, backgroundPaint);
     }
 
@@ -69,9 +68,4 @@ public class Background4Player0Animations {
     public Rect getBackground() {
         return background;
     }
-
-    public Paint getBackgroundPaint() {
-        return backgroundPaint;
-    }
-
 }

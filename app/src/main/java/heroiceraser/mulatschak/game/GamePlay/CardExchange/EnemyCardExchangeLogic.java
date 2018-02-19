@@ -2,10 +2,10 @@ package heroiceraser.mulatschak.game.GamePlay.CardExchange;
 
 import android.graphics.Canvas;
 import java.util.List;
-import heroiceraser.mulatschak.game.DrawableObjects.Card;
+import heroiceraser.mulatschak.game.BaseObjects.Card;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
-import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
+import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 
 //----------------------------------------------------------------------------------------------
 //  EnemyCardExchangeLogic:
@@ -208,7 +208,7 @@ public class EnemyCardExchangeLogic {
     //----------------------------------------------------------------------------------------------
     //  Getter & Setter
     //
-    public boolean isAnimationRunning() {
+    boolean isAnimationRunning() {
         return animation_running_;
     }
 }

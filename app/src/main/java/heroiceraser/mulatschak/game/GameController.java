@@ -8,17 +8,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import heroiceraser.mulatschak.GameSettings.GameSettings;
-import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
-import heroiceraser.mulatschak.game.GameModerator.GameModerator;
+import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GamePlay.GamePlay;
 import heroiceraser.mulatschak.game.NonGamePlayUI.NonGamePlayUIContainer;
-import heroiceraser.mulatschak.game.DrawableObjects.Card;
-import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
-import heroiceraser.mulatschak.game.DrawableObjects.DealerButton;
-import heroiceraser.mulatschak.game.DrawableObjects.DiscardPile;
+import heroiceraser.mulatschak.game.BaseObjects.Card;
+import heroiceraser.mulatschak.game.BaseObjects.CardStack;
+import heroiceraser.mulatschak.game.BaseObjects.DealerButton;
+import heroiceraser.mulatschak.game.BaseObjects.DiscardPile;
 import heroiceraser.mulatschak.game.NonGamePlayUI.GameOver.GameOver;
-import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
-import heroiceraser.mulatschak.game.Animations.AnimateHands;
+import heroiceraser.mulatschak.game.BaseObjects.MulatschakDeck;
+import heroiceraser.mulatschak.game.BaseObjects.PlayerHandsView;
 import heroiceraser.mulatschak.game.NonGamePlayUI.PlayerInfo.PlayerInfo;
 
 
@@ -47,9 +46,8 @@ public class GameController{
     private GameLogic logic_;
     private GameSettings settings_;
 
-    private AnimateHands animateHands;
+    private PlayerHandsView playerHandsView;
 
-    private GameModerator gameModerator;
     private NonGamePlayUIContainer non_game_play_ui_;
     private GamePlay game_play_;
 
@@ -81,8 +79,7 @@ public class GameController{
         logic_ = null;
         settings_= null;
 
-        animateHands = null;
-        gameModerator = null;
+        playerHandsView = null;
         non_game_play_ui_ = null;
         game_play_ = null;
 
@@ -110,7 +107,7 @@ public class GameController{
 
         logic_ = new GameLogic();
         layout_ = new GameLayout();
-        animateHands = new AnimateHands();
+        playerHandsView = new PlayerHandsView();
         touch_events_ = new TouchEvents();
         settings_ = new GameSettings();
 
@@ -125,7 +122,6 @@ public class GameController{
         discardPile_ = new DiscardPile();
 
         dealer_button_ = new DealerButton();
-        gameModerator = new GameModerator();
     }
 
     //----------------------------------------------------------------------------------------------
@@ -179,7 +175,7 @@ public class GameController{
                 Log.d("--", 9 + " - " + System.currentTimeMillis());
                 dealer_button_.init(view_);
                 Log.d("--", 10 + " - " + System.currentTimeMillis());
-                animateHands.init(view_);
+                playerHandsView.init(view_);
                 Log.d("--", 11 + " - " + System.currentTimeMillis());
                 enable_drawing_ = true;
                 long time = System.currentTimeMillis() - start;
@@ -264,7 +260,7 @@ public class GameController{
     //
     public void continueAfterTrickBids() {
         if (getPlayerById(0).getMissATurn()) {
-            getAnimateHands().setMissATurnInfoVisible(true);
+            getPlayerHandsView().setMissATurnInfoVisible(true);
         }
 
         final GameController controller = this;
@@ -337,7 +333,7 @@ public class GameController{
         // update player lives, game over? or new round?
         // starts the animations if needed
         if (game_play_.getAllCardsPlayed().areAllCardsPlayed(this)) {
-            getAnimateHands().setMissATurnInfoVisible(false);
+            getPlayerHandsView().setMissATurnInfoVisible(false);
             game_play_.getAllCardsPlayed().allCardsArePlayedLogic(this);
             return;
         }
@@ -364,7 +360,7 @@ public class GameController{
 
         if (multiplayer_) {
             for (int i = 0; i < participants_.size(); i++) {
-                MyPlayer new_My_player = new MyPlayer(view_);
+                MyPlayer new_My_player = new MyPlayer();
                 new_My_player.participant_ = participants_.get(i);
                 int player_id = i;
                 myPlayer_list_.add(player_id, new_My_player);
@@ -376,7 +372,7 @@ public class GameController{
         if (!multiplayer_) {
             int players = enemies + 1;
             for (int i = 0; i < players; i++) {
-                MyPlayer new_My_player = new MyPlayer(view_);
+                MyPlayer new_My_player = new MyPlayer();
                 new_My_player.setId(i);
                 myPlayer_list_.add(new_My_player);
             }
@@ -573,7 +569,7 @@ public class GameController{
 
     public GameLayout getLayout() { return layout_; }
 
-    public AnimateHands getAnimateHands() { return  animateHands; }
+    public PlayerHandsView getPlayerHandsView() { return playerHandsView; }
 
     public GameLogic getLogic() { return logic_; }
 

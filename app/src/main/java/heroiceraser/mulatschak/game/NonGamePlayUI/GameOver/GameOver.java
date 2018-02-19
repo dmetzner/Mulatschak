@@ -7,7 +7,7 @@ import android.graphics.Point;
 import android.os.Handler;
 import android.text.TextPaint;
 
-import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
 import heroiceraser.mulatschak.MainActivity;
 import at.heroiceraser.mulatschak.R;
@@ -15,7 +15,7 @@ import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GamePlay.Background4Player0Animations;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
+import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 
 
 //--------------------------------------------------------------------------------------------------
@@ -29,7 +29,7 @@ public class GameOver {
     private boolean visible;
     private Background4Player0Animations background;
     private MyTextField textField;
-    private MyTextButton endGameButton;
+    private MyButton endGameButton;
 
 
     //----------------------------------------------------------------------------------------------
@@ -38,13 +38,13 @@ public class GameOver {
     public GameOver() {
         super();
         background = new Background4Player0Animations();
-        endGameButton = new MyTextButton();
+        endGameButton = new MyButton();
         textField = new MyTextField();
         visible = false;
     }
 
     //----------------------------------------------------------------------------------------------
-    //  Constructor
+    //  init
     //
     public void init(GameView view) {
         GameLayout layout = view.getController().getLayout();
@@ -75,9 +75,11 @@ public class GameOver {
         endGameButton.init(view, endGameButtonPosition,
                 endGameButtonSize.x, endGameButtonSize.y, "button_blue_metallic_large", text);
         endGameButton.setVisible(false);
-
     }
 
+    //----------------------------------------------------------------------------------------------
+    //  set game to game over
+    //
     public void setGameGameOver(GameController controller) {
         setVisible(true);
         controller.getLogic().setGameOver(true);
@@ -88,7 +90,7 @@ public class GameOver {
         controller.getPlayerInfo().setVisible(false);
         controller.getGamePlay().getTrickBids().getBidsView().setVisible(false);
         controller.getGamePlay().getMulatschakResultAnimation().remove();
-        controller.getGamePlay().getDecideMulatschak().startRound(controller);
+        controller.getGamePlay().getDecideMulatschak().startRound();
         controller.getDealerButton().setVisible(false);
         controller.getPlayerInfo().setActivePlayer(GameController.NOT_SET);
         controller.getPlayerInfo().setShowPlayer0Turn(false);
@@ -109,10 +111,13 @@ public class GameOver {
     }
 
 
-    public void draw(Canvas canvas, GameController controller) {
+    //----------------------------------------------------------------------------------------------
+    //  draw
+    //
+    public void draw(Canvas canvas) {
         if (isVisible()) {
-            background.draw(canvas, controller);
-            background.draw(canvas, controller);
+            background.draw(canvas);
+            background.draw(canvas);
             textField.draw(canvas);
             // button should get call on top of button bar windows!!
         }
@@ -180,6 +185,7 @@ public class GameOver {
        handler.postDelayed(runnable, 500);
     }
 
+
     //----------------------------------------------------------------------------------------------
     //  Getter & Setter
     //
@@ -191,7 +197,7 @@ public class GameOver {
         this.visible = visible;
     }
 
-    public MyTextButton getEndGameButton() {
+    public MyButton getEndGameButton() {
         return endGameButton;
     }
 }

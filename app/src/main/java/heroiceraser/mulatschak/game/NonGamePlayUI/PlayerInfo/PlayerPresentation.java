@@ -9,7 +9,7 @@ import android.graphics.Rect;
 import android.text.TextPaint;
 import java.util.List;
 import at.heroiceraser.mulatschak.R;
-import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
@@ -86,7 +86,7 @@ public class PlayerPresentation {
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas, List<MyTextButton> buttons, final GameController controller) {
+    public void draw(Canvas canvas, List<MyButton> buttons, final GameController controller) {
 
         double maxTime = 2500 * controller.getSettings().getAnimationSpeed().getSpeedFactor();
         long timeNow = System.currentTimeMillis();
@@ -114,7 +114,7 @@ public class PlayerPresentation {
     //  prepare next animation
     //                          called when a presentation is done
     //
-    private void prepareNextAnimation(List<MyTextButton> buttons, GameController controller) {
+    private void prepareNextAnimation(List<MyButton> buttons, GameController controller) {
         presentationId++;
 
         // all presentations done -> start Game!
@@ -180,7 +180,7 @@ public class PlayerPresentation {
     //  handle button movement
     //
     private void handleButtonMovement(long timeSinceStart, double maxTime,
-                                      GameController controller, List<MyTextButton> buttons) {
+                                      GameController controller, List<MyButton> buttons) {
         // button movement
         if (presentationId != 0) {
             double p = timeSinceStart / (maxTime / 3.0);
@@ -203,7 +203,7 @@ public class PlayerPresentation {
     //----------------------------------------------------------------------------------------------
     //  draw presented buttons
     //
-    private void drawPresentedButtons(Canvas canvas, List<MyTextButton> buttons) {
+    private void drawPresentedButtons(Canvas canvas, List<MyButton> buttons) {
         for (int i = 0; i <= presentationId; i++) {
             if (buttons != null && buttons.size() > i) {
                 if (buttons.get(i) != null) {

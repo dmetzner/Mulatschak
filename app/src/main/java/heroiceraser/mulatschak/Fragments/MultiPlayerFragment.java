@@ -8,10 +8,10 @@ import android.view.ViewGroup;
 
 import at.heroiceraser.mulatschak.R;
 
-/**
- * Created by Daniel Metzner on 19.09.2017.
- */
 
+//--------------------------------------------------------------------------------------------------
+//  Multi Player Screen Fragment
+//
 public class MultiPlayerFragment extends Fragment implements View.OnClickListener {
 
     public interface Listener {

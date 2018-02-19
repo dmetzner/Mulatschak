@@ -5,36 +5,51 @@ import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GameView;
 
-/**
- * Created by Daniel Metzner on 03.01.2018.
- */
 
+//--------------------------------------------------------------------------------------------------
+//  Choose trump class
+//
 public class ChooseTrump {
 
+    //----------------------------------------------------------------------------------------------
+    //  member Variables
+    //
     private ChooseTrumpAnimation choose_trump_animation_;
     private EnemyChooseTrumpLogic enemyChooseTrumpLogic;
     private TrumpView trump_view_;
 
+
+    //----------------------------------------------------------------------------------------------
+    //  Constructor
+    //
     public ChooseTrump() {
         choose_trump_animation_ = new ChooseTrumpAnimation();
         enemyChooseTrumpLogic = new EnemyChooseTrumpLogic();
         trump_view_ = new TrumpView();
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  init
+    //
     public void init(GameView view) {
         choose_trump_animation_.init(view);
-        // enemylogic
+        // enemy logic no init needed
         trump_view_.init(view);
     }
 
-    public void startRound(GameController controller) {
+
+    //----------------------------------------------------------------------------------------------
+    //  startRound
+    //
+    public void startRound() {
         trump_view_.setVisible(false);
         choose_trump_animation_.reEnableButtons();
     }
 
 
     //----------------------------------------------------------------------------------------------
-    //  cada
+    //  letHighestBidderChooseTrump
     //
     public void letHighestBidderChooseTrump(final GameController controller) {
         final GameView view = controller.getView();
@@ -47,12 +62,14 @@ public class ChooseTrump {
         }
         else if (logic.getTrumpPlayerId() != 0) {
             view.enableUpdateCanvasThread();
-            enemyChooseTrumpLogic.chooseTrump(controller.getPlayerById(logic.getTrumpPlayerId()), logic, view);
+            enemyChooseTrumpLogic.
+                    chooseTrump(controller.getPlayerById(logic.getTrumpPlayerId()), logic);
             Handler mhandler = new Handler();
             Runnable codeToRun = new Runnable() {
                 @Override
                 public void run() {
-                    trump_view_.startAnimation(logic.getTrump(), logic.getTrumpPlayerId(), controller);
+                    trump_view_.startAnimation(logic.getTrump(),
+                            logic.getTrumpPlayerId(), controller);
                 }
             };
             mhandler.postDelayed(codeToRun, 500);

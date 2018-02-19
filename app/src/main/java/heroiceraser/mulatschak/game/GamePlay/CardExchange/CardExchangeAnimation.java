@@ -6,7 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import java.util.ArrayList;
 import java.util.List;
-import heroiceraser.mulatschak.game.DrawableObjects.Card;
+import heroiceraser.mulatschak.game.BaseObjects.Card;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
 

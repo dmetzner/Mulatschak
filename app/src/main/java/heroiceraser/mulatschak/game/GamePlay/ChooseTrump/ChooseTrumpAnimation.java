@@ -5,8 +5,8 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 import java.util.ArrayList;
 import java.util.List;
-import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
-import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
+import heroiceraser.mulatschak.game.BaseObjects.MulatschakDeck;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GamePlay.Background4Player0Animations;
@@ -23,7 +23,7 @@ public class ChooseTrumpAnimation {
     public static int MAX_TRUMP_COLS = 2;
     private Background4Player0Animations background;
     private boolean animatingTrumps;
-    private List<MyTextButton> trumpButtons;
+    private List<MyButton> trumpButtons;
 
 
     //----------------------------------------------------------------------------------------------
@@ -47,7 +47,7 @@ public class ChooseTrumpAnimation {
         String image_name = "trick_bids_button_trump_";
 
         for (int id = 1; id < MulatschakDeck.CARD_SUITS; id++) { // start at 1, no Joker
-            MyTextButton button = new MyTextButton();
+            MyButton button = new MyButton();
             int width = layout.getTrickBidsTrumpButtonSize().x;
             int height = layout.getTrickBidsTrumpButtonSize().y;
             button.init(view, new Point(), width, height, image_name + id, "");
@@ -75,10 +75,10 @@ public class ChooseTrumpAnimation {
             return;
         }
 
-        background.draw(canvas, controller);
-        controller.getAnimateHands().drawPlayer0Hand(canvas, controller);
+        background.draw(canvas);
+        controller.getPlayerHandsView().drawPlayer0Hand(canvas, controller);
 
-        for (MyTextButton button : trumpButtons) {
+        for (MyButton button : trumpButtons) {
             button.draw(canvas);
         }
     }
@@ -101,7 +101,7 @@ public class ChooseTrumpAnimation {
     //  reEnableButtons
     //
     void reEnableButtons() {
-        List<MyTextButton> buttons_sym = trumpButtons;
+        List<MyButton> buttons_sym = trumpButtons;
         for (int i = 0; i < buttons_sym.size(); i++) {
             buttons_sym.get(i).setEnabled(true);
         }

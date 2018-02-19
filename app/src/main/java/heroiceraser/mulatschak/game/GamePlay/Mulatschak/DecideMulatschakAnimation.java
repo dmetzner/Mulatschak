@@ -7,7 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.text.TextPaint;
 
-import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
 import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.GameController;
@@ -27,8 +27,8 @@ class DecideMulatschakAnimation {
     private boolean animationRunning;
     private Background4Player0Animations background;
     private MyTextField muliText;
-    private MyTextButton yesButton;
-    private MyTextButton noButton;
+    private MyButton yesButton;
+    private MyButton noButton;
 
 
     //----------------------------------------------------------------------------------------------
@@ -37,8 +37,8 @@ class DecideMulatschakAnimation {
     DecideMulatschakAnimation() {
         background = new Background4Player0Animations();
         muliText = new MyTextField();
-        yesButton = new MyTextButton();
-        noButton = new MyTextButton();
+        yesButton = new MyButton();
+        noButton = new MyButton();
     }
 
 
@@ -98,8 +98,8 @@ class DecideMulatschakAnimation {
     //
     public void draw(Canvas canvas, GameController controller) {
         if (animationRunning) {
-            background.draw(canvas, controller);
-            controller.getAnimateHands().drawPlayer0Hand(canvas, controller);
+            background.draw(canvas);
+            controller.getPlayerHandsView().drawPlayer0Hand(canvas, controller);
             muliText.draw(canvas);
             yesButton.draw(canvas);
             noButton.draw(canvas);
@@ -142,11 +142,7 @@ class DecideMulatschakAnimation {
     //----------------------------------------------------------------------------------------------
     //  Getter & Setter
     //
-    public boolean isAnimationRunning() {
-        return animationRunning;
-    }
-
-    public void turnOnAnimation() {
+    void turnOnAnimation() {
         this.animationRunning = true;
     }
 }

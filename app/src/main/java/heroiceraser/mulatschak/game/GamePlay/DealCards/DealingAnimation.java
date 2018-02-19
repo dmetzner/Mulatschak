@@ -3,11 +3,11 @@ package heroiceraser.mulatschak.game.GamePlay.DealCards;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Point;
-import heroiceraser.mulatschak.game.DrawableObjects.Card;
+import heroiceraser.mulatschak.game.BaseObjects.Card;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameLogic;
-import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
+import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
 
 //----------------------------------------------------------------------------------------------

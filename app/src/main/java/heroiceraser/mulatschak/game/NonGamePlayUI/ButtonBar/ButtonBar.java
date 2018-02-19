@@ -3,7 +3,7 @@ package heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBar;
 
 import android.graphics.Canvas;
 import android.graphics.Point;
-import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.GameView;
@@ -20,10 +20,10 @@ public class ButtonBar extends DrawableObject {
     //----------------------------------------------------------------------------------------------
     //  Member Variables
     //
-    private MyTextButton statisticsButton;
-    private MyTextButton tricksButton;
-    private MyTextButton menuButton;
-    private MyTextButton chatButton;
+    private MyButton statisticsButton;
+    private MyButton tricksButton;
+    private MyButton menuButton;
+    private MyButton chatButton;
 
 
     //----------------------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ public class ButtonBar extends DrawableObject {
     //  init Buttons
     //
     private void initMenuButton(GameView view) {
-        menuButton = new MyTextButton();
+        menuButton = new MyButton();
         Point position = new Point(view.getController().getLayout().getButtonBarButtonPosition());
         position.x = (int) (view.getController().getLayout().getOnePercentOfScreenWidth() * 2);
         int width = (int) (view.getController().getLayout().getOnePercentOfScreenWidth() * 23.75);
@@ -64,7 +64,7 @@ public class ButtonBar extends DrawableObject {
     }
 
     private void initChatButton(GameView view) {
-        chatButton = new MyTextButton();
+        chatButton = new MyButton();
         Point position = new Point(view.getController().getLayout().getButtonBarButtonPosition());
         position.x = (int) (view.getController().getLayout().getOnePercentOfScreenWidth() * 26.083);
         int width = (int) (view.getController().getLayout().getOnePercentOfScreenWidth() * 23.75);
@@ -75,7 +75,7 @@ public class ButtonBar extends DrawableObject {
     }
 
     private void initTricksButton(GameView view) {
-        tricksButton = new MyTextButton();
+        tricksButton = new MyButton();
         Point position = new Point(view.getController().getLayout().getButtonBarButtonPosition());
         position.x = (int) (view.getController().getLayout().getOnePercentOfScreenWidth() * 50.083);
         int width = (int) (view.getController().getLayout().getOnePercentOfScreenWidth() * 23.75);
@@ -86,7 +86,7 @@ public class ButtonBar extends DrawableObject {
     }
 
     private void initStatisticButton(GameView view) {
-        statisticsButton = new MyTextButton();
+        statisticsButton = new MyButton();
         Point position = new Point(view.getController().getLayout().getButtonBarButtonPosition());
         position.x = (int) (view.getController().getLayout().getOnePercentOfScreenWidth() * 74.083);
         int width = (int) (view.getController().getLayout().getOnePercentOfScreenWidth() * 23.75);

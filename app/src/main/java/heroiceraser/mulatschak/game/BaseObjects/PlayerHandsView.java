@@ -1,4 +1,4 @@
-package heroiceraser.mulatschak.game.Animations;
+package heroiceraser.mulatschak.game.BaseObjects;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -6,11 +6,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.text.TextPaint;
-
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
 import at.heroiceraser.mulatschak.R;
-import heroiceraser.mulatschak.game.DrawableObjects.Card;
-import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameLogic;
@@ -19,19 +16,27 @@ import heroiceraser.mulatschak.helpers.HelperFunctions;
 
 
 //--------------------------------------------------------------------------------------------------
-//  Animate Hands Class
+//  Player Hands
 //
-public class AnimateHands {
+public class PlayerHandsView {
 
+    //----------------------------------------------------------------------------------------------
+    //  Member Variables
+    //
     private MyTextField missATurnTextField;
+
 
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
-    public AnimateHands() {
+    public PlayerHandsView() {
         missATurnTextField = new MyTextField();
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  init
+    //
     public void init(GameView view) {
         GameLayout layout = view.getController().getLayout();
         missATurnTextField.setPosition(new Point(layout.getScreenWidth() / 2,
@@ -48,6 +53,7 @@ public class AnimateHands {
         missATurnTextField.setVisible(false);
     }
 
+
     //----------------------------------------------------------------------------------------------
     //  redrawHands
     //
@@ -57,7 +63,8 @@ public class AnimateHands {
                 for (int i = 0; i < player.getAmountOfCardsInHand(); i++) {
                     player.getHand().getCardAt(i).setFixedPosition(layout.getHandBottom().x +
                                     layout.getCardWidth() * i +  (int) (layout.getCardWidth() *
-                                    ((GameLogic.MAX_CARDS_PER_HAND - player.getAmountOfCardsInHand()) / 2.0)),
+                                    ((GameLogic.MAX_CARDS_PER_HAND -
+                                            player.getAmountOfCardsInHand()) / 2.0)),
                             layout.getHandBottom().y);
                     player.getHand().getCardAt(i).setPosition(
                             player.getHand().getCardAt(i).getFixedPosition());
@@ -107,6 +114,9 @@ public class AnimateHands {
     }
 
 
+    //----------------------------------------------------------------------------------------------
+    //  draw Player 0 Hand
+    //
     public void drawPlayer0Hand(Canvas canvas, GameController controller) {
         for (Card card : controller.getPlayerById(0).getHand().getCardStack()) {
             canvas.drawBitmap(card.getBitmap(), card.getPosition().x, card.getPosition().y, null);
@@ -114,11 +124,17 @@ public class AnimateHands {
     }
 
 
-
+    //----------------------------------------------------------------------------------------------
+    //  draw miss a turn
+    //
     public void drawMissATurn(Canvas canvas) {
         missATurnTextField.draw(canvas);
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  Getter & Setter
+    //
     public void setMissATurnInfoVisible(boolean visible) {
         missATurnTextField.setVisible(visible);
     }

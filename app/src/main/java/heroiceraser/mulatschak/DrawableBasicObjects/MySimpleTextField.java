@@ -8,10 +8,10 @@ import android.text.StaticLayout;
 import android.text.TextPaint;
 import heroiceraser.mulatschak.game.GameView;
 
-/**
- * Created by Daniel Metzner on 30.09.2017.
- */
 
+//--------------------------------------------------------------------------------------------------
+//  simple text field class  ---> ToDo remove
+//
 public class MySimpleTextField {
 
     private boolean visible_;

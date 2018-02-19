@@ -1,9 +1,5 @@
 package heroiceraser.mulatschak.Fragments;
 
-/**
- * Created by Daniel Metzner on 15.09.2017.
- */
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -15,6 +11,11 @@ import android.widget.TextView;
 
 import at.heroiceraser.mulatschak.R;
 
+
+
+//--------------------------------------------------------------------------------------------------
+//  Start Screen Fragment
+//
 public class StartScreenFragment extends Fragment implements OnClickListener {
     String mGreeting = "Hello, anonymous user (not signed in)";
 

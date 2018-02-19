@@ -11,18 +11,29 @@ import android.widget.TextView;
 
 import at.heroiceraser.mulatschak.R;
 
-/**
- * Created by Daniel Metzner on 22.09.2017.
- */
 
+//--------------------------------------------------------------------------------------------------
+//  PlayerInfo Pop up view class
+//
 public class PlayerInfoPopUpView extends LinearLayout {
 
+    //----------------------------------------------------------------------------------------------
+    //  back button listener
+    //
     public interface Listener {
         void onBackButtonRequested();
     }
 
     PlayerInfoPopUpView.Listener mListener = null;
 
+    public void setListener(PlayerInfoPopUpView.Listener l) {
+        mListener = l;
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    //  Constructor
+    //
     public PlayerInfoPopUpView(Context context) {
         super(context);
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -30,6 +41,10 @@ public class PlayerInfoPopUpView extends LinearLayout {
         addView(v);
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  init
+    //
     public void init(String display_name, String text, Bitmap bitmap) {
         findViewById(R.id.player_info_pop_up_back_button)
                 .setOnClickListener(new View.OnClickListener() {
@@ -43,13 +58,5 @@ public class PlayerInfoPopUpView extends LinearLayout {
         ((TextView) findViewById(R.id.player_info_pop_up_display_name)).setText(display_name);
 
         ((TextView) findViewById(R.id.player_info_pop_up_text)).setText(text);
-
     }
-
-
-
-    public void setListener(PlayerInfoPopUpView.Listener l) {
-        mListener = l;
-    }
-
 }

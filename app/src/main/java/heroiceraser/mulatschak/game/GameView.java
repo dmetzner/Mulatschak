@@ -181,8 +181,8 @@ public class GameView extends View {
     }
 
     private void drawHandCards(Canvas canvas) {
-        controller_.getAnimateHands().drawHandCards(canvas, controller_);
-        controller_.getAnimateHands().drawMissATurn(canvas);
+        controller_.getPlayerHandsView().drawHandCards(canvas, controller_);
+        controller_.getPlayerHandsView().drawMissATurn(canvas);
     }
 
 

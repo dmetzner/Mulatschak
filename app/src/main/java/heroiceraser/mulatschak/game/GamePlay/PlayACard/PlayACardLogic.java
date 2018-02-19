@@ -5,8 +5,8 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 
-import heroiceraser.mulatschak.game.DrawableObjects.Card;
-import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
+import heroiceraser.mulatschak.game.BaseObjects.Card;
+import heroiceraser.mulatschak.game.BaseObjects.CardStack;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
@@ -85,7 +85,7 @@ public class PlayACardLogic {
     //
     private void reduceInvalidSymbolAlpha(GameController controller) {
 
-        invalid_symbol_alpha_ = calculateAlphaPercentage(1500, 255, invalid_time_start_);
+        invalid_symbol_alpha_ = calculateAlphaPercentage(1500, invalid_time_start_);
 
         if (invalid_symbol_alpha_ < 0) {
             invalid_symbol_alpha_ = 0;
@@ -98,11 +98,11 @@ public class PlayACardLogic {
     }
 
 
-
     //----------------------------------------------------------------------------------------------
     //  calculateAlphaPercentage()
     //
-    private int calculateAlphaPercentage(int max_time, int max_value, long start_time) {
+    private int calculateAlphaPercentage(int max_time, long start_time) {
+        int max_value = 255;
         long time = System.currentTimeMillis();
         long time_since_start = time - start_time;
 
@@ -113,6 +113,7 @@ public class PlayACardLogic {
         double percentage  = ((double)time_since_start / max_time);
         return max_value - ((int) (percentage * max_value));
     }
+
 
     //----------------------------------------------------------------------------------------------
     //  touchActionDOWN
@@ -192,7 +193,7 @@ public class PlayACardLogic {
             moveCardFromHandToDiscardPile(controller);
 
             // recalculate hand positions!
-            controller.getAnimateHands().redrawHands(controller.getLayout(), controller.getPlayerById(0));
+            controller.getPlayerHandsView().redrawHands(controller.getLayout(), controller.getPlayerById(0));
 
             // give turn to next player
             move_card_idx_ = GameController.NOT_SET;

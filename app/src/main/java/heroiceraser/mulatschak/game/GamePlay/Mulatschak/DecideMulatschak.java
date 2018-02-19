@@ -101,7 +101,7 @@ public class DecideMulatschak {
     //----------------------------------------------------------------------------------------------
     //  startRound
     //
-    public void startRound(GameController controller) {
+    public void startRound() {
         mulatschakRound.clear();
     }
 

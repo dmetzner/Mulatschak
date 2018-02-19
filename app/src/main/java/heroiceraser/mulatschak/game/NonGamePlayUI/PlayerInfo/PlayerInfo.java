@@ -15,9 +15,9 @@ import java.util.List;
 
 import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
-import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
-import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
+import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
@@ -41,10 +41,10 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
 
     // The player profile image buttons; onclick they open a information pop up
     // bottom position (player 0) has no such image button
-    private MyTextButton buttonLeft;
-    private MyTextButton buttonTop;
-    private MyTextButton buttonRight;
-    private List<MyTextButton> buttons;
+    private MyButton buttonLeft;
+    private MyButton buttonTop;
+    private MyButton buttonRight;
+    private List<MyButton> buttons;
 
     // highlight the player who has the turn with a colored rectangle
     // player 0 has a text field instead, that tells the players it's his turn
@@ -70,11 +70,11 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
         setVisible(false);
 
         // buttons
-        buttonLeft = new MyTextButton();
-        buttonTop = new MyTextButton();
-        buttonRight = new MyTextButton();
+        buttonLeft = new MyButton();
+        buttonTop = new MyButton();
+        buttonRight = new MyButton();
         buttons = new ArrayList<>();
-        buttons.add(new MyTextButton());
+        buttons.add(new MyButton());
         buttons.add(buttonLeft);
         buttons.add(buttonTop);
         buttons.add(buttonRight);
@@ -218,7 +218,7 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
                 canvas.drawRect(playersTurnRectangles.get(activePlayer), rectanglePaint);
             }
 
-            for (MyTextButton b : buttons) {
+            for (MyButton b : buttons) {
                 b.draw(canvas);
             }
         }

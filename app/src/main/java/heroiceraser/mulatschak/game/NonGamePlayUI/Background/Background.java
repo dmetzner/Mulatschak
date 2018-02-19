@@ -68,9 +68,4 @@ public class Background {
     public Rect getBackground() {
         return background;
     }
-
-    public Paint getBackgroundPaint() {
-        return backgroundPaint;
-    }
-
 }

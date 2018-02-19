@@ -1,4 +1,4 @@
-package heroiceraser.mulatschak.game.DrawableObjects;
+package heroiceraser.mulatschak.game.BaseObjects;
 
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -8,9 +8,6 @@ import java.util.Random;
 
 import heroiceraser.mulatschak.game.GameView;
 
-/**
- * Created by Daniel Metzner on 08.08.2017.
- */
 
 //----------------------------------------------------------------------------------------------
 //  A Mulatschak Deck consists out of 33 different cards:
@@ -24,18 +21,17 @@ public class MulatschakDeck extends CardStack {
     //  Constants for the naming convention of the card images
     //
     public final static int WELI     = 0;            // IMG_NAME0 -> the Joker value 14
-    private final int JOKER          = 14;
+    public final static int JOKER    = 14;
     public final static int DIAMOND  = 1;            // IMG_NAME107 - IMG_NAME115
     public final static int CLUB     = 2;            // IMG_NAME207 - IMG_NAME215
     public final static int HEART    = 3;            // IMG_NAME307 - IMG_NAME315
     public final static int SPADE    = 4;            // IMG_NAME407 - IMG_NAME415
     //
-    private final String IMG_PRE_NAME = "card";
     public final static int CARDS_PER_DECK = 33;
     public final static int CARD_SUITS = 5;
-    public final static int FIRST_CARD = 7;
+    private final static int FIRST_CARD = 7;
     public final static int LAST_CARD = 15;
-    public final static int BACKSIDE = -1;
+    private final static int BACKSIDE = -1;
 
     //----------------------------------------------------------------------------------------------
     // Member Variables
@@ -59,7 +55,7 @@ public class MulatschakDeck extends CardStack {
     //            initialises the mulatschak deck
     //
     public void initDeck(GameView view) {
-        // backside cards
+        String IMG_PRE_NAME = "card";
         setWidth(0);
         setHeight(0);
         setPosition(view.getController().getLayout().getDeckPosition());

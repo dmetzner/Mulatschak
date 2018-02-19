@@ -102,7 +102,7 @@ public class MulatschakResultAnimation {
         textField2.updateAlpha(0);
         textField.setVisible(true);
         textField2.setVisible(true);
-        controller.getAnimateHands().setMissATurnInfoVisible(false);
+        controller.getPlayerHandsView().setMissATurnInfoVisible(false);
     }
 
 
@@ -143,7 +143,7 @@ public class MulatschakResultAnimation {
 
     public void draw(Canvas canvas, GameController controller) {
         if (textField != null) {
-            background4Player0Animations.draw(canvas, controller);
+            background4Player0Animations.draw(canvas);
             textField.draw(canvas);
             textField2.draw(canvas);
             if (animating) {

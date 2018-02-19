@@ -7,9 +7,9 @@ import android.graphics.Matrix;
 import android.graphics.Point;
 import java.util.ArrayList;
 import java.util.List;
-import heroiceraser.mulatschak.game.DrawableObjects.Card;
+import heroiceraser.mulatschak.game.BaseObjects.Card;
 import heroiceraser.mulatschak.game.GameController;
-import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
+import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
 
 //--------------------------------------------------------------------------------------------------
@@ -36,7 +36,6 @@ public class EnemyCardExchangeAnimation {
     private boolean clean_hand;      // reorder hand cards
 
     private Camera camera_;     // needed for 3D rotation od bitmaps
-    private long time_prev_;  // keeps track of the previous timestamp
     private int degree_;    // at which degree is the card in the moment of drawing
     private double spin_speed_; // how fast is the rotation spinning
     private final int MIN_SPIN_SPEED = 1;
@@ -71,7 +70,6 @@ public class EnemyCardExchangeAnimation {
     public void init(GameController controller, MyPlayer myPlayer) {
         animation_running_ = false;
         animation_end_running_ = false;
-        time_prev_ = 0;
         degree_ = 0;
         spin_speed_ = MIN_SPIN_SPEED;
         myPlayer_ = myPlayer;
@@ -238,7 +236,6 @@ public class EnemyCardExchangeAnimation {
                 moving_down_ = false;
                 index_ = 0;
                 start_time_ = System.currentTimeMillis();
-                time_prev_ = start_time_;
                 return;
             }
             Card card = exchanged_cards_.get(index_);

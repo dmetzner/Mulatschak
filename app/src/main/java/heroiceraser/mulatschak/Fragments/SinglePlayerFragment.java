@@ -1,8 +1,5 @@
 package heroiceraser.mulatschak.Fragments;
 
-/**
- * Created by Daniel Metzner on 15.09.2017.
- */
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,10 +12,10 @@ import android.widget.TextView;
 
 import at.heroiceraser.mulatschak.R;
 
-/**
- * Created by Daniel Metzner on 16.09.2017.
- */
 
+//--------------------------------------------------------------------------------------------------
+//  Singe Player Screen Fragment
+//
 public class SinglePlayerFragment extends Fragment implements View.OnClickListener {
 
     public interface Listener {
@@ -83,8 +80,9 @@ public class SinglePlayerFragment extends Fragment implements View.OnClickListen
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 progress_value = progress + 1;
-                player_lives_textView.setText(
-                        getString(R.string.single_player_settings_player_lives_text) + "   "  + progress_value);
+                String text = getString(R.string.single_player_settings_player_lives_text) +
+                        "   "  + progress_value;
+                player_lives_textView.setText(text);
             }
 
             @Override
@@ -94,8 +92,9 @@ public class SinglePlayerFragment extends Fragment implements View.OnClickListen
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                player_lives_textView.setText(
-                        getString(R.string.single_player_settings_player_lives_text) + "   "  + progress_value);
+                String text = getString(R.string.single_player_settings_player_lives_text) +
+                        "   "  + progress_value;
+                player_lives_textView.setText(text);
             }
         });
 

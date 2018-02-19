@@ -52,7 +52,7 @@ public class GameLayout {
     private List<Point> discard_pile_positions_;
 
     //-- MyPlayer Hands
-    public static final int POSITION_BOTTOM = 0;
+    static final int POSITION_BOTTOM = 0;
     public static final int POSITION_LEFT = 1;
     public static final int POSITION_TOP = 2;
     public static final int POSITION_RIGHT = 3;
@@ -70,11 +70,6 @@ public class GameLayout {
     private Point dealer_button_right_;
 
     //-- TrickBidsView
-    private Point trick_bids_game_play_size_;
-    private Point trick_bids_game_play_bottom_;
-    private Point trick_bids_game_play_left_;
-    private Point trick_bids_game_play_top_;
-    private Point trick_bids_game_play_right_;
     private List<Point> trick_bids_game_play_positions_;
 
     //-- MyPlayer Info
@@ -450,18 +445,18 @@ public class GameLayout {
         // offset caused by radius drawing
         int offset = dealer_button_size_.x / 2;
 
-        trick_bids_game_play_bottom_ = new Point(
+        Point trick_bids_game_play_bottom_ = new Point(
                 dealer_button_bottom_.x + dealer_button_size_.x + offset,
                 dealer_button_bottom_.y + offset);
 
-        trick_bids_game_play_left_ = new Point(dealer_button_left_.x + offset,
+        Point trick_bids_game_play_left_ = new Point(dealer_button_left_.x + offset,
                 dealer_button_left_.y - dealer_button_size_.y + offset);
 
-        trick_bids_game_play_top_ = new Point(
+        Point trick_bids_game_play_top_ = new Point(
                 dealer_button_top_.x + dealer_button_size_.x + offset,
                 dealer_button_top_.y + offset);
 
-        trick_bids_game_play_right_ = new Point(dealer_button_right_.x + offset,
+        Point trick_bids_game_play_right_ = new Point(dealer_button_right_.x + offset,
                 dealer_button_right_.y + dealer_button_size_.y + offset);
 
         trick_bids_game_play_positions_ = new ArrayList<>();

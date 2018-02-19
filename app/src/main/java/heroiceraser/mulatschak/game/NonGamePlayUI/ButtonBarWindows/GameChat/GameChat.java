@@ -8,7 +8,7 @@ import android.text.TextPaint;
 import java.util.List;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
-import heroiceraser.mulatschak.GameKeyBoard.MyKeyBoard;
+import heroiceraser.mulatschak.game.NonGamePlayUI.GameKeyBoard.MyKeyBoard;
 import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameView;
@@ -100,7 +100,7 @@ public class GameChat extends ButtonBarWindow {
             this.setVisible(false);
         }
 
-        List<String> keys = keyBoard.touchEventUp(X, Y, controller);
+        List<String> keys = keyBoard.touchEventUp(X, Y);
         if (keys == null) {
             return;
         }

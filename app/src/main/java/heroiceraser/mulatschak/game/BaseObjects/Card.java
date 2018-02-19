@@ -1,4 +1,4 @@
-package heroiceraser.mulatschak.game.DrawableObjects;
+package heroiceraser.mulatschak.game.BaseObjects;
 
 import android.graphics.Point;
 
@@ -6,9 +6,6 @@ import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
 
-/**
- * Created by Daniel Metzner on 08.08.2017.
- */
 
 //----------------------------------------------------------------------------------------------
 //  A Card is a drawable object with
@@ -23,6 +20,7 @@ public class Card extends DrawableObject {
     //
     private int id_;
     private Point fixed_position;
+
 
     //----------------------------------------------------------------------------------------------
     //  Constructor
@@ -42,15 +40,18 @@ public class Card extends DrawableObject {
     //  initCard:
     //            loads, scales and sets bitmap for a card
     //
-    public Card initCard(GameView view, String image_name) {
+    void initCard(GameView view, String image_name) {
         setWidth(view.getController().getLayout().getCardWidth());
         setHeight(view.getController().getLayout().getCardHeight());
         setBitmap(HelperFunctions.loadBitmap(view, image_name, getWidth(), getHeight()));
         setVisible(false);
-        return this;
     }
 
-    public static Card copy(Card card_to_copy) {
+
+    //----------------------------------------------------------------------------------------------
+    //  copy
+    //
+    static Card copy(Card card_to_copy) {
         Card tmp = new Card();
         if (card_to_copy != null) {
             tmp.setId(card_to_copy.getId());

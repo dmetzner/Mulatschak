@@ -1,4 +1,4 @@
-package heroiceraser.mulatschak.GameKeyBoard;
+package heroiceraser.mulatschak.game.NonGamePlayUI.GameKeyBoard;
 
 import android.graphics.Canvas;
 import android.graphics.Point;
@@ -8,14 +8,18 @@ import java.util.List;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 
-import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
 
 
+//--------------------------------------------------------------------------------------------------
+//  Key Board class
+//
 public class MyKeyBoard extends DrawableObject {
 
-
+    //----------------------------------------------------------------------------------------------
+    //  Member variables
+    //
     private boolean lower;
     private boolean upper;
     private boolean number;
@@ -26,6 +30,9 @@ public class MyKeyBoard extends DrawableObject {
     private List<MyKeyBoardButton> lastRowKeyBoard;
 
 
+    //----------------------------------------------------------------------------------------------
+    //  Constructor
+    //
     public MyKeyBoard() {
         super();
         lowerKeyBoard = new ArrayList<>();
@@ -34,6 +41,10 @@ public class MyKeyBoard extends DrawableObject {
         lastRowKeyBoard = new ArrayList<>();
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  init
+    //
     public void init(GameView view) {
         GameLayout layout = view.getController().getLayout();
 
@@ -164,6 +175,10 @@ public class MyKeyBoard extends DrawableObject {
         setVisible(true);
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  draw
+    //
     public void draw(Canvas canvas) {
 
         if (!isVisible()) {
@@ -202,30 +217,22 @@ public class MyKeyBoard extends DrawableObject {
         }
         if (lower) {
             for (MyKeyBoardButton button : lowerKeyBoard) {
-                if (button.touchEventDown(X, Y)) {
-                    //break;
-                }
+                button.touchEventDown(X, Y);
             }
         }
         else if (upper) {
             for (MyKeyBoardButton button : upperKeyBoard) {
-                if (button.touchEventDown(X, Y)) {
-                    //break;
-                }
+                button.touchEventDown(X, Y);
             }
         }
         else if (number) {
             for (MyKeyBoardButton button : numberKeyBoard) {
-                if (button.touchEventDown(X, Y)) {
-                    //break;
-                }
+                button.touchEventDown(X, Y);
             }
         }
 
         for (MyKeyBoardButton button : lastRowKeyBoard) {
-            if (button.touchEventDown(X, Y)) {
-                //break;
-            }
+            button.touchEventDown(X, Y);
         }
     }
 
@@ -236,34 +243,26 @@ public class MyKeyBoard extends DrawableObject {
 
         if (lower) {
             for (MyKeyBoardButton button : lowerKeyBoard) {
-                if (button.touchEventMove(X, Y)) {
-                    //break;
-                }
+                button.touchEventMove(X, Y);
             }
         }
         else if (upper) {
             for (MyKeyBoardButton button : upperKeyBoard) {
-                if (button.touchEventMove(X, Y)) {
-                    //break;
-                }
+                button.touchEventMove(X, Y);
             }
         }
         else if (number) {
             for (MyKeyBoardButton button : numberKeyBoard) {
-                if (button.touchEventMove(X, Y)) {
-                    //break;
-                }
+                button.touchEventMove(X, Y);
             }
         }
 
         for (MyKeyBoardButton button : lastRowKeyBoard) {
-            if (button.touchEventMove(X, Y)) {
-                //break;
-            }
+            button.touchEventMove(X, Y);
         }
     }
 
-    public List<String> touchEventUp(int X, int Y, GameController controller) {
+    public List<String> touchEventUp(int X, int Y) {
         if (!isVisible()) {
             return null;
         }
@@ -345,6 +344,4 @@ public class MyKeyBoard extends DrawableObject {
         }
         return keys;
     }
-
-
 }

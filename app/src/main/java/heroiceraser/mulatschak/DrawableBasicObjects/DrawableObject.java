@@ -3,18 +3,24 @@ package heroiceraser.mulatschak.DrawableBasicObjects;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 
-/**
- * Created by Daniel Metzner on 26.08.2017.
- */
-
+//--------------------------------------------------------------------------------------------------
+//  simple base class for drawable objects
+//
 public abstract class DrawableObject {
 
+    //----------------------------------------------------------------------------------------------
+    //  Member variables
+    //
     private boolean visible_;
     private Bitmap bitmap_;
     private Point position_;
     private int width_;
     private int height_;
 
+
+    //----------------------------------------------------------------------------------------------
+    //  Constructor
+    //
     public DrawableObject() {
         width_ = 0;
         height_ = 0;
@@ -23,6 +29,10 @@ public abstract class DrawableObject {
         visible_ = false;
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  Getter & Setter
+    //
     public boolean isVisible() {
         return this.visible_;
     }
@@ -62,8 +72,8 @@ public abstract class DrawableObject {
     public void setHeight(int height) {
         this.height_ = height;
     }
+
     public int getHeight() {
         return this.height_;
     }
-
 }

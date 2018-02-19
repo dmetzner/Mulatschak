@@ -2,7 +2,7 @@ package heroiceraser.mulatschak.game.GamePlay.CardExchange;
 
 import android.graphics.Canvas;
 
-import heroiceraser.mulatschak.game.DrawableObjects.Card;
+import heroiceraser.mulatschak.game.BaseObjects.Card;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GameView;

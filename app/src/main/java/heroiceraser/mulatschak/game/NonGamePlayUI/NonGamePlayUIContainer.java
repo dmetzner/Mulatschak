@@ -90,7 +90,7 @@ public class NonGamePlayUIContainer {
         chatView.draw(canvas);
         button_bar_.draw(canvas);
 
-        gameOver.draw(canvas, controller);
+        gameOver.draw(canvas);
 
         // Display Overlays with the functionality
         statistics_.draw(canvas);

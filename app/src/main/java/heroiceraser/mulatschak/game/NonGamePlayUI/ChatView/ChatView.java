@@ -13,40 +13,49 @@ import java.util.List;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
-import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
+import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
 
 
 //--------------------------------------------------------------------------------------------------
-//  Round Info Class
+//  Chat View Class
 //
 public class ChatView extends DrawableObject {
 
-    private final int MAX_MESSAGES = 5;
-
+    //----------------------------------------------------------------------------------------------
+    //  Member Variables
+    //
     private Rect background;
     private Paint backgroundPaint;
-    private Point monitor_size_;
-    private Point board_to_text_offset_;
+    private Point monitorSize;
+    private Point boardToTextOffset;
 
     private Point position;
     private TextPaint textPaint;
     private List<MyTextField> messageQueue;
     private MyTextField trash;
 
+
+    //----------------------------------------------------------------------------------------------
+    //  Constructor
+    //
     public ChatView() {
         super();
         setVisible(false);
         messageQueue = new ArrayList<>();
-        monitor_size_ = new Point();
-        board_to_text_offset_ = new Point();
+        monitorSize = new Point();
+        boardToTextOffset = new Point();
         position = new Point();
         trash = null;
         background = new Rect();
         backgroundPaint = new Paint();
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  init
+    //
     public void init(GameView view) {
         setWidth(view.getController().getLayout().getRoundInfoSize().x);
         setHeight(view.getController().getLayout().getRoundInfoSize().y);
@@ -54,16 +63,16 @@ public class ChatView extends DrawableObject {
         String image_name = "round_info";
         setBitmap(HelperFunctions.loadBitmap(view, image_name , getWidth(), getHeight()));
         setVisible(true);
-        board_to_text_offset_.x = (int) (view.getController().getLayout().getOnePercentOfScreenWidth() * 8);
-        board_to_text_offset_.y = (int) (view.getController().getLayout().getOnePercentOfScreenHeight() * 4);
-        monitor_size_.x = (int) (view.getController().getLayout().getOnePercentOfScreenWidth() * 80);
-        monitor_size_.y = view.getController().getLayout().getSectors().get(2).y - 2 * board_to_text_offset_.y;
+        boardToTextOffset.x = (int) (view.getController().getLayout().getOnePercentOfScreenWidth() * 8);
+        boardToTextOffset.y = (int) (view.getController().getLayout().getOnePercentOfScreenHeight() * 4);
+        monitorSize.x = (int) (view.getController().getLayout().getOnePercentOfScreenWidth() * 80);
+        monitorSize.y = view.getController().getLayout().getSectors().get(2).y - 2 * boardToTextOffset.y;
 
         background = new Rect(0, 0, view.getController().getLayout().getScreenWidth(),
                 view.getController().getLayout().getSectors().get(2).y);
         backgroundPaint.setColor(Color.DKGRAY);
 
-        position = new Point(board_to_text_offset_);
+        position = new Point(boardToTextOffset);
         textPaint = new TextPaint();
         textPaint.setAntiAlias(true);
         textPaint.setColor(Color.WHITE);
@@ -72,12 +81,18 @@ public class ChatView extends DrawableObject {
         textPaint.setTypeface(tf);
         textPaint.setTextAlign(Paint.Align.LEFT);
         textPaint.setTextScaleX(0.7f);
-        textPaint.setTextSize( (int) ((monitor_size_.y / 100.0) * 15));
+        textPaint.setTextSize( (int) ((monitorSize.y / 100.0) * 15));
 
         trash = null;
     }
 
-    public void addMessage(String player_name, String message) {
+
+    //----------------------------------------------------------------------------------------------
+    //  add message
+    //
+    private void addMessage(String player_name, String message) {
+
+        final int MAX_MESSAGES = 5;
 
         MyTextField textField = new MyTextField();
         textField.setVisible(true);
@@ -99,6 +114,9 @@ public class ChatView extends DrawableObject {
         messageQueue.add(textField);
     }
 
+    //----------------------------------------------------------------------------------------------
+    //  add message
+    //
     public void addMessage(MyPlayer player, String message) {
 
         String player_name = "";
@@ -114,6 +132,9 @@ public class ChatView extends DrawableObject {
     }
 
 
+    //----------------------------------------------------------------------------------------------
+    //  draw
+    //
     public void draw(Canvas canvas) {
         if (!isVisible()) {
             return;
@@ -141,14 +162,20 @@ public class ChatView extends DrawableObject {
         canvas.drawBitmap(getBitmap(), getPosition().x, getPosition().y, null);
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  clear chat
+    //
     public void clearChat() {
         trash = null;
         messageQueue.clear();
     }
 
 
+    //----------------------------------------------------------------------------------------------
+    //  Getter
+    //
     public TextPaint getTextPaint() {
         return textPaint;
     }
-
 }

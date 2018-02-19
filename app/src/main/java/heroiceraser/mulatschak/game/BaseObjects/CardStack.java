@@ -1,4 +1,4 @@
-package heroiceraser.mulatschak.game.DrawableObjects;
+package heroiceraser.mulatschak.game.BaseObjects;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -24,8 +24,10 @@ public class CardStack extends DrawableObject {
         stack_ = new ArrayList<>();
     }
 
-    // Sorting
 
+    //----------------------------------------------------------------------------------------------
+    //  Sorting
+    //
     static Comparator<Card> xPosComperator = new Comparator<Card>() {
         @Override
         public int compare(Card c1, Card c2) {
@@ -78,5 +80,4 @@ public class CardStack extends DrawableObject {
         }
         return null;
     }
-
 }

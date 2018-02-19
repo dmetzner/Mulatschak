@@ -12,12 +12,16 @@ import android.text.TextPaint;
 
 import heroiceraser.mulatschak.game.GameView;
 
-/**
- * Created by Daniel Metzner on 30.08.2017.
- */
 
+//--------------------------------------------------------------------------------------------------
+//  Help Text
+//                  ToDo  You need me?
+//
 public class HelpText extends DrawableObject{
 
+    //----------------------------------------------------------------------------------------------
+    //  Member Variables
+    //
     private float rect_rx_;
     private float rect_ry_;
     private RectF background_rect_;
@@ -26,10 +30,18 @@ public class HelpText extends DrawableObject{
     private TextPaint text_paint_;
     private String text_;
 
+
+    //----------------------------------------------------------------------------------------------
+    //  Constructor
+    //
     public HelpText() {
         super();
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  init
+    //
     public void init(GameView view, String text, int width) {
         init(view, text, width, -1);
     }
@@ -64,6 +76,10 @@ public class HelpText extends DrawableObject{
         rect_ry_ = static_layout_.getHeight() / 2.f;
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  draw
+    //
     public void draw(Canvas canvas, Point position) {
         canvas.save();
         canvas.translate(position.x, position.y);
@@ -72,6 +88,9 @@ public class HelpText extends DrawableObject{
         canvas.restore();
     }
 
+    //----------------------------------------------------------------------------------------------
+    //  Getter
+    //
     public TextPaint getTextPaint() {
         return text_paint_;
     }

@@ -1,20 +1,20 @@
 package heroiceraser.mulatschak.game.GamePlay.ChooseTrump;
 
-import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
+import heroiceraser.mulatschak.game.BaseObjects.MulatschakDeck;
 import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
+import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 
-/**
- * Created by Daniel Metzner on 03.01.2018.
- */
 
-public class EnemyChooseTrumpLogic {
+//----------------------------------------------------------------------------------------------
+//  enemy choose trump class
+//
+class EnemyChooseTrumpLogic {
 
     //----------------------------------------------------------------------------------------------
     //  chooseTrump
     //
-    public void chooseTrump(MyPlayer myPlayer, GameLogic logic, GameView view) {
+    void chooseTrump(MyPlayer myPlayer, GameLogic logic) {
         // ToDo: put in some fancy logic here
 
         int[] cards_per_suit = new int[MulatschakDeck.CARD_SUITS];

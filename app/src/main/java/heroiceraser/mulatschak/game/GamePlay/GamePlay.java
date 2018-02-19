@@ -66,9 +66,9 @@ public class GamePlay {
     //
     public void startRound(GameController controller) {
         trickBids.startRound(controller);
-        chooseTrump.startRound(controller);
+        chooseTrump.startRound();
         mulatschakResultAnimation.remove();
-        decideMulatschak.startRound(controller);
+        decideMulatschak.startRound();
         // clean up ToDo for the rest
     }
 

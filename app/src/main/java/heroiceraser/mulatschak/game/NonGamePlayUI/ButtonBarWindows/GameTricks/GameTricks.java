@@ -11,10 +11,10 @@ import android.text.TextPaint;
 import java.util.ArrayList;
 import java.util.List;
 
-import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.DrawableBasicObjects.MySimpleTextField;
-import heroiceraser.mulatschak.game.DrawableObjects.DiscardPile;
+import heroiceraser.mulatschak.game.BaseObjects.DiscardPile;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
@@ -33,8 +33,8 @@ public class GameTricks extends ButtonBarWindow {
     private GameView view_;
     private MySimpleTextField subtitle_;
     private MySimpleTextField info_;
-    private MyTextButton arrow_left_;
-    private MyTextButton arrow_right_;
+    private MyButton arrow_left_;
+    private MyButton arrow_right_;
     private List<DiscardPile> discard_piles_;
     private Bitmap card_back_bitmap_;
     private List<Integer> winners_;
@@ -49,8 +49,8 @@ public class GameTricks extends ButtonBarWindow {
         super();
         subtitle_ = new MySimpleTextField();
         info_ = new MySimpleTextField();
-        arrow_left_ = new MyTextButton();
-        arrow_right_ = new MyTextButton();
+        arrow_left_ = new MyButton();
+        arrow_right_ = new MyButton();
         discard_piles_ = new ArrayList<>();
         winners_ = new ArrayList<>();
         winner_name_text_paint_ = new TextPaint();

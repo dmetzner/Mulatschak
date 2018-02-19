@@ -4,10 +4,10 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 import java.util.ArrayList;
 import java.util.List;
-import heroiceraser.mulatschak.DrawableBasicObjects.MyTextButton;
+import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import at.heroiceraser.mulatschak.R;
-import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
-import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
+import heroiceraser.mulatschak.game.BaseObjects.CardStack;
+import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameLogic;
@@ -31,7 +31,7 @@ public class MakeBidsAnimation {
     //  Member Variables
     //
     private Background4Player0Animations background;
-    private List<MyTextButton> numberButtons;
+    private List<MyButton> numberButtons;
     private boolean animatingNumbers;
 
 
@@ -57,7 +57,7 @@ public class MakeBidsAnimation {
         int width =  layout.getTrickBidsNumberButtonSize().x;
         int height = layout.getTrickBidsNumberButtonSize().y;
 
-        MyTextButton missATurnButton = new MyTextButton();
+        MyButton missATurnButton = new MyButton();
         String missATurnText = view.getResources().getString(R.string.miss_a_turn_button);
         missATurnButton.init(view, new Point(x, y), width * 3, height,
                 "button_blue_metallic_large", missATurnText);
@@ -73,7 +73,7 @@ public class MakeBidsAnimation {
             // offset
             newX += (layout.getOnePercentOfScreenWidth() * 0.75f * (i % MAX_BID_COLS));
             newY += height * ((i / MAX_BID_COLS) + 1);
-            MyTextButton numberButton = new MyTextButton();
+            MyButton numberButton = new MyButton();
             Point position = new Point(newX, newY);
             numberButton.init(view, position, width, height,
                     "button_blue_metallic_small", i + "");
@@ -88,10 +88,10 @@ public class MakeBidsAnimation {
     //
     public void draw(Canvas canvas, GameController controller) {
         if (animatingNumbers) {
-            background.draw(canvas, controller);
-            controller.getAnimateHands().drawPlayer0Hand(canvas, controller);
+            background.draw(canvas);
+            controller.getPlayerHandsView().drawPlayer0Hand(canvas, controller);
 
-            for (MyTextButton button : numberButtons) {
+            for (MyButton button : numberButtons) {
                 button.draw(canvas);
             }
         }
@@ -236,7 +236,7 @@ public class MakeBidsAnimation {
         animatingNumbers = true;
     }
 
-    List<MyTextButton> getNumberButtons() {
+    List<MyButton> getNumberButtons() {
         return numberButtons;
     }
 }

@@ -1,22 +1,21 @@
 package heroiceraser.mulatschak.game;
 
 
-import heroiceraser.mulatschak.game.DrawableObjects.Card;
-import heroiceraser.mulatschak.game.DrawableObjects.CardStack;
-import heroiceraser.mulatschak.game.DrawableObjects.DiscardPile;
-import heroiceraser.mulatschak.game.DrawableObjects.MulatschakDeck;
+import heroiceraser.mulatschak.game.BaseObjects.Card;
+import heroiceraser.mulatschak.game.BaseObjects.CardStack;
+import heroiceraser.mulatschak.game.BaseObjects.DiscardPile;
+import heroiceraser.mulatschak.game.BaseObjects.MulatschakDeck;
 
-/**
- * Created by Daniel Metzner on 11.08.2017.
- */
 
+//--------------------------------------------------------------------------------------------------
+//  Game Logic
+//
 public class GameLogic {
 
     //----------------------------------------------------------------------------------------------
     //  Constants
     //
     public final static int DEFAULT_PLAYER_START_LIVES = 21;
-    public final static int MAX_PLAYERS = 4;
     public final static int MAX_CARDS_PER_HAND = 5;
 
     public final static int DIFFICULTY_EASY = 1;
@@ -78,14 +77,14 @@ public class GameLogic {
 
 
 
-    public void moveDealer(int players) {
+    void moveDealer(int players) {
         dealer_++;
         if (dealer_ >= players) {
             dealer_ = 0;
         }
     }
 
-    public void turnToNextPlayer(int players) {
+    void turnToNextPlayer(int players) {
         turn_++;
         if (turn_ >= players) {
             turn_ = 0;
@@ -271,7 +270,7 @@ public class GameLogic {
     //
     public int getDealer() { return dealer_; }
 
-    public void setDealer(int dealer) { dealer_ = dealer; }
+    void setDealer(int dealer) { dealer_ = dealer; }
 
     public void setTurn(int turn) { turn_ = turn; }
 
@@ -287,7 +286,7 @@ public class GameLogic {
         tricks_to_make_ = tricks;
     }
 
-    public void setStartingCard(int starting_card_symbol_) {
+    void setStartingCard(int starting_card_symbol_) {
         this.starting_card_symbol_ = starting_card_symbol_;
     }
 

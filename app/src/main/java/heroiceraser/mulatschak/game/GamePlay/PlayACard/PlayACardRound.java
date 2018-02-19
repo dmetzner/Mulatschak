@@ -3,9 +3,9 @@ package heroiceraser.mulatschak.game.GamePlay.PlayACard;
 import android.graphics.Canvas;
 import android.os.Handler;
 
-import heroiceraser.mulatschak.game.DrawableObjects.Card;
-import heroiceraser.mulatschak.game.DrawableObjects.DiscardPile;
-import heroiceraser.mulatschak.game.DrawableObjects.MyPlayer;
+import heroiceraser.mulatschak.game.BaseObjects.Card;
+import heroiceraser.mulatschak.game.BaseObjects.DiscardPile;
+import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GameView;
@@ -286,9 +286,4 @@ public class PlayACardRound {
     private void setCardMovable(boolean movable) {
         play_a_card_logic_.setCardMoveable(movable);
     }
-
-    public PlayACardLogic getPlayACardLogic() {
-        return play_a_card_logic_;
-    }
-
 }

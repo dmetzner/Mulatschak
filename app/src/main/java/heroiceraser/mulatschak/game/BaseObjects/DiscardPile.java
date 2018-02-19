@@ -1,4 +1,4 @@
-package heroiceraser.mulatschak.game.DrawableObjects;
+package heroiceraser.mulatschak.game.BaseObjects;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -12,16 +12,20 @@ import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
 
-/**
- * Created by Daniel Metzner on 14.08.2017.
- */
 
+//--------------------------------------------------------------------------------------------------
+//  Discard Pile class
+//
 public class DiscardPile extends DrawableObject {
 
+    //----------------------------------------------------------------------------------------------
+    //  Constants
+    //
     public final int SIZE = 4;
-    private final String BMP_DISCARD_PILE = "discard_pile";
-    private final String BMP_OVERLAY_LOST = "discard_pile_overlay_lost";
 
+    //----------------------------------------------------------------------------------------------
+    //  Member Variables
+    //
     private Card card_bottom_;
     private Card card_left_;
     private Card card_top_;
@@ -32,6 +36,10 @@ public class DiscardPile extends DrawableObject {
 
     private List<Point> positions_;
 
+
+    //----------------------------------------------------------------------------------------------
+    //  Constructor
+    //
     public DiscardPile() {
         super();
         positions_ = new ArrayList<>();
@@ -43,6 +51,10 @@ public class DiscardPile extends DrawableObject {
         overlay_lost_ = null;
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  init
+    //
     public void init(GameView view) {
         setWidth(view.getController().getLayout().getDiscardPileWidth());
         setHeight(view.getController().getLayout().getDiscardPileHeight());
@@ -58,8 +70,8 @@ public class DiscardPile extends DrawableObject {
         finishInit(view);
     }
 
-
     private void finishInit(GameView view) {
+        String BMP_DISCARD_PILE = "discard_pile";
         this.positions_ = view.getController().getLayout().getDiscardPilePositions();
         setBitmap(HelperFunctions.loadBitmap(view, BMP_DISCARD_PILE, getWidth(), getHeight()));
         Bitmap backside = HelperFunctions.loadBitmap(view, "card_back", getWidth(), getHeight());
@@ -75,6 +87,9 @@ public class DiscardPile extends DrawableObject {
     }
 
 
+    //----------------------------------------------------------------------------------------------
+    //  copy
+    //
     public static DiscardPile copy(DiscardPile dp_to_copy) {
         DiscardPile tmp = new DiscardPile();
         tmp.setWidth(dp_to_copy.getWidth());
@@ -92,52 +107,10 @@ public class DiscardPile extends DrawableObject {
 
     }
 
+
     //----------------------------------------------------------------------------------------------
-    // Getter & Setter
+    //  draw
     //
-    public Point getPoint(int pos) {
-        return positions_.get(pos);
-    }
-    public List<Point> getPositions() {
-        return positions_;
-    }
-
-    public void setPositions(List<Point> positions) {
-        this.positions_ = positions;
-    }
-
-    public Card getCard(int pos) {
-        switch (pos) {
-            case 0:
-                return getCardBottom();
-            case 1:
-                return getCardLeft();
-            case 2:
-                return getCardTop();
-            case 3:
-                return getCardRight();
-        }
-        return null;
-    }
-
-    public void setCard(int pos, Card card) {
-        switch (pos) {
-            case 0:
-                setCardBottom(card);
-                return;
-            case 1:
-                setCardLeft(card);
-                return;
-            case 2:
-                setCardTop(card);
-                return;
-            case 3:
-                setCardRight(card);
-                return;
-        }
-    }
-
-
     public void draw(Canvas canvas) {
         if (isVisible()) {
             // draw discard pile
@@ -156,6 +129,9 @@ public class DiscardPile extends DrawableObject {
     }
 
 
+    //----------------------------------------------------------------------------------------------
+    //  draw Overlays
+    //
     public void drawOverlays(Canvas canvas, GameLogic logic) {
         if (overlays_visible_) {
             // draw discard pile
@@ -169,6 +145,10 @@ public class DiscardPile extends DrawableObject {
         }
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //  clear
+    //
     public void clear() {
         this.setCardBottom(null);
         this.setCardLeft(null);
@@ -211,6 +191,48 @@ public class DiscardPile extends DrawableObject {
 
     public void setOverlaysVisible(boolean visible) {
         overlays_visible_ = visible;
+    }
+
+    public Point getPoint(int pos) {
+        return positions_.get(pos);
+    }
+    public List<Point> getPositions() {
+        return positions_;
+    }
+
+    public void setPositions(List<Point> positions) {
+        this.positions_ = positions;
+    }
+
+    public Card getCard(int pos) {
+        switch (pos) {
+            case 0:
+                return getCardBottom();
+            case 1:
+                return getCardLeft();
+            case 2:
+                return getCardTop();
+            case 3:
+                return getCardRight();
+        }
+        return null;
+    }
+
+    public void setCard(int pos, Card card) {
+        switch (pos) {
+            case 0:
+                setCardBottom(card);
+                break;
+            case 1:
+                setCardLeft(card);
+                break;
+            case 2:
+                setCardTop(card);
+                break;
+            case 3:
+                setCardRight(card);
+                break;
+        }
     }
 
 }
