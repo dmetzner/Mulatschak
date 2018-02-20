@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -101,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements
     private boolean mSignInClicked = false;
 
     // Automatically start the sign-in flow when the Activity starts
-    private boolean mAutoStartSignInFlow = true;
+    private boolean mAutoStartSignInFlow = false;
 
     // Room ID where the currently active game is taking place; null if we're
     // not playing.
@@ -126,6 +127,8 @@ public class MainActivity extends AppCompatActivity implements
     // achievements and scores we're pending to push to the cloud
     // (waiting for the user to sign in, for instance)
     AccomplishmentsOutbox mOutbox = new AccomplishmentsOutbox();
+
+    SharedPreferences mySharedPreference;
 
     //----------------------------------------------------------------------------------------------
     //  onCreate
@@ -163,7 +166,12 @@ public class MainActivity extends AppCompatActivity implements
                 mStartScreenFragment).commit();
         //Todo: multiplayer
 
-        // load outbox from file
+
+        // load sign in preference
+        mySharedPreference = getSharedPreferences("MyMuliData", 0);
+        mAutoStartSignInFlow = mySharedPreference.getBoolean("autoSignIn", false);
+
+        // ToDo who am I?
         mOutbox.loadLocal(this);
     }
 
@@ -214,15 +222,15 @@ public class MainActivity extends AppCompatActivity implements
         if (!game_running_) {
 
             if (mGoogleApiClient == null) {
-                // switchToFragment(mStartScreenFragment, "mStartScreenFragment");
-            } else if (!mGoogleApiClient.isConnected()) {
-                // AUTO LOG IN
-                //Log.d(TAG, "Connecting client.");
-                //switchToFragment(mStartScreenFragment, "mStartScreenFragment");
-                //mGoogleApiClient.connect();
-            } else {
-                Log.w(TAG,
-                        "GameHelper: client was already connected on onStart()");
+                Log.d(TAG, "Google Api failed!");
+            }
+            else if (!mGoogleApiClient.isConnected() && mAutoStartSignInFlow) {
+                Log.d(TAG, "Connecting client.");
+                switchToFragment(mStartScreenFragment, "mStartScreenFragment");
+                mGoogleApiClient.connect();
+            }
+            else if (mGoogleApiClient.isConnected()) {
+                Log.w(TAG,"GameHelper: client was already connected on onStart()");
             }
         }
         super.onStart();
@@ -255,9 +263,10 @@ public class MainActivity extends AppCompatActivity implements
         // stop trying to keep the screen on
         stopKeepingScreenOn();
 
-        //if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-            //mGoogleApiClient.disconnect();
-        //} else {
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+        // else {
             //switchToFragment(mStartScreenFragment, "mStartScreenFragment");
         //}
         super.onStop();
@@ -348,6 +357,7 @@ public class MainActivity extends AppCompatActivity implements
                     mGoogleApiClient, connectionResult,
                     RC_SIGN_IN, getString(R.string.signin_other_error))) {
                 mResolvingConnectionFailure = false;
+                mySharedPreference.edit().putBoolean("autoSignIn", false).apply();
             }
         }
 
@@ -465,6 +475,7 @@ public class MainActivity extends AppCompatActivity implements
         // start the sign-in flow
         mSignInClicked = true;
         mGoogleApiClient.connect();
+        mySharedPreference.edit().putBoolean("autoSignIn", true).apply();
     }
 
     //----------------------------------------------------------------------------------------------
@@ -477,7 +488,7 @@ public class MainActivity extends AppCompatActivity implements
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
-
+        mySharedPreference.edit().putBoolean("autoSignIn", false).apply();
         mStartScreenFragment.setGreeting(getString(R.string.signed_out_greeting));
         mStartScreenFragment.setShowSignInButton(true);
     }
