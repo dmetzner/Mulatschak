@@ -45,8 +45,8 @@ public class StartScreenFragment extends Fragment implements OnClickListener {
         }
         // Todo: multiplayer        ;)#
         // right now deactivated
-        Button multiplayer_button = (Button) v.findViewById(R.id.multi_player_button);
-         // multiplayer_button.setEnabled(false);
+        //Button multiplayer_button = (Button) v.findViewById(R.id.multi_player_button);
+        // multiplayer_button.setEnabled(false);
 
         return v;
     }

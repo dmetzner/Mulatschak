@@ -101,7 +101,7 @@ public class PlayerPresentation {
         handleButtonMovement(timeSinceStart, maxTime, controller, buttons);
 
         // draw already presented buttons
-        drawPresentedButtons(canvas, buttons);
+        drawPresentedButtons(canvas, buttons, controller);
 
         // time 4 the next animation?
         if (timeSinceStart > maxTime) {
@@ -203,8 +203,8 @@ public class PlayerPresentation {
     //----------------------------------------------------------------------------------------------
     //  draw presented buttons
     //
-    private void drawPresentedButtons(Canvas canvas, List<MyButton> buttons) {
-        for (int i = 0; i <= presentationId; i++) {
+    private void drawPresentedButtons(Canvas canvas, List<MyButton> buttons, GameController controller) {
+        for (int i = 0; i <= controller.getPlayerById(presentationId).getPosition(); i++) {
             if (buttons != null && buttons.size() > i) {
                 if (buttons.get(i) != null) {
                     buttons.get(i).draw(canvas);

@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.drive.Drive;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesActivityResultCodes;
 import com.google.android.gms.games.GamesStatusCodes;
@@ -30,6 +31,7 @@ import com.google.android.gms.games.multiplayer.OnInvitationReceivedListener;
 import com.google.android.gms.games.multiplayer.Participant;
 import com.google.android.gms.games.multiplayer.realtime.RealTimeMessage;
 import com.google.android.gms.games.multiplayer.realtime.RealTimeMessageReceivedListener;
+import com.google.android.gms.games.multiplayer.realtime.RealTimeMultiplayer;
 import com.google.android.gms.games.multiplayer.realtime.Room;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.android.gms.games.multiplayer.realtime.RoomStatusUpdateListener;
@@ -614,9 +616,9 @@ public class MainActivity extends AppCompatActivity implements
         rtmConfigBuilder.setRoomStatusUpdateListener(this);
         rtmConfigBuilder.setAutoMatchCriteria(autoMatchCriteria);
         keepScreenOn();
-        resetGameVars();
+        // resetGameVars();
         Games.RealTimeMultiplayer.create(mGoogleApiClient, rtmConfigBuilder.build());
-    }
+}
 
     @Override
     public void onActivityResult(int requestCode, int responseCode,
@@ -691,6 +693,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // create the room
         Log.d(TAG, "Creating room...");
+
         RoomConfig.Builder rtmConfigBuilder = RoomConfig.builder(this);
         rtmConfigBuilder.addPlayersToInvite(invitees);
         rtmConfigBuilder.setMessageReceivedListener(this);
@@ -698,9 +701,18 @@ public class MainActivity extends AppCompatActivity implements
         if (autoMatchCriteria != null) {
             rtmConfigBuilder.setAutoMatchCriteria(autoMatchCriteria);
         }
-        switchToFragment(mLoadingScreenFragment, "mLoadingScreenFragment");
+
+        // switchToFragment(mLoadingScreenFragment, "mLoadingScreenFragment");
         keepScreenOn();
         resetGameVars();
+
+        /*RoomConfig mRoomConfig = RoomConfig.builder(mRoomUpdateCallback)
+                .addPlayersToInvite(invitees)
+                .setOnMessageReceivedListener(mOnRealTimeMessageReceivedListener)
+                .setRoomStatusUpdateCallback(mRoomStatusUpdateCallback)
+                .setAutoMatchCriteria(autoMatchCriteria).build();
+        mRealTimeMultiplayerClient.create(mRoomConfig);*/
+
         Games.RealTimeMultiplayer.create(mGoogleApiClient, rtmConfigBuilder.build());
         Log.d(TAG, "Room created, waiting for it to be ready...");
     }
@@ -766,7 +778,7 @@ public class MainActivity extends AppCompatActivity implements
         // We got an invitation to play a game! So, store it in
         // mIncomingInvitationId
         // and show the popup on the screen.
-        //mIncomingInvitationId = invitation.getInvitationId();
+        mIncomingInvitationId = invitation.getInvitationId();
         //((TextView) findViewById(R.id.incoming_invitation_text)).setText(
           //      invitation.getInviter().getDisplayName() + " " +
             //            "lädt dich ein");
@@ -830,6 +842,11 @@ public class MainActivity extends AppCompatActivity implements
     public void onRoomCreated(int statusCode, Room room) {
         Log.d(TAG, "onRoomCreated(" + statusCode + ", " + room + ")");
         if (statusCode != GamesStatusCodes.STATUS_OK) {
+
+            if (statusCode == GamesStatusCodes.STATUS_CLIENT_RECONNECT_REQUIRED) {
+                Log.e(TAG, "damn..");
+            }
+
             Log.e(TAG, "*** Error: onRoomCreated, status " + statusCode);
             showGameError();
             return;
@@ -939,10 +956,10 @@ public class MainActivity extends AppCompatActivity implements
 
     // Reset game variables in preparation for a new game.
     void resetGameVars() {
-        mSecondsLeft = GAME_DURATION;
-        mScore = 0;
-        mParticipantScore.clear();
-        mFinishedParticipants.clear();
+        //mSecondsLeft = GAME_DURATION;
+        //mScore = 0;
+        //mParticipantScore.clear();
+        //mFinishedParticipants.clear();
     }
 
     // Start the gameplay phase of the game.
@@ -1049,8 +1066,6 @@ public class MainActivity extends AppCompatActivity implements
             }
         };
         handler.postDelayed(runnable, 2000);
-
-
     }
 
     private boolean waitForNewGame;
