@@ -1,7 +1,9 @@
 package heroiceraser.mulatschak.Fragments;
 
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,6 +33,11 @@ public class StartScreenFragment extends Fragment implements OnClickListener {
     Listener mListener = null;
     boolean mShowSignIn = true;
 
+    private Button mSinglePlayerButton;
+    private Button mMultiplayerButton;
+    private Button mAchievementsButton;
+    private Button mLeaderboardsButton;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -43,10 +50,6 @@ public class StartScreenFragment extends Fragment implements OnClickListener {
         for (int i : CLICKABLES) {
             v.findViewById(i).setOnClickListener(this);
         }
-        // Todo: multiplayer        ;)#
-        // right now deactivated
-        //Button multiplayer_button = (Button) v.findViewById(R.id.multi_player_button);
-        // multiplayer_button.setEnabled(false);
 
         return v;
     }
@@ -101,9 +104,18 @@ public class StartScreenFragment extends Fragment implements OnClickListener {
         }
     }
 
-    public void setShowSignInButton(boolean showSignIn) {
+    public void handleSignIn(boolean showSignIn) {
         mShowSignIn = showSignIn;
+        handleButtons(!showSignIn);
         updateUi();
+    }
+
+    private void handleButtons(boolean signedIn) {
+        if (getActivity() != null) {
+            getActivity().findViewById(R.id.multi_player_button).setEnabled(signedIn);
+            getActivity().findViewById(R.id.show_achievements_button).setEnabled(signedIn);
+            getActivity().findViewById(R.id.show_leaderboards_button).setEnabled(signedIn);
+        }
     }
 }
 

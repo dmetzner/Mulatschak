@@ -13,8 +13,8 @@ android {
 
         minSdkVersion android_min_sdk_version
         targetSdkVersion android_compile_version
-        versionCode 3
-        versionName "3.0"
+        versionCode 5
+        versionName "5.0"
     }
 
     buildTypes {
@@ -23,13 +23,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
-    buildToolsVersion '26.0.2'
 }
 
 dependencies {
-    compile "com.android.support:appcompat-v7:${appcompat_library_version}"
-    compile "com.android.support:support-v4:${support_library_version}"
-    compile project(':BaseGameUtils')
+    implementation "com.android.support:appcompat-v7:${appcompat_library_version}"
+    implementation "com.android.support:support-v4:${support_library_version}"
+    implementation "com.google.android.gms:play-services-games:${gms_library_version}"
+    implementation "com.google.android.gms:play-services-auth:${gms_library_version}"
+
+    compile 'com.google.code.gson:gson:2.8.2'
 }
 
 buildscript {

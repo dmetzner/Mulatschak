@@ -32,10 +32,11 @@
                     android:id="@+id/imageView"
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
-                    android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
                     android:gravity="center"
-                    app:srcCompat="@drawable/title_graphic" />
+                    android:visibility="visible"
+                    android:src="@drawable/title_graphic" />
 
 
                 <TextView
@@ -64,7 +65,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="MultiPlayer"
-                        android:textSize="25sp">b</Button>
+                        android:textSize="25sp">b
+                    </Button>
 
                 </LinearLayout>
 
@@ -130,10 +132,10 @@
                 android:id="@+id/sign_out_bar"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
+                android:layout_marginTop="30dp"
                 android:background="@color/my_dark_gray"
                 android:gravity="center|end"
                 android:orientation="horizontal"
-                android:layout_marginTop="30dp"
                 android:visibility="gone">
 
                 <TextView
