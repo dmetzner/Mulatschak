@@ -1231,6 +1231,7 @@ public class MainActivity extends FragmentActivity implements
     }
 
 
+    private String gameHostId;
 
     void continueStartGame(final boolean multiplayer) {
 
@@ -1267,7 +1268,8 @@ public class MainActivity extends FragmentActivity implements
         }
 
         if (multiplayer) {
- //           broadcastMessage();
+            gameHostId = mParticipants.get(0).getPlayer().getPlayerId();
+            Log.d("----------", "host id " + gameHostId);
         }
 
         // start the game via the game controller of our game view
@@ -1287,7 +1289,7 @@ public class MainActivity extends FragmentActivity implements
                 try {
                     switchToFragment(mGameScreenFragment, "mGameScreenFragment");
                     mGameView.getController().init(player_lives_final, enemies_final, difficulty_final,
-                            mMultiplayer, my_name_final,  mMyId, mParticipants);
+                            mMultiplayer, my_name_final,  mMyId, mParticipants, gameHostId);
                 }
                 catch (Exception e) {
                     Log.e(TAG, "game error: " + e);

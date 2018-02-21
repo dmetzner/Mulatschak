@@ -38,9 +38,10 @@ public class GameController{
 
     public boolean multiplayer_;
     public ArrayList<Participant> participants_;
-    public Participant host_;
+
     public String my_display_name_;
     public String myPlayerId;
+    public String hostOnlineId;
 
     private GameView view_;
     private GameLayout layout_;
@@ -71,9 +72,9 @@ public class GameController{
             participants_.clear();
             participants_ = null;
         }
-        host_ = null;
         my_display_name_ = null;
         myPlayerId = null;
+
 
         view_ = null;
         layout_ = null;
@@ -130,13 +131,14 @@ public class GameController{
     //  start
     //
     public void init(final int start_lives, final int enemies, final int difficulty, final boolean multiplayer,
-                      final String myName, final String my_id, final ArrayList<Participant> participants) {
+                      final String myName, final String my_id, final ArrayList<Participant> participants, final String hostOnlineId) {
 
         multiplayer_ = multiplayer;
         my_display_name_ = myName;
         if (my_display_name_ == null) {
             my_display_name_ = "notSignedIn";
         }
+        this.hostOnlineId = hostOnlineId;
         myPlayerId = my_id;
         participants_ = participants;
 
@@ -145,7 +147,7 @@ public class GameController{
         logic_.init(start_lives, difficulty);
         layout_.init(view_);
         settings_.init(view_);
-        initPlayers(my_id, enemies);
+        initPlayers(my_id, enemies);                                                    // special multi
         resetPlayerLives();
         setPlayerPositions();
         player_info_.init(view_);
@@ -183,7 +185,13 @@ public class GameController{
     public void startGame() {
         if (enable_drawing_) {
             playerPresentation = false;
-            chooseFirstDealerRandomly();
+            if (multiplayer_) {
+                Log.d("----------", "host id " + Integer.toString(getPlayerByOnlineId(hostOnlineId).getId()));
+                chooseHostAsDealer(getPlayerByOnlineId(hostOnlineId).getId());
+            }
+            else {
+                chooseFirstDealerRandomly();
+            }
             startRound();
         }
         else {
@@ -354,17 +362,36 @@ public class GameController{
     private void initPlayers(String my_id, int enemies) {
 
         if (multiplayer_) {
+
+            int mainPlayerId = 0;
+            ArrayList<MyPlayer> tmpPlayerList = new ArrayList<>();
+
             for (int i = 0; i < participants_.size(); i++) {
                 MyPlayer newPlayer = new MyPlayer();
                 newPlayer.participant_ = participants_.get(i);
                 newPlayer.initMultiplayer(); // in your own app you are always player 0
+                tmpPlayerList.add(i, newPlayer);
                 if (participants_.get(i).getPlayer().getPlayerId().equals(myPlayerId)) {
-                    myPlayer_list_.add(0, newPlayer);
-                }
-                else {
-                    myPlayer_list_.add(i, newPlayer);
+                    mainPlayerId = i;
                 }
             }
+
+            // keep the correct order between players
+            for (int i = mainPlayerId; i < participants_.size(); i++) {
+                myPlayer_list_.add(tmpPlayerList.get(i));
+            }
+
+            for (int i = 0; i < mainPlayerId; i++) {
+                myPlayer_list_.add(tmpPlayerList.get(i));
+            }
+
+            // check debug
+            for (int i = 0; i < myPlayer_list_.size(); i++) {
+                Log.d("P", "" + myPlayer_list_.get(i).getDisplayName() + " -- " + myPlayer_list_.get(i).getOnlineId());
+                getPlayerById(i).setId(i);
+            }
+
+
         }
 
         // simple Singleplayer
@@ -375,31 +402,10 @@ public class GameController{
                 new_My_player.setId(i);
                 myPlayer_list_.add(new_My_player);
             }
-        }
-
-        for (int i = 0; i < myPlayer_list_.size(); i++) {
-            setDisplayName(getPlayerById(i));
-        }
-
-        switch (getAmountOfPlayers()) {
-            case 1:
-                getPlayerById(0).setPosition(0);
-                break;
-            case 2:
-                getPlayerById(0).setPosition(0);
-                getPlayerById(1).setPosition(2);
-                break;
-            case 3:
-                getPlayerById(0).setPosition(0);
-                getPlayerById(1).setPosition(1);
-                getPlayerById(2).setPosition(2);
-                break;
-            case 4:
-                getPlayerById(0).setPosition(0);
-                getPlayerById(1).setPosition(1);
-                getPlayerById(3).setPosition(3);
-                getPlayerById(2).setPosition(2);
-                break;
+            for (int i = 0; i < myPlayer_list_.size(); i++) {
+                setDisplayName(getPlayerById(i));
+                getPlayerById(i).setId(i);
+            }
         }
     }
 
@@ -407,10 +413,7 @@ public class GameController{
 
         String text;
 
-        if (myPlayer.participant_ != null) {
-            text = myPlayer.participant_.getDisplayName();
-        }
-        else if (myPlayer.getId() == 0) {
+        if (myPlayer.getId() == 0) {
             text = view_.getController().my_display_name_;
         }
         else {
@@ -470,6 +473,16 @@ public class GameController{
         dealer_button_.startMoveAnimation(this, getPlayerById(dealer_id).getPosition());
         logic_.setStartingPlayer(logic_.getFirstBidder(getAmountOfPlayers()));
         setTurn(dealer_id);
+    }
+
+    //----------------------------------------------------------------------------------------------
+    //
+    //
+    private void chooseHostAsDealer(int hostOnlineId) {
+        logic_.setDealer(hostOnlineId);
+        dealer_button_.startMoveAnimation(this, getPlayerById(hostOnlineId).getPosition());
+        logic_.setStartingPlayer(logic_.getFirstBidder(getAmountOfPlayers()));
+        setTurn(hostOnlineId);
     }
 
 
@@ -610,6 +623,7 @@ public class GameController{
                 return getPlayerById(i);
             }
         }
+        Log.w("con", "player not found by online id");
         return getPlayerByPosition(0);
     }
 
@@ -619,6 +633,7 @@ public class GameController{
                 return getPlayerById(i);
             }
         }
+        Log.w("con", "player not found by pos");
         return getPlayerByPosition(0);
     }
 
