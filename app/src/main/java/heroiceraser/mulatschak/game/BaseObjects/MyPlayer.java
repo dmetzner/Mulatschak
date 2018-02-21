@@ -15,8 +15,10 @@ public class MyPlayer {
     //  Member Variables
     //
     public Participant participant_;
-    private int id_;
     private String display_name_;
+    private String onlineId;
+
+    private int id_;
 
     private int position_;
     private int lives_;
@@ -38,6 +40,10 @@ public class MyPlayer {
         tricks_ = new CardStack();
     }
 
+    public void initMultiplayer() {
+        display_name_ = participant_.getDisplayName();
+        onlineId = participant_.getPlayer().getPlayerId();
+    }
 
     //----------------------------------------------------------------------------------------------
     //  get amount of tricks
@@ -126,6 +132,14 @@ public class MyPlayer {
 
     public String getDisplayName() {
         return display_name_;
+    }
+
+    public String getOnlineId() {
+        return this.onlineId;
+    }
+
+    public void setOnlineId(String onlineId) {
+        this.onlineId = onlineId;
     }
 }
 

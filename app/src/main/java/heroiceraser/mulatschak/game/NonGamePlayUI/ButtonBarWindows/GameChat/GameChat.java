@@ -1,5 +1,6 @@
 package heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBarWindows.GameChat;
 
+import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
@@ -8,6 +9,7 @@ import android.text.TextPaint;
 import java.util.List;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
+import heroiceraser.mulatschak.MainActivity;
 import heroiceraser.mulatschak.game.NonGamePlayUI.GameKeyBoard.MyKeyBoard;
 import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.GameController;
@@ -109,7 +111,7 @@ public class GameChat extends ButtonBarWindow {
             switch (key) {
                 case "send":
                     if (!text.equals("")) {
-                    controller.getNonGamePlayUIContainer().getChatView().addMessage(controller.getPlayerById(0), text);
+                        sendMessage(controller);
                     }
                     text = "";
                     textField.setText("Nachricht: " + text);
@@ -128,6 +130,14 @@ public class GameChat extends ButtonBarWindow {
                     textField.setText("Nachricht: " + text);
                     break;
             }
+        }
+    }
+
+    private void sendMessage(GameController controller) {
+        controller.getNonGamePlayUIContainer().getChatView().addMessage(controller.getPlayerById(0), text, controller);
+        if (controller.multiplayer_) {
+            MainActivity host = (MainActivity) controller.getView().getContext();
+            host.broadcastMessage(text);
         }
     }
 

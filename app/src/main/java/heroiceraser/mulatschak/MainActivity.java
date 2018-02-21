@@ -178,6 +178,11 @@ public class MainActivity extends FragmentActivity implements
         switchToFragment(mStartScreenFragment, "mStartScreenFragment");
     }
 
+    public void requestLoadingScreen() {
+        switchToFragment(mLoadingScreenFragment, "mLoadingScreenFragment");
+    }
+
+
     //----------------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------------
@@ -245,10 +250,6 @@ public class MainActivity extends FragmentActivity implements
             onStartMenuRequested();
         }
 
-        if (frag != null && frag.equals(mLoadingScreenFragment) && !game_running_) {
-            onStartMenuRequested();
-        }
-
         // Since the state of the signed in user can change when the activity is not active
         // it is recommended to try and sign in silently from when the app resumes.
         signInSilently();
@@ -277,7 +278,7 @@ public class MainActivity extends FragmentActivity implements
         Log.d(TAG, "**** got onStop");
 
         // if we're in a room, leave it.
-        leaveRoom();
+        // leaveRoom(); nope
 
         // stop trying to keep the screen on
         stopKeepingScreenOn();
@@ -484,7 +485,7 @@ public class MainActivity extends FragmentActivity implements
     private void handleSelectPlayersResult(int response, Intent data) {
         if (response != Activity.RESULT_OK) {
             Log.w(TAG, "*** select players UI cancelled, " + response);
-            // switchToMainScreen();
+            onStartMenuRequested();
             return;
         }
 
@@ -506,7 +507,7 @@ public class MainActivity extends FragmentActivity implements
 
         // create the room
         Log.d(TAG, "Creating room...");
-        //switchToScreen(R.id.screen_wait);
+        requestLoadingScreen();
         keepScreenOn();
         resetGameVars();
 
@@ -524,7 +525,7 @@ public class MainActivity extends FragmentActivity implements
     private void handleInvitationInboxResult(int response, Intent data) {
         if (response != Activity.RESULT_OK) {
             Log.w(TAG, "*** invitation inbox UI cancelled, " + response);
-            // switchToMainScreen();
+            onStartMenuRequested();
             return;
         }
 
@@ -548,7 +549,7 @@ public class MainActivity extends FragmentActivity implements
                 .setRoomStatusUpdateCallback(mRoomStatusUpdateCallback)
                 .build();
 
-        //switchToScreen(R.id.screen_wait);
+        requestLoadingScreen();
         keepScreenOn();
         resetGameVars();
 
@@ -587,9 +588,9 @@ public class MainActivity extends FragmentActivity implements
                             mRoomConfig = null;
                         }
                     });
-            // switchToScreen(R.id.screen_wait);
+            requestLoadingScreen();
         } else {
-            // switchToMainScreen();
+            onStartMenuRequested();
         }
     }
 
@@ -818,7 +819,7 @@ public class MainActivity extends FragmentActivity implements
                 .setMessage("getString(R.string.game_problem)")
                 .setNeutralButton(android.R.string.ok, null).create();
 
-        onStartMenuRequested();
+        // onStartMenuRequested();
     }
 
     private RoomUpdateCallback mRoomUpdateCallback = new RoomUpdateCallback() {
@@ -920,6 +921,9 @@ public class MainActivity extends FragmentActivity implements
     // whether it's a final or interim score. The second byte is the score.
     // There is also the
     // 'S' message, which indicates that the game should start.
+
+    private List<Message> messageQueue = new ArrayList<>();
+
     OnRealTimeMessageReceivedListener mOnRealTimeMessageReceivedListener = new OnRealTimeMessageReceivedListener() {
         @Override
         public void onRealTimeMessageReceived(@NonNull RealTimeMessage realTimeMessage) {
@@ -930,38 +934,31 @@ public class MainActivity extends FragmentActivity implements
             Message message = gson.fromJson(data, Message.class);
 
             Log.d(TAG, "Message received: " + message.message);
-
-
-             /* if (true) {
-                // score update.
-                int existingScore = mParticipantScore.containsKey(sender) ?
-                        mParticipantScore.get(sender) : 0;
-                int thisScore = (int) buf[1];
-                if (thisScore > existingScore) {
-                    // this check is necessary because packets may arrive out of
-                    // order, so we
-                    // should only ever consider the highest score we received, as
-                    // we know in our
-                    // game there is no way to lose points. If there was a way to
-                    // lose points,
-                    // we'd have to add a "serial number" to the packet.
-                    mParticipantScore.put(sender, thisScore);
-                }
-
-                // update the scores on the screen
-                //updatePeerScoresDisplay();
-
-                // if it's a final score, mark this participant as having finished
-                // the game
-                if ((char) buf[0] == 'F') {
-                    mFinishedParticipants.add(realTimeMessage.getSenderParticipantId());
-                }
-            }*/
+            messageQueue.add( message);
+            workOnMessageQueue();
         }
     };
 
+    private void workOnMessageQueue() {
+        if (mGameView != null && mGameView.getController() != null) {
+            mGameView.getController().handleReceivedMessage(messageQueue.get(0));
+            messageQueue.remove(0);
+        }
+        else {
+            Log.w(TAG, "controller init to slow");
+            Handler h = new Handler();
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    workOnMessageQueue();
+                }
+            };
+            h.postDelayed(r, 200);
+        }
+    }
+
     // Broadcast my score to everybody else.
-    void broadcastMessage() {
+    public void broadcastMessage(String text) {
         if (!mMultiplayer) {
             // playing single-player mode
             return;
@@ -972,7 +969,8 @@ public class MainActivity extends FragmentActivity implements
             Gson gson = new Gson();
             Message message = new Message();
             message.type = "M";
-            message.message = "test nachricht";
+            message.senderId = mPlayerId;
+            message.message = text;
             mMsgBuf = gson.toJson(message).getBytes("UTF-8");
         }
         catch (Exception e) {
@@ -1256,7 +1254,6 @@ public class MainActivity extends FragmentActivity implements
         int player_lives = GameLogic.DEFAULT_PLAYER_START_LIVES;
         int difficulty = GameLogic.DIFFICULTY_NORMAL;
         int enemies = 0;
-
         if (!multiplayer) { // singleplayer
             player_lives = mSinglePlayerFragment.getPlayerLives();
             difficulty = mSinglePlayerFragment.getDifficulty();
@@ -1266,10 +1263,11 @@ public class MainActivity extends FragmentActivity implements
         String my_name = "NotSignedIn";
         if (isSignedIn()) {
            my_name = mDisplayName;
+           mMyId = mPlayerId;
         }
 
         if (multiplayer) {
-            broadcastMessage();
+ //           broadcastMessage();
         }
 
         // start the game via the game controller of our game view

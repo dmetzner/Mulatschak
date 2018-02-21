@@ -14,6 +14,7 @@ import java.util.List;
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
 import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
+import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
 
@@ -90,7 +91,7 @@ public class ChatView extends DrawableObject {
     //----------------------------------------------------------------------------------------------
     //  add message
     //
-    private void addMessage(String player_name, String message) {
+    private void addMessage(String player_name, String message, GameController controller) {
 
         final int MAX_MESSAGES = 5;
 
@@ -112,12 +113,13 @@ public class ChatView extends DrawableObject {
             messageQueue.remove(0);
         }
         messageQueue.add(textField);
+        controller.getView().postInvalidate();
     }
 
     //----------------------------------------------------------------------------------------------
     //  add message
     //
-    public void addMessage(MyPlayer player, String message) {
+    public void addMessage(MyPlayer player, String message, GameController controller) {
 
         String player_name = "";
 
@@ -128,7 +130,7 @@ public class ChatView extends DrawableObject {
         // make the player name fit a fixed size!
         player_name = HelperFunctions.getStringOfFixedLength(player_name, 9);
 
-        addMessage(player_name, message);
+        addMessage(player_name, message, controller);
     }
 
 

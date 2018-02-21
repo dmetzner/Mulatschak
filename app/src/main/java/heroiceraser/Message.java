@@ -8,5 +8,5 @@ public class Message {
 
     public String type;
     public String message;
-
+    public String senderId;
 }

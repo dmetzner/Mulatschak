@@ -7,6 +7,8 @@ import com.google.android.gms.games.multiplayer.Participant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import heroiceraser.Message;
 import heroiceraser.mulatschak.GameSettings.GameSettings;
 import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GamePlay.GamePlay;
@@ -38,7 +40,7 @@ public class GameController{
     public ArrayList<Participant> participants_;
     public Participant host_;
     public String my_display_name_;
-    public String my_participant_id_;
+    public String myPlayerId;
 
     private GameView view_;
     private GameLayout layout_;
@@ -71,7 +73,7 @@ public class GameController{
         }
         host_ = null;
         my_display_name_ = null;
-        my_participant_id_ = null;
+        myPlayerId = null;
 
         view_ = null;
         layout_ = null;
@@ -131,19 +133,12 @@ public class GameController{
                       final String myName, final String my_id, final ArrayList<Participant> participants) {
 
         multiplayer_ = multiplayer;
-
         my_display_name_ = myName;
         if (my_display_name_ == null) {
             my_display_name_ = "notSignedIn";
         }
-
-        // if singlePlayer -> == null
-        my_participant_id_ = my_id;
+        myPlayerId = my_id;
         participants_ = participants;
-        if (participants != null && participants.size() > 0) {
-            host_ = participants.get(0);
-        }
-
 
         long start = System.currentTimeMillis();
         // essential inits
@@ -360,12 +355,16 @@ public class GameController{
 
         if (multiplayer_) {
             for (int i = 0; i < participants_.size(); i++) {
-                MyPlayer new_My_player = new MyPlayer();
-                new_My_player.participant_ = participants_.get(i);
-                int player_id = i;
-                myPlayer_list_.add(player_id, new_My_player);
+                MyPlayer newPlayer = new MyPlayer();
+                newPlayer.participant_ = participants_.get(i);
+                newPlayer.initMultiplayer(); // in your own app you are always player 0
+                if (participants_.get(i).getPlayer().getPlayerId().equals(myPlayerId)) {
+                    myPlayer_list_.add(0, newPlayer);
+                }
+                else {
+                    myPlayer_list_.add(i, newPlayer);
+                }
             }
-
         }
 
         // simple Singleplayer
@@ -562,6 +561,24 @@ public class GameController{
     }
 
 
+    public void handleReceivedMessage(final Message message) {
+        if (enable_drawing_) {
+            non_game_play_ui_.getChatView().addMessage(getPlayerByOnlineId(message.senderId), message.message, this);
+        }
+        else {
+            Handler h = new Handler();
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    handleReceivedMessage(message);
+                }
+            };
+            h.postDelayed(r, 200);
+        }
+
+    }
+
+
     //----------------------------------------------------------------------------------------------
     //  Getter
     //
@@ -586,6 +603,15 @@ public class GameController{
     public List<MyPlayer> getPlayerList() { return myPlayer_list_; }
 
     public MyPlayer getPlayerById(int id) { return myPlayer_list_.get(id); }
+
+    public MyPlayer getPlayerByOnlineId(String playerId) {
+        for (int i = 0; i < getAmountOfPlayers(); i++) {
+            if (playerId.equals(getPlayerById(i).getOnlineId())) {
+                return getPlayerById(i);
+            }
+        }
+        return getPlayerByPosition(0);
+    }
 
     public MyPlayer getPlayerByPosition(int pos) {
         for (int i = 0; i < getAmountOfPlayers(); i++) {
