@@ -169,7 +169,7 @@ public class GameView extends View {
 
     private void drawDiscardPile(Canvas canvas) {
         controller_.getDiscardPile().draw(canvas);
-        controller_.getDiscardPile().drawOverlays(canvas, controller_.getLogic());
+        controller_.getDiscardPile().drawOverlays(canvas, controller_);
     }
 
     private void drawBidsView(Canvas canvas) {

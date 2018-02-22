@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
+import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.helpers.HelperFunctions;
@@ -132,11 +133,13 @@ public class DiscardPile extends DrawableObject {
     //----------------------------------------------------------------------------------------------
     //  draw Overlays
     //
-    public void drawOverlays(Canvas canvas, GameLogic logic) {
+    public void drawOverlays(Canvas canvas, GameController controller) {
         if (overlays_visible_) {
             // draw discard pile
+            int roundWinnerPos = controller.getPlayerById(controller.getLogic()
+                    .getRoundWinnerId()).getPosition();
             for (int j = 0; j < positions_.size(); j++) {
-                if (j != logic.getRoundWinnerId()) {
+                if (j != roundWinnerPos) {
                     canvas.drawBitmap(overlay_lost_,
                             getPoint(j).x,
                             getPoint(j).y, null);

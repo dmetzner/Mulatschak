@@ -236,7 +236,7 @@ public class GameController{
         view_.enableUpdateCanvasThread();
         //gameModerator.startRoundMessage(non_game_play_ui_.getChatView(),
         //        getPlayerById(logic_.getDealer()).getDisplayName());
-        dealer_button_.startMoveAnimation(this, logic_.getDealer());
+        dealer_button_.startMoveAnimation(this, getPlayerById(logic_.getDealer()).getPosition());
         deck_.shuffleDeck();
         game_play_.getDealCards().dealCards(this);  // starts an dealing animation
     }
@@ -281,7 +281,7 @@ public class GameController{
             case 0:  // start a new round if every player said 0 tricks
                 // ToDo
                 logic_.raiseMultiplier();
-                setTurn(NOT_SET);
+                setTurn(logic_.getDealer());
                 mHandler.postDelayed(newRoundRunnable, 3000);
                 break;
 

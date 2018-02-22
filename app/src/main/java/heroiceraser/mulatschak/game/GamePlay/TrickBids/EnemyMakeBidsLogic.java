@@ -38,6 +38,6 @@ class EnemyMakeBidsLogic {
             max--;
         }
 
-        controller.getGamePlay().getTrickBids().setNewMaxTrumps(max, myPlayer.getId(), controller);
+        controller.getGamePlay().getTrickBids().setNewMaxTrumps(0, myPlayer.getId(), controller);
     }
 }

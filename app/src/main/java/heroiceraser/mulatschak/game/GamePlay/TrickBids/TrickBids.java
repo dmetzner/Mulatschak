@@ -76,12 +76,14 @@ public class TrickBids {
         controller.turnToNextPlayer(false);
 
         if (logic.getTricksToMake() == MakeBidsAnimation.MULATSCHAK) {
-            bids_view_.startEndingAnimation(logic.getTrumpPlayerId(), layout);
+            int winnerId = controller.getPlayerById(logic.getTrumpPlayerId()).getPosition();
+            bids_view_.startEndingAnimation(winnerId, layout);
             return;
         }
 
         if (!first_call && logic.getTurn() == logic.getFirstBidder(controller.getAmountOfPlayers())) {
-            bids_view_.startEndingAnimation(logic.getTrumpPlayerId(), layout);
+            int winnerPos = controller.getPlayerById(logic.getTrumpPlayerId()).getPosition();
+            bids_view_.startEndingAnimation(winnerPos, layout);
             return;         // stops the recursion after all players made their bids
         }
 
@@ -105,17 +107,19 @@ public class TrickBids {
     void setNewMaxTrumps(int amount, int id, GameController controller) {
         GameLogic logic = controller.getLogic();
 
+        int playerPos = controller.getPlayerById(logic.getTurn()).getPosition();
+
         if (amount == MakeBidsAnimation.MULATSCHAK) {
             logic.setMulatschakRound(true);
             logic.setTrumpPlayerId(id);
             logic.setTricksToMake(MakeBidsAnimation.MULATSCHAK);
             controller.getPlayerById(id).setTricksToMake(MakeBidsAnimation.MULATSCHAK);
-            bids_view_.startAnimation(controller, logic.getTurn(), "M");
+            bids_view_.startAnimation(controller, playerPos, "M");
         }
 
         else if (amount == MakeBidsAnimation.MISS_A_TURN) {
             controller.getPlayerById(id).setTricksToMake(amount);
-            bids_view_.startAnimation(controller, logic.getTurn(), "X");
+            bids_view_.startAnimation(controller, playerPos, "X");
         }
 
         // amount have to be bigger, except dealers turn
@@ -129,12 +133,12 @@ public class TrickBids {
             controller.getPlayerById(id).setTricksToMake(amount);
             logic.setTricksToMake(amount);
             logic.setTrumpPlayerId(id);
-            bids_view_.startAnimation(controller, logic.getTurn(), "" + amount);
+            bids_view_.startAnimation(controller, playerPos, "" + amount);
         }
 
         else {
             controller.getPlayerById(id).setTricksToMake(0);
-            bids_view_.startAnimation(controller, logic.getTurn(), "-");
+            bids_view_.startAnimation(controller, playerPos, "-");
         }
 
         // there have to be at least two active players every round!
