@@ -28,6 +28,8 @@ public class MyPlayer {
     private CardStack hand_;
     private CardStack tricks_;
 
+    private boolean enemyLogic;
+
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
@@ -38,11 +40,13 @@ public class MyPlayer {
         miss_a_turn_ = false;
         hand_ = new CardStack();
         tricks_ = new CardStack();
+        enemyLogic = false;
     }
 
     public void initMultiplayer() {
         display_name_ = participant_.getDisplayName();
         onlineId = participant_.getPlayer().getPlayerId();
+        enemyLogic = false;
     }
 
     //----------------------------------------------------------------------------------------------
@@ -140,6 +144,15 @@ public class MyPlayer {
 
     public void setOnlineId(String onlineId) {
         this.onlineId = onlineId;
+    }
+
+
+    public boolean isEnemyLogic() {
+        return enemyLogic;
+    }
+
+    public void setEnemyLogic(boolean enemyLogic) {
+        this.enemyLogic = enemyLogic;
     }
 }
 

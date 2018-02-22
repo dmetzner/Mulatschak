@@ -85,19 +85,6 @@ public class ChooseTrumpAnimation {
 
 
     //----------------------------------------------------------------------------------------------
-    //  setTrump
-    //                 -> called by Touch events, choose trump animation
-    //                 -> ends choose trump animation
-    //
-    private void setTrump(GameController controller, int button_id) {
-        controller.getLogic().setTrump(button_id + 1); // No Joker Button (card suit include joker)
-        animatingTrumps = false;
-        controller.getGamePlay().getChooseTrump().getTrumpView()
-                .startAnimation(controller.getLogic().getTrump(), controller.getLogic().getTrumpPlayerId(), controller);
-    }
-
-
-    //----------------------------------------------------------------------------------------------
     //  reEnableButtons
     //
     void reEnableButtons() {
@@ -136,7 +123,8 @@ public class ChooseTrumpAnimation {
         }
         for (int i = 0; i < trumpButtons.size(); i++) {
             if (trumpButtons.get(i).touchEventUp(X, Y)) {
-                setTrump(controller, i);
+                animatingTrumps = false;
+                controller.getGamePlay().getChooseTrump().handleMainPlayersDecision(i, controller);
             }
         }
     }

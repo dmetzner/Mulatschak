@@ -95,6 +95,7 @@ public class MulatschakResultAnimation {
     //  startAnimation
     //
     public void startAnimation(GameController controller) {
+        controller.getView().enableUpdateCanvasThread();
         startTime = System.currentTimeMillis();
         animating = true;
         background4Player0Animations.updateAlpha(0);

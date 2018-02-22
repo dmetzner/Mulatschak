@@ -8,6 +8,7 @@ import android.text.TextPaint;
 
 import java.util.List;
 
+import heroiceraser.Message;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
 import heroiceraser.mulatschak.MainActivity;
 import heroiceraser.mulatschak.game.NonGamePlayUI.GameKeyBoard.MyKeyBoard;
@@ -137,7 +138,7 @@ public class GameChat extends ButtonBarWindow {
         controller.getNonGamePlayUIContainer().getChatView().addMessage(controller.getPlayerById(0), text, controller);
         if (controller.multiplayer_) {
             MainActivity host = (MainActivity) controller.getView().getContext();
-            host.broadcastMessage(text);
+            host.broadcastMessage(Message.chatMessage, text);
         }
     }
 

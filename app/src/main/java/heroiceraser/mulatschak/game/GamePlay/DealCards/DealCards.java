@@ -44,8 +44,14 @@ public class DealCards {
     //
     private void deal(GameController controller) {
         for (int hand_card = 0; hand_card < GameLogic.MAX_CARDS_PER_HAND; hand_card++) {
-            for (MyPlayer player : controller.getPlayerList()) {
-                takeCardFromDeck(player, controller.getDeck());
+            //for (MyPlayer player : controller.getPlayerList()) {
+              //  takeCardFromDeck(player, controller.getDeck());
+            //}
+            for (int i = controller.getLogic().getDealer() + 1; i < controller.getAmountOfPlayers(); i++) {
+                takeCardFromDeck(controller.getPlayerById(i), controller.getDeck());
+            }
+            for (int i = 0; i <= controller.getLogic().getDealer(); i++) {
+                takeCardFromDeck(controller.getPlayerById(i), controller.getDeck());
             }
         }
     }

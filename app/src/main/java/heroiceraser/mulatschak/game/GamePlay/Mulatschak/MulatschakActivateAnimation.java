@@ -37,7 +37,9 @@ public class MulatschakActivateAnimation {
     public void setUp(GameController controller) {
         GameLayout layout = controller.getLayout();
         bidsField = new BidsField();
-        Point startPos = new Point(layout.getPlayerInfoPositions().get(controller.getLogic().getTrumpPlayerId()));
+        Point startPos = new Point(layout.getPlayerInfoPositions()
+                .get(controller.getPlayerById(
+                        controller.getLogic().getTrumpPlayerId()).getPosition()));
         startPos.x += layout.getCardWidth() / 2;
         startPos.y += layout.getCardHeight() / 2;      // offsets to center 'em
         Point final_pos = new Point(layout.getDiscardPilePositions().get(0).x + layout.getCardWidth() / 2,
@@ -98,7 +100,8 @@ public class MulatschakActivateAnimation {
             if (startAnimation) {
                 bidsField.setStartPos(
                         controller.getLayout().getTrickBidsGamePlayPositions().get(
-                                controller.getLogic().getTrumpPlayerId()));
+                                controller.getPlayerById(controller.getLogic().getTrumpPlayerId())
+                                        .getPosition()));
                 Point offset = new Point(bidsField.getPosition().x - bidsField.getStartPos().x,
                     bidsField.getPosition().y - bidsField.getStartPos().y);
                 bidsField.setOffset(offset);

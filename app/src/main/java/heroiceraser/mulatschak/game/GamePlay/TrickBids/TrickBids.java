@@ -1,13 +1,21 @@
 package heroiceraser.mulatschak.game.GamePlay.TrickBids;
 
+import android.os.Handler;
+
+import com.google.gson.Gson;
+
 import java.util.List;
 
+import heroiceraser.Message;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
+import heroiceraser.mulatschak.MainActivity;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
+
+import static heroiceraser.mulatschak.game.GamePlay.TrickBids.MakeBidsAnimation.MISS_A_TURN;
 
 
 //----------------------------------------------------------------------------------------------
@@ -78,7 +86,7 @@ public class TrickBids {
         if (logic.getTricksToMake() == MakeBidsAnimation.MULATSCHAK) {
             int winnerId = controller.getPlayerById(logic.getTrumpPlayerId()).getPosition();
             bids_view_.startEndingAnimation(winnerId, layout);
-            return;
+            return;         // mulatschak stops the bidding
         }
 
         if (!first_call && logic.getTurn() == logic.getFirstBidder(controller.getAmountOfPlayers())) {
@@ -95,9 +103,61 @@ public class TrickBids {
         }
         else if (logic.getTurn() != 0) {
             controller.getView().enableUpdateCanvasThread();
-            enemyMakeBidsLogic.makeTrickBids(controller.getPlayerById(logic.getTurn()), controller);
-            // makeTrickBids should get called after animation
+
+            // single player
+            if (controller.getPlayerById(logic.getTurn()).isEnemyLogic()) {
+                enemyMakeBidsLogic.makeTrickBids(controller.getPlayerById(logic.getTurn()), controller);
+                // makeTrickBids should get called after animation
+            }
+            // multiplayer
+            else {
+                controller.waitForOnlineInteraction = true;
+                // wait 4 online interaction
+            }
         }
+    }
+
+
+    public void handleOnlineInteraction(int buttonId, GameController controller) {
+        controller.waitForOnlineInteraction = false;
+        setTricks(controller, buttonId, controller.getLogic().getTurn());
+    }
+
+    public void handleMainPlayersDecision(int buttonId, GameController controller) {
+
+        if (controller.multiplayer_) {
+            // broadcast to all the decision
+            MainActivity activity = (MainActivity) controller.getView().getContext();
+            Gson gson = new Gson();
+            activity.broadcastMessage(Message.trickBids, gson.toJson(buttonId));
+        }
+
+        setTricks(controller, buttonId, 0);
+    }
+
+    //----------------------------------------------------------------------------------------------
+    //  setTricks
+    //                  -> called by touch events, animating numbers
+    //                  -> ends choose bids animation
+    //                  -> sets Bids
+    //
+    void setTricks(GameController controller, int buttonId, int playerId) {
+        buttonId--;  // because of miss a turn button
+
+        //---- don't play this round
+        if (buttonId == MISS_A_TURN) {
+            controller.getPlayerById(playerId).setMissATurn(true);
+            makeBidsAnimation.clearHand(controller);
+            controller.getGamePlay().getTrickBids().setNewMaxTrumps(MISS_A_TURN, playerId, controller);
+            return;
+        }
+
+        //---- play this round
+        controller.getPlayerById(playerId).setMissATurn(false);
+        if (playerId == 0) {
+            makeBidsAnimation.getNumberButtons().get(0).setEnabled(true); // played this round -> can skip the next one
+        }
+        controller.getGamePlay().getTrickBids().setNewMaxTrumps(buttonId, playerId, controller);
     }
 
 
@@ -117,7 +177,7 @@ public class TrickBids {
             bids_view_.startAnimation(controller, playerPos, "M");
         }
 
-        else if (amount == MakeBidsAnimation.MISS_A_TURN) {
+        else if (amount == MISS_A_TURN) {
             controller.getPlayerById(id).setTricksToMake(amount);
             bids_view_.startAnimation(controller, playerPos, "X");
         }
@@ -127,7 +187,7 @@ public class TrickBids {
                 amount == logic.getTricksToMake() && logic.getTurn() == logic.getDealer()) {
             List<MyButton> buttons = makeBidsAnimation.getNumberButtons();
             // disable lower amount buttons, but button 0 is always clickable // miss a turn
-            for (int i = 2; i <= (amount + 1); i++) {
+            for (int i = 2; i <= (amount + 1) && i < buttons.size(); i++) {
                 buttons.get(i).setEnabled(false);
             }
             controller.getPlayerById(id).setTricksToMake(amount);

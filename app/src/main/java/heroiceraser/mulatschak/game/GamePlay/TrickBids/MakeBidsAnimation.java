@@ -99,35 +99,10 @@ public class MakeBidsAnimation {
 
 
     //----------------------------------------------------------------------------------------------
-    //  setTricks
-    //                  -> called by touch events, animating numbers
-    //                  -> ends choose bids animation
-    //                  -> sets Bids
-    //
-    private void setTricks(GameController controller, int button_id) {
-        animatingNumbers = false;
-        button_id--;  // because of miss a turn button
-
-        //---- don't play this round
-        if (button_id == MISS_A_TURN) {
-            controller.getPlayerById(0).setMissATurn(true);
-            clearHand(controller);
-            controller.getGamePlay().getTrickBids().setNewMaxTrumps(MISS_A_TURN, 0, controller);
-            return;
-        }
-
-        //---- play this round
-        controller.getPlayerById(0).setMissATurn(false);
-        numberButtons.get(0).setEnabled(true); // played this round -> can skip the next one
-        controller.getGamePlay().getTrickBids().setNewMaxTrumps(button_id, 0, controller);
-    }
-
-
-    //----------------------------------------------------------------------------------------------
     //  clear Hand
     //                 -> moves all player 0 hand cards to the trash
     //
-    private void clearHand(GameController controller) {
+    void clearHand(GameController controller) {
         CardStack hand = controller.getPlayerById(0).getHand();
         for (int i = 0; i < hand.getCardStack().size(); i++) {
             hand.getCardAt(i).setPosition(controller.getLayout().getDeckPosition());
@@ -224,7 +199,8 @@ public class MakeBidsAnimation {
         }
         for (int i = 0; i < numberButtons.size(); i++) {
             if (numberButtons.get(i).touchEventDown(X, Y)) {
-                setTricks(controller, i);
+                animatingNumbers = false;
+                controller.getGamePlay().getTrickBids().handleMainPlayersDecision(i, controller);
             }
         }
     }

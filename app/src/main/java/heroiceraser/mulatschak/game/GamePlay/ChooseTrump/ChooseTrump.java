@@ -1,6 +1,11 @@
 package heroiceraser.mulatschak.game.GamePlay.ChooseTrump;
 
 import android.os.Handler;
+
+import com.google.gson.Gson;
+
+import heroiceraser.Message;
+import heroiceraser.mulatschak.MainActivity;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GameView;
@@ -62,20 +67,54 @@ public class ChooseTrump {
         }
         else if (logic.getTrumpPlayerId() != 0) {
             view.enableUpdateCanvasThread();
-            enemyChooseTrumpLogic.
-                    chooseTrump(controller.getPlayerById(logic.getTrumpPlayerId()), logic);
-            Handler mhandler = new Handler();
-            Runnable codeToRun = new Runnable() {
-                @Override
-                public void run() {
-                    trump_view_.startAnimation(logic.getTrump(),
-                            logic.getTrumpPlayerId(), controller);
-                }
-            };
-            mhandler.postDelayed(codeToRun, 500);
+
+            // single player
+            if (controller.getPlayerById(logic.getTurn()).isEnemyLogic()) {
+                enemyChooseTrumpLogic.
+                        chooseTrump(controller.getPlayerById(logic.getTrumpPlayerId()), logic);
+                Handler mhandler = new Handler();
+                Runnable codeToRun = new Runnable() {
+                    @Override
+                    public void run() {
+                        trump_view_.startAnimation(logic.getTrump(),
+                                logic.getTrumpPlayerId(), controller);
+                    }
+                };
+                mhandler.postDelayed(codeToRun, 500);
+            }
+            else {
+                controller.waitForOnlineInteraction = true;
+            }
         }
     }
 
+    public void handleOnlineInteraction(int trump, GameController controller) {
+        controller.waitForOnlineInteraction = false;
+        setTrump(controller, trump);
+    }
+
+    public void handleMainPlayersDecision(int trump, GameController controller) {
+
+        if (controller.multiplayer_) {
+            // broadcast to all the decision
+            MainActivity activity = (MainActivity) controller.getView().getContext();
+            Gson gson = new Gson();
+            activity.broadcastMessage(Message.chooseTrump, gson.toJson(trump));
+        }
+        setTrump(controller, trump);
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    //  setTrump
+    //                 -> called by Touch events, choose trump animation
+    //                 -> ends choose trump animation
+    //
+    private void setTrump(GameController controller, int button_id) {
+        controller.getLogic().setTrump(button_id + 1); // No Joker Button (card suit include joker)
+        controller.getGamePlay().getChooseTrump().getTrumpView()
+                .startAnimation(controller.getLogic().getTrump(), controller.getLogic().getTrumpPlayerId(), controller);
+    }
 
     //----------------------------------------------------------------------------------------------
     //  Getter

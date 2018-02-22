@@ -171,7 +171,7 @@ public class GameLogic {
         return true;
     }
 
-    private boolean isDiscardPileEmpty(DiscardPile discard_pile) {
+    public boolean isDiscardPileEmpty(DiscardPile discard_pile) {
         for (int i = 0; i < 4; i++) {
             if (discard_pile.getCard(i) != null) {
              return false;
@@ -286,7 +286,7 @@ public class GameLogic {
         tricks_to_make_ = tricks;
     }
 
-    void setStartingCard(int starting_card_symbol_) {
+    public void setStartingCard(int starting_card_symbol_) {
         this.starting_card_symbol_ = starting_card_symbol_;
     }
 

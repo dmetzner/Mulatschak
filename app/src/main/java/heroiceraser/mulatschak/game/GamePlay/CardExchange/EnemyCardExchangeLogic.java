@@ -1,8 +1,11 @@
 package heroiceraser.mulatschak.game.GamePlay.CardExchange;
 
 import android.graphics.Canvas;
+
+import java.util.ArrayList;
 import java.util.List;
 import heroiceraser.mulatschak.game.BaseObjects.Card;
+import heroiceraser.mulatschak.game.BaseObjects.CardStack;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
@@ -76,6 +79,37 @@ public class EnemyCardExchangeLogic {
         //      -> give back the best cards from move cards to the players hand
         handleToLessCardsInDeck(card_exchange_animation_.getExchangedCards(), myPlayer,
                 controller.getDeck().getCardStack().size());
+
+        // no cards to change? -> nothing to do
+        if (card_exchange_animation_.getExchangedCards().size() <= 0) {
+            endCardExchange(controller);
+            return;
+        }
+
+        // start animation -> enables canvas thread
+        controller.getView().enableUpdateCanvasThread();
+        card_exchange_animation_.startAnimation();
+
+        // --> gets continued by draw method
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // exchangeCards:
+    //
+    void exchangeCardOnline(MyPlayer myPlayer, GameController controller, ArrayList<Integer> handCardsToRemoveIds) {
+
+        animation_running_ = true;
+
+        myPlayer_ = myPlayer;
+        card_exchange_animation_.init(controller, myPlayer);
+
+        CardStack playerHand = controller.getPlayerById(controller.getLogic().getTurn()).getHand();
+        // minus i cause we removed some (only works if sorted!)
+        for (int i = 0; i < handCardsToRemoveIds.size(); i++) {
+            card_exchange_animation_.getExchangedCards().add(playerHand.getCardAt(
+                            handCardsToRemoveIds.get(i) - i));
+            playerHand.getCardStack().remove(handCardsToRemoveIds.get(i) - i);
+        }
 
         // no cards to change? -> nothing to do
         if (card_exchange_animation_.getExchangedCards().size() <= 0) {
@@ -210,5 +244,9 @@ public class EnemyCardExchangeLogic {
     //
     boolean isAnimationRunning() {
         return animation_running_;
+    }
+
+    public EnemyCardExchangeAnimation getEnemyCardExchangeAnimation() {
+        return card_exchange_animation_;
     }
 }

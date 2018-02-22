@@ -74,6 +74,10 @@ public class CardStack extends DrawableObject {
         return stack_;
     }
 
+    public void setCardStack(List<Card> cardStack) {
+        stack_ = cardStack;
+    }
+
     public Card getCardAt(int pos) {
         if (pos < stack_.size()) {
             return stack_.get(pos);

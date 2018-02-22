@@ -192,6 +192,8 @@ public class PlayACardLogic {
             // valid card play -> move card to discard pile call playACard again
             moveCardFromHandToDiscardPile(controller);
 
+            controller.getGamePlay().getPlayACardRound().handleMainPlayersDecision(controller);
+
             // recalculate hand positions!
             controller.getPlayerHandsView().redrawHands(controller.getLayout(), controller.getPlayerById(0));
 

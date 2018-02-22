@@ -2,7 +2,15 @@ package heroiceraser.mulatschak.game.GamePlay.CardExchange;
 
 import android.graphics.Canvas;
 
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import heroiceraser.Message;
+import heroiceraser.mulatschak.MainActivity;
 import heroiceraser.mulatschak.game.BaseObjects.Card;
+import heroiceraser.mulatschak.game.BaseObjects.CardStack;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GameView;
@@ -72,10 +80,43 @@ public class CardExchange {
 
         else if (logic.getTurn() != 0) {
             controller.getView().enableUpdateCanvasThread();
-            enemy_card_exchange_logic_.exchangeCard(controller.getPlayerById(logic.getTurn()), controller);
+            // single player
+            if (controller.getPlayerById(logic.getTurn()).isEnemyLogic()) {
+                enemy_card_exchange_logic_.exchangeCard(controller.getPlayerById(logic.getTurn()), controller);
+            }
+            else {
+                controller.waitForOnlineInteraction = true;
+            }
         }
     }
 
+
+    public void handleOnlineInteraction(ArrayList<Integer> handCardsToRemoveIds, GameController controller) {
+        controller.waitForOnlineInteraction = false;
+
+        enemy_card_exchange_logic_.exchangeCardOnline(
+                controller.getPlayerById(controller.getLogic().getTurn()),
+                controller, handCardsToRemoveIds);
+    }
+
+    public void handleMainPlayersDecision(GameController controller) {
+
+        if (controller.multiplayer_) {
+            // broadcast to all the decision
+            MainActivity activity = (MainActivity) controller.getView().getContext();
+            Gson gson = new Gson();
+            ArrayList<Integer> cardHandIds = new ArrayList<>();
+            List<Card> playerHand = controller.getPlayerById(0).getHand().getCardStack();
+            for (int i = 0; i < playerHand.size(); i++) {
+                if (playerHand.get(i).getFixedPosition().y != playerHand.get(i).getPosition().y) {
+                    cardHandIds.add(i);
+                }
+            }
+            activity.broadcastMessage(Message.cardExchange, gson.toJson(cardHandIds));
+        }
+
+        card_exchange_logic_.exchangeCards(controller);
+    }
 
     //----------------------------------------------------------------------------------------------
     //  draw
@@ -128,7 +169,7 @@ public class CardExchange {
             return;
         }
         if (card_exchange_logic_.getButton().touchEventUp(X, Y)) {
-            card_exchange_logic_.exchangeCards(controller);
+            handleMainPlayersDecision(controller);
         }
     }
 }

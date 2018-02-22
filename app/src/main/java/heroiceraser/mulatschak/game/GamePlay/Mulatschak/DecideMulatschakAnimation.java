@@ -128,12 +128,13 @@ class DecideMulatschakAnimation {
         if (animationRunning) {
             if (yesButton.touchEventUp(X, Y)) {
                 animationRunning = false;
-                controller.getGamePlay().getDecideMulatschak().setMulatschakUp(controller);
-                // makeMulatschakDecision(false, controller) gets called after animation
+                controller.getGamePlay().getDecideMulatschak()
+                        .handleMainPlayersDecision(true, controller);
             }
             if (noButton.touchEventUp(X, Y)) {
                 animationRunning = false;
-                controller.getGamePlay().getDecideMulatschak().makeMulatschakDecision(false, controller);
+                controller.getGamePlay().getDecideMulatschak()
+                        .handleMainPlayersDecision(false, controller);
             }
         }
     }

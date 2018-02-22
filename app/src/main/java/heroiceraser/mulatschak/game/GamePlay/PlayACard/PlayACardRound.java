@@ -3,6 +3,10 @@ package heroiceraser.mulatschak.game.GamePlay.PlayACard;
 import android.graphics.Canvas;
 import android.os.Handler;
 
+import com.google.gson.Gson;
+
+import heroiceraser.Message;
+import heroiceraser.mulatschak.MainActivity;
 import heroiceraser.mulatschak.game.BaseObjects.Card;
 import heroiceraser.mulatschak.game.BaseObjects.DiscardPile;
 import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
@@ -69,7 +73,7 @@ public class PlayACardRound {
         // only allowed if turn is player 0
         controller.getGamePlay().getPlayACardRound().setCardMovable(false);
 
-        // ever player played played a card
+        // every player played played a card
         if (!first_call && logic.getTurn() == logic.getStartingPlayer()) {
             endCardRound(controller);
             return;
@@ -92,12 +96,37 @@ public class PlayACardRound {
         // enemies
         else if (logic.getTurn() != 0) {
             controller.getView().enableUpdateCanvasThread();
-            enemy_play_a_card_logic_.playACard(controller,
-                    controller.getPlayerById(logic.getTurn()));
+            // single player
+            if (controller.getPlayerById(logic.getTurn()).isEnemyLogic()) {
+                enemy_play_a_card_logic_.playACard(controller,
+                        controller.getPlayerById(logic.getTurn()));
+            }
+            // multiplayer
+            else {
+                controller.waitForOnlineInteraction = true;
+                // wait 4 online interaction
+            }
         }
     }
 
+    public void handleOnlineInteraction(int cardId, GameController controller) {
+        controller.waitForOnlineInteraction = false;
 
+        enemy_play_a_card_logic_.playACardOnline(controller,
+                controller.getPlayerById(controller.getLogic().getTurn()), cardId);
+
+    }
+
+    public void handleMainPlayersDecision(GameController controller) {
+        if (controller.multiplayer_) {
+            // broadcast to all the decision
+            MainActivity activity = (MainActivity) controller.getView().getContext();
+            int cardId = controller.getDiscardPile().getCard(controller
+                    .getPlayerById(controller.getLogic().getTurn()).getPosition()).getId();
+            Gson gson = new Gson();
+            activity.broadcastMessage(Message.playACard, gson.toJson(cardId));
+        }
+    }
 
     //----------------------------------------------------------------------------------------------
     //  end card round

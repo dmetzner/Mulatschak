@@ -4,12 +4,17 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.google.android.gms.games.multiplayer.Participant;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import heroiceraser.Message;
 import heroiceraser.mulatschak.GameSettings.GameSettings;
+import heroiceraser.mulatschak.MainActivity;
 import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GamePlay.GamePlay;
 import heroiceraser.mulatschak.game.NonGamePlayUI.NonGamePlayUIContainer;
@@ -210,11 +215,12 @@ public class GameController{
     // ---------------------------------------------------------------------------------------------
     // ----------------------  Game Flow
 
+
     // ---------------------------------------------------------------------------------------------
     //  startRound
     //
     public void startRound() {
-
+        waitForOnlineInteraction = false;
         player_info_.setVisible(true);
 
         // clean up last round
@@ -237,8 +243,30 @@ public class GameController{
         //gameModerator.startRoundMessage(non_game_play_ui_.getChatView(),
         //        getPlayerById(logic_.getDealer()).getDisplayName());
         dealer_button_.startMoveAnimation(this, getPlayerById(logic_.getDealer()).getPosition());
-        deck_.shuffleDeck();
-        game_play_.getDealCards().dealCards(this);  // starts an dealing animation
+
+        if (multiplayer_) {
+            if (myPlayerId.equals(hostOnlineId)) {
+                deck_.shuffleDeck();
+                // send to all participants
+                ArrayList<Integer> cardIds = new ArrayList<>();
+                for (int i = 0; i < deck_.getCardStack().size(); i++) {
+                    cardIds.add(deck_.getCardAt(i).getId());
+                }
+                MainActivity mainActivity = (MainActivity) view_.getContext();
+                Gson gson = new Gson();
+                mainActivity.broadcastMessage(Message.shuffledDeck, gson.toJson(cardIds));
+                game_play_.getDealCards().dealCards(this);  // starts an dealing animation
+            }
+            else {
+                // show shuffle animation
+                // wait for shuffled deck
+                waitForOnlineInteraction = true;
+            }
+        }
+        else {
+            deck_.shuffleDeck();
+            game_play_.getDealCards().dealCards(this);  // starts an dealing animation
+        }
     }
 
 
@@ -279,7 +307,7 @@ public class GameController{
         // checkButton the highest bid
         switch (game_play_.getTrickBids().getHighestBid(controller)) {
             case 0:  // start a new round if every player said 0 tricks
-                // ToDo
+                // ToDo animation
                 logic_.raiseMultiplier();
                 setTurn(logic_.getDealer());
                 mHandler.postDelayed(newRoundRunnable, 3000);
@@ -390,8 +418,6 @@ public class GameController{
                 Log.d("P", "" + myPlayer_list_.get(i).getDisplayName() + " -- " + myPlayer_list_.get(i).getOnlineId());
                 getPlayerById(i).setId(i);
             }
-
-
         }
 
         // simple Singleplayer
@@ -405,11 +431,17 @@ public class GameController{
             for (int i = 0; i < myPlayer_list_.size(); i++) {
                 setDisplayName(getPlayerById(i));
                 getPlayerById(i).setId(i);
+                if (i == 0) {
+                    getPlayerById(i).setEnemyLogic(false);
+                }
+                else {
+                    getPlayerById(i).setEnemyLogic(true);
+                }
             }
         }
     }
 
-    public void setDisplayName(MyPlayer myPlayer) {
+    private void setDisplayName(MyPlayer myPlayer) {
 
         String text;
 
@@ -576,7 +608,32 @@ public class GameController{
 
     public void handleReceivedMessage(final Message message) {
         if (enable_drawing_) {
-            non_game_play_ui_.getChatView().addMessage(getPlayerByOnlineId(message.senderId), message.message, this);
+            switch (message.type) {
+                case Message.chatMessage:
+                    non_game_play_ui_.getChatView().addMessage(getPlayerByOnlineId(message.senderId), message.data, this);
+                    break;
+                case Message.shuffledDeck:
+                    receiveShuffledDeck(message);
+                    break;
+                case Message.mulatschakDecision:
+                    receiveMulatschakDecision(message);
+                    break;
+                case Message.trickBids:
+                    receiveTrickBids(message);
+                    break;
+                case Message.chooseTrump:
+                    receiveChooseTrump(message);
+                    break;
+                case Message.cardExchange:
+                    receiveCardExchange(message);
+                    break;
+                case Message.playACard:
+                    receivePlayACard(message);
+                    break;
+
+
+            }
+
         }
         else {
             Handler h = new Handler();
@@ -589,6 +646,126 @@ public class GameController{
             h.postDelayed(r, 200);
         }
 
+    }
+
+    public boolean waitForOnlineInteraction;
+
+    private void receiveShuffledDeck(final Message message) {
+        if (waitForOnlineInteraction) {
+            Gson gson = new Gson();
+            Type listType = new TypeToken<ArrayList<Integer>>() {}.getType();
+            ArrayList<Integer> cardIds = gson.fromJson(message.data, listType);
+            waitForOnlineInteraction = false;
+            deck_.sortByIdList(cardIds);
+            getGamePlay().getDealCards().dealCards(this);
+        }
+        // wait & try again
+        else  {
+            final GameController gc = this;
+            Handler h = new Handler();
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    receiveShuffledDeck(message);
+                }
+            };
+            h.postDelayed(r, 200);
+        }
+    }
+
+    private void receiveMulatschakDecision(final Message message) {
+        if (waitForOnlineInteraction) {
+            Gson gson = new Gson();
+            boolean muli = gson.fromJson(message.data, boolean.class);
+            game_play_.getDecideMulatschak().handleOnlineInteraction(muli, this);
+        }
+        // wait & try again
+        else {
+            Handler h = new Handler();
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    receiveMulatschakDecision(message);
+                }
+            };
+            h.postDelayed(r, 200);
+        }
+    }
+    private void receiveTrickBids(final Message message) {
+        if (waitForOnlineInteraction) {
+            Gson gson = new Gson();
+            int tricks = gson.fromJson(message.data, int.class);
+            game_play_.getTrickBids().handleOnlineInteraction(tricks, this);
+        }
+        // wait & try again
+        else {
+            Handler h = new Handler();
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    receiveTrickBids(message);
+                }
+            };
+            h.postDelayed(r, 200);
+        }
+    }
+
+    private void receiveChooseTrump(final Message message) {
+        if (waitForOnlineInteraction) {
+            Gson gson = new Gson();
+            int trump = gson.fromJson(message.data, int.class);
+            game_play_.getChooseTrump().handleOnlineInteraction(trump, this);
+        }
+        // wait & try again
+        else {
+            Handler h = new Handler();
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    receiveChooseTrump(message);
+                }
+            };
+            h.postDelayed(r, 200);
+        }
+    }
+
+    private void receiveCardExchange(final Message message) {
+        if (waitForOnlineInteraction) {
+            Gson gson = new Gson();
+            Type listType = new TypeToken<ArrayList<Integer>>() {}.getType();
+            ArrayList<Integer> handCardsToRemoveIds = gson.fromJson(message.data, listType);
+            game_play_.getCardExchange().handleOnlineInteraction(handCardsToRemoveIds, this);
+        }
+        // wait & try again
+        else {
+            Handler h = new Handler();
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    receiveCardExchange(message);
+                }
+            };
+            h.postDelayed(r, 200);
+        }
+    }
+
+    private void receivePlayACard(final Message message) {
+        if (waitForOnlineInteraction) {
+            Gson gson = new Gson();
+            int cardId = gson.fromJson(message.data, int.class);
+            game_play_.getPlayACardRound().handleOnlineInteraction(cardId, this);
+        }
+        // wait & try again
+        else {
+            Handler h = new Handler();
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    receivePlayACard(message);
+                }
+            };
+            h.postDelayed(r, 200);
+        }
     }
 
 

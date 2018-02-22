@@ -106,7 +106,8 @@ public class TrumpView extends DrawableObject {
         controller.getView().enableUpdateCanvasThread();
         if (player_id >= 0 && player_id < controller.getAmountOfPlayers()) {
             start_position_ = new Point(controller.getLayout()
-                    .getPlayerInfoPositions().get(player_id));
+                    .getPlayerInfoPositions().get(
+                            controller.getPlayerById(player_id).getPosition()));
         }
         else {
             start_position_.x = end_position_.x + max_width_ / 2;

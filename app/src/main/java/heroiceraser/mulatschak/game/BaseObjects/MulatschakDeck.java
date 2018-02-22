@@ -3,7 +3,9 @@ package heroiceraser.mulatschak.game.BaseObjects;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 import heroiceraser.mulatschak.game.GameView;
@@ -94,6 +96,18 @@ public class MulatschakDeck extends CardStack {
 
     public void shuffleDeck() {
         Collections.shuffle(getCardStack(), new Random());
+    }
+
+    public void sortByIdList(ArrayList<Integer> cardIds) {
+        List<Card> tmp = new ArrayList<>();
+        for (int i = 0; i < cardIds.size(); i++) {
+            for (int deckId = 0; deckId < getCardStack().size(); deckId++) {
+                if (cardIds.get(i) == getCardAt(deckId).getId()) {
+                    tmp.add(getCardAt(deckId));
+                }
+            }
+        }
+        setCardStack(tmp);
     }
 
 

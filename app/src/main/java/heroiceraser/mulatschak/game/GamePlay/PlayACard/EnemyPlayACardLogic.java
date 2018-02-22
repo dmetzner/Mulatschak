@@ -92,6 +92,43 @@ public class EnemyPlayACardLogic {
     }
 
 
+    void playACardOnline(GameController controller, MyPlayer myPlayer, int cardId) {
+
+        int posId = 0;
+
+        for (int i = 0; i < myPlayer.getHand().getCardStack().size(); i++) {
+            if (cardId == myPlayer.getHand().getCardAt(i).getId()) {
+                posId = i;
+            }
+        }
+
+        Card card = myPlayer.getHand().getCardAt(posId);
+
+        // first card set starting card in logic!
+        if (controller.getLogic().isDiscardPileEmpty(controller.getDiscardPile())) {
+            int card_to_play_symbol = (card.getId() / 100) % 5;
+            controller.getLogic().setStartingCard(card_to_play_symbol);
+        }
+
+        myPlayer.getHand().getCardStack().remove(posId);
+
+        move_card_ = card;
+        end_position_ = controller.getDiscardPile().getPositions().get(myPlayer.getPosition());
+
+        player_pos_ = myPlayer.getPosition();
+        if (player_pos_ % 2 != 0) {
+            rotation_start_ = 90;
+        } else {
+            rotation_start_ = 0;
+        }
+        rotation_end_ = 0;
+
+        start_position_ = move_card_.getPosition();
+        time_start_ = System.currentTimeMillis();
+        animation_running_ = true;
+        animateCardMovement(controller);
+    }
+
     //----------------------------------------------------------------------------------------------
     //  animate card movement
     //

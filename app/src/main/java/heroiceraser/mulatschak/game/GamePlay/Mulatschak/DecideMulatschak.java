@@ -2,6 +2,11 @@ package heroiceraser.mulatschak.game.GamePlay.Mulatschak;
 
 import android.graphics.Canvas;
 import android.os.Handler;
+
+import com.google.gson.Gson;
+
+import heroiceraser.Message;
+import heroiceraser.mulatschak.MainActivity;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GamePlay.TrickBids.MakeBidsAnimation;
@@ -17,7 +22,7 @@ public class DecideMulatschak {
     //
     private EnemyDecideMulatschakLogic enemyDecideMulatschakLogic;
     private DecideMulatschakAnimation decideMulatschakAnimation;
-    private MulatschakActivateAnimation mulatschakRound;
+    private MulatschakActivateAnimation mulatschakRoundAnimation;
 
 
     //----------------------------------------------------------------------------------------------
@@ -26,7 +31,7 @@ public class DecideMulatschak {
     public DecideMulatschak() {
         enemyDecideMulatschakLogic = new EnemyDecideMulatschakLogic();
         decideMulatschakAnimation = new DecideMulatschakAnimation();
-        mulatschakRound = new MulatschakActivateAnimation();
+        mulatschakRoundAnimation = new MulatschakActivateAnimation();
     }
 
 
@@ -79,43 +84,81 @@ public class DecideMulatschak {
         // Enemies
         else if (logic.getTurn() != 0) {
             controller.getView().enableUpdateCanvasThread();
-            if (enemyDecideMulatschakLogic.decideMulatschak(controller)) {
-                setMulatschakUp(controller);
-                return;
-            }
 
-            // simulate thinking
-            Handler myHandler = new Handler();
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    makeMulatschakDecision(false, controller);
+            // single player
+            if (controller.getPlayerById(logic.getTurn()).isEnemyLogic()) {
+                if (enemyDecideMulatschakLogic.decideMulatschak(controller)) {
+                    setMulatschakUp(controller);
+                    return;
                 }
-            };
-            double animation_factor =  controller.getSettings().getAnimationSpeed().getSpeedFactor();
-            myHandler.postDelayed(runnable, (int) (500 * animation_factor));
+                // simulate thinking
+                Handler myHandler = new Handler();
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        makeMulatschakDecision(false, controller);
+                    }
+                };
+                double animation_factor =  controller.getSettings().getAnimationSpeed().getSpeedFactor();
+                myHandler.postDelayed(runnable, (int) (500 * animation_factor));
+
+            }
+            // multiplayer
+            else {
+                controller.waitForOnlineInteraction = true;
+                // wait 4 online interaction
+            }
         }
     }
 
+
+    public void handleOnlineInteraction(boolean muli, GameController controller) {
+        controller.waitForOnlineInteraction = false;
+        if (muli) {
+            setMulatschakUp(controller);
+        }
+        else {
+            makeMulatschakDecision(false, controller);
+        }
+    }
+
+    public void handleMainPlayersDecision(boolean muli, GameController controller) {
+
+        if (controller.multiplayer_) {
+            // broadcast to all the decision
+            MainActivity activity = (MainActivity) controller.getView().getContext();
+            Gson gson = new Gson();
+            activity.broadcastMessage(Message.mulatschakDecision, gson.toJson(muli));
+        }
+
+        if (muli) {
+            controller.getGamePlay().getDecideMulatschak().setMulatschakUp(controller);
+            // makeMulatschakDecision(false, controller) gets called after animation
+        }
+        else {
+            controller.getGamePlay().getDecideMulatschak().makeMulatschakDecision(false, controller);
+        }
+    }
 
     //----------------------------------------------------------------------------------------------
     //  startRound
     //
     public void startRound() {
-        mulatschakRound.clear();
+        mulatschakRoundAnimation.clear();
     }
 
     //----------------------------------------------------------------------------------------------
     //  setMulatschakUp
     //
-    void setMulatschakUp(GameController controller) {
+    private void setMulatschakUp(GameController controller) {
         GameLogic logic = controller.getLogic();
         logic.setMulatschakRound(true);
         controller.getPlayerById(logic.getTurn()).setTricksToMake(MakeBidsAnimation.MULATSCHAK);
         logic.setTricksToMake(MakeBidsAnimation.MULATSCHAK);
         logic.setTrumpPlayerId(logic.getTurn());
         logic.setTurn(logic.getDealer());
-        mulatschakRound.setUp(controller);
+        mulatschakRoundAnimation.setUp(controller);
+        // makeMulatschakDecision(false, controller) gets called after animation
     }
 
 
@@ -124,7 +167,7 @@ public class DecideMulatschak {
     //
     public void draw(Canvas canvas, GameController controller) {
         decideMulatschakAnimation.draw(canvas, controller);
-        mulatschakRound.draw(canvas, controller);
+        mulatschakRoundAnimation.draw(canvas, controller);
     }
 
 

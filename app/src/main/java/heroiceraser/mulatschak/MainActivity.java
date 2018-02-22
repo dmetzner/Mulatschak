@@ -928,12 +928,10 @@ public class MainActivity extends FragmentActivity implements
         @Override
         public void onRealTimeMessageReceived(@NonNull RealTimeMessage realTimeMessage) {
             byte[] buf = realTimeMessage.getMessageData();
-            String sender = realTimeMessage.getSenderParticipantId();
             Gson gson = new Gson();
             String data = new String(buf);
             Message message = gson.fromJson(data, Message.class);
-
-            Log.d(TAG, "Message received: " + message.message);
+            Log.d(TAG, "Message received: type " + message.type);
             messageQueue.add( message);
             workOnMessageQueue();
         }
@@ -957,20 +955,23 @@ public class MainActivity extends FragmentActivity implements
         }
     }
 
-    // Broadcast my score to everybody else.
-    public void broadcastMessage(String text) {
+
+
+    // Broadcast chat message
+    public void broadcastMessage(int type, String data) {
+        // playing single-player mode
         if (!mMultiplayer) {
-            // playing single-player mode
             return;
         }
 
+        // create message
+        Message message = new Message();
+        message.type = type;
+        message.senderId = mPlayerId;
+        message.data = data;
         mMsgBuf = null;
         try {
             Gson gson = new Gson();
-            Message message = new Message();
-            message.type = "M";
-            message.senderId = mPlayerId;
-            message.message = text;
             mMsgBuf = gson.toJson(message).getBytes("UTF-8");
         }
         catch (Exception e) {
@@ -978,6 +979,12 @@ public class MainActivity extends FragmentActivity implements
         }
 
         // Send to every other participant.
+        broadcast(mMsgBuf);
+    }
+
+
+
+    private void broadcast(byte[] msgBuf) {
         for (Participant p : mParticipants) {
             if (p.getParticipantId().equals(mMyId)) {
                 continue;
