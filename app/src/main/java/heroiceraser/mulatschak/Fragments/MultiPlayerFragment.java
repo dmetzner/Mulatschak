@@ -31,7 +31,7 @@ public class MultiPlayerFragment extends Fragment implements View.OnClickListene
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.multiplayer_settings, container, false);
+        View v = inflater.inflate(R.layout.multiplayer_options, container, false);
         final int[] CLICKABLES = new int[]{
                 R.id.multi_player_settings_back_button,
                 R.id.multi_player_settings_quick_game_button,

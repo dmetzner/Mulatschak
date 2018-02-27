@@ -64,6 +64,10 @@ public class EnemyCardExchangeLogic {
                 break;
         }
 
+        if (controller.multiplayer_) {
+            randomness = -1;
+        }
+
         myPlayer_ = myPlayer;
         card_exchange_animation_.init(controller, myPlayer);
 

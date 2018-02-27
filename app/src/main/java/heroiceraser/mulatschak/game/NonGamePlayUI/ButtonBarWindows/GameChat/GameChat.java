@@ -1,6 +1,5 @@
 package heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBarWindows.GameChat;
 
-import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
@@ -8,7 +7,7 @@ import android.text.TextPaint;
 
 import java.util.List;
 
-import heroiceraser.Message;
+import heroiceraser.mulatschak.Message;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
 import heroiceraser.mulatschak.MainActivity;
 import heroiceraser.mulatschak.game.NonGamePlayUI.GameKeyBoard.MyKeyBoard;

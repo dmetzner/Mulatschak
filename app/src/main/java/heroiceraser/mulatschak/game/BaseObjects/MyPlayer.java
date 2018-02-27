@@ -45,7 +45,7 @@ public class MyPlayer {
 
     public void initMultiplayer() {
         display_name_ = participant_.getDisplayName();
-        onlineId = participant_.getPlayer().getPlayerId();
+        onlineId = participant_.getParticipantId();
         enemyLogic = false;
     }
 

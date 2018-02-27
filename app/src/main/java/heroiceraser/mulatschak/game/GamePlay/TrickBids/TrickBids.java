@@ -1,12 +1,10 @@
 package heroiceraser.mulatschak.game.GamePlay.TrickBids;
 
-import android.os.Handler;
-
 import com.google.gson.Gson;
 
 import java.util.List;
 
-import heroiceraser.Message;
+import heroiceraser.mulatschak.Message;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.MainActivity;
 import heroiceraser.mulatschak.game.GameController;

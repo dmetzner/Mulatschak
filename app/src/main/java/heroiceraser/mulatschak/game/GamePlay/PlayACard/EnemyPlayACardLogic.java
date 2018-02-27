@@ -3,7 +3,6 @@ package heroiceraser.mulatschak.game.GamePlay.PlayACard;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Point;
-import java.util.Random;
 import heroiceraser.mulatschak.game.BaseObjects.Card;
 import heroiceraser.mulatschak.game.BaseObjects.CardStack;
 import heroiceraser.mulatschak.game.GameController;
@@ -62,11 +61,10 @@ public class EnemyPlayACardLogic {
     void playACard(GameController controller, MyPlayer myPlayer) {
         GameLogic logic = controller.getLogic();
 
-        Random random_generator = new Random();
         boolean valid = false;
         int random_number = -1;
         while (!valid) {
-            random_number = random_generator.nextInt(myPlayer.getAmountOfCardsInHand());
+            random_number++;
             Card card = myPlayer.getHand().getCardAt(random_number);
             CardStack hand = myPlayer.getHand();
             valid = logic.isAValidCardPlay(card, hand, controller.getDiscardPile());

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import heroiceraser.Message;
+import heroiceraser.mulatschak.Message;
 import heroiceraser.mulatschak.GameSettings.GameSettings;
 import heroiceraser.mulatschak.MainActivity;
 import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
@@ -41,12 +41,13 @@ public class GameController{
     private boolean enable_drawing_;
     private boolean playerPresentation;
 
+    // online sheesh
     public boolean multiplayer_;
-    public ArrayList<Participant> participants_;
+    private ArrayList<Participant> participants_;
+    private String my_display_name_;
+    private String myPlayerId;
+    private String hostOnlineId;
 
-    public String my_display_name_;
-    public String myPlayerId;
-    public String hostOnlineId;
 
     private GameView view_;
     private GameLayout layout_;
@@ -136,7 +137,8 @@ public class GameController{
     //  start
     //
     public void init(final int start_lives, final int enemies, final int difficulty, final boolean multiplayer,
-                      final String myName, final String my_id, final ArrayList<Participant> participants, final String hostOnlineId) {
+                      final String myName, final String my_id, final ArrayList<Participant> participants,
+                     final String hostOnlineId, final ArrayList<String> sortedPlayerIds) {
 
         multiplayer_ = multiplayer;
         my_display_name_ = myName;
@@ -152,7 +154,7 @@ public class GameController{
         logic_.init(start_lives, difficulty);
         layout_.init(view_);
         settings_.init(view_);
-        initPlayers(my_id, enemies);                                                    // special multi
+        initPlayers(enemies, sortedPlayerIds);                                      // special multi
         resetPlayerLives();
         setPlayerPositions();
         player_info_.init(view_);
@@ -387,7 +389,7 @@ public class GameController{
         logic_.setTurn(id);
     }
 
-    private void initPlayers(String my_id, int enemies) {
+    private void initPlayers(int enemies, ArrayList<String> sortedPlayerIds) {
 
         if (multiplayer_) {
 
@@ -399,19 +401,45 @@ public class GameController{
                 newPlayer.participant_ = participants_.get(i);
                 newPlayer.initMultiplayer(); // in your own app you are always player 0
                 tmpPlayerList.add(i, newPlayer);
-                if (participants_.get(i).getPlayer().getPlayerId().equals(myPlayerId)) {
+            }
+
+            for (int i = 0; i < enemies; i++) {
+                MyPlayer newPlayer = new MyPlayer();
+                newPlayer.participant_ = null;
+                newPlayer.setEnemyLogic(true);
+                newPlayer.setOnlineId("");
+                newPlayer.setDisplayName("Muli Bot " + (i + 1));
+                tmpPlayerList.add(i, newPlayer);
+            }
+
+            ArrayList<MyPlayer> tmpPlayerList2 = new ArrayList<>();
+            for (int i = 0; i < sortedPlayerIds.size(); i++) {
+                for (int j = 0; j < tmpPlayerList.size(); j++) {
+                    if (sortedPlayerIds.get(i).equals(tmpPlayerList.get(j).getOnlineId())) {
+                        tmpPlayerList2.add(tmpPlayerList.get(i));
+                        break;
+                    }
+                }
+            }
+
+            tmpPlayerList.clear();
+
+            // keep the correct order between players
+            for (int i = 0; i < tmpPlayerList2.size(); i++) {
+                if (tmpPlayerList2.get(i).getOnlineId().equals(myPlayerId)) {
                     mainPlayerId = i;
                 }
             }
 
-            // keep the correct order between players
-            for (int i = mainPlayerId; i < participants_.size(); i++) {
-                myPlayer_list_.add(tmpPlayerList.get(i));
+            for (int i = mainPlayerId; i < tmpPlayerList2.size(); i++) {
+                myPlayer_list_.add(tmpPlayerList2.get(i));
             }
 
             for (int i = 0; i < mainPlayerId; i++) {
-                myPlayer_list_.add(tmpPlayerList.get(i));
+                myPlayer_list_.add(tmpPlayerList2.get(i));
             }
+
+            tmpPlayerList2.clear();
 
             // check debug
             for (int i = 0; i < myPlayer_list_.size(); i++) {
@@ -552,7 +580,7 @@ public class GameController{
     }
 
 
-    public void allCardsBackToTheDeck() {
+    private void allCardsBackToTheDeck() {
 
         for (int player_id = 0; player_id < getAmountOfPlayers(); player_id++) {
 
@@ -661,7 +689,6 @@ public class GameController{
         }
         // wait & try again
         else  {
-            final GameController gc = this;
             Handler h = new Handler();
             Runnable r = new Runnable() {
                 @Override

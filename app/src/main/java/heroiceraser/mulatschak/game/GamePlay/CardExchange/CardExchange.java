@@ -7,10 +7,9 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
-import heroiceraser.Message;
+import heroiceraser.mulatschak.Message;
 import heroiceraser.mulatschak.MainActivity;
 import heroiceraser.mulatschak.game.BaseObjects.Card;
-import heroiceraser.mulatschak.game.BaseObjects.CardStack;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GameView;

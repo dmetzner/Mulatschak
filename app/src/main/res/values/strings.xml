@@ -37,11 +37,16 @@
     <string name="single_player_settings_title">SinglePlayer</string>
 
     <string name="single_player_settings_player_amount_text">Wähle die Anzahl deiner Gegner: </string>
+    <string name="multi_player_settings_player_amount_text">Wähle die Anzahl zusätzlicher Gegner: </string>
+    <string name="multi_player_settings_player_amount_text_no_host">Der Host wählt die Anzahl zusätzlicher Gegner</string>
+    <string name="single_player_settings_enemies_0">0</string>
     <string name="single_player_settings_enemies_1">1</string>
     <string name="single_player_settings_enemies_2">2</string>
     <string name="single_player_settings_enemies_3">3</string>
 
     <string name="single_player_settings_difficulty_text">Wähle die Schwierigkeit deiner Gegner: </string>
+    <string name="multi_player_settings_difficulty_text">Wähle die Schwierigkeit der Gegner: </string>
+    <string name="multi_player_settings_difficulty_text_no_host">Der Host wählt die Schwierigkeit der Gegner: </string>
     <string name="single_player_settings_difficulty_easy">Leicht</string>
     <string name="single_player_settings_difficulty_normal">Normal</string>
     <string name="single_player_settings_difficulty_hard">Schwer</string>
@@ -53,6 +58,7 @@
     <string name="single_player_settings_animation_text">Animations Geschwindigkeit:</string>
 
     <string name="single_player_settings_start_button">Spiel Starten</string>
+    <string name="single_player_settings_start_button_no_host">Der Host konfiguriert das Spiel</string>
 
     <!-- :::::::::::::::::::: MultiPlayer Settings ::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="multi_player_settings_title">MultiPlayer</string>

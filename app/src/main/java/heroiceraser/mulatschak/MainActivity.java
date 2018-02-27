@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.CharArrayBuffer;
+import android.net.Uri;
 import android.os.Handler;
+import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,6 +36,7 @@ import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.InvitationCallback;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.Participant;
+import com.google.android.gms.games.multiplayer.ParticipantResult;
 import com.google.android.gms.games.multiplayer.realtime.OnRealTimeMessageReceivedListener;
 import com.google.android.gms.games.multiplayer.realtime.RealTimeMessage;
 import com.google.android.gms.games.multiplayer.realtime.Room;
@@ -45,17 +48,17 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 import at.heroiceraser.mulatschak.R;
-import heroiceraser.Message;
-import heroiceraser.mulatschak.game.GameLogic;
+import heroiceraser.mulatschak.Fragments.MultiPlayerSettingsFragment;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.Fragments.GameScreenFragment;
 import heroiceraser.mulatschak.Fragments.LoadingScreenFragment;
@@ -63,20 +66,21 @@ import heroiceraser.mulatschak.Fragments.MultiPlayerFragment;
 import heroiceraser.mulatschak.Fragments.SinglePlayerFragment;
 import heroiceraser.mulatschak.Fragments.StartScreenFragment;
 
-// old AppCompatActivity
+
 public class MainActivity extends FragmentActivity implements
         // StartScreen  -> Single/Multi MyPlayer, Sign in/out, Achievements, Leaderboards
         StartScreenFragment.Listener,
         // SinglePlayer Settings
         SinglePlayerFragment.Listener,
         // MultiPlayer Settings
-        MultiPlayerFragment.Listener {
+        MultiPlayerFragment.Listener, MultiPlayerSettingsFragment.Listener {
 
     // Fragments
     List<Fragment> fragList = new ArrayList<>();
     StartScreenFragment mStartScreenFragment;
     SinglePlayerFragment mSinglePlayerFragment;
     MultiPlayerFragment mMultiPlayerFragment;
+    MultiPlayerSettingsFragment mMultiPlayerSettingsFragment;
     LoadingScreenFragment mLoadingScreenFragment;
     GameScreenFragment mGameScreenFragment;
     GameView mGameView;
@@ -85,11 +89,11 @@ public class MainActivity extends FragmentActivity implements
     final String TAG = "MainActivity";
 
     // bool if an actual game is active
-    private boolean game_running_;
+    private boolean gameRunning;
+    private int waitForOnlineInteraction;
+    private boolean waitForNewGame;
 
     // request codes we use when invoking an external activity
-    private static final int RC_RESOLVE = 5000;
-    private static final int RC_UNUSED = 5001;
     private static final int RC_SIGN_IN = 9001;
 
     // Request codes for the UIs that we show with startActivityForResult:
@@ -127,7 +131,7 @@ public class MainActivity extends FragmentActivity implements
     ArrayList<Participant> mParticipants = null;
 
     // My participant ID in the currently active game
-    String mMyId = null;
+    String myParticipantId = null;
 
     // If non-null, this is the id of the invitation we received via the
     // invitation listener
@@ -136,6 +140,7 @@ public class MainActivity extends FragmentActivity implements
     // Message buffer for sending messages
     byte[] mMsgBuf = new byte[2];
 
+    // to save data local
     SharedPreferences mySharedPreference;
 
 
@@ -143,14 +148,6 @@ public class MainActivity extends FragmentActivity implements
     //----------------------------------------------------------------------------------------------
     //----------------------- Handle Fragments -----------------------------------------------------
     //----------------------------------------------------------------------------------------------
-
-    //----------------------------------------------------------------------------------------------
-    // Switch UI to the given fragment
-    //
-    public void switchToFragment(Fragment newFrag, String id) {
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, newFrag, id)
-                .commitAllowingStateLoss();
-    }
 
     @Override
     public void onAttachFragment (Fragment fragment) {
@@ -161,16 +158,21 @@ public class MainActivity extends FragmentActivity implements
     // getVisibleFragment
     //
     public Fragment getVisibleFragment(){
-        FragmentManager fragmentManager = MainActivity.this.getSupportFragmentManager();
         List<Fragment> fragments = new ArrayList<>();
-        fragments.addAll(fragList);   //fragmentManager.getFragments();
-        if(fragments != null){
-            for(Fragment fragment : fragments){
-                if(fragment != null && fragment.isVisible())
-                    return fragment;
-            }
+        fragments.addAll(fragList);
+        for(Fragment fragment : fragments){
+            if(fragment != null && fragment.isVisible())
+                return fragment;
         }
         return null;
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // Switch UI to the given fragment
+    //
+    public void switchToFragment(Fragment newFrag, String id) {
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, newFrag, id)
+                .commitAllowingStateLoss();
     }
 
     @Override
@@ -196,21 +198,28 @@ public class MainActivity extends FragmentActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        game_running_ = false;
+        Log.d(TAG, "**** got onCreate");
+
+        gameRunning = false;
+        waitForOnlineInteraction = 0;
+        waitForNewGame = false;
+        
         // supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.main_activity);
 
         // create fragments
-        mStartScreenFragment =      new StartScreenFragment();
-        mSinglePlayerFragment =     new SinglePlayerFragment();
-        mMultiPlayerFragment =      new MultiPlayerFragment();
-        mLoadingScreenFragment =    new LoadingScreenFragment();
-        mGameScreenFragment =       new GameScreenFragment();
+        mStartScreenFragment =          new StartScreenFragment();
+        mSinglePlayerFragment =         new SinglePlayerFragment();
+        mMultiPlayerFragment =          new MultiPlayerFragment();
+        mMultiPlayerSettingsFragment =  new MultiPlayerSettingsFragment();
+        mLoadingScreenFragment =        new LoadingScreenFragment();
+        mGameScreenFragment =           new GameScreenFragment();
 
         // listen to fragment events
         mStartScreenFragment.setListener(this);
         mSinglePlayerFragment.setListener(this);
         mMultiPlayerFragment.setListener(this);
+        mMultiPlayerSettingsFragment.setListener(this);
 
         // add initial fragment (welcome fragment)
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container,
@@ -245,8 +254,12 @@ public class MainActivity extends FragmentActivity implements
         super.onResume();
         Log.d(TAG, "**** got onResume");
 
+        if (gameRunning) {
+            keepScreenOn();
+        }
+
         Fragment frag = getVisibleFragment();
-        if (frag != null && frag.equals(mGameScreenFragment) && !game_running_) {
+        if (frag != null && frag.equals(mGameScreenFragment) && !gameRunning) {
             onStartMenuRequested();
         }
 
@@ -277,14 +290,27 @@ public class MainActivity extends FragmentActivity implements
     public void onStop() {
         Log.d(TAG, "**** got onStop");
 
-        // if we're in a room, leave it.
-        // leaveRoom(); nope
+        // if we're in a room, leave it.        // not happy with the api -> prefer resource leaks
+        leaveRoom();                        // ToDo find better idea
 
         // stop trying to keep the screen on
         stopKeepingScreenOn();
 
         super.onStop();
     }
+
+    //----------------------------------------------------------------------------------------------
+    // onDestroy()
+    //
+    @Override
+    public void onDestroy() {
+        Log.d(TAG, "**** got onDestroy");
+
+        leaveRoom();// not happy with the api -> prefer resource leaks
+                                   // ToDo find better idea
+        super.onDestroy();
+    }
+
 
 
     //----------------------------------------------------------------------------------------------
@@ -417,7 +443,6 @@ public class MainActivity extends FragmentActivity implements
                 MAX_OPPONENTS, 0);
 
         keepScreenOn();
-        resetGameVars();
 
         mRoomConfig = RoomConfig.builder(mRoomUpdateCallback)
                 .setOnMessageReceivedListener(mOnRealTimeMessageReceivedListener)
@@ -465,7 +490,7 @@ public class MainActivity extends FragmentActivity implements
             if (resultCode == Activity.RESULT_OK) {
                 // ready to start playing
                 Log.d(TAG, "Starting game (waiting room returned OK).");
-                startGame(true);
+                startGamePreparation(true);
             } else if (resultCode == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
                 // player indicated that they want to leave the room
                 leaveRoom();
@@ -509,7 +534,6 @@ public class MainActivity extends FragmentActivity implements
         Log.d(TAG, "Creating room...");
         requestLoadingScreen();
         keepScreenOn();
-        resetGameVars();
 
         mRoomConfig = RoomConfig.builder(mRoomUpdateCallback)
                 .addPlayersToInvite(invitees)
@@ -530,7 +554,10 @@ public class MainActivity extends FragmentActivity implements
         }
 
         Log.d(TAG, "Invitation inbox UI succeeded.");
-        Invitation invitation = data.getExtras().getParcelable(Multiplayer.EXTRA_INVITATION);
+        Invitation invitation = null;
+        if (data.getExtras() != null) {
+            invitation = data.getExtras().getParcelable(Multiplayer.EXTRA_INVITATION);
+        }
 
         // accept invitation
         if (invitation != null) {
@@ -551,7 +578,6 @@ public class MainActivity extends FragmentActivity implements
 
         requestLoadingScreen();
         keepScreenOn();
-        resetGameVars();
 
         mRealTimeMultiplayerClient.join(mRoomConfig)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -577,7 +603,6 @@ public class MainActivity extends FragmentActivity implements
     // Leave the room.
     void leaveRoom() {
         Log.d(TAG, "Leaving room.");
-        mSecondsLeft = 0;
         stopKeepingScreenOn();
         if (mRoomId != null) {
             mRealTimeMultiplayerClient.leave(mRoomConfig, mRoomId)
@@ -590,6 +615,7 @@ public class MainActivity extends FragmentActivity implements
                     });
             requestLoadingScreen();
         } else {
+            Log.d(TAG, "Leaving room.... but we are in no room");
             onStartMenuRequested();
         }
     }
@@ -629,7 +655,7 @@ public class MainActivity extends FragmentActivity implements
         @Override
         public void onInvitationRemoved(@NonNull String invitationId) {
 
-            if (mIncomingInvitationId.equals(invitationId) && mIncomingInvitationId != null) {
+            if (mIncomingInvitationId != null && mIncomingInvitationId.equals(invitationId)) {
                 mIncomingInvitationId = null;
                 // switchToScreen(mCurScreen); // This will hide the invitation popup
             }
@@ -662,8 +688,6 @@ public class MainActivity extends FragmentActivity implements
                         @Override
                         public void onSuccess(Player player) {
                             mPlayerId = player.getPlayerId();
-
-                            // switchToMainScreen();
                         }
                     })
                     .addOnFailureListener(createFailureListener("There was a problem getting the player id!"));
@@ -738,7 +762,7 @@ public class MainActivity extends FragmentActivity implements
 
             //get participants and my ID:
             mParticipants = room.getParticipants();
-            mMyId = room.getParticipantId(mPlayerId);
+            myParticipantId = room.getParticipantId(mPlayerId);
 
             // save room ID if its not initialized in onRoomCreated() so we can leave cleanly before the game starts.
             if (mRoomId == null) {
@@ -747,7 +771,7 @@ public class MainActivity extends FragmentActivity implements
 
             // print out the list of participants (for debug purposes)
             Log.d(TAG, "Room ID: " + mRoomId);
-            Log.d(TAG, "My ID " + mMyId);
+            Log.d(TAG, "My ID " + myParticipantId);
             Log.d(TAG, "<< CONNECTED TO ROOM>>");
         }
 
@@ -880,86 +904,133 @@ public class MainActivity extends FragmentActivity implements
         if (room != null) {
             mParticipants = room.getParticipants();
         }
-        if (mParticipants != null) {
-            // updatePeerScoresDisplay();
-        }
     }
 
-    /*
-     * GAME LOGIC SECTION. Methods that implement the game's rules.
-     */
 
-    // Current state of the game:
-    int mSecondsLeft = -1; // how long until the game ends (seconds)
-    final static int GAME_DURATION = 20; // game duration, seconds.
-    int mScore = 0; // user's current score
-
-    // Reset game variables in preparation for a new game.
-    void resetGameVars() {
-        mSecondsLeft = GAME_DURATION;
-        mScore = 0;
-        mParticipantScore.clear();
-        mFinishedParticipants.clear();
-    }
 
 
     /*
      * COMMUNICATIONS SECTION. Methods that implement the game's network
      * protocol.
      */
-
-    // Score of other participants. We update this as we receive their scores
-    // from the network.
-    Map<String, Integer> mParticipantScore = new HashMap<>();
-
-    // Participants who sent us their final score.
-    Set<String> mFinishedParticipants = new HashSet<>();
-
-    // Called when we receive a real-time message from the network.
-    // Messages in our game are made up of 2 bytes: the first one is 'F' or 'U'
-    // indicating
-    // whether it's a final or interim score. The second byte is the score.
-    // There is also the
-    // 'S' message, which indicates that the game should start.
-
+    
+    //  data structure to save incoming messages, till they were processed
     private List<Message> messageQueue = new ArrayList<>();
+   
+    // used to (un)marshall messages
+    private Gson gson = new Gson();
 
+    //
+    // Called when we receive a real-time message from the network.
+    //          -> converts the byte message into an Message object and
+    //              calls workOnMessageQueue 
+    //
     OnRealTimeMessageReceivedListener mOnRealTimeMessageReceivedListener = new OnRealTimeMessageReceivedListener() {
         @Override
         public void onRealTimeMessageReceived(@NonNull RealTimeMessage realTimeMessage) {
             byte[] buf = realTimeMessage.getMessageData();
-            Gson gson = new Gson();
             String data = new String(buf);
             Message message = gson.fromJson(data, Message.class);
             Log.d(TAG, "Message received: type " + message.type);
+            // don't need messages for singleplayer
+            if (!mMultiplayer) {
+                return;
+            }
             messageQueue.add( message);
             workOnMessageQueue();
         }
     };
 
+    //
+    //  tries to execute received messaged
+    //          -> if the activity is not ready it tries again after a short delay
+    //
     private void workOnMessageQueue() {
-        if (mGameView != null && mGameView.getController() != null) {
-            mGameView.getController().handleReceivedMessage(messageQueue.get(0));
-            messageQueue.remove(0);
+
+        if (gameRunning) {
+            // should never happen but remove wrong messages which are only to prepare the game
+            // not the game itself
+            if (messageQueue.get(0).type == Message.setHost ||
+                    messageQueue.get(0).type == Message.prepareGame ||
+                    messageQueue.get(0).type == Message.startGame) {
+                messageQueue.remove(0);
+                return;
+            }
+            // push forward to the game controller
+            if (mGameView != null && mGameView.getController() != null) {
+                Message message = messageQueue.get(0);
+                messageQueue.remove(0);
+                mGameView.getController().handleReceivedMessage(message);
+            }
+            // game controller needs more time to get initialized
+            else {
+                tryWorkOnMessageAgainLater();
+            }
+            return;
         }
-        else {
-            Log.w(TAG, "controller init to slow");
-            Handler h = new Handler();
-            Runnable r = new Runnable() {
-                @Override
-                public void run() {
-                    workOnMessageQueue();
-                }
-            };
-            h.postDelayed(r, 200);
+
+        // Main Activity messaged to handle:
+        if (messageQueue.get(0).type == Message.setHost) {
+            if (waitForOnlineInteraction == Message.setHost) {
+                waitForOnlineInteraction = 0;
+                String hostId = messageQueue.get(0).data;
+                messageQueue.remove(0);
+                setHostAndContinue(hostId);
+            }
+            else {
+                tryWorkOnMessageAgainLater();
+            }
+            return;
         }
+
+        if (messageQueue.get(0).type == Message.prepareGame) {
+            if (waitForOnlineInteraction == Message.prepareGame) {
+                int msgCode = Integer.parseInt(messageQueue.get(0).data);
+                messageQueue.remove(0);
+                mMultiPlayerSettingsFragment.receiveMessage(msgCode);
+            }
+            else {
+                tryWorkOnMessageAgainLater();
+            }
+            return;
+        }
+
+        if (messageQueue.get(0).type == Message.startGame) {
+            if (waitForOnlineInteraction == Message.prepareGame) {
+                waitForOnlineInteraction = 0;
+                startGameParas paras = gson.fromJson(messageQueue.get(0).data, startGameParas.class);
+                messageQueue.remove(0);
+                mMultiPlayerSettingsFragment.setValues(paras.enemies, paras.difficulty, paras.playerLives);
+                startGame(paras, mDisplayName);
+            }
+            else {
+                tryWorkOnMessageAgainLater();
+            }
+
+        }
+
     }
 
+    //
+    //  starts workOnMessageQueue again after a short delay
+    //
+    private void tryWorkOnMessageAgainLater() {
+        Handler h = new Handler();
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                workOnMessageQueue();
+            }
+        };
+        h.postDelayed(r, 100);
+    }
 
-
-    // Broadcast chat message
+    //
+    // Broadcast message (uses reliable)
+    //
     public void broadcastMessage(int type, String data) {
-        // playing single-player mode
+
+        // playing single-player mode -> nothing to send
         if (!mMultiplayer) {
             return;
         }
@@ -967,11 +1038,10 @@ public class MainActivity extends FragmentActivity implements
         // create message
         Message message = new Message();
         message.type = type;
-        message.senderId = mPlayerId;
+        message.senderId = myParticipantId;
         message.data = data;
         mMsgBuf = null;
         try {
-            Gson gson = new Gson();
             mMsgBuf = gson.toJson(message).getBytes("UTF-8");
         }
         catch (Exception e) {
@@ -979,68 +1049,57 @@ public class MainActivity extends FragmentActivity implements
         }
 
         // Send to every other participant.
-        broadcast(mMsgBuf);
+        broadcastReliable();
     }
 
 
-
-    private void broadcast(byte[] msgBuf) {
+    //
+    // Broadcast reliable
+    //
+    private void broadcastReliable() {
         for (Participant p : mParticipants) {
-            if (p.getParticipantId().equals(mMyId)) {
+            if (p.getParticipantId().equals(myParticipantId)) {
                 continue;
             }
             if (p.getStatus() != Participant.STATUS_JOINED) {
                 continue;
             }
-            if (true) {
-                // final score notification must be sent via reliable message
-                mRealTimeMultiplayerClient.sendReliableMessage(mMsgBuf,
-                        mRoomId, p.getParticipantId(), new RealTimeMultiplayerClient.ReliableMessageSentCallback() {
-                            @Override
-                            public void onRealTimeMessageSent(int statusCode, int tokenId, String recipientParticipantId) {
-                                Log.d(TAG, "RealTime message sent");
-                                Log.d(TAG, "  statusCode: " + statusCode);
-                                Log.d(TAG, "  tokenId: " + tokenId);
-                                Log.d(TAG, "  recipientParticipantId: " + recipientParticipantId);
-                            }
-                        })
-                        .addOnSuccessListener(new OnSuccessListener<Integer>() {
-                            @Override
-                            public void onSuccess(Integer tokenId) {
-                                Log.d(TAG, "Created a reliable message with tokenId: " + tokenId);
-                            }
-                        });
-            } else {
-                // it's an interim score notification, so we can use unreliable
-                mRealTimeMultiplayerClient.sendUnreliableMessage(mMsgBuf, mRoomId,
-                        p.getParticipantId());
-            }
+            // final score notification must be sent via reliable message
+            mRealTimeMultiplayerClient.sendReliableMessage(mMsgBuf,
+                    mRoomId, p.getParticipantId(), new RealTimeMultiplayerClient.ReliableMessageSentCallback() {
+                        @Override
+                        public void onRealTimeMessageSent(int statusCode, int tokenId, String recipientParticipantId) {
+                            Log.d(TAG, "RealTime message sent");
+                            Log.d(TAG, "  statusCode: " + statusCode);
+                            Log.d(TAG, "  tokenId: " + tokenId);
+                            Log.d(TAG, "  recipientParticipantId: " + recipientParticipantId);
+                        }
+                    })
+                    .addOnSuccessListener(new OnSuccessListener<Integer>() {
+                        @Override
+                        public void onSuccess(Integer tokenId) {
+                            Log.d(TAG, "Created a reliable message with tokenId: " + tokenId);
+                        }
+                    });
         }
     }
 
 
-
-    /*
-     * MISC SECTION. Miscellaneous methods.
-     */
-    // Sets the flag to keep this screen on. It's recommended to do that during
-    // the
-    // handshake when setting up a game, because if the screen turns off, the
-    // game will be
-    // cancelled.
-    void keepScreenOn() {
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+ /*
+    private void broadcastUnreliable(byte[] msgBuf) {
+        for (Participant p : mParticipants) {
+            if (p.getParticipantId().equals(myParticipantId)) {
+                continue;
+            }
+            if (p.getStatus() != Participant.STATUS_JOINED) {
+                continue;
+            }
+            // it's an interim score notification, so we can use unreliable
+            mRealTimeMultiplayerClient.sendUnreliableMessage(mMsgBuf, mRoomId,
+                    p.getParticipantId());
+        }
     }
-
-    // Clears the flag that keeps the screen on.
-    void stopKeepingScreenOn() {
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    }
-
-
-
-
-
+*/
 
 
     //----------------------------------------------------------------------------------------------
@@ -1052,12 +1111,13 @@ public class MainActivity extends FragmentActivity implements
     }
 
     //----------------------------------------------------------------------------------------------
-    // start MultiPlayer Settings
+    // start MultiPlayer
     //
     @Override
     public void onMultiPlayerRequested() {
         switchToFragment(mMultiPlayerFragment, "mMultiPlayerFragment");
     }
+
 
     //----------------------------------------------------------------------------------------------
     // start Show Achievements
@@ -1107,13 +1167,19 @@ public class MainActivity extends FragmentActivity implements
         signOut();
     }
 
+    @Override
+    public void onMultiPlayerSettingsBackButtonRequested() {
+        onBackPressed();
+    }
+
 
     @Override
     public void onBackPressed() {
         Fragment active_frag = getVisibleFragment();
 
         if (active_frag != null && active_frag.getTag() != null &&
-                active_frag.getTag().equals("mGameScreenFragment")) {
+                (active_frag.getTag().equals("mGameScreenFragment") ||
+                (active_frag.getTag().equals("mMultiPlayerSettingsFragment")))) {
             new AlertDialog.Builder(this)
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle(getString(R.string.app_name) + " schließen?")
@@ -1161,7 +1227,7 @@ public class MainActivity extends FragmentActivity implements
             @Override
             public void run() {
                 mSinglePlayerFragment.prepareSinglePlayerRequested();
-                startGame(false);
+                startGamePreparation(false);
             }
         };
         mHandler.postDelayed(showLoadingScreenThenContinue, 100);
@@ -1217,30 +1283,13 @@ public class MainActivity extends FragmentActivity implements
 
 
 
-
-
     /*
      * GAME LOGIC SECTION. Methods that implement the game's rules.
      */
 
-    // Start the gameplay phase of the game.
-    void startGame(final boolean multiplayer) {
+    void startGamePreparation(final boolean multiplayer) {
 
-        switchToFragment(mLoadingScreenFragment, "mLoadingScreenFragment");
-        Handler myHandler = new Handler();
-        Runnable myRunnable = new Runnable() {
-            @Override
-            public void run() {
-                continueStartGame(multiplayer);
-            }
-        };
-        myHandler.postDelayed(myRunnable, 100);
-    }
-
-
-    private String gameHostId;
-
-    void continueStartGame(final boolean multiplayer) {
+        requestLoadingScreen();
 
         //  create the Game View
         if (waitForNewGame) {
@@ -1248,42 +1297,127 @@ public class MainActivity extends FragmentActivity implements
             Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
-                    startGame(multiplayer);
+                    startGamePreparation(multiplayer);
                 }
             };
             handler.postDelayed(runnable, 200);
-            return;
         }
+        else {
+            Handler myHandler = new Handler();
+            Runnable myRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    prepareStartedGame(multiplayer);
+                }
+            };
+            myHandler.postDelayed(myRunnable, 10);
+        }
+    }
+
+
+    private String gameHostId;
+
+    void prepareStartedGame(final boolean multiplayer) {
 
         mMultiplayer = multiplayer;
 
         //---- get/set all game starting parameters
-
-        int player_lives = GameLogic.DEFAULT_PLAYER_START_LIVES;
-        int difficulty = GameLogic.DIFFICULTY_NORMAL;
-        int enemies = 0;
-        if (!multiplayer) { // singleplayer
-            player_lives = mSinglePlayerFragment.getPlayerLives();
-            difficulty = mSinglePlayerFragment.getDifficulty();
-            enemies = mSinglePlayerFragment.getEnemies();
-        }
-
-        String my_name = "NotSignedIn";
-        if (isSignedIn()) {
-           my_name = mDisplayName;
-           mMyId = mPlayerId;
+        if (!isSignedIn()) {
+            mDisplayName = "Du";
         }
 
         if (multiplayer) {
-            gameHostId = mParticipants.get(0).getPlayer().getPlayerId();
-            Log.d("----------", "host id " + gameHostId);
+            sortParticipants();
+            if (mParticipants.get(0).getParticipantId().equals(myParticipantId)) {
+                int randomNum = ThreadLocalRandom.current().nextInt(0, mParticipants.size());
+                gameHostId = mParticipants.get(randomNum).getParticipantId();
+                broadcastMessage(Message.setHost, gameHostId);
+                setHostAndContinue(gameHostId);
+            }
+            else {
+                waitForOnlineInteraction = Message.setHost;
+            }
         }
 
+        else { // singleplayer
+
+            startGameParas paras = new startGameParas();
+            paras.enemies = mSinglePlayerFragment.getEnemies();
+            paras.difficulty = mSinglePlayerFragment.getDifficulty();
+            paras.playerLives = mSinglePlayerFragment.getPlayerLives();
+            startGame(paras, mDisplayName);
+        }
+    }
+
+    private void setHostAndContinue(String hostParticipantId) {
+        gameHostId = hostParticipantId;
+        Log.d("----------", "host id " + gameHostId);
+        mMultiPlayerSettingsFragment.prepareMultiPlayerSettingsRequested(mParticipants.size(),
+                gameHostId.equals(myParticipantId));
+        switchToFragment(mMultiPlayerSettingsFragment, "mMultiPlayerSettingsFragment");
+        if (!gameHostId.equals(myParticipantId)) {
+            waitForOnlineInteraction = Message.prepareGame;
+        }
+    }
+
+
+    private void sortParticipants() {
+        Collections.sort(mParticipants, new Comparator<Participant>() {
+            @Override
+            public int compare(Participant p1, Participant p2) {
+                String s1 = p1.getParticipantId();
+                String s2 = p2.getParticipantId();
+                return s1.compareToIgnoreCase(s2);
+            }
+        });
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    // start SinglePlayer Game Mode
+    //
+    @Override
+    public void onMultiPlayerSettingsStartGameRequested() {
+        mMultiPlayerSettingsFragment.setMultiPlayerSettingsRequested();
+        int player_lives = mMultiPlayerSettingsFragment.getPlayerLives();
+        int difficulty = mMultiPlayerSettingsFragment.getDifficulty();
+        int enemies = mMultiPlayerSettingsFragment.getEnemies();
+        startGameParas paras = new startGameParas();
+        paras.enemies = enemies;
+        paras.difficulty = difficulty;
+        paras.playerLives = player_lives;
+        if (myParticipantId.equals(gameHostId)) {
+            paras.playerPositions = new ArrayList<>();
+            for (Participant p : mParticipants) {
+                paras.playerPositions.add(p.getParticipantId());
+            }
+            for (int i = 0; i < enemies; i++) {
+                paras.playerPositions.add("");
+            }
+            Collections.shuffle(paras.playerPositions);
+            broadcastMessage(Message.startGame, gson.toJson(paras));
+        }
+        // else can't be called without a message
+        startGame(paras, mDisplayName);
+    }
+
+    @Override
+    public void onMultiPlayerSettingsChanged(int code) {
+        if (myParticipantId.equals(gameHostId)) {
+            broadcastMessage(Message.prepareGame, "" + code);
+        }
+    }
+
+    class startGameParas
+    {
+        public int    playerLives;
+        public int    enemies;
+        public int    difficulty;
+        public ArrayList<String> playerPositions;
+    };
+
+    private void startGame(final startGameParas paras, final String my_name_final) {
         // start the game via the game controller of our game view
-        final int player_lives_final = player_lives;
-        final int enemies_final = enemies;
-        final int difficulty_final = difficulty;
-        final String my_name_final = my_name;
 
         mGameView = new GameView(this);
         mGameView.setKeepScreenOn(true);
@@ -1292,11 +1426,19 @@ public class MainActivity extends FragmentActivity implements
         Runnable showGameScreenThenContinue = new Runnable() {
             @Override
             public void run() {
-                game_running_ = true;
+                gameRunning = true;
                 try {
                     switchToFragment(mGameScreenFragment, "mGameScreenFragment");
-                    mGameView.getController().init(player_lives_final, enemies_final, difficulty_final,
-                            mMultiplayer, my_name_final,  mMyId, mParticipants, gameHostId);
+                    mGameView.getController().init(
+                            paras.playerLives,
+                            paras.enemies,
+                            paras.difficulty,
+                            mMultiplayer,
+                            my_name_final,
+                            myParticipantId,
+                            mParticipants,
+                            gameHostId,
+                            paras.playerPositions);
                 }
                 catch (Exception e) {
                     Log.e(TAG, "game error: " + e);
@@ -1306,34 +1448,58 @@ public class MainActivity extends FragmentActivity implements
         };
         addContentView(mGameView,  new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
                 FrameLayout.LayoutParams.WRAP_CONTENT));
-        mHandler.postDelayed(showGameScreenThenContinue, 100);
+        mHandler.postDelayed(showGameScreenThenContinue, 10);
     }
+
 
     public void endGame() {
-        switchToFragment(mStartScreenFragment, "mStartScreenFragment");
-        ((ViewGroup) mGameView.getParent()).removeView(mGameView);
-        mGameView.stopAll = true;
-        game_running_ = false;
-        waitForNewGame = true;
-        Handler handler = new Handler();
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                if (mGameView != null) {
-                    mGameView.clear();
-                    mGameView = null;
+
+        if (mMultiplayer) {
+            leaveRoom();
+        }
+
+        if (gameRunning) {
+            onStartMenuRequested();
+            ((ViewGroup) mGameView.getParent()).removeView(mGameView);
+            mGameView.stopAll = true;
+            gameRunning = false;
+            waitForNewGame = true;
+            Handler handler = new Handler();
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    if (mGameView != null) {
+                        mGameView.clear();
+                        mGameView = null;
+                    }
+                    if (mMultiplayer) {
+                        leaveRoom();
+                    }
+                    waitForNewGame = false;
+                    System.gc();
                 }
-                if (mMultiplayer) {
-                    leaveRoom();
-                }
-                waitForNewGame = false;
-                System.gc();
-            }
-        };
-        handler.postDelayed(runnable, 2000);
+            };
+            handler.postDelayed(runnable, 2000);
+        }
     }
 
-    private boolean waitForNewGame;
+
+    /*
+ * MISC SECTION. Miscellaneous methods.
+ */
+    // Sets the flag to keep this screen on. It's recommended to do that during
+    // the
+    // handshake when setting up a game, because if the screen turns off, the
+    // game will be
+    // cancelled.
+    void keepScreenOn() {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
+
+    // Clears the flag that keeps the screen on.
+    void stopKeepingScreenOn() {
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
 }
 
 

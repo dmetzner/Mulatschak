@@ -5,7 +5,7 @@ import android.os.Handler;
 
 import com.google.gson.Gson;
 
-import heroiceraser.Message;
+import heroiceraser.mulatschak.Message;
 import heroiceraser.mulatschak.MainActivity;
 import heroiceraser.mulatschak.game.BaseObjects.Card;
 import heroiceraser.mulatschak.game.BaseObjects.DiscardPile;
