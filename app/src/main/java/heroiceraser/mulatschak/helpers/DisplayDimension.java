@@ -4,9 +4,6 @@ import android.app.Activity;
 import android.util.DisplayMetrics;
 import android.view.View;
 
-/**
- * Created by Daniel Metzner on 10.08.2017.
- */
 
 public final class DisplayDimension {
 

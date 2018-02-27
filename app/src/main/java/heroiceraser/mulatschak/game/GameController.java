@@ -807,7 +807,7 @@ public class GameController{
 
     public GameLogic getLogic() { return logic_; }
 
-    public TouchEvents getTouchEvents() { return touch_events_; }
+    TouchEvents getTouchEvents() { return touch_events_; }
 
     public MulatschakDeck getDeck() {
         return deck_;
@@ -821,7 +821,7 @@ public class GameController{
 
     public MyPlayer getPlayerById(int id) { return myPlayer_list_.get(id); }
 
-    public MyPlayer getPlayerByOnlineId(String playerId) {
+    private MyPlayer getPlayerByOnlineId(String playerId) {
         for (int i = 0; i < getAmountOfPlayers(); i++) {
             if (playerId.equals(getPlayerById(i).getOnlineId())) {
                 return getPlayerById(i);
@@ -861,11 +861,11 @@ public class GameController{
 
     public PlayerInfo getPlayerInfo() { return player_info_; }
 
-    public boolean isDrawingEnabled() {
+    boolean isDrawingEnabled() {
         return enable_drawing_;
     }
 
-    public boolean isPlayerPresentationRunning() {
+    boolean isPlayerPresentationRunning() {
         return playerPresentation;
     }
 

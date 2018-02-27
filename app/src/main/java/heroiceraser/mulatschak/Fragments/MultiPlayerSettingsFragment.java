@@ -1,10 +1,9 @@
 package heroiceraser.mulatschak.Fragments;
 
 
-import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +24,7 @@ import at.heroiceraser.mulatschak.R;
 public class MultiPlayerSettingsFragment extends Fragment implements View.OnClickListener {
 
     public static final int backButton = 0;
-    public static final int startButton = -1;
+    // public static final int startButton = -1;
     public static final int enemies0 = -2;
     public static final int enemies1 = -3;
     public static final int enemies2 = -4;
@@ -47,7 +46,6 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
     private int enemies = NOT_SET;
     private int difficulty = NOT_SET;
 
-    private View v;
     private RadioButton enemies_0_radioButton;
     private RadioButton enemies_1_radioButton;
     private RadioButton enemies_2_radioButton;
@@ -65,15 +63,11 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
     int players;
     boolean host;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        v = inflater.inflate(R.layout.multiplayer_settings, container, false);
+        View v = inflater.inflate(R.layout.multiplayer_settings, container, false);
         final int[] CLICKABLES = new int[] {
                 R.id.multi_player_settings_back_button,
                 R.id.multi_player_settings_start_button
@@ -85,14 +79,14 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
         startGameButton = v.findViewById(R.id.multi_player_settings_start_button);
 
         enemiesText = v.findViewById(R.id.multi_player_settings_player_amount_text);
-        enemies_0_radioButton = (RadioButton)
+        enemies_0_radioButton =
                 v.findViewById(R.id.multi_player_settings_enemies_0_radioButton);
-        enemies_1_radioButton = (RadioButton)
+        enemies_1_radioButton =
                 v.findViewById(R.id.multi_player_settings_enemies_1_radioButton);
-        enemies_2_radioButton = (RadioButton)
+        enemies_2_radioButton =
                 v.findViewById(R.id.multi_player_settings_enemies_2_radioButton);
 
-        RadioGroup radioGroup = (RadioGroup) v.findViewById(R.id.multi_player_settings_enemies_radio_group);
+        RadioGroup radioGroup = v.findViewById(R.id.multi_player_settings_enemies_radio_group);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
         {
             @Override
@@ -112,14 +106,14 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
         });
 
         difficultyText = v.findViewById(R.id.multi_player_settings_difficulty_text);
-        difficulty_easy_radioButton   = (RadioButton)
+        difficulty_easy_radioButton   =
                 v.findViewById(R.id.multi_player_settings_difficulty_easy_radioButton);
-        difficulty_normal_radioButton = (RadioButton)
+        difficulty_normal_radioButton =
                 v.findViewById(R.id.multi_player_settings_difficulty_normal_radioButton);
-        difficulty_hard_radioButton   = (RadioButton)
+        difficulty_hard_radioButton   =
                 v.findViewById(R.id.multi_player_settings_difficulty_hard_radioButton);
 
-        RadioGroup radioGroup2 = (RadioGroup) v.findViewById(R.id.multi_player_settings_difficulty_radio_group);
+        RadioGroup radioGroup2 =  v.findViewById(R.id.multi_player_settings_difficulty_radio_group);
         radioGroup2.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
         {
             @Override
@@ -139,9 +133,9 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
         });
 
 
-        player_lives_textView = (TextView)
+        player_lives_textView =
                 v.findViewById(R.id.multi_player_settings_player_lives_text);
-        player_lives_seekBar = (SeekBar)
+        player_lives_seekBar =
                 v.findViewById(R.id.multi_player_settings_player_lives_seekBar);
 
         player_lives_seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -168,12 +162,9 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
             }
         });
 
-
-
         if (notCreatedYet) {
             prepareMultiPlayerSettingsRequested(players, host);
         }
-
         if (received) {
             handleMessageCode();
         }
@@ -185,10 +176,6 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
         mListener = l;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
 
     @Override
     public void onClick(View view) {
@@ -304,7 +291,6 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
         catch (Exception e) {
             received = true;
         }
-
     }
 
 
@@ -358,7 +344,7 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
                 enemies_2_radioButton.isChecked();
                 break;
         }
-        switch (enemies) {
+        switch (difficulty) {
             case 0:
                 difficulty_easy_radioButton.isChecked();
                 break;

@@ -9,7 +9,7 @@ import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBarWindows.ButtonBarWindow;
 import heroiceraser.mulatschak.game.NonGamePlayUI.NonGamePlayUIContainer;
-import heroiceraser.mulatschak.helpers.HelperFunctions;
+import heroiceraser.mulatschak.helpers.BitmapMethodes;
 
 
 //--------------------------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ public class ButtonBar extends DrawableObject {
         setWidth(view.getController().getLayout().getButtonBarWidth());
         setHeight(view.getController().getLayout().getButtonBarHeight());
         setPosition(view.getController().getLayout().getButtonBarPosition());
-        setBitmap(HelperFunctions.loadBitmap(view, "button_bar", getWidth(), getHeight()));
+        setBitmap(BitmapMethodes.loadBitmap(view, "button_bar", getWidth(), getHeight()));
         setVisible(true);
         initStatisticButton(view);
         initTricksButton(view);

@@ -2,7 +2,6 @@
 
 <!-- MAIN MENU -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/start_screen"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -57,14 +56,14 @@
                         android:id="@+id/single_player_button"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="SinglePlayer"
+                        android:text="@string/single_player_settings_title"
                         android:textSize="25sp">b</Button>
 
                     <Button
                         android:id="@+id/multi_player_button"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="MultiPlayer"
+                        android:text="@string/multi_player_settings_title"
                         android:textSize="25sp">b
                     </Button>
 
@@ -78,7 +77,8 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    >
 
                     <Button
                         android:id="@+id/show_achievements_button"
@@ -120,7 +120,6 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"
                     android:gravity="center"
@@ -136,13 +135,13 @@
                 android:background="@color/my_dark_gray"
                 android:gravity="center|end"
                 android:orientation="horizontal"
-                android:visibility="gone">
+                android:visibility="gone"
+                >
 
                 <TextView
                     android:id="@+id/textView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
                     android:layout_marginStart="20dp"
                     android:layout_weight="0.76"
                     android:gravity="center"
@@ -154,9 +153,9 @@
                     android:id="@+id/sign_out_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
                     android:gravity="center"
                     android:text="@string/sign_out"
+                    android:layout_marginEnd="20dp"
                     android:textSize="12sp" />
             </LinearLayout>
 

@@ -2,7 +2,6 @@ package heroiceraser.mulatschak.game.GamePlay.ChooseTrump;
 
 import heroiceraser.mulatschak.game.BaseObjects.MulatschakDeck;
 import heroiceraser.mulatschak.game.GameLogic;
-import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 
 

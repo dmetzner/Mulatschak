@@ -16,7 +16,7 @@ import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
 import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.helpers.HelperFunctions;
+import heroiceraser.mulatschak.helpers.BitmapMethodes;
 
 
 //--------------------------------------------------------------------------------------------------
@@ -62,7 +62,7 @@ public class ChatView extends DrawableObject {
         setHeight(view.getController().getLayout().getRoundInfoSize().y);
         setPosition(view.getController().getLayout().getRoundInfoPositon());
         String image_name = "round_info";
-        setBitmap(HelperFunctions.loadBitmap(view, image_name , getWidth(), getHeight()));
+        setBitmap(BitmapMethodes.loadBitmap(view, image_name , getWidth(), getHeight()));
         setVisible(true);
         boardToTextOffset.x = (int) (view.getController().getLayout().getOnePercentOfScreenWidth() * 8);
         boardToTextOffset.y = (int) (view.getController().getLayout().getOnePercentOfScreenHeight() * 4);
@@ -128,7 +128,7 @@ public class ChatView extends DrawableObject {
         }
 
         // make the player name fit a fixed size!
-        player_name = HelperFunctions.getStringOfFixedLength(player_name, 9);
+        player_name = BitmapMethodes.getStringOfFixedLength(player_name, 9);
 
         addMessage(player_name, message, controller);
     }

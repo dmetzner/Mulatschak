@@ -4,7 +4,7 @@ import android.graphics.Canvas;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.helpers.HelperFunctions;
+import heroiceraser.mulatschak.helpers.BitmapMethodes;
 
 
 //----------------------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ public class SideBorders extends DrawableObject{
         setWidth(view.getController().getLayout().getButtonBarWidth());
         setHeight(view.getController().getLayout().getButtonBarHeight());
         setPosition(view.getController().getLayout().getSectors().get(2));
-        setBitmap(HelperFunctions.loadBitmap(view, "side_borders", getWidth(), getHeight() * 4));
+        setBitmap(BitmapMethodes.loadBitmap(view, "side_borders", getWidth(), getHeight() * 4));
     }
 
 

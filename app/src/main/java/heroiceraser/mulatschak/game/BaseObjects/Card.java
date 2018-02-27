@@ -4,7 +4,7 @@ import android.graphics.Point;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.helpers.HelperFunctions;
+import heroiceraser.mulatschak.helpers.BitmapMethodes;
 
 
 //----------------------------------------------------------------------------------------------
@@ -43,7 +43,7 @@ public class Card extends DrawableObject {
     void initCard(GameView view, String image_name) {
         setWidth(view.getController().getLayout().getCardWidth());
         setHeight(view.getController().getLayout().getCardHeight());
-        setBitmap(HelperFunctions.loadBitmap(view, image_name, getWidth(), getHeight()));
+        setBitmap(BitmapMethodes.loadBitmap(view, image_name, getWidth(), getHeight()));
         setVisible(false);
     }
 

@@ -8,7 +8,7 @@ import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
-import heroiceraser.mulatschak.helpers.HelperFunctions;
+import heroiceraser.mulatschak.helpers.BitmapMethodes;
 
 //----------------------------------------------------------------------------------------------
 //  Dealing Animation Class
@@ -131,7 +131,7 @@ public class DealingAnimation {
 
         if (rotation_ != 0) {
             // player left and right need a rotation
-            bitmap = HelperFunctions.rotateBitmap(bitmap, (int) rotation_);
+            bitmap = BitmapMethodes.rotateBitmap(bitmap, (int) rotation_);
         }
         canvas.drawBitmap(bitmap, card_.getPosition().x, card_.getPosition().y, null);
 

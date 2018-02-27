@@ -25,7 +25,6 @@
         android:id="@+id/multi_player_settings_linearLayout_settings"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/multi_player_settings_back_button"
         android:layout_gravity="bottom"
@@ -38,17 +37,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="@string/multi_player_settings_quick_game_button"
-            android:layout_below="@+id/multi_player_settings_linearLayout_title"
-            android:layout_centerHorizontal="true" />
+            android:text="@string/multi_player_settings_quick_game_button" />
 
         <Button
             android:id="@+id/multi_player_settings_invite_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/multi_player_settings_quick_game_button"
-            android:layout_alignStart="@+id/multi_player_settings_quick_game_button"
-            android:layout_below="@+id/multi_player_settings_quick_game_button"
             android:layout_marginTop="10dp"
             android:text="@string/multi_player_settings_invite_button" />
 
@@ -56,9 +50,6 @@
             android:id="@+id/multi_player_settings_invitations_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/multi_player_settings_invite_button"
-            android:layout_alignRight="@+id/multi_player_settings_invite_button"
-            android:layout_below="@+id/multi_player_settings_invite_button"
             android:layout_marginTop="10dp"
             android:text="@string/multi_player_settings_invitations_button" />
 

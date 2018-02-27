@@ -11,7 +11,7 @@ import android.text.TextPaint;
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.helpers.HelperFunctions;
+import heroiceraser.mulatschak.helpers.BitmapMethodes;
 
 
 //----------------------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ public class MyKeyBoardButton extends DrawableObject{
         setWidth(width);
         setHeight(height);
         if (!image_name.equals("")) {
-            setBitmap(HelperFunctions.loadBitmap(view, image_name, width, height));
+            setBitmap(BitmapMethodes.loadBitmap(view, image_name, width, height));
         }
         this.text = text;
         textPaint = new TextPaint();

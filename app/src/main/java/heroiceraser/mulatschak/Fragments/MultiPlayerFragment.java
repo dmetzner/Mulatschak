@@ -1,6 +1,7 @@
 package heroiceraser.mulatschak.Fragments;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,13 +24,9 @@ public class MultiPlayerFragment extends Fragment implements View.OnClickListene
 
     heroiceraser.mulatschak.Fragments.MultiPlayerFragment.Listener mListener = null;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.multiplayer_options, container, false);
         final int[] CLICKABLES = new int[]{
@@ -46,11 +43,6 @@ public class MultiPlayerFragment extends Fragment implements View.OnClickListene
 
     public void setListener(heroiceraser.mulatschak.Fragments.MultiPlayerFragment.Listener l) {
         mListener = l;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
     }
 
     @Override

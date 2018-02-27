@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import heroiceraser.mulatschak.game.BaseObjects.Card;
 import heroiceraser.mulatschak.game.GameController;
-import heroiceraser.mulatschak.helpers.HelperFunctions;
+import heroiceraser.mulatschak.helpers.BitmapMethodes;
 
 
 //--------------------------------------------------------------------------------------------------
@@ -66,7 +66,7 @@ public class CardExchangeAnimation {
         new_drawn_cards_ = new ArrayList<>();
         cards_changed_ = false;
         degree_ = 0;
-        backside_bitmap_ = HelperFunctions.loadBitmap(controller.getView(), "card_back",
+        backside_bitmap_ = BitmapMethodes.loadBitmap(controller.getView(), "card_back",
                 controller.getLayout().getCardWidth(), controller.getLayout().getCardHeight());
     }
 

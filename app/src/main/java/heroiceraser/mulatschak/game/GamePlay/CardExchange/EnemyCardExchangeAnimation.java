@@ -10,7 +10,7 @@ import java.util.List;
 import heroiceraser.mulatschak.game.BaseObjects.Card;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
-import heroiceraser.mulatschak.helpers.HelperFunctions;
+import heroiceraser.mulatschak.helpers.BitmapMethodes;
 
 //--------------------------------------------------------------------------------------------------
 //What does this animation?
@@ -75,7 +75,7 @@ public class EnemyCardExchangeAnimation {
         myPlayer_ = myPlayer;
         clean_hand = false;
         exchanged_cards_ = new ArrayList<>();
-        backside_bitmap_ = HelperFunctions.loadBitmap(controller.getView(), "card_back",
+        backside_bitmap_ = BitmapMethodes.loadBitmap(controller.getView(), "card_back",
                 controller.getLayout().getCardWidth(), controller.getLayout().getCardHeight());
     }
 
@@ -133,7 +133,7 @@ public class EnemyCardExchangeAnimation {
 
             // myPlayer 1 & 3 show a rotated bitmap
             if (myPlayer.getPosition() % 2 != 0) {
-                bitmap = HelperFunctions.rotateBitmap(bitmap, 90);
+                bitmap = BitmapMethodes.rotateBitmap(bitmap, 90);
             }
 
             for (int i = 0; i < exchanged_cards_.size(); i++) {
@@ -160,7 +160,7 @@ public class EnemyCardExchangeAnimation {
 
             if (myPlayer.getPosition() % 2 != 0) {
 
-                bitmap = HelperFunctions.rotateBitmap(bitmap, 90);
+                bitmap = BitmapMethodes.rotateBitmap(bitmap, 90);
                 camera_.rotateX(degree_);
                 camera_.rotateY(0);
                 camera_.getMatrix(matrix);
@@ -197,7 +197,7 @@ public class EnemyCardExchangeAnimation {
         if (clean_hand) {
             Bitmap bitmap = backside_bitmap_;
             if (myPlayer.getPosition() % 2 != 0) {
-                bitmap = HelperFunctions.rotateBitmap(bitmap, 90);
+                bitmap = BitmapMethodes.rotateBitmap(bitmap, 90);
             }
             for (Card card : myPlayer.getHand().getCardStack()) {
                 canvas.drawBitmap(bitmap, card.getPosition().x, card.getPosition().y, null);

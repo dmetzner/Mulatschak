@@ -6,7 +6,7 @@ import android.graphics.Point;
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.helpers.HelperFunctions;
+import heroiceraser.mulatschak.helpers.BitmapMethodes;
 
 
 // ToDo
@@ -25,7 +25,7 @@ public class DealerButton extends DrawableObject{
         setPosition(view.getController().getLayout().getDeckPosition());
         setWidth(view.getController().getLayout().getDealerButtonSize());
         setHeight(getWidth());
-        setBitmap(HelperFunctions.loadBitmap(view, "dealer_button" ,getWidth(), getHeight()));
+        setBitmap(BitmapMethodes.loadBitmap(view, "dealer_button" ,getWidth(), getHeight()));
         setVisible(true);
     }
 

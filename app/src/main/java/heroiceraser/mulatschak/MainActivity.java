@@ -4,10 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.CharArrayBuffer;
-import android.net.Uri;
 import android.os.Handler;
-import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -36,7 +33,6 @@ import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.InvitationCallback;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.Participant;
-import com.google.android.gms.games.multiplayer.ParticipantResult;
 import com.google.android.gms.games.multiplayer.realtime.OnRealTimeMessageReceivedListener;
 import com.google.android.gms.games.multiplayer.realtime.RealTimeMessage;
 import com.google.android.gms.games.multiplayer.realtime.Room;
@@ -48,9 +44,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -291,7 +285,7 @@ public class MainActivity extends FragmentActivity implements
         Log.d(TAG, "**** got onStop");
 
         // if we're in a room, leave it.        // not happy with the api -> prefer resource leaks
-        leaveRoom();                        // ToDo find better idea
+        // leaveRoom();                        // ToDo find better idea
 
         // stop trying to keep the screen on
         stopKeepingScreenOn();
@@ -306,8 +300,7 @@ public class MainActivity extends FragmentActivity implements
     public void onDestroy() {
         Log.d(TAG, "**** got onDestroy");
 
-        leaveRoom();// not happy with the api -> prefer resource leaks
-                                   // ToDo find better idea
+        leaveRoom();// not happy with the api -> prefer resource leaks // ToDo find better idea
         super.onDestroy();
     }
 
@@ -1410,11 +1403,11 @@ public class MainActivity extends FragmentActivity implements
 
     class startGameParas
     {
-        public int    playerLives;
-        public int    enemies;
-        public int    difficulty;
-        public ArrayList<String> playerPositions;
-    };
+        int playerLives;
+        int enemies;
+        int difficulty;
+        ArrayList<String> playerPositions;
+    }
 
     private void startGame(final startGameParas paras, final String my_name_final) {
         // start the game via the game controller of our game view

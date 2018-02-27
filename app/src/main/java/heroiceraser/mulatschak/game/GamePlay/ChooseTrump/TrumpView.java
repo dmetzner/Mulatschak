@@ -12,7 +12,7 @@ import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.game.BaseObjects.MulatschakDeck;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.helpers.HelperFunctions;
+import heroiceraser.mulatschak.helpers.BitmapMethodes;
 
 //--------------------------------------------------------------------------------------------------
 //  Trump view
@@ -162,7 +162,7 @@ public class TrumpView extends DrawableObject {
         setPosition(start_position_.x + (int) (offset_.x * percentage),
                 start_position_.y + (int) (offset_.y * percentage));
 
-        active_bitmap_ = HelperFunctions.loadBitmap(controller.getView(),
+        active_bitmap_ = BitmapMethodes.loadBitmap(controller.getView(),
                 active_id_, getWidth(), getHeight());
 
         if (percentage >= 1) {
@@ -202,7 +202,7 @@ public class TrumpView extends DrawableObject {
             setPosition(game_position_);
             setWidth(game_size_.x);
             setHeight(game_size_.y);
-            active_bitmap_ = HelperFunctions
+            active_bitmap_ = BitmapMethodes
                     .loadBitmap(controller.getView(), active_id_, getWidth(), getHeight());
             controller.continueAfterTrumpWasChosen();
         }

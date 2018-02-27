@@ -5,7 +5,7 @@ import android.graphics.Canvas;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.helpers.HelperFunctions;
+import heroiceraser.mulatschak.helpers.BitmapMethodes;
 
 
 //--------------------------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ public class ButtonBarDecoration extends DrawableObject{
         setHeight(view.getController().getLayout().getButtonBarHeight());
         setPosition(view.getController().getLayout().getButtonBarPosition().x,
                 view.getController().getLayout().getButtonBarPosition().y - getHeight());
-        setBitmap(HelperFunctions.loadBitmap(view, "button_bar_decoration", getWidth(), getHeight()));
+        setBitmap(BitmapMethodes.loadBitmap(view, "button_bar_decoration", getWidth(), getHeight()));
     }
 
     public void draw(Canvas canvas) {

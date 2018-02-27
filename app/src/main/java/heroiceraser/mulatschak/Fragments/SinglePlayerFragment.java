@@ -2,6 +2,7 @@ package heroiceraser.mulatschak.Fragments;
 
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,13 +40,9 @@ public class SinglePlayerFragment extends Fragment implements View.OnClickListen
     private SeekBar player_lives_seekBar;
     private TextView player_lives_textView;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.singleplayer_settings, container, false);
         final int[] CLICKABLES = new int[] {
@@ -56,23 +53,23 @@ public class SinglePlayerFragment extends Fragment implements View.OnClickListen
             v.findViewById(i).setOnClickListener(this);
         }
 
-        enemies_1_radioButton = (RadioButton)
+        enemies_1_radioButton =
                 v.findViewById(R.id.single_player_settings_enemies_1_radioButton);
-        enemies_2_radioButton = (RadioButton)
+        enemies_2_radioButton =
                 v.findViewById(R.id.single_player_settings_enemies_2_radioButton);
-        enemies_3_radioButton = (RadioButton)
+        enemies_3_radioButton =
                 v.findViewById(R.id.single_player_settings_enemies_3_radioButton);
 
-        difficulty_easy_radioButton   = (RadioButton)
+        difficulty_easy_radioButton   =
                 v.findViewById(R.id.single_player_settings_difficulty_easy_radioButton);
-        difficulty_normal_radioButton = (RadioButton)
+        difficulty_normal_radioButton =
                 v.findViewById(R.id.single_player_settings_difficulty_normal_radioButton);
-        difficulty_hard_radioButton   = (RadioButton)
+        difficulty_hard_radioButton   =
                 v.findViewById(R.id.single_player_settings_difficulty_hard_radioButton);
 
-        player_lives_textView = (TextView)
+        player_lives_textView =
                 v.findViewById(R.id.single_player_settings_player_lives_text);
-        player_lives_seekBar = (SeekBar)
+        player_lives_seekBar =
                 v.findViewById(R.id.single_player_settings_player_lives_seekBar);
 
         player_lives_seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -105,10 +102,6 @@ public class SinglePlayerFragment extends Fragment implements View.OnClickListen
         mListener = l;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
 
     @Override
     public void onClick(View view) {

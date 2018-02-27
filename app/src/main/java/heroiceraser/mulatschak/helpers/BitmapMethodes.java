@@ -10,12 +10,9 @@ import android.util.Log;
 
 import heroiceraser.mulatschak.game.GameView;
 
-/**
- * Created by Daniel Metzner on 14.08.2017.
- */
 
-public final class HelperFunctions {
-    private HelperFunctions() {}
+public final class BitmapMethodes {
+    private BitmapMethodes() {}
 
     public static String getStringOfFixedLength(String s, int length) {
         if (s.length() > length) {

@@ -19,7 +19,7 @@ import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBarWindows.ButtonBarWindow;
-import heroiceraser.mulatschak.helpers.HelperFunctions;
+import heroiceraser.mulatschak.helpers.BitmapMethodes;
 
 
 //--------------------------------------------------------------------------------------------------
@@ -105,7 +105,7 @@ public class GameTricks extends ButtonBarWindow {
 
         // discardPiles
         // discard piles get added via the controller after every round
-        card_back_bitmap_ = HelperFunctions.loadBitmap(view, "card_back",
+        card_back_bitmap_ = BitmapMethodes.loadBitmap(view, "card_back",
                 view.getController().getLayout().getCardWidth(),
                 view.getController().getLayout().getCardHeight());
         visible_round_id_ = GameController.NOT_SET;

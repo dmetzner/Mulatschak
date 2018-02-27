@@ -9,9 +9,8 @@ import java.util.List;
 
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.game.GameController;
-import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.helpers.HelperFunctions;
+import heroiceraser.mulatschak.helpers.BitmapMethodes;
 
 
 //--------------------------------------------------------------------------------------------------
@@ -74,10 +73,10 @@ public class DiscardPile extends DrawableObject {
     private void finishInit(GameView view) {
         String BMP_DISCARD_PILE = "discard_pile";
         this.positions_ = view.getController().getLayout().getDiscardPilePositions();
-        setBitmap(HelperFunctions.loadBitmap(view, BMP_DISCARD_PILE, getWidth(), getHeight()));
-        Bitmap backside = HelperFunctions.loadBitmap(view, "card_back", getWidth(), getHeight());
-        Bitmap overlay = HelperFunctions.createBitmapOverlay(backside);
-        overlay_lost_ = HelperFunctions.adjustOpacity(overlay, 120);
+        setBitmap(BitmapMethodes.loadBitmap(view, BMP_DISCARD_PILE, getWidth(), getHeight()));
+        Bitmap backside = BitmapMethodes.loadBitmap(view, "card_back", getWidth(), getHeight());
+        Bitmap overlay = BitmapMethodes.createBitmapOverlay(backside);
+        overlay_lost_ = BitmapMethodes.adjustOpacity(overlay, 120);
         if (backside != null) {
             backside.recycle();
         }

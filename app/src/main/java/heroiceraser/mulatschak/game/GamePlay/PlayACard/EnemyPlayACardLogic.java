@@ -8,7 +8,7 @@ import heroiceraser.mulatschak.game.BaseObjects.CardStack;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
-import heroiceraser.mulatschak.helpers.HelperFunctions;
+import heroiceraser.mulatschak.helpers.BitmapMethodes;
 
 
 //--------------------------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ public class EnemyPlayACardLogic {
     //                  -> loads backside bitmap
     //
     public void init(GameController controller) {
-        backside_bitmap_ = HelperFunctions.loadBitmap(controller.getView(), "card_back",
+        backside_bitmap_ = BitmapMethodes.loadBitmap(controller.getView(), "card_back",
                 controller.getLayout().getCardWidth(), controller.getLayout().getCardHeight());
     }
 
@@ -150,7 +150,7 @@ public class EnemyPlayACardLogic {
         reCalculateOffset(percentage);
         move_card_.setPosition(start_position_.x + offset_.x,
                 start_position_.y + offset_.y);
-        rotated_bitmap_ = HelperFunctions.rotateBitmap(backside_bitmap_,
+        rotated_bitmap_ = BitmapMethodes.rotateBitmap(backside_bitmap_,
                 rotation_start_ + rotation_offset_);
 
         // end animation

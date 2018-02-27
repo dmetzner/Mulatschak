@@ -12,7 +12,7 @@ import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.helpers.HelperFunctions;
+import heroiceraser.mulatschak.helpers.BitmapMethodes;
 
 
 //--------------------------------------------------------------------------------------------------
@@ -103,7 +103,7 @@ public class PlayerHandsView {
                     bmp = controller.getDeck().getBacksideBitmap();
                 } else if (i == 1 || i == 3) {
                     Bitmap tmp = controller.getDeck().getBacksideBitmap();
-                    bmp = HelperFunctions.rotateBitmap(tmp, 90);
+                    bmp = BitmapMethodes.rotateBitmap(tmp, 90);
                 }
 
                 canvas.drawBitmap(bmp,

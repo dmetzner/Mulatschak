@@ -9,7 +9,7 @@ import heroiceraser.mulatschak.game.BaseObjects.Card;
 import heroiceraser.mulatschak.game.BaseObjects.CardStack;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.helpers.HelperFunctions;
+import heroiceraser.mulatschak.helpers.BitmapMethodes;
 
 
 //----------------------------------------------------------------------------------------------
@@ -43,7 +43,7 @@ public class PlayACardLogic {
         move_card_idx_ = GameController.NOT_SET;
         card_movable_ = false;
         invalid_move_symbol_running_ = false;
-        invalid_move_symbol_ = HelperFunctions.loadBitmap(view, "no_way",
+        invalid_move_symbol_ = BitmapMethodes.loadBitmap(view, "no_way",
                 view.getController().getLayout().getCardHeight(),
                 view.getController().getLayout().getCardHeight());
         invalid_move_symbol_position_ = new Point(
