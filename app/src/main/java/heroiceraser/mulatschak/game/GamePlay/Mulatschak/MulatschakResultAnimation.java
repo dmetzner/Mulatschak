@@ -57,7 +57,7 @@ public class MulatschakResultAnimation {
                 layout.getDiscardPilePositions().get(0).y + layout.getCardHeight() / 3));
         TextPaint tmp = new TextPaint();
         tmp.setAntiAlias(true);
-        tmp.setTextSize(layout.getCardHeight());
+        tmp.setTextSize(layout.getCardHeight() / 2);
         tmp.setTextAlign(Paint.Align.CENTER);
         tmp.setColor(Color.WHITE);
         tmp.setAlpha(0);

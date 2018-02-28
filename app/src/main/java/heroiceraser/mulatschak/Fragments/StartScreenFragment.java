@@ -7,10 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import at.heroiceraser.mulatschak.R;
-
+import heroiceraser.mulatschak.helpers.LocaleHelper;
 
 
 //--------------------------------------------------------------------------------------------------
@@ -18,14 +19,18 @@ import at.heroiceraser.mulatschak.R;
 //
 public class StartScreenFragment extends Fragment implements OnClickListener {
     String mGreeting;
+    String language;
 
     public interface Listener {
         void onSinglePlayerSettingsRequested();
-        void onMultiPlayerRequested();
         void onShowAchievementsRequested();
         void onShowLeaderboardsRequested();
         void onSignInButtonClicked();
         void onSignOutButtonClicked();
+        void onMultiPlayerQuickGameRequested();
+        void onMultiPlayerInvitePlayersRequested();
+        void onMultiPlayerSeeInvitationsRequested();
+        void onChangeLanguage();
     }
 
     Listener mListener = null;
@@ -36,15 +41,20 @@ public class StartScreenFragment extends Fragment implements OnClickListener {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.start_screen, container, false);
         final int[] CLICKABLES = new int[] {
-                R.id.single_player_button, R.id.multi_player_button,
+                R.id.change_language_button,
+                R.id.single_player_button,
                 R.id.show_achievements_button, R.id.show_leaderboards_button,
-                R.id.sign_in_button, R.id.sign_out_button
+                R.id.sign_in_button, R.id.sign_out_button,
+                R.id.multi_player_quick_game_button,
+                R.id.multi_player_invite_button,
+                R.id.multi_player_invitations_button
         };
         for (int i : CLICKABLES) {
             v.findViewById(i).setOnClickListener(this);
         }
 
         mGreeting = v.getResources().getString(R.string.signed_out_greeting);
+        language = LocaleHelper.getLanguage(getContext());
         return v;
     }
 
@@ -56,6 +66,7 @@ public class StartScreenFragment extends Fragment implements OnClickListener {
     public void onStart() {
         super.onStart();
         updateUi();
+        updateLanguageIcon(language);
     }
 
     public void setGreeting(String greeting) {
@@ -65,6 +76,7 @@ public class StartScreenFragment extends Fragment implements OnClickListener {
 
     void updateUi() {
         if (getActivity() == null) return;
+
         TextView tv =  getActivity().findViewById(R.id.hello);
         if (tv != null) tv.setText(mGreeting);
 
@@ -74,14 +86,23 @@ public class StartScreenFragment extends Fragment implements OnClickListener {
                 View.GONE : View.VISIBLE);
     }
 
+    public void updateLanguageIcon(String languageCode) {
+        if (getActivity() == null) return;
+        ImageButton ib = getActivity().findViewById(R.id.change_language_button);
+        switch (languageCode) {
+            case "de":
+                ib.setImageResource(R.drawable.language_de);
+                break;
+            default:
+                ib.setImageResource(R.drawable.language_en);
+        }
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.single_player_button:
                 mListener.onSinglePlayerSettingsRequested();
-                break;
-            case R.id.multi_player_button:
-                mListener.onMultiPlayerRequested();
                 break;
             case R.id.show_achievements_button:
                 mListener.onShowAchievementsRequested();
@@ -95,6 +116,18 @@ public class StartScreenFragment extends Fragment implements OnClickListener {
             case R.id.sign_out_button:
                 mListener.onSignOutButtonClicked();
                 break;
+            case R.id.change_language_button:
+                mListener.onChangeLanguage();
+                break;
+            case R.id.multi_player_quick_game_button:
+                mListener.onMultiPlayerQuickGameRequested();
+                break;
+            case R.id.multi_player_invite_button:
+                mListener.onMultiPlayerInvitePlayersRequested();
+                break;
+            case R.id.multi_player_invitations_button:
+                mListener.onMultiPlayerSeeInvitationsRequested();
+                break;
         }
     }
 
@@ -106,7 +139,9 @@ public class StartScreenFragment extends Fragment implements OnClickListener {
 
     private void handleButtons(boolean signedIn) {
         if (getActivity() != null) {
-            getActivity().findViewById(R.id.multi_player_button).setEnabled(signedIn);
+            getActivity().findViewById(R.id.multi_player_quick_game_button).setEnabled(signedIn);
+            getActivity().findViewById(R.id.multi_player_invite_button).setEnabled(signedIn);
+            getActivity().findViewById(R.id.multi_player_invitations_button).setEnabled(signedIn);
             getActivity().findViewById(R.id.show_achievements_button).setEnabled(signedIn);
             getActivity().findViewById(R.id.show_leaderboards_button).setEnabled(signedIn);
         }

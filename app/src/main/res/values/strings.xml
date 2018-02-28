@@ -2,126 +2,132 @@
     <string name="app_name">Mulatschak</string>
     <string name="title_activity_game">GameActivity</string>
 
-    <string name="signed_out_greeting">Hallo, anonymer Spieler!</string>
-    <string name="achievements_not_available">Bitte melde dich an um deine Erfolge zu sehen.</string>
-    <string name="leaderboards_not_available">Bitte melde dich an um deine Ranglisten zu sehen.</string>
-    <string name="achievement">Erfolg</string>
-    <string name="your_progress_will_be_uploaded">Dein Erfolg wird in kürze hochgeladen</string>
-    <string name="see_your_progress">Wirf einen Blick auf deinen Fortschritt:</string>
-    <string name="show_achievements">Erfolge</string>
-    <string name="show_leaderboards">Ranglisten</string>
-    <string name="sign_in_why">Melde dich mit Google an um online gegen deine Freunde spielen zu können.</string>
-    <string name="you_are_signed_in">Du bist mittels Google angemeldet</string>
-    <string name="sign_out">Abmelden</string>
-    <string name="you_win">Du gewinnst!</string>
-    <string name="sign_in_to_upload_this_score">Melde dich an um deine Erfolge hochzuladen</string>
-    <string name="signin_other_error">Es gab einen Fehler bei deiner Anmeldung. Bitte versuch es später erneut.</string>
+    <string name="signed_out_greeting">Hello anonymous user!</string>
+    <string name="signed_in_greeting">Hello %1$s</string>
+    <string name="achievements_not_available">Please sign in to view achievements.</string>
+    <string name="leaderboards_not_available">Please sign in to view leaderboards.</string>
+    <string name="achievement">Achievement</string>
+    <string name="your_progress_will_be_uploaded">Your existing achievements and score will be uploaded shortly.</string>
+    <string name="see_your_progress">See your progress:</string>
+    <string name="show_achievements">Achievements</string>
+    <string name="show_leaderboards">Leaderboards</string>
+    <string name="sign_in_why">Sign in with Google to share your scores and achievements with your friends.</string>
+    <string name="you_are_signed_in">You are signed in with Google.</string>
+    <string name="sign_out">Sign out</string>
+    <string name="you_win">You win!</string>
+    <string name="sign_in_to_upload_this_score">Sign in now to upload this score, save your achievements and share your progress with friends.</string>
+    <string name="signin_other_error">There was an issue with sign in.  Please try again later.</string>
+
+    <!-- :::::::::::::::: back button :::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+    <string name="close">close</string>
+    <string name="are_you_sure_to_close_message">"Are you sure you want to end %1$s?"</string>
+    <string name="this_game">"this game"</string>
+
+    <!-- :::::::::::::::: Loading :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+    <string name="loading">loading…</string>
 
     <!-- :::::::::::::::: Player Info Pop Up ::::::::::::::::::::::::::::::::::::::::::::::::::: -->
-    <string name="loading">Es wird geladen…</string>
-
-    <!-- :::::::::::::::: Player Info Pop Up ::::::::::::::::::::::::::::::::::::::::::::::::::: -->
-    <string name="player_info_title_bar_name">Spieler Profil</string>
+    <string name="player_info_title_bar_name">Player Profile</string>
 
     <!-- ::::::::::::::::::::::: Player Info ::::::::::::::::::::::::::::::::::::::::::::::::::: -->
-    <string name="player_info_active_player_is_0">Du bist am Zug</string>
-    <string name="player_info_miss_a_turn">Du setzt diese Runde aus</string>
+    <string name="player_info_active_player_is_0">It is your turn!</string>
+    <string name="player_info_miss_a_turn">You pass this round</string>
     <string name="player_presentation_greeting">Hi</string>
-    <string name="player_presentation_intro">Deine Gegner sind</string>
+    <string name="player_presentation_intro">Your enemies are:</string>
 
 
     <!-- :::::::::::::::: Mulatschak Round ::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="mulatschak">Mulatschak</string>
-    <string name="mulatschak_failed_2">fehlgeschlagen</string>
-    <string name="mulatschak_succeeded_2">erfolgreich</string>
+    <string name="mulatschak_failed_2">failed</string>
+    <string name="mulatschak_succeeded_2">succeeded</string>
 
 
     <!-- :::::::::::::::::::: SinglePlayer Settings :::::::::::::::::::::::::::::::::::::::::::: -->
-    <string name="single_player_settings_title">Einzelspieler</string>
+    <string name="single_player_settings_title">SinglePlayer</string>
 
-    <string name="single_player_settings_player_amount_text">Wähle die Anzahl deiner Gegner: </string>
-    <string name="multi_player_settings_player_amount_text">Wähle die Anzahl zusätzlicher Gegner: </string>
-    <string name="multi_player_settings_player_amount_text_no_host">Der Host wählt die Anzahl zusätzlicher Gegner</string>
+    <string name="single_player_settings_player_amount_text">Choose the amount of enemies: </string>
+    <string name="multi_player_settings_player_amount_text">Choose the amount of additional enemies: </string>
+    <string name="multi_player_settings_player_amount_text_no_host">The host chooses the amount of additional enemies:</string>
     <string name="single_player_settings_enemies_0">0</string>
     <string name="single_player_settings_enemies_1">1</string>
     <string name="single_player_settings_enemies_2">2</string>
     <string name="single_player_settings_enemies_3">3</string>
 
-    <string name="single_player_settings_difficulty_text">Wähle die Schwierigkeit deiner Gegner: </string>
-    <string name="multi_player_settings_difficulty_text">Wähle die Schwierigkeit der Gegner: </string>
-    <string name="multi_player_settings_difficulty_text_no_host">Der Host wählt die Schwierigkeit der Gegner: </string>
-    <string name="single_player_settings_difficulty_easy">Leicht</string>
+    <string name="single_player_settings_difficulty_text">Choose the difficulty of your enemies: </string>
+    <string name="multi_player_settings_difficulty_text">Choose the difficulty of the enemies: </string>
+    <string name="multi_player_settings_difficulty_text_no_host">The host chooses the difficulty of the enemies: </string>
+    <string name="single_player_settings_difficulty_easy">Easy</string>
     <string name="single_player_settings_difficulty_normal">Normal</string>
-    <string name="single_player_settings_difficulty_hard">Schwer</string>
+    <string name="single_player_settings_difficulty_hard">Hard</string>
 
-    <string name="single_player_settings_player_lives_text">Anzahl der Startleben:   </string>
-    <string name="single_player_settings_player_lives_text_default">Anzahl der Startleben:\u0020\u0020\u0020 21</string>
+    <string name="single_player_settings_player_lives_text">Amount of player lives:   </string>
+    <string name="single_player_settings_player_lives_text_default">Amount of player lives:\u0020\u0020\u0020 21</string>
 
-    <string name="single_player_settings_animation_default">Animations Geschwindigkeit: Normal</string>
-    <string name="single_player_settings_animation_text">Animations Geschwindigkeit:</string>
+    <string name="single_player_settings_animation_default">Animation speed: normal</string>
+    <string name="single_player_settings_animation_text">Animation speed:</string>
 
-    <string name="single_player_settings_start_button">Spiel Starten</string>
-    <string name="single_player_settings_start_button_no_host">Der Host konfiguriert das Spiel</string>
+    <string name="single_player_settings_start_button">Start Game</string>
 
     <!-- :::::::::::::::::::: MultiPlayer Settings ::::::::::::::::::::::::::::::::::::::::::::: -->
-    <string name="multi_player_settings_title">Mehrspieler</string>
+    <string name="multi_player_settings_title">MultiPlayer</string>
+    <string name="multi_player_settings_no_host_text">Please wait while the host takes care of the settings:</string>
 
-    <string name="multi_player_settings_quick_game_button">Schnelles Spiel</string>
-    <string name="multi_player_settings_invite_button">Freunde einladen</string>
-    <string name="multi_player_settings_invitations_button">Einladungen ansehen</string>
+    <string name="multi_player_settings_quick_game_button">Quick Game</string>
+    <string name="multi_player_settings_invite_button">Invite Friends</string>
+    <string name="multi_player_settings_invitations_button">See your Invitations</string>
 
     <!-- :::::::::::::::::::: Button Bar Windows ::::::::::::::::::::::::::::::::::::::::::::::: -->
 
-        <!-- :::::::::::::::::::: Menu ::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
-        <string name="button_bar_menu_title">Menü</string>
+    <!-- :::::::::::::::::::: Menu ::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+    <string name="button_bar_menu_title">Menu</string>
 
     <!-- :::::::::::::::::ChatViewChat ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
-        <string name="button_bar_chat_title">Chat</string>
+    <string name="button_bar_chat_title">Chat</string>
 
-        <!-- :::::::::::::::::::: Tricks ::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
-        <string name="button_bar_tricks_title">Stiche</string>
-        <string name="button_bar_tricks_subtitle">Runde</string>
-        <string name="button_bar_tricks_empty_info">Du hast noch keine Stiche gemacht!</string>
+    <!-- :::::::::::::::::::: Tricks ::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+    <string name="button_bar_tricks_title">Tricks</string>
+    <string name="button_bar_tricks_subtitle">Round</string>
+    <string name="button_bar_tricks_empty_info">You have not made any tricks yet!</string>
 
-        <!-- :::::::::::::::::::: State of the game :::::::::::::::::::::::::::::::::::::::::::: -->
-        <string name="button_bar_state_of_the_game_title">Spielstand</string>
+    <!-- :::::::::::::::::::: State of the game :::::::::::::::::::::::::::::::::::::::::::: -->
+    <string name="button_bar_state_of_the_game_title">Score</string>
 
-        <!-- :::::::::::::::::::: NextRoundButton :::::::::::::::::::::::::::::::::::::::::::::: -->
-        <string name="next_round_button">Nächste Runde</string>
+    <!-- :::::::::::::::::::: NextRoundButton :::::::::::::::::::::::::::::::::::::::::::::: -->
+    <string name="next_round_button">Next Round</string>
 
     <!-- :::::::::::::::::::: Game Over :::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
-    <string name="game_over_text">Spiel beendet</string>
-    <string name="game_over_button">Zurück in Menü</string>
-    <string name="game_over_won">Du hast gewonnen</string>
-    <string name="game_over_lost">Du hast verloren</string>
+    <string name="game_over_text">Game Over</string>
+    <string name="game_over_button">Back to the Menu</string>
+    <string name="game_over_won">You Won</string>
+    <string name="game_over_lost">You Lost</string>
 
     <!-- :::::::::::::::::::: TrickBids :::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="muli_text">Mulatschak?</string>
-    <string name="yes_button">Ja</string>
-    <string name="no_button">Nein</string>
+    <string name="yes_button">Yes</string>
+    <string name="no_button">No</string>
 
     <!-- :::::::::::::::::::: TrickBids :::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
-    <string name="miss_a_turn_button">Diese Runde aussetzen</string>
+    <string name="miss_a_turn_button">Skip this Round</string>
 
     <!-- :::::::::::::::::::: Card Exchange :::::::::::::::::::::::::::::::::::::::::::::::::::: -->
-        <!-- :::::::::::::::::::: Card Exchange Buttons :-:::::::::::::::::::::::::::::::::::::: -->
-        <string name="card_exchange_help_text">Berühre alle Karten die du austauschen möchtest.
-            "Du kannst Keine, Eine, Zwei, Drei oder alle Karten austauschen"</string>
+    <!-- :::::::::::::::::::: Card Exchange Buttons :-:::::::::::::::::::::::::::::::::::::: -->
+    <string name="card_exchange_help_text">Touch the cards you want exchange!
+            You can exchange either None, One, Two, Three or All cards."</string>
 
-        <string name="card_exchange_button_0">Keine Karten tauschen</string>
-        <string name="card_exchange_button_1"> Eine Karte  tauschen</string>
-        <string name="card_exchange_button_2"> Zwei Karten tauschen</string>
-        <string name="card_exchange_button_3"> Drei Karten tauschen</string>
-        <string name="card_exchange_button_4"> Vier Karten tauschen</string>
-        <string name="card_exchange_button_5"> Alle Karten tauschen</string>
+    <string name="card_exchange_button_0">Change No Cards</string>
+    <string name="card_exchange_button_1">Change One Cards</string>
+    <string name="card_exchange_button_2">Change Two Cards</string>
+    <string name="card_exchange_button_3">Change Three Cards</string>
+    <string name="card_exchange_button_4">Change Four Cards</string>
+    <string name="card_exchange_button_5">Change All Cards</string>
 
 
     <!-- :::::::::::::::::::: Game Menu :::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
-    <string name="animation_speed_title">Animations Geschwindigkeit</string>
-    <string name="animation_speed_slow">Langsam</string>
+    <string name="animation_speed_title">Animations</string>
+    <string name="animation_speed_slow">Slow</string>
     <string name="animation_speed_normal">Normal</string>
-    <string name="animation_speed_fast">Schnell</string>
-    <string name="animation_speed_no_animations">Aus</string>
+    <string name="animation_speed_fast">Fast</string>
+    <string name="animation_speed_no_animations">Off</string>
 
 
 

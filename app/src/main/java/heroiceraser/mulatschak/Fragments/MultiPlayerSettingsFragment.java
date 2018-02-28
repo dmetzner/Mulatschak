@@ -57,7 +57,7 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
     private TextView difficultyText;
     private TextView player_lives_textView;
     private Button startGameButton;
-
+    private TextView notHostText;
     private boolean notCreatedYet = false;
     private boolean received = false;
     int players;
@@ -79,12 +79,9 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
         startGameButton = v.findViewById(R.id.multi_player_settings_start_button);
 
         enemiesText = v.findViewById(R.id.multi_player_settings_player_amount_text);
-        enemies_0_radioButton =
-                v.findViewById(R.id.multi_player_settings_enemies_0_radioButton);
-        enemies_1_radioButton =
-                v.findViewById(R.id.multi_player_settings_enemies_1_radioButton);
-        enemies_2_radioButton =
-                v.findViewById(R.id.multi_player_settings_enemies_2_radioButton);
+        enemies_0_radioButton = v.findViewById(R.id.multi_player_settings_enemies_0_radioButton);
+        enemies_1_radioButton = v.findViewById(R.id.multi_player_settings_enemies_1_radioButton);
+        enemies_2_radioButton = v.findViewById(R.id.multi_player_settings_enemies_2_radioButton);
 
         RadioGroup radioGroup = v.findViewById(R.id.multi_player_settings_enemies_radio_group);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
@@ -133,10 +130,8 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
         });
 
 
-        player_lives_textView =
-                v.findViewById(R.id.multi_player_settings_player_lives_text);
-        player_lives_seekBar =
-                v.findViewById(R.id.multi_player_settings_player_lives_seekBar);
+        player_lives_textView = v.findViewById(R.id.multi_player_settings_player_lives_text);
+        player_lives_seekBar = v.findViewById(R.id.multi_player_settings_player_lives_seekBar);
 
         player_lives_seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int progress_value = NOT_SET;
@@ -161,6 +156,8 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
                 mListener.onMultiPlayerSettingsChanged(progress_value);
             }
         });
+
+        notHostText = v.findViewById(R.id.multi_player_settings_no_host);
 
         if (notCreatedYet) {
             prepareMultiPlayerSettingsRequested(players, host);
@@ -206,8 +203,8 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
                 }
                 difficultyText.setText(getString(R.string.multi_player_settings_difficulty_text));
                 enemiesText.setText(getString(R.string.multi_player_settings_player_amount_text));
-                startGameButton.setEnabled(true);
-                startGameButton.setText(getString(R.string.single_player_settings_start_button));
+                startGameButton.setVisibility(View.VISIBLE);
+                notHostText.setVisibility(View.GONE);
                 notCreatedYet = false;
             }
             else {
@@ -220,8 +217,8 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
                 player_lives_seekBar.setEnabled(false);
                 difficultyText.setText(getString(R.string.multi_player_settings_difficulty_text_no_host));
                 enemiesText.setText(getString(R.string.multi_player_settings_player_amount_text_no_host));
-                startGameButton.setText(getString(R.string.single_player_settings_start_button_no_host));
-                startGameButton.setEnabled(false);
+                startGameButton.setVisibility(View.GONE);
+                notHostText.setVisibility(View.VISIBLE);
             }
         }
         catch (Exception e) {

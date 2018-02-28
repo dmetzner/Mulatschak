@@ -1,43 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:weightSum="1">
 
     <!-- :::::::::::::::::::: Back Button :::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <Button
         android:id="@+id/multi_player_settings_back_button"
-        style="@style/BackButton" />
+        style="@style/BackButton"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="start|top"
+        android:layout_marginStart="16dp" />
 
     <!-- :::::::::::::::::::: Title :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
-    <LinearLayout
-        android:id="@+id/multi_player_settings_linearLayout_title"
-        style="@style/SettingsTitleLayout"
-        android:layout_below="@+id/multi_player_settings_back_button">
-
-        <TextView
-            android:id="@+id/multi_player_settings_title"
-            style="@style/SettingsTitleText"
-            android:text="@string/multi_player_settings_title"/>
-    </LinearLayout>
-
 
     <LinearLayout
         android:id="@+id/multi_player_settings_linearLayout_settings"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/multi_player_settings_back_button"
-        android:layout_gravity="bottom"
-        android:layout_marginTop="90dp"
+        android:gravity="center"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="30dp">
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="50dp">
+
+
+        <TextView
+            android:id="@+id/multi_player_settings_title"
+            style="@style/SettingsTitleText"
+            android:layout_height="76dp"
+            android:layout_marginTop="15dp"
+            android:text="@string/multi_player_settings_title" />
+
 
         <Button
             android:id="@+id/multi_player_settings_quick_game_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="@string/multi_player_settings_quick_game_button" />
+            android:layout_marginTop="8dp"
+            android:text="@string/multi_player_settings_quick_game_button"
+ />
 
         <Button
             android:id="@+id/multi_player_settings_invite_button"

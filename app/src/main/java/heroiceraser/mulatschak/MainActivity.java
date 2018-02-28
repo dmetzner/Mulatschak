@@ -56,9 +56,9 @@ import heroiceraser.mulatschak.Fragments.MultiPlayerSettingsFragment;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.Fragments.GameScreenFragment;
 import heroiceraser.mulatschak.Fragments.LoadingScreenFragment;
-import heroiceraser.mulatschak.Fragments.MultiPlayerFragment;
 import heroiceraser.mulatschak.Fragments.SinglePlayerFragment;
 import heroiceraser.mulatschak.Fragments.StartScreenFragment;
+import heroiceraser.mulatschak.helpers.LocaleHelper;
 
 
 public class MainActivity extends FragmentActivity implements
@@ -67,13 +67,12 @@ public class MainActivity extends FragmentActivity implements
         // SinglePlayer Settings
         SinglePlayerFragment.Listener,
         // MultiPlayer Settings
-        MultiPlayerFragment.Listener, MultiPlayerSettingsFragment.Listener {
+         MultiPlayerSettingsFragment.Listener {
 
     // Fragments
     List<Fragment> fragList = new ArrayList<>();
     StartScreenFragment mStartScreenFragment;
     SinglePlayerFragment mSinglePlayerFragment;
-    MultiPlayerFragment mMultiPlayerFragment;
     MultiPlayerSettingsFragment mMultiPlayerSettingsFragment;
     LoadingScreenFragment mLoadingScreenFragment;
     GameScreenFragment mGameScreenFragment;
@@ -89,6 +88,8 @@ public class MainActivity extends FragmentActivity implements
 
     // request codes we use when invoking an external activity
     private static final int RC_SIGN_IN = 9001;
+    private static final int RC_ACHIEVEMENT_UI = 9003;
+    private static final int RC_LEADERBOARD_UI = 9004;
 
     // Request codes for the UIs that we show with startActivityForResult:
     final static int RC_SELECT_PLAYERS = 10000;
@@ -201,10 +202,12 @@ public class MainActivity extends FragmentActivity implements
         // supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.main_activity);
 
+        // set language
+        LocaleHelper.setLocale(this, LocaleHelper.getLanguage(this));
+
         // create fragments
         mStartScreenFragment =          new StartScreenFragment();
         mSinglePlayerFragment =         new SinglePlayerFragment();
-        mMultiPlayerFragment =          new MultiPlayerFragment();
         mMultiPlayerSettingsFragment =  new MultiPlayerSettingsFragment();
         mLoadingScreenFragment =        new LoadingScreenFragment();
         mGameScreenFragment =           new GameScreenFragment();
@@ -212,7 +215,6 @@ public class MainActivity extends FragmentActivity implements
         // listen to fragment events
         mStartScreenFragment.setListener(this);
         mSinglePlayerFragment.setListener(this);
-        mMultiPlayerFragment.setListener(this);
         mMultiPlayerSettingsFragment.setListener(this);
 
         // add initial fragment (welcome fragment)
@@ -617,8 +619,6 @@ public class MainActivity extends FragmentActivity implements
     // room and get connected.
     void showWaitingRoom(Room room) {
         // minimum number of players required for our game
-        // For simplicity, we require everyone to join the game before we start it
-        // (this is signaled by Integer.MAX_VALUE).
         final int MIN_PLAYERS = Integer.MAX_VALUE;
         mRealTimeMultiplayerClient.getWaitingRoomIntent(room, MIN_PLAYERS)
                 .addOnSuccessListener(new OnSuccessListener<Intent>() {
@@ -665,6 +665,7 @@ public class MainActivity extends FragmentActivity implements
 
         // Show sign-out button on main menu
         mStartScreenFragment.handleSignIn(false);
+        mStartScreenFragment.setGreeting(getString(R.string.signed_in_greeting, mDisplayName));
 
         if (mSignedInAccount != googleSignInAccount) {
 
@@ -696,7 +697,7 @@ public class MainActivity extends FragmentActivity implements
                                 handleException(e, "getString(R.string.players_exception)");
                                 mDisplayName = "???";
                             }
-                            mStartScreenFragment.setGreeting("Hello, " + mDisplayName);
+                            mStartScreenFragment.setGreeting(getString(R.string.signed_in_greeting, mDisplayName));
                         }
                     });
         }
@@ -1096,19 +1097,30 @@ public class MainActivity extends FragmentActivity implements
 
 
     //----------------------------------------------------------------------------------------------
+    //  change language
+    //
+    @Override
+    public void onChangeLanguage() {
+        if (LocaleHelper.getLanguage(this).equals("de")) {
+            LocaleHelper.setLocale(this, "");
+            mStartScreenFragment.updateLanguageIcon("");
+        }
+        else {
+            LocaleHelper.setLocale(this, "de");
+            mStartScreenFragment.updateLanguageIcon("de");
+        }
+
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
+    }
+
+    //----------------------------------------------------------------------------------------------
     // start SinglePlayer Settings
     //
     @Override
     public void onSinglePlayerSettingsRequested() {
         switchToFragment(mSinglePlayerFragment, "mSinglePlayerFragment");
-    }
-
-    //----------------------------------------------------------------------------------------------
-    // start MultiPlayer
-    //
-    @Override
-    public void onMultiPlayerRequested() {
-        switchToFragment(mMultiPlayerFragment, "mMultiPlayerFragment");
     }
 
 
@@ -1117,12 +1129,20 @@ public class MainActivity extends FragmentActivity implements
     //
     @Override
     public void onShowAchievementsRequested() {
-        /*if (isSignedIn()) {
-            startActivityForResult(Games.Achievements.getAchievementsIntent(mGoogleApiClient),
-                    RC_UNUSED);
-        } else {
-           // BaseGameUtils.makeSimpleDialog(this, getString(R.string.achievements_not_available)).show();
-        }*/
+        if (isSignedIn()) {
+            showAchievements();
+        }
+    }
+
+    private void showAchievements() {
+        Games.getAchievementsClient(this, GoogleSignIn.getLastSignedInAccount(this))
+                .getAchievementsIntent()
+                .addOnSuccessListener(new OnSuccessListener<Intent>() {
+                    @Override
+                    public void onSuccess(Intent intent) {
+                        startActivityForResult(intent, RC_ACHIEVEMENT_UI);
+                    }
+                });
     }
 
     //----------------------------------------------------------------------------------------------
@@ -1130,12 +1150,20 @@ public class MainActivity extends FragmentActivity implements
     //
     @Override
     public void onShowLeaderboardsRequested() {
-        /*if (isSignedIn()) {
-            startActivityForResult(Games.Leaderboards.getAllLeaderboardsIntent(mGoogleApiClient),
-                    RC_UNUSED);
-        } else {
-          //  BaseGameUtils.makeSimpleDialog(this, getString(R.string.leaderboards_not_available)).show();
-        } */
+        if (isSignedIn()) {
+            showLeaderboard();
+        }
+    }
+
+    private void showLeaderboard() {
+        Games.getLeaderboardsClient(this, GoogleSignIn.getLastSignedInAccount(this))
+                .getAllLeaderboardsIntent()
+                .addOnSuccessListener(new OnSuccessListener<Intent>() {
+                    @Override
+                    public void onSuccess(Intent intent) {
+                        startActivityForResult(intent, RC_LEADERBOARD_UI);
+                    }
+                });
     }
 
 
@@ -1175,16 +1203,16 @@ public class MainActivity extends FragmentActivity implements
                 (active_frag.getTag().equals("mMultiPlayerSettingsFragment")))) {
             new AlertDialog.Builder(this)
                     .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setTitle(getString(R.string.app_name) + " schließen?")
+                    .setTitle(getString(R.string.app_name) + " " + getString(R.string.close) + "?")
                     .setCancelable(true)
-                    .setMessage("Bist du sicher dass du dieses Spiel beenden möchtest?")
-                    .setPositiveButton("Ja", new DialogInterface.OnClickListener(){
+                    .setMessage(getString(R.string.are_you_sure_to_close_message, getString(R.string.this_game)))
+                    .setPositiveButton(getString(R.string.yes_button), new DialogInterface.OnClickListener(){
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             endGame();
                         }
                     })
-                    .setNegativeButton("Nein", null)
+                    .setNegativeButton(getString(R.string.no_button), null)
                     .show();
         }
         else if (active_frag != null && active_frag.getTag() != null &&
@@ -1194,16 +1222,16 @@ public class MainActivity extends FragmentActivity implements
         else {
             new AlertDialog.Builder(this)
                     .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setTitle(getString(R.string.app_name) + " schließen?")
+                    .setTitle(getString(R.string.app_name)  + " " + getString(R.string.close) + "?")
                     .setCancelable(true)
-                    .setMessage("Bist du sicher dass du " + getString(R.string.app_name) + " beenden möchtest?")
-                    .setPositiveButton("Ja", new DialogInterface.OnClickListener(){
+                    .setMessage(getString(R.string.are_you_sure_to_close_message, getString(R.string.app_name)))
+                    .setPositiveButton(getString(R.string.yes_button), new DialogInterface.OnClickListener(){
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             finish();
                         }
                     })
-                    .setNegativeButton("Nein", null)
+                    .setNegativeButton(getString(R.string.no_button), null)
                     .show();
         }
 
