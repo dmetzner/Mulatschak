@@ -805,4 +805,8 @@ public class GameLayout {
     public float getOnePercentOfScreenHeight() {
         return getScreenHeight() / 100.0f;
     }
+
+    public Point getCenter() {
+        return new Point(getScreenWidth() / 2, getScreenHeight() / 2);
+    }
 }

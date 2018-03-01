@@ -40,6 +40,7 @@ public class GameController{
     //
     private boolean enable_drawing_;
     private boolean playerPresentation;
+    private boolean gameStarted;
 
     // online sheesh
     public boolean multiplayer_;
@@ -47,6 +48,7 @@ public class GameController{
     private String my_display_name_;
     private String myPlayerId;
     private String hostOnlineId;
+    public int waitForOnlineInteraction;
 
 
     private GameView view_;
@@ -80,7 +82,7 @@ public class GameController{
         }
         my_display_name_ = null;
         myPlayerId = null;
-
+        player_info_.clear();
 
         view_ = null;
         layout_ = null;
@@ -113,6 +115,8 @@ public class GameController{
         view_ = view;
         enable_drawing_ = false;
         playerPresentation = false;
+        gameStarted = false;
+        waitForOnlineInteraction = Message.noMessage;
 
         logic_ = new GameLogic();
         layout_ = new GameLayout();
@@ -165,7 +169,6 @@ public class GameController{
         Log.d("gebrauchte start zeit: ", time + "");
 
         // init the rest while the players get presented
-        Handler handler = new Handler();
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -181,25 +184,48 @@ public class GameController{
                 Log.d("--", 10 + " - " + System.currentTimeMillis());
                 playerHandsView.init(view_);
                 Log.d("--", 11 + " - " + System.currentTimeMillis());
+
+                // tell everyone my game is fully laoded
+                getPlayerByPosition(0).setGameStarted(true);
+                MainActivity ma = (MainActivity) getView().getContext();
+                ma.broadcastMessage(Message.gameReady, "");
+
                 enable_drawing_ = true;
                 long time = System.currentTimeMillis() - start;
                 Log.d("gebrauchte zeit init2:", time + "");
             }
         };
-        handler.postDelayed(runnable, 100);
+        Thread t = new Thread(runnable);
+        t.start();
     }
 
     public void startGame() {
         if (enable_drawing_) {
+
             playerPresentation = false;
             if (multiplayer_) {
-                Log.d("----------", "host id " + Integer.toString(getPlayerByOnlineId(hostOnlineId).getId()));
-                chooseHostAsDealer(getPlayerByOnlineId(hostOnlineId).getId());
+
+                boolean mGameStarted = true;
+                for (MyPlayer p : getPlayerList()) {
+                    if (p.getOnlineId().equals("")) {
+                        continue;
+                    }
+                    if (!p.isGameStarted()) {
+                        mGameStarted = false;
+                        break;
+                    }
+                }
+                if (mGameStarted) {
+                    gameStarted = true;
+                    Log.d("----------", "host id " + Integer.toString(getPlayerByOnlineId(hostOnlineId).getId()));
+                    chooseHostAsDealer(getPlayerByOnlineId(hostOnlineId).getId());
+                    startRound();
+                }
             }
             else {
                 chooseFirstDealerRandomly();
+                startRound();
             }
-            startRound();
         }
         else {
             Handler handler = new Handler();
@@ -222,7 +248,7 @@ public class GameController{
     //  startRound
     //
     public void startRound() {
-        waitForOnlineInteraction = false;
+        waitForOnlineInteraction = Message.noMessage;
         player_info_.setVisible(true);
 
         // clean up last round
@@ -246,6 +272,11 @@ public class GameController{
         //        getPlayerById(logic_.getDealer()).getDisplayName());
         dealer_button_.startMoveAnimation(this, getPlayerById(logic_.getDealer()).getPosition());
 
+        shuffleDeck();
+    }
+
+
+    private void shuffleDeck() {
         if (multiplayer_) {
             if (myPlayerId.equals(hostOnlineId)) {
                 deck_.shuffleDeck();
@@ -262,7 +293,7 @@ public class GameController{
             else {
                 // show shuffle animation
                 // wait for shuffled deck
-                waitForOnlineInteraction = true;
+                waitForOnlineInteraction = Message.shuffledDeck;
             }
         }
         else {
@@ -580,7 +611,7 @@ public class GameController{
     }
 
 
-    private void allCardsBackToTheDeck() {
+    public void allCardsBackToTheDeck() {
 
         for (int player_id = 0; player_id < getAmountOfPlayers(); player_id++) {
 
@@ -634,11 +665,124 @@ public class GameController{
     }
 
 
+
+    public void handleLeftPeer(final String leftPeerOnlineId) {
+        if (waitForOnlineInteraction == Message.noMessage || player_info_.arePopUpsBlocked()) {
+            Handler h = new Handler();
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    handleLeftPeer(leftPeerOnlineId);
+                }
+            };
+            h.postDelayed(r, 200);
+            return;
+        }
+
+        MyPlayer leftPeerPlayer = getPlayerByOnlineId(leftPeerOnlineId);
+        if (leftPeerPlayer == null) {
+            return;
+        }
+        int onlinePlayers = getAmountOfOnlinePlayer();
+        if (onlinePlayers == 2) {
+            player_info_.makeLastPlayerPopUp(leftPeerPlayer);
+        }
+        else if (onlinePlayers > 2) {
+            player_info_.makeLeftPlayerPopUp(leftPeerPlayer);
+        }
+    }
+
+
+    public void lastPlayerLeftSoLetMeWin() {
+        for (int i = 0; i < getAmountOfPlayers(); i++) {
+            getPlayerById(i).setLives(1);
+            if (getPlayerById(i).getPosition() == 0) {
+                getPlayerById(i).setLives(0);
+            }
+        }
+
+        getNonGamePlayUIContainer().getStatistics().updatePlayerLives(this);
+        getGameOver().setGameGameOver(this);
+    }
+
+
+    private int getAmountOfOnlinePlayer() {
+        int onlinePlayers = 0;
+        for (MyPlayer p : getPlayerList()) {
+            if (!p.getOnlineId().equals("")) {
+                onlinePlayers++;
+            }
+        }
+        return onlinePlayers;
+    }
+
+    public void playerLeftContinueWithAI(MyPlayer leftPlayer) {
+        leftPlayer.setEnemyLogic(true);
+
+        if (leftPlayer.getOnlineId().equals(hostOnlineId)) {
+            leftPlayer.setOnlineId("");
+            for (MyPlayer p : getPlayerList()) {
+                if (!p.getOnlineId().equals("")) {
+                    hostOnlineId = p.getOnlineId();
+                    break;
+                }
+            }
+        }
+        else {
+            leftPlayer.setOnlineId("");
+        }
+
+        // check active player
+        int onlinePlayers = getAmountOfOnlinePlayer();
+        if (onlinePlayers < 2) {
+            multiplayer_ = false;
+        }
+
+        switch (waitForOnlineInteraction) {
+
+            case Message.gameReady:
+                startGame();
+                break;
+
+            case Message.shuffledDeck:
+                shuffleDeck();
+                getGamePlay().getDealCards().dealCards(this);
+                break;
+
+            case Message.mulatschakDecision:
+                getGamePlay().getDecideMulatschak().handleEnemyAction(this);
+                break;
+
+            case Message.chooseTrump:
+                getGamePlay().getChooseTrump().handleEnemyAction(this);
+                break;
+
+            case Message.cardExchange:
+                getGamePlay().getCardExchange().handleEnemyAction(this);
+                break;
+
+            case Message.trickBids:
+                getGamePlay().getTrickBids().handleEnemyAction(this);
+                break;
+
+            case Message.playACard:
+                getGamePlay().getPlayACardRound().handleEnemyAction(this);
+                break;
+        }
+    }
+
     public void handleReceivedMessage(final Message message) {
         if (enable_drawing_) {
             switch (message.type) {
                 case Message.chatMessage:
                     non_game_play_ui_.getChatView().addMessage(getPlayerByOnlineId(message.senderId), message.data, this);
+                    break;
+                case Message.gameReady:
+                    MyPlayer p =getPlayerByOnlineId(message.senderId);
+                    if (p != null) {
+                        p.setGameStarted(true);
+                    }
+                    startGame();
                     break;
                 case Message.shuffledDeck:
                     receiveShuffledDeck(message);
@@ -676,14 +820,13 @@ public class GameController{
 
     }
 
-    public boolean waitForOnlineInteraction;
 
     private void receiveShuffledDeck(final Message message) {
-        if (waitForOnlineInteraction) {
+        if (waitForOnlineInteraction == Message.shuffledDeck) {
             Gson gson = new Gson();
             Type listType = new TypeToken<ArrayList<Integer>>() {}.getType();
             ArrayList<Integer> cardIds = gson.fromJson(message.data, listType);
-            waitForOnlineInteraction = false;
+            waitForOnlineInteraction = Message.noMessage;
             deck_.sortByIdList(cardIds);
             getGamePlay().getDealCards().dealCards(this);
         }
@@ -701,7 +844,7 @@ public class GameController{
     }
 
     private void receiveMulatschakDecision(final Message message) {
-        if (waitForOnlineInteraction) {
+        if (waitForOnlineInteraction == Message.mulatschakDecision) {
             Gson gson = new Gson();
             boolean muli = gson.fromJson(message.data, boolean.class);
             game_play_.getDecideMulatschak().handleOnlineInteraction(muli, this);
@@ -719,7 +862,7 @@ public class GameController{
         }
     }
     private void receiveTrickBids(final Message message) {
-        if (waitForOnlineInteraction) {
+        if (waitForOnlineInteraction == Message.trickBids) {
             Gson gson = new Gson();
             int tricks = gson.fromJson(message.data, int.class);
             game_play_.getTrickBids().handleOnlineInteraction(tricks, this);
@@ -738,7 +881,7 @@ public class GameController{
     }
 
     private void receiveChooseTrump(final Message message) {
-        if (waitForOnlineInteraction) {
+        if (waitForOnlineInteraction == Message.chooseTrump) {
             Gson gson = new Gson();
             int trump = gson.fromJson(message.data, int.class);
             game_play_.getChooseTrump().handleOnlineInteraction(trump, this);
@@ -757,7 +900,7 @@ public class GameController{
     }
 
     private void receiveCardExchange(final Message message) {
-        if (waitForOnlineInteraction) {
+        if (waitForOnlineInteraction == Message.cardExchange) {
             Gson gson = new Gson();
             Type listType = new TypeToken<ArrayList<Integer>>() {}.getType();
             ArrayList<Integer> handCardsToRemoveIds = gson.fromJson(message.data, listType);
@@ -777,7 +920,7 @@ public class GameController{
     }
 
     private void receivePlayACard(final Message message) {
-        if (waitForOnlineInteraction) {
+        if (waitForOnlineInteraction == Message.playACard) {
             Gson gson = new Gson();
             int cardId = gson.fromJson(message.data, int.class);
             game_play_.getPlayACardRound().handleOnlineInteraction(cardId, this);
@@ -861,7 +1004,7 @@ public class GameController{
 
     public PlayerInfo getPlayerInfo() { return player_info_; }
 
-    boolean isDrawingEnabled() {
+    public boolean isDrawingEnabled() {
         return enable_drawing_;
     }
 
@@ -879,5 +1022,9 @@ public class GameController{
 
     public GameSettings getSettings() {
         return settings_;
+    }
+
+    public boolean isGameStarted() {
+        return gameStarted;
     }
 }

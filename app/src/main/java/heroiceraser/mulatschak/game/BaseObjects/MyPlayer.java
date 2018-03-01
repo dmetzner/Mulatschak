@@ -17,6 +17,7 @@ public class MyPlayer {
     public Participant participant_;
     private String display_name_;
     private String onlineId;
+    private boolean gameStarted;
 
     private int id_;
 
@@ -41,6 +42,7 @@ public class MyPlayer {
         hand_ = new CardStack();
         tricks_ = new CardStack();
         enemyLogic = false;
+        gameStarted = false;
     }
 
     public void initMultiplayer() {
@@ -153,6 +155,14 @@ public class MyPlayer {
 
     public void setEnemyLogic(boolean enemyLogic) {
         this.enemyLogic = enemyLogic;
+    }
+
+    public boolean isGameStarted() {
+        return gameStarted;
+    }
+
+    public void setGameStarted(boolean gameStarted) {
+        this.gameStarted = gameStarted;
     }
 }
 

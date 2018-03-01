@@ -104,7 +104,7 @@ public class MainActivity extends FragmentActivity implements
 
     private PlayersClient mPlayersClient;
     private String mPlayerId;
-    private String  mDisplayName;
+    public String  mDisplayName;
 
     // Client used to interact with the real time multiplayer system.
     private RealTimeMultiplayerClient mRealTimeMultiplayerClient = null;
@@ -221,7 +221,7 @@ public class MainActivity extends FragmentActivity implements
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container,
                 mStartScreenFragment).commit();
 
-
+        mDisplayName = "???";
         // load sign in preference
         // Create the Google Api Client with access to the Play Game and Drive services.
         mGoogleSignInClient = GoogleSignIn.getClient(this, new GoogleSignInOptions
@@ -312,7 +312,7 @@ public class MainActivity extends FragmentActivity implements
     //----------------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------------
 
-    private boolean isSignedIn() {
+    public boolean isSignedIn() {
         return GoogleSignIn.getLastSignedInAccount(this) != null;
     }
 
@@ -438,6 +438,8 @@ public class MainActivity extends FragmentActivity implements
                 MAX_OPPONENTS, 0);
 
         keepScreenOn();
+        messageQueue.clear();
+        correctLeftPeers.clear();
 
         mRoomConfig = RoomConfig.builder(mRoomUpdateCallback)
                 .setOnMessageReceivedListener(mOnRealTimeMessageReceivedListener)
@@ -528,6 +530,8 @@ public class MainActivity extends FragmentActivity implements
         // create the room
         Log.d(TAG, "Creating room...");
         requestLoadingScreen();
+        messageQueue.clear();
+        correctLeftPeers.clear();
         keepScreenOn();
 
         mRoomConfig = RoomConfig.builder(mRoomUpdateCallback)
@@ -572,6 +576,8 @@ public class MainActivity extends FragmentActivity implements
                 .build();
 
         requestLoadingScreen();
+        messageQueue.clear();
+        correctLeftPeers.clear();
         keepScreenOn();
 
         mRealTimeMultiplayerClient.join(mRoomConfig)
@@ -807,7 +813,7 @@ public class MainActivity extends FragmentActivity implements
 
         @Override
         public void onPeerLeft(Room room, @NonNull List<String> peersWhoLeft) {
-            updateRoom(room);
+            updateRoom(room, peersWhoLeft);
         }
 
         @Override
@@ -900,7 +906,81 @@ public class MainActivity extends FragmentActivity implements
         }
     }
 
+    private ArrayList<String> correctLeftPeers = new ArrayList<>();
 
+    void updateRoom(Room room, @NonNull List<String> peersWhoLeft) {
+        updateRoom(room);
+
+        if (peersWhoLeft.contains(myParticipantId)) {
+            return; // this player left the room too -> so there is nothing to do!
+        }
+
+        if (mParticipants.size() - peersWhoLeft.size() < 2) {
+            for (String leftPeer: peersWhoLeft) {
+                boolean leftCorrect = false;
+                for (String leftCorrectId : correctLeftPeers) {
+                    if (leftPeer.equals(leftCorrectId)) {
+                        leftCorrect = true;
+                    }
+                }
+                if (leftCorrect) { // peer left correct at end of the game
+                    return;
+                }
+                // double secure -> check if game is over...
+                if (mGameView != null && mGameView.getController() != null &&
+                        mGameView.getController().getGameOver() != null &&
+                        mGameView.getController().getGameOver().isVisible()) {
+                    return;
+                }
+
+                // so a player left in the middle od a game? :(
+                // tell the player
+                if (gameRunning && mGameView != null && mGameView.getController() != null
+                        && mGameView.getController().isGameStarted()) {
+                    Log.d(TAG, "Bye bye " + leftPeer);
+                    mGameView.getController().handleLeftPeer(leftPeer);
+                }
+                else if (gamePreparationRunning || gameRunning) {
+                    Log.d(TAG, "Bye bye pre " + leftPeer);
+                    // ToDo Show message Error
+                    endGame();
+                }
+            }
+        }
+
+        if (mParticipants.size() - peersWhoLeft.size() > 2) {
+            for (String leftPeer: peersWhoLeft) {
+                boolean leftCorrect = false;
+                for (String leftCorrectId : correctLeftPeers) {
+                    if (leftPeer.equals(leftCorrectId)) {
+                        leftCorrect = true;
+                    }
+                }
+                if (leftCorrect) { // peer left correct at end of the game
+                    return;
+                }
+                // double secure -> check if game is over...
+                if (mGameView != null && mGameView.getController() != null &&
+                        mGameView.getController().getGameOver() != null &&
+                        mGameView.getController().getGameOver().isVisible()) {
+                    return;
+                }
+
+                // so a player left in the middle od a game? :(
+                // tell the player
+                if (gameRunning && mGameView != null && mGameView.getController() != null
+                        && mGameView.getController().isGameStarted()) {
+                    Log.d(TAG, "Bye bye " + leftPeer);
+                    mGameView.getController().handleLeftPeer(leftPeer);
+                }
+                else if (gamePreparationRunning || gameRunning) {
+                    Log.d(TAG, "Bye bye pre " + leftPeer);
+                    // ToDo Show message Error
+                    endGame();
+                }
+            }
+        }
+    }
 
 
     /*
@@ -940,6 +1020,12 @@ public class MainActivity extends FragmentActivity implements
     //          -> if the activity is not ready it tries again after a short delay
     //
     private void workOnMessageQueue() {
+
+        if (messageQueue.get(0).type == Message.leftGameAtEnd) {
+            correctLeftPeers.add(messageQueue.get(0).senderId);
+            messageQueue.remove(0);
+            return;
+        }
 
         if (gameRunning) {
             // should never happen but remove wrong messages which are only to prepare the game
@@ -1196,6 +1282,9 @@ public class MainActivity extends FragmentActivity implements
 
     @Override
     public void onBackPressed() {
+
+        Log.d(TAG, "-----------------------------------------------------------------------------");
+
         Fragment active_frag = getVisibleFragment();
 
         if (active_frag != null && active_frag.getTag() != null &&
@@ -1308,8 +1397,10 @@ public class MainActivity extends FragmentActivity implements
      * GAME LOGIC SECTION. Methods that implement the game's rules.
      */
 
+    private boolean gamePreparationRunning = false;
     void startGamePreparation(final boolean multiplayer) {
 
+        gamePreparationRunning = true;
         requestLoadingScreen();
 
         //  create the Game View
@@ -1477,6 +1568,10 @@ public class MainActivity extends FragmentActivity implements
 
         if (mMultiplayer) {
             leaveRoom();
+        }
+
+        if (gamePreparationRunning) {
+            onStartMenuRequested();
         }
 
         if (gameRunning) {

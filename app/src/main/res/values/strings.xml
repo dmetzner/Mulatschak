@@ -28,6 +28,12 @@
 
     <!-- :::::::::::::::: Player Info Pop Up ::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="player_info_title_bar_name">Player Profile</string>
+    <string name="last_player_left_title_bar_name">Player Left</string>
+    <string name="last_player_left_info">"%1$s left the game!"</string>
+    <string name="player_left_info">"%1$s left the game!"</string>
+    <string name="last_player_left_explanation">Press YES to end the game (You win!) or press NO to replace the player with a Bot.</string>
+    <string name="player_left_explanation">The player gets replaced with a Bot</string>
+    <string name="okay">OK</string>
 
     <!-- ::::::::::::::::::::::: Player Info ::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="player_info_active_player_is_0">It is your turn!</string>

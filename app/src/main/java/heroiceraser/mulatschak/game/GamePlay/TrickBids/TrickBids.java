@@ -104,24 +104,29 @@ public class TrickBids {
 
             // single player
             if (controller.getPlayerById(logic.getTurn()).isEnemyLogic()) {
-                enemyMakeBidsLogic.makeTrickBids(controller.getPlayerById(logic.getTurn()), controller);
-                // makeTrickBids should get called after animation
+                handleEnemyAction(controller);
             }
+
             // multiplayer
             else {
-                controller.waitForOnlineInteraction = true;
+                controller.waitForOnlineInteraction = Message.trickBids;
                 // wait 4 online interaction
             }
         }
     }
 
+    public void handleEnemyAction(final GameController controller) {
+        enemyMakeBidsLogic.makeTrickBids(
+                controller.getPlayerById(controller.getLogic().getTurn()), controller);
+    }
+
 
     public void handleOnlineInteraction(int buttonId, GameController controller) {
-        controller.waitForOnlineInteraction = false;
+        controller.waitForOnlineInteraction = Message.noMessage;
         setTricks(controller, buttonId, controller.getLogic().getTurn());
     }
 
-    public void handleMainPlayersDecision(int buttonId, GameController controller) {
+    void handleMainPlayersDecision(int buttonId, GameController controller) {
 
         if (controller.multiplayer_) {
             // broadcast to all the decision
@@ -139,7 +144,7 @@ public class TrickBids {
     //                  -> ends choose bids animation
     //                  -> sets Bids
     //
-    void setTricks(GameController controller, int buttonId, int playerId) {
+    private void setTricks(GameController controller, int buttonId, int playerId) {
         buttonId--;  // because of miss a turn button
 
         //---- don't play this round

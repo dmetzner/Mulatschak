@@ -24,6 +24,7 @@ public class Message {
     //
     // don't use 0 -> we use 0 to indicate no Message
 
+    public final static int noMessage = 0;
     public final static int chatMessage = 10;
     public final static int shuffledDeck = 1;
     public final static int mulatschakDecision = 2;
@@ -33,5 +34,7 @@ public class Message {
     public final static int playACard = 6;
     public final static int prepareGame = 9;
     public final static int startGame = 7;
+    public final static int gameReady = 17;
     public final static int setHost = 8;
+    public final static int leftGameAtEnd = 99;
 }

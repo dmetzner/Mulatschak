@@ -11,6 +11,8 @@ import java.util.List;
 import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
+import heroiceraser.mulatschak.MainActivity;
+import heroiceraser.mulatschak.Message;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;

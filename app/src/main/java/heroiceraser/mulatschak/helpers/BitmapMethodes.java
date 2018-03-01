@@ -19,7 +19,7 @@ public final class BitmapMethodes {
             s = s.substring(0, length);
         }
         StringBuffer sb = new StringBuffer();
-        while (s.length() < length) {
+        while (sb.length() < length - s.length()) {
             sb.append(" ");
         }
         s += sb;

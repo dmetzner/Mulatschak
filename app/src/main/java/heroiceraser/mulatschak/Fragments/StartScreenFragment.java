@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import at.heroiceraser.mulatschak.R;
+import heroiceraser.mulatschak.MainActivity;
 import heroiceraser.mulatschak.helpers.LocaleHelper;
 
 
@@ -53,7 +54,7 @@ public class StartScreenFragment extends Fragment implements OnClickListener {
             v.findViewById(i).setOnClickListener(this);
         }
 
-        mGreeting = v.getResources().getString(R.string.signed_out_greeting);
+        mGreeting = getString(R.string.signed_out_greeting);
         language = LocaleHelper.getLanguage(getContext());
         return v;
     }
@@ -76,6 +77,14 @@ public class StartScreenFragment extends Fragment implements OnClickListener {
 
     void updateUi() {
         if (getActivity() == null) return;
+
+        MainActivity ma = (MainActivity) getActivity();
+        if (ma.isSignedIn()) {
+            mGreeting = getString(R.string.signed_in_greeting, ma.mDisplayName);
+        }
+        else {
+            mGreeting = getString(R.string.signed_out_greeting);
+        }
 
         TextView tv =  getActivity().findViewById(R.id.hello);
         if (tv != null) tv.setText(mGreeting);

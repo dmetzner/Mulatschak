@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/trans_black"
+    android:weightSum="1">
+
+
+    <!-- pop up size -->
+    <RelativeLayout
+        android:layout_width="@dimen/player_info_pop_up_width"
+        android:layout_height="@dimen/player_info_pop_up_height"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+        <!-- pop up border color -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/pop_up_background_shape">
+
+            <RelativeLayout
+                android:id="@+id/relativeLayout3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/player_info_pop_up_title_bar">
+
+                <TextView
+                    android:id="@+id/player_left_pop_up_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="75dp"
+                    android:shadowColor="@color/black"
+                    android:shadowDx="0.0"
+                    android:shadowDy="0"
+                    android:shadowRadius="3"
+                    android:text="@string/last_player_left_title_bar_name"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/relativeLayout"
+                android:layout_width="230dp"
+                android:layout_height="120dp"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/relativeLayout3"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="2dp">
+
+                <TextView
+                    android:id="@+id/player_left_pop_up_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/last_player_left_info"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/player_left_pop_up_explanation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="30dp"
+                    android:text="@string/player_left_explanation"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/player_left_pop_up_ok"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_below="@+id/player_left_pop_up_explanation"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/okay" />
+
+
+
+            </RelativeLayout>
+
+
+        </RelativeLayout> <!-- border -->
+
+    </RelativeLayout> <!-- size -->
+
+</RelativeLayout>

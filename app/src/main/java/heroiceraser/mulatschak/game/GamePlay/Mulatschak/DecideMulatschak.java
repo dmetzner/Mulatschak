@@ -87,33 +87,35 @@ public class DecideMulatschak {
 
             // single player
             if (controller.getPlayerById(logic.getTurn()).isEnemyLogic()) {
-                if (enemyDecideMulatschakLogic.decideMulatschak(controller)) {
-                    setMulatschakUp(controller);
-                    return;
-                }
-                // simulate thinking
-                Handler myHandler = new Handler();
-                Runnable runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        makeMulatschakDecision(false, controller);
-                    }
-                };
-                double animation_factor =  controller.getSettings().getAnimationSpeed().getSpeedFactor();
-                myHandler.postDelayed(runnable, (int) (500 * animation_factor));
-
+                handleEnemyAction(controller);
             }
             // multiplayer
             else {
-                controller.waitForOnlineInteraction = true;
+                controller.waitForOnlineInteraction = Message.mulatschakDecision;
                 // wait 4 online interaction
             }
         }
     }
 
+    public void handleEnemyAction(final GameController controller) {
+        if (enemyDecideMulatschakLogic.decideMulatschak(controller)) {
+            setMulatschakUp(controller);
+            return;
+        }
+        // simulate thinking
+        Handler myHandler = new Handler();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                makeMulatschakDecision(false, controller);
+            }
+        };
+        double animation_factor =  controller.getSettings().getAnimationSpeed().getSpeedFactor();
+        myHandler.postDelayed(runnable, (int) (500 * animation_factor));
+    }
 
     public void handleOnlineInteraction(boolean muli, GameController controller) {
-        controller.waitForOnlineInteraction = false;
+        controller.waitForOnlineInteraction = Message.noMessage;
         if (muli) {
             setMulatschakUp(controller);
         }
@@ -122,7 +124,7 @@ public class DecideMulatschak {
         }
     }
 
-    public void handleMainPlayersDecision(boolean muli, GameController controller) {
+    void handleMainPlayersDecision(boolean muli, GameController controller) {
 
         if (controller.multiplayer_) {
             // broadcast to all the decision

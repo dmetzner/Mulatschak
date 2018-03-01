@@ -91,22 +91,23 @@ public class GameView extends View {
         }
 
         drawBackground(canvas);
-        drawDiscardPile(canvas);
-        drawBidsView(canvas);
-        drawTrumpView(canvas);
-        drawPlayerInfo(canvas);
-        drawDealerButton(canvas);
+         if (!controller_.getGameOver().isVisible()) {
+             drawDiscardPile(canvas);
+             drawBidsView(canvas);
+             drawTrumpView(canvas);
+             drawPlayerInfo(canvas);
+             drawDealerButton(canvas);
 
-        drawHandCards(canvas);
+             drawHandCards(canvas);
 
-        drawDecideMulatschak(canvas);
-        drawMakeTrickBidsAnimation(canvas);
-        drawChooseTrumpAnimation(canvas);
-        drawDealingAnimation(canvas);
-        drawPlayACardAnimation(canvas);
-        drawExchangeCardsAnimation(canvas);
-        drawMulatschakResult(canvas);
-
+             drawDecideMulatschak(canvas);
+             drawMakeTrickBidsAnimation(canvas);
+             drawChooseTrumpAnimation(canvas);
+             drawDealingAnimation(canvas);
+             drawPlayACardAnimation(canvas);
+             drawExchangeCardsAnimation(canvas);
+             drawMulatschakResult(canvas);
+         }
         drawNonGamePlayUI(canvas);
 
         thread_.now = System.currentTimeMillis();

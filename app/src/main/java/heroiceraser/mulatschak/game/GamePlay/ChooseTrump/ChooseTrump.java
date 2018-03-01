@@ -70,26 +70,32 @@ public class ChooseTrump {
 
             // single player
             if (controller.getPlayerById(logic.getTurn()).isEnemyLogic()) {
-                enemyChooseTrumpLogic.
-                        chooseTrump(controller.getPlayerById(logic.getTrumpPlayerId()), logic);
-                Handler mhandler = new Handler();
-                Runnable codeToRun = new Runnable() {
-                    @Override
-                    public void run() {
-                        trump_view_.startAnimation(logic.getTrump(),
-                                logic.getTrumpPlayerId(), controller);
-                    }
-                };
-                mhandler.postDelayed(codeToRun, 500);
+                handleEnemyAction(controller);
             }
             else {
-                controller.waitForOnlineInteraction = true;
+                controller.waitForOnlineInteraction = Message.chooseTrump;
             }
         }
     }
 
+
+    public void handleEnemyAction(final GameController controller) {
+        final GameLogic logic = controller.getLogic();
+        enemyChooseTrumpLogic.
+                chooseTrump(controller.getPlayerById(logic.getTrumpPlayerId()), logic);
+        Handler mhandler = new Handler();
+        Runnable codeToRun = new Runnable() {
+            @Override
+            public void run() {
+                trump_view_.startAnimation(logic.getTrump(),
+                        logic.getTrumpPlayerId(), controller);
+            }
+        };
+        mhandler.postDelayed(codeToRun, 500);
+    }
+
     public void handleOnlineInteraction(int trump, GameController controller) {
-        controller.waitForOnlineInteraction = false;
+        controller.waitForOnlineInteraction = Message.noMessage;
         setTrump(controller, trump);
     }
 

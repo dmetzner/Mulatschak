@@ -11,6 +11,7 @@ import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
 import heroiceraser.mulatschak.MainActivity;
 import at.heroiceraser.mulatschak.R;
+import heroiceraser.mulatschak.Message;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GamePlay.Background4Player0Animations;
@@ -85,19 +86,10 @@ public class GameOver {
         controller.getLogic().setGameOver(true);
 
         // disable things
-        controller.getGamePlay().getChooseTrump().getTrumpView().setVisible(false);
-        controller.getDiscardPile().setVisible(false);
-        controller.getPlayerInfo().setVisible(false);
-        controller.getGamePlay().getTrickBids().getBidsView().setVisible(false);
-        controller.getGamePlay().getMulatschakResultAnimation().remove();
-        controller.getGamePlay().getDecideMulatschak().startRound();
-        controller.getDealerButton().setVisible(false);
-        controller.getPlayerInfo().setActivePlayer(GameController.NOT_SET);
-        controller.getPlayerInfo().setShowPlayer0Turn(false);
 
         // show things
         String text;
-        if (controller.getPlayerById(0).getLives() <= 0) {
+        if (controller.getPlayerByPosition(0).getLives() <= 0) {
             text = controller.getView().getResources().getString(R.string.game_over_won);
         }
         else {
@@ -174,6 +166,8 @@ public class GameOver {
     //
     private void backToMainMenu(final GameController controller) {
         controller.getView().stopAll = true;
+        MainActivity mainActivity = (MainActivity) controller.getView().getContext();
+        mainActivity.broadcastMessage(Message.leftGameAtEnd, "");
         Handler handler = new Handler();
         Runnable runnable = new Runnable() {
             @Override
@@ -182,7 +176,7 @@ public class GameOver {
                 mainActivity.endGame();
             }
         };
-       handler.postDelayed(runnable, 500);
+       handler.postDelayed(runnable, 1000);
     }
 
 

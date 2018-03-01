@@ -81,24 +81,28 @@ public class CardExchange {
             controller.getView().enableUpdateCanvasThread();
             // single player
             if (controller.getPlayerById(logic.getTurn()).isEnemyLogic()) {
-                enemy_card_exchange_logic_.exchangeCard(controller.getPlayerById(logic.getTurn()), controller);
+                handleEnemyAction(controller);
             }
             else {
-                controller.waitForOnlineInteraction = true;
+                controller.waitForOnlineInteraction = Message.cardExchange;
             }
         }
     }
 
+    public void handleEnemyAction(final GameController controller) {
+        enemy_card_exchange_logic_.exchangeCard(
+                controller.getPlayerById(controller.getLogic().getTurn()), controller);
+    }
 
     public void handleOnlineInteraction(ArrayList<Integer> handCardsToRemoveIds, GameController controller) {
-        controller.waitForOnlineInteraction = false;
+        controller.waitForOnlineInteraction = Message.noMessage;
 
         enemy_card_exchange_logic_.exchangeCardOnline(
                 controller.getPlayerById(controller.getLogic().getTurn()),
                 controller, handCardsToRemoveIds);
     }
 
-    public void handleMainPlayersDecision(GameController controller) {
+    void handleMainPlayersDecision(GameController controller) {
 
         if (controller.multiplayer_) {
             // broadcast to all the decision

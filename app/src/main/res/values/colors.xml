@@ -15,4 +15,9 @@
 
     <color name="startScreenLight">#b0d2e4</color>
     <color name="startScreenDark">#6082B6</color>
+
+
+    <color name="trans_black">#28000000</color>
+
+
 </resources>

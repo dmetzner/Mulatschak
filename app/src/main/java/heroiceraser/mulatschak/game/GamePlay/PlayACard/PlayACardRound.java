@@ -98,26 +98,32 @@ public class PlayACardRound {
             controller.getView().enableUpdateCanvasThread();
             // single player
             if (controller.getPlayerById(logic.getTurn()).isEnemyLogic()) {
-                enemy_play_a_card_logic_.playACard(controller,
-                        controller.getPlayerById(logic.getTurn()));
+                handleEnemyAction(controller);
             }
             // multiplayer
             else {
-                controller.waitForOnlineInteraction = true;
+                controller.waitForOnlineInteraction = Message.playACard;
                 // wait 4 online interaction
             }
         }
     }
 
+
+    public void handleEnemyAction(final GameController controller) {
+        enemy_play_a_card_logic_.playACard(controller,
+                controller.getPlayerById(controller.getLogic().getTurn()));
+    }
+
+
     public void handleOnlineInteraction(int cardId, GameController controller) {
-        controller.waitForOnlineInteraction = false;
+        controller.waitForOnlineInteraction = Message.noMessage;
 
         enemy_play_a_card_logic_.playACardOnline(controller,
                 controller.getPlayerById(controller.getLogic().getTurn()), cardId);
 
     }
 
-    public void handleMainPlayersDecision(GameController controller) {
+    void handleMainPlayersDecision(GameController controller) {
         if (controller.multiplayer_) {
             // broadcast to all the decision
             MainActivity activity = (MainActivity) controller.getView().getContext();

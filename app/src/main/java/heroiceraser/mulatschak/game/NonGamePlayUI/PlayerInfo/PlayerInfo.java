@@ -1,5 +1,6 @@
 package heroiceraser.mulatschak.game.NonGamePlayUI.PlayerInfo;
 
+
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -32,7 +33,10 @@ import heroiceraser.mulatschak.game.GameView;
 //                      -> or an info text field for player 0
 //
 //
-public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Listener{
+public class PlayerInfo extends DrawableObject implements
+        PlayerInfoPopUpView.Listener,
+        LastPlayerLeftPopUpView.Listener,
+        PlayerLeftPopUpView.Listener {
 
     //----------------------------------------------------------------------------------------------
     //  Member Variables
@@ -59,6 +63,10 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
     private int popUpHeight;
     private PopupWindow popUp;
 
+    private PopupWindow popUpPlayerLeft;
+    private MyPlayer leftPlayer;
+    private boolean popUpsBlocked;
+
     private PlayerPresentation presentation;
 
 
@@ -68,6 +76,7 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
     public PlayerInfo() {
         super();
         setVisible(false);
+        popUpsBlocked = false;
 
         // buttons
         buttonLeft = new MyButton();
@@ -205,6 +214,28 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
 
 
     //----------------------------------------------------------------------------------------------
+    //  makePopupWindow
+    //
+    private PopupWindow makeLastPlayerLeftPopupWindow(String displayName) {
+        LastPlayerLeftPopUpView view = new LastPlayerLeftPopUpView(view_.getContext());
+        view.setListener(this);
+        view.init(displayName);
+        return new PopupWindow(view, popUpWidth, popUpHeight, false);
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    //  makePopupWindow
+    //
+    private PopupWindow makePlayerLeftPopupWindow(String displayName) {
+        PlayerLeftPopUpView view = new PlayerLeftPopUpView(view_.getContext());
+        view.setListener(this);
+        view.init(displayName);
+        return new PopupWindow(view, popUpWidth, popUpHeight, false);
+    }
+
+
+    //----------------------------------------------------------------------------------------------
     //  draw
     //
     public void draw(Canvas canvas) {
@@ -309,6 +340,27 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
     }
 
 
+    public void makeLastPlayerPopUp(MyPlayer leftPlayer) {
+        this.leftPlayer = leftPlayer;
+        popUpsBlocked = true;
+        Point pos = view_.getController().getLayout().getCenter();
+        popUpPlayerLeft = makeLastPlayerLeftPopupWindow(leftPlayer.getDisplayName());
+        popUpPlayerLeft.setFocusable(false); //Setting this to true will prevent the events to reach activity below
+        popUpPlayerLeft.showAtLocation(view_, Gravity.NO_GRAVITY,
+                pos.x - popUpWidth / 2, pos.y - popUpHeight / 2);
+    }
+
+    public void makeLeftPlayerPopUp(MyPlayer leftPlayer) {
+        this.leftPlayer = leftPlayer;
+        popUpsBlocked = true;
+        Point pos = view_.getController().getLayout().getCenter();
+        popUpPlayerLeft = makePlayerLeftPopupWindow(leftPlayer.getDisplayName());
+        popUpPlayerLeft.setFocusable(false); //Setting this to true will prevent the events to reach activity below
+        popUpPlayerLeft.showAtLocation(view_, Gravity.NO_GRAVITY,
+                pos.x - popUpWidth / 2, pos.y - popUpHeight / 2);
+    }
+
+
     //----------------------------------------------------------------------------------------------
     // closes pop up if the x is clicked
     @Override
@@ -320,6 +372,50 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
 
 
     //----------------------------------------------------------------------------------------------
+    //
+    @Override
+    public void onYesButtonRequested() {
+        if (popUpPlayerLeft != null) {
+            popUpPlayerLeft.dismiss();
+            popUpsBlocked = false;
+            view_.getController().lastPlayerLeftSoLetMeWin();
+        }
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    //
+    @Override
+    public void onNoButtonRequested() {
+        if (popUpPlayerLeft != null) {
+            popUpPlayerLeft.dismiss();
+            popUpsBlocked = false;
+            view_.getController().playerLeftContinueWithAI(leftPlayer);
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------
+    //
+    @Override
+    public void onOkButtonRequested() {
+        if (popUpPlayerLeft != null) {
+            popUpPlayerLeft.dismiss();
+            popUpsBlocked = false;
+            view_.getController().playerLeftContinueWithAI(leftPlayer);
+        }
+    }
+
+
+    public void clear() {
+        if (popUpPlayerLeft != null) {
+            popUpPlayerLeft.dismiss();
+        }
+        if (popUp != null) {
+            popUp.dismiss();
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------
     //  Getter & Setter
     //
     public void setShowPlayer0Turn(boolean showPlayer0Turn) {
@@ -328,5 +424,10 @@ public class PlayerInfo extends DrawableObject implements PlayerInfoPopUpView.Li
 
     public void setActivePlayer(int id) {
         this.activePlayer = id;
+    }
+
+
+    public boolean arePopUpsBlocked() {
+        return popUpsBlocked;
     }
 }

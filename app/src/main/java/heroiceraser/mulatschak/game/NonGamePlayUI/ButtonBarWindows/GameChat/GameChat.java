@@ -134,7 +134,7 @@ public class GameChat extends ButtonBarWindow {
     }
 
     private void sendMessage(GameController controller) {
-        controller.getNonGamePlayUIContainer().getChatView().addMessage(controller.getPlayerById(0), text, controller);
+        controller.getNonGamePlayUIContainer().getChatView().addMessage(controller.getPlayerByPosition(0), text, controller);
         if (controller.multiplayer_) {
             MainActivity host = (MainActivity) controller.getView().getContext();
             host.broadcastMessage(Message.chatMessage, text);
