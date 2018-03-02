@@ -61,7 +61,7 @@ public class PlayACardLogic {
     public void draw(Canvas canvas, GameController controller) {
 
         if (move_card_idx_ != GameController.NOT_SET) {
-            Card card = controller.getPlayerById(0).getHand().getCardAt(move_card_idx_);
+            Card card = controller.getPlayerByPosition(0).getHand().getCardAt(move_card_idx_);
             if (card != null) {
                 canvas.drawBitmap(card.getBitmap(), card.getPosition().x, card.getPosition().y,
                         null);
@@ -124,8 +124,8 @@ public class PlayACardLogic {
         if (isCardMoveable() &&
              move_card_idx_ == GameController.NOT_SET) {
 
-            for (int i = 0; i < controller.getPlayerById(0).getAmountOfCardsInHand(); i++) {
-                Card card = controller.getPlayerById(0).getHand().getCardAt(i);
+            for (int i = 0; i < controller.getPlayerByPosition(0).getAmountOfCardsInHand(); i++) {
+                Card card = controller.getPlayerByPosition(0).getHand().getCardAt(i);
                 if (card.getFixedPosition() == null) {
                     break;
                 }
@@ -148,7 +148,7 @@ public class PlayACardLogic {
     //
     void touchActionMove(GameController controller, int X, int Y) {
         if (move_card_idx_ >= 0) {
-            controller.getPlayerById(0).getHand().getCardAt(move_card_idx_).setPosition(
+            controller.getPlayerByPosition(0).getHand().getCardAt(move_card_idx_).setPosition(
                 X -  controller.getLayout().getCardWidth() / 2,
                 Y -  controller.getLayout().getCardHeight() / 2);
         }
@@ -160,14 +160,14 @@ public class PlayACardLogic {
     //
     void touchActionUp(GameController controller) {
         if (move_card_idx_ >= 0) {
-            CardStack hand =  controller.getPlayerById(0).getHand();
+            CardStack hand =  controller.getPlayerByPosition(0).getHand();
             int card_y = hand.getCardAt(move_card_idx_).getPosition().y;
             int fixed_y = hand.getCardAt(move_card_idx_).getFixedPosition().y;
 
             // if the card was not pulled high enough to reach the discard pile
             //      -> return card to hand
             if (card_y > fixed_y - controller.getLayout().getCardHeight() * 1.5) {
-                returnCardToHand(controller.getPlayerById(0).getHand().getCardAt(move_card_idx_));
+                returnCardToHand(controller.getPlayerByPosition(0).getHand().getCardAt(move_card_idx_));
                 return;
             }
 

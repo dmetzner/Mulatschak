@@ -221,7 +221,7 @@ public class MainActivity extends FragmentActivity implements
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container,
                 mStartScreenFragment).commit();
 
-        mDisplayName = "???";
+        mDisplayName = "";
         // load sign in preference
         // Create the Google Api Client with access to the Play Game and Drive services.
         mGoogleSignInClient = GoogleSignIn.getClient(this, new GoogleSignInOptions
@@ -915,7 +915,7 @@ public class MainActivity extends FragmentActivity implements
             return; // this player left the room too -> so there is nothing to do!
         }
 
-        if (mParticipants.size() - peersWhoLeft.size() < 2) {
+        if (mParticipants.size() - peersWhoLeft.size() - correctLeftPeers.size() < 2) {
             for (String leftPeer: peersWhoLeft) {
                 boolean leftCorrect = false;
                 for (String leftCorrectId : correctLeftPeers) {
@@ -933,6 +933,9 @@ public class MainActivity extends FragmentActivity implements
                     return;
                 }
 
+                // left in the middle of the game, but still leaves the game correct
+                correctLeftPeers.add(leftPeer);
+
                 // so a player left in the middle od a game? :(
                 // tell the player
                 if (gameRunning && mGameView != null && mGameView.getController() != null
@@ -948,7 +951,7 @@ public class MainActivity extends FragmentActivity implements
             }
         }
 
-        if (mParticipants.size() - peersWhoLeft.size() > 2) {
+        if (mParticipants.size() - peersWhoLeft.size() - correctLeftPeers.size() >= 2) {
             for (String leftPeer: peersWhoLeft) {
                 boolean leftCorrect = false;
                 for (String leftCorrectId : correctLeftPeers) {
@@ -1099,6 +1102,7 @@ public class MainActivity extends FragmentActivity implements
         Runnable r = new Runnable() {
             @Override
             public void run() {
+                Log.d("-------------", "w4O: " + waitForOnlineInteraction);
                 workOnMessageQueue();
             }
         };

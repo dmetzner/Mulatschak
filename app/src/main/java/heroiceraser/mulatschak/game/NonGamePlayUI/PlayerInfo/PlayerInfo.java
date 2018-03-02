@@ -191,7 +191,10 @@ public class PlayerInfo extends DrawableObject implements
         PlayerInfoPopUpView view = new PlayerInfoPopUpView(view_.getContext());
         view.setListener(this);
         MyPlayer p = view_.getController().getPlayerByPosition(pos);
-        String top_display_name = p.getDisplayName();
+        String top_display_name = "";
+        if (p != null) {
+            top_display_name = p.getDisplayName();
+        }
         Bitmap bitmap = null;
         String text = "";
         switch (pos) {

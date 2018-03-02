@@ -200,8 +200,9 @@ public class GameController{
     }
 
     public void startGame() {
-        if (enable_drawing_) {
 
+        if (enable_drawing_) {
+            Log.d(".......", "start game");
             playerPresentation = false;
             if (multiplayer_) {
 
@@ -323,7 +324,7 @@ public class GameController{
     //  continueAfterTrickBids
     //
     public void continueAfterTrickBids() {
-        if (getPlayerById(0).getMissATurn()) {
+        if (getPlayerByPosition(0).getMissATurn()) {
             getPlayerHandsView().setMissATurnInfoVisible(true);
         }
 
@@ -667,7 +668,13 @@ public class GameController{
 
 
     public void handleLeftPeer(final String leftPeerOnlineId) {
-        if (waitForOnlineInteraction == Message.noMessage || player_info_.arePopUpsBlocked()) {
+
+        MyPlayer leftPeerPlayer = getPlayerByOnlineId(leftPeerOnlineId);
+        if (leftPeerPlayer == null) {
+            return;
+        }
+
+        if (player_info_.arePopUpsBlocked()) {
             Handler h = new Handler();
             Runnable r = new Runnable() {
                 @Override
@@ -675,14 +682,10 @@ public class GameController{
                     handleLeftPeer(leftPeerOnlineId);
                 }
             };
-            h.postDelayed(r, 200);
+            h.postDelayed(r, 100);
             return;
         }
 
-        MyPlayer leftPeerPlayer = getPlayerByOnlineId(leftPeerOnlineId);
-        if (leftPeerPlayer == null) {
-            return;
-        }
         int onlinePlayers = getAmountOfOnlinePlayer();
         if (onlinePlayers == 2) {
             player_info_.makeLastPlayerPopUp(leftPeerPlayer);
@@ -741,7 +744,9 @@ public class GameController{
         switch (waitForOnlineInteraction) {
 
             case Message.gameReady:
-                startGame();
+                if (!playerPresentation) {
+                    startGame();
+                }
                 break;
 
             case Message.shuffledDeck:
@@ -778,11 +783,13 @@ public class GameController{
                     non_game_play_ui_.getChatView().addMessage(getPlayerByOnlineId(message.senderId), message.data, this);
                     break;
                 case Message.gameReady:
-                    MyPlayer p =getPlayerByOnlineId(message.senderId);
+                    MyPlayer p = getPlayerByOnlineId(message.senderId);
                     if (p != null) {
                         p.setGameStarted(true);
                     }
-                    startGame();
+                    if (!playerPresentation) {
+                        startGame();
+                    }
                     break;
                 case Message.shuffledDeck:
                     receiveShuffledDeck(message);
@@ -802,8 +809,6 @@ public class GameController{
                 case Message.playACard:
                     receivePlayACard(message);
                     break;
-
-
             }
 
         }
@@ -812,6 +817,7 @@ public class GameController{
             Runnable r = new Runnable() {
                 @Override
                 public void run() {
+                    Log.d("~~~~~~~~~~", "w4O " + waitForOnlineInteraction);
                     handleReceivedMessage(message);
                 }
             };
@@ -962,26 +968,46 @@ public class GameController{
 
     public List<MyPlayer> getPlayerList() { return myPlayer_list_; }
 
-    public MyPlayer getPlayerById(int id) { return myPlayer_list_.get(id); }
+    public MyPlayer getPlayerById(int id) {
+        try {
+            return myPlayer_list_.get(id);
+        } catch (Exception e) {
+            Log.e("con", "player not found by online id");
+            return null;
+        }
+    }
 
     private MyPlayer getPlayerByOnlineId(String playerId) {
-        for (int i = 0; i < getAmountOfPlayers(); i++) {
-            if (playerId.equals(getPlayerById(i).getOnlineId())) {
-                return getPlayerById(i);
+
+        try {
+            for (MyPlayer p : getPlayerList()) {
+                if (playerId.equals(p.getOnlineId())) {
+                    return p;
+                }
             }
+        } catch (Exception e) {
+            Log.e("con", "player not found by online id");
+            return null;
         }
+
         Log.w("con", "player not found by online id");
-        return getPlayerByPosition(0);
+        return null;
     }
 
     public MyPlayer getPlayerByPosition(int pos) {
-        for (int i = 0; i < getAmountOfPlayers(); i++) {
-            if (pos == getPlayerById(i).getPosition()) {
-                return getPlayerById(i);
+
+        try {
+            for (MyPlayer p : getPlayerList()) {
+                if (pos == p.getPosition()) {
+                    return p;
+                }
             }
+        } catch (Exception e) {
+            Log.e("con", "player not found by online id");
+            return null;
         }
         Log.w("con", "player not found by pos");
-        return getPlayerByPosition(0);
+        return null;
     }
 
     public int getAmountOfPlayers() { return myPlayer_list_.size(); }

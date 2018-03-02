@@ -87,6 +87,14 @@ public class GameView extends View {
         }
 
         if (!controller_.isDrawingEnabled()) {
+            try {
+                drawBackground(canvas);
+                drawPlayerInfo(canvas);
+                drawNonGamePlayUI(canvas);
+            }
+            catch (Exception e) {
+                return;
+            }
             return;
         }
 

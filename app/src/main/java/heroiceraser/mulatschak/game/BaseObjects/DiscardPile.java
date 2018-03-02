@@ -61,6 +61,7 @@ public class DiscardPile extends DrawableObject {
         setPosition(new Point(view.getController().getLayout().getDiscardPilePositions().get(1).x,
                 view.getController().getLayout().getDiscardPilePositions().get(2).y));
         finishInit(view);
+
     }
 
     public void init(GameView view, Point size, List<Point> positions) {
@@ -83,7 +84,7 @@ public class DiscardPile extends DrawableObject {
         if (overlay != null) {
             overlay.recycle();
         }
-        setVisible(true);
+        setVisible(false);
     }
 
 

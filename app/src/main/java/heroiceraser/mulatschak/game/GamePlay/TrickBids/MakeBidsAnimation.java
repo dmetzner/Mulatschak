@@ -102,8 +102,8 @@ public class MakeBidsAnimation {
     //  clear Hand
     //                 -> moves all player 0 hand cards to the trash
     //
-    void clearHand(GameController controller) {
-        CardStack hand = controller.getPlayerById(0).getHand();
+    void clearHand(GameController controller, int playerId) {
+        CardStack hand = controller.getPlayerById(playerId).getHand();
         for (int i = 0; i < hand.getCardStack().size(); i++) {
             hand.getCardAt(i).setPosition(controller.getLayout().getDeckPosition());
             hand.getCardAt(i).setFixedPosition(controller.getLayout().getDeckPosition());
@@ -122,7 +122,7 @@ public class MakeBidsAnimation {
             // there have to be more than 2 players to pass this round
             // also it is not possible to miss a turn if the last round was missed
             if (i == 0 && (controller.getAmountOfPlayers() <= 2 ||
-                            controller.getPlayerById(0).getMissATurn() ) ) {
+                            controller.getPlayerByPosition(0).getMissATurn() ) ) {
                 numberButtons.get(i).setEnabled(false);
             }
             else {

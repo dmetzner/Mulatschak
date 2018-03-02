@@ -61,6 +61,10 @@ public class EnemyPlayACardLogic {
     void playACard(GameController controller, MyPlayer myPlayer) {
         GameLogic logic = controller.getLogic();
 
+        if (myPlayer.getMissATurn()) {
+            controller.getGamePlay().getPlayACardRound().playACard(false, controller);
+        }
+
         boolean valid = false;
         int random_number = -1;
         while (!valid) {
@@ -91,6 +95,7 @@ public class EnemyPlayACardLogic {
 
 
     void playACardOnline(GameController controller, MyPlayer myPlayer, int cardId) {
+
 
         int posId = 0;
 

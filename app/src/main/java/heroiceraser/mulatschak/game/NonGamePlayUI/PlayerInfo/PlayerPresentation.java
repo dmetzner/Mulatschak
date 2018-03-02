@@ -7,6 +7,8 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.text.TextPaint;
+import android.util.Log;
+
 import java.util.List;
 import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
@@ -117,6 +119,7 @@ public class PlayerPresentation {
     //                          called when a presentation is done
     //
     private void prepareNextAnimation(List<MyButton> buttons, GameController controller) {
+
         presentationId++;
 
         // all presentations done -> start Game!

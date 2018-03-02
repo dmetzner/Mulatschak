@@ -150,7 +150,7 @@ public class TrickBids {
         //---- don't play this round
         if (buttonId == MISS_A_TURN) {
             controller.getPlayerById(playerId).setMissATurn(true);
-            makeBidsAnimation.clearHand(controller);
+            makeBidsAnimation.clearHand(controller, playerId);
             controller.getGamePlay().getTrickBids().setNewMaxTrumps(MISS_A_TURN, playerId, controller);
             return;
         }

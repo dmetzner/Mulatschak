@@ -263,7 +263,7 @@ public class PlayACardRound {
         touched = isDiscardPileTouched(X, Y, controller.getDiscardPile());
 
         // down on the hand cards is enough (feels more natural in this case)
-        if (isAHandCardTouched(X, Y, controller.getPlayerById(0))) {
+        if (isAHandCardTouched(X, Y, controller.getPlayerByPosition(0))) {
             discardPileClicked = true;
             prepareNextCardRound(controller, false);
         }

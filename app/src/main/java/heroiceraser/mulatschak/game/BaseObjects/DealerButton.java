@@ -26,10 +26,11 @@ public class DealerButton extends DrawableObject{
         setWidth(view.getController().getLayout().getDealerButtonSize());
         setHeight(getWidth());
         setBitmap(BitmapMethodes.loadBitmap(view, "dealer_button" ,getWidth(), getHeight()));
-        setVisible(true);
+        setVisible(false);
     }
 
     public void startMoveAnimation(GameController controller, int player_position) {
+        setVisible(true);
         time_start_ = System.currentTimeMillis();
         Point end_position = new Point(controller.getLayout().getDealerButtonPosition(player_position));
         start_position_ = new Point(getPosition());
