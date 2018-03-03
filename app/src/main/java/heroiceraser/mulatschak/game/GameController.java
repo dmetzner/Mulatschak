@@ -686,7 +686,12 @@ public class GameController{
             return;
         }
 
+        Log.d("--------------", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         int onlinePlayers = getAmountOfOnlinePlayer();
+        Log.d("--------------", "op: " + onlinePlayers);
+
+        Log.d("--_>", "" + Thread.currentThread().getId());
+
         if (onlinePlayers == 2) {
             player_info_.makeLastPlayerPopUp(leftPeerPlayer);
         }

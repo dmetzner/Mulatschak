@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.nfc.Tag;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -49,7 +50,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.Fragments.MultiPlayerSettingsFragment;
@@ -153,11 +157,16 @@ public class MainActivity extends FragmentActivity implements
     // getVisibleFragment
     //
     public Fragment getVisibleFragment(){
-        List<Fragment> fragments = new ArrayList<>();
-        fragments.addAll(fragList);
-        for(Fragment fragment : fragments){
-            if(fragment != null && fragment.isVisible())
-                return fragment;
+        try {
+            List<Fragment> fragments = new ArrayList<>();
+            fragments.addAll(fragList);
+            for(Fragment fragment : fragments){
+                if(fragment != null && fragment.isVisible())
+                    return fragment;
+            }
+        }
+        catch (Exception e) {
+            Log.e(TAG, "getVisibleFragment" + e);
         }
         return null;
     }
@@ -166,8 +175,13 @@ public class MainActivity extends FragmentActivity implements
     // Switch UI to the given fragment
     //
     public void switchToFragment(Fragment newFrag, String id) {
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, newFrag, id)
-                .commitAllowingStateLoss();
+        try {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, newFrag, id)
+                    .commitAllowingStateLoss();
+        }
+        catch (Exception e) {
+            Log.e(TAG, "switchToFragment" + e);
+        }
     }
 
     @Override
@@ -183,7 +197,6 @@ public class MainActivity extends FragmentActivity implements
     //----------------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------------
-
 
 
     //----------------------------------------------------------------------------------------------
@@ -321,7 +334,12 @@ public class MainActivity extends FragmentActivity implements
     // your Activity's onActivityResult function
     //
     public void startSignInIntent() {
-        startActivityForResult(mGoogleSignInClient.getSignInIntent(), RC_SIGN_IN);
+        try {
+            startActivityForResult(mGoogleSignInClient.getSignInIntent(), RC_SIGN_IN);
+        }
+        catch (Exception e) {
+            Log.e(TAG, "startSignInIntent " + e);
+        }
     }
 
     //
@@ -330,45 +348,54 @@ public class MainActivity extends FragmentActivity implements
     // If the user has already signed in previously, it will not show dialog.
     //
     public void signInSilently() {
-        Log.d(TAG, "signInSilently()");
 
-        mGoogleSignInClient.silentSignIn().addOnCompleteListener(this,
-                new OnCompleteListener<GoogleSignInAccount>() {
-                    @Override
-                    public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "signInSilently(): success");
-                            onConnected(task.getResult());
-                        } else {
-                            Log.d(TAG, "signInSilently(): failure", task.getException());
-                            onDisconnected();
+        try {
+            Log.d(TAG, "signInSilently()");
+
+            mGoogleSignInClient.silentSignIn().addOnCompleteListener(this,
+                    new OnCompleteListener<GoogleSignInAccount>() {
+                        @Override
+                        public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
+                            if (task.isSuccessful()) {
+                                Log.d(TAG, "signInSilently(): success");
+                                onConnected(task.getResult());
+                            } else {
+                                Log.d(TAG, "signInSilently(): failure", task.getException());
+                                onDisconnected();
+                            }
                         }
-                    }
-                });
+                    });
+        } catch (Exception e) {
+            Log.e(TAG, "signInSilently " + e);
+        }
     }
 
     public void signOut() {
-        Log.d(TAG, "signOut()");
+        try {
+            Log.d(TAG, "signOut()");
 
-        if (!isSignedIn()) {
-            Log.w(TAG, "signOut() called, but was not signed in!");
-            return;
-        }
+            if (!isSignedIn()) {
+                Log.w(TAG, "signOut() called, but was not signed in!");
+                return;
+            }
 
-        mGoogleSignInClient.signOut().addOnCompleteListener(this,
-                new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
+            mGoogleSignInClient.signOut().addOnCompleteListener(this,
+                    new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
 
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "signOut(): success");
-                        } else {
-                            handleException(task.getException(), "signOut() failed!");
+                            if (task.isSuccessful()) {
+                                Log.d(TAG, "signOut(): success");
+                            } else {
+                                handleException(task.getException(), "signOut() failed!");
+                            }
+
+                            onDisconnected();
                         }
-
-                        onDisconnected();
-                    }
-                });
+                    });
+        } catch (Exception e) {
+            Log.e(TAG, "signOut " + e);
+        }
     }
 
 
@@ -432,209 +459,244 @@ public class MainActivity extends FragmentActivity implements
     }
 
     void startQuickGame() {
-        // quick-start a game with 1 randomly selected opponent
-        final int MIN_OPPONENTS = 1, MAX_OPPONENTS = 3;
-        Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(MIN_OPPONENTS,
-                MAX_OPPONENTS, 0);
+        try {
+            // quick-start a game with 1 randomly selected opponent
+            final int MIN_OPPONENTS = 1, MAX_OPPONENTS = 3;
+            Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(MIN_OPPONENTS,
+                    MAX_OPPONENTS, 0);
 
-        keepScreenOn();
-        messageQueue.clear();
-        correctLeftPeers.clear();
+            keepScreenOn();
+            messageQueue.clear();
+            correctLeftPeers.clear();
 
-        mRoomConfig = RoomConfig.builder(mRoomUpdateCallback)
-                .setOnMessageReceivedListener(mOnRealTimeMessageReceivedListener)
-                .setRoomStatusUpdateCallback(mRoomStatusUpdateCallback)
-                .setAutoMatchCriteria(autoMatchCriteria)
-                .build();
-        mRealTimeMultiplayerClient.create(mRoomConfig);
+            mRoomConfig = RoomConfig.builder(mRoomUpdateCallback)
+                    .setOnMessageReceivedListener(mOnRealTimeMessageReceivedListener)
+                    .setRoomStatusUpdateCallback(mRoomStatusUpdateCallback)
+                    .setAutoMatchCriteria(autoMatchCriteria)
+                    .build();
+            mRealTimeMultiplayerClient.create(mRoomConfig);
+        }
+        catch (Exception e) {
+            Log.e(TAG, "startQuickGame exception " + e);
+        }
+
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 
-        if (requestCode == RC_SIGN_IN) {
+        try {
+            if (requestCode == RC_SIGN_IN) {
 
-            Task<GoogleSignInAccount> task =
-                    GoogleSignIn.getSignedInAccountFromIntent(intent);
+                Task<GoogleSignInAccount> task =
+                        GoogleSignIn.getSignedInAccountFromIntent(intent);
 
-            try {
-                GoogleSignInAccount account = task.getResult(ApiException.class);
-                onConnected(account);
-            } catch (ApiException apiException) {
-                String message = apiException.getMessage();
-                if (message == null || message.isEmpty()) {
-                    message = getString(R.string.signin_other_error);
+                try {
+                    GoogleSignInAccount account = task.getResult(ApiException.class);
+                    onConnected(account);
+                } catch (ApiException apiException) {
+                    String message = apiException.getMessage();
+                    if (message == null || message.isEmpty()) {
+                        message = getString(R.string.signin_other_error);
+                    }
+
+                    onDisconnected();
+
+                    new AlertDialog.Builder(this)
+                            .setMessage(message)
+                            .setNeutralButton(android.R.string.ok, null)
+                            .show();
                 }
+            } else if (requestCode == RC_SELECT_PLAYERS) {
+                // we got the result from the "select players" UI -- ready to create the room
+                handleSelectPlayersResult(resultCode, intent);
 
-                onDisconnected();
+            } else if (requestCode == RC_INVITATION_INBOX) {
+                // we got the result from the "select invitation" UI (invitation inbox). We're
+                // ready to accept the selected invitation:
+                handleInvitationInboxResult(resultCode, intent);
 
-                new AlertDialog.Builder(this)
-                        .setMessage(message)
-                        .setNeutralButton(android.R.string.ok, null)
-                        .show();
+            } else if (requestCode == RC_WAITING_ROOM) {
+                // we got the result from the "waiting room" UI.
+                if (resultCode == Activity.RESULT_OK) {
+                    // ready to start playing
+                    Log.d(TAG, "Starting game (waiting room returned OK).");
+                    startGamePreparation(true);
+                } else if (resultCode == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
+                    // player indicated that they want to leave the room
+                    leaveRoom();
+                } else if (resultCode == Activity.RESULT_CANCELED) {
+                    // Dialog was cancelled (user pressed back key, for instance). In our game,
+                    // this means leaving the room too. In more elaborate games, this could mean
+                    // something else (like minimizing the waiting room UI).
+                    leaveRoom();
+                }
             }
-        } else if (requestCode == RC_SELECT_PLAYERS) {
-            // we got the result from the "select players" UI -- ready to create the room
-            handleSelectPlayersResult(resultCode, intent);
-
-        } else if (requestCode == RC_INVITATION_INBOX) {
-            // we got the result from the "select invitation" UI (invitation inbox). We're
-            // ready to accept the selected invitation:
-            handleInvitationInboxResult(resultCode, intent);
-
-        } else if (requestCode == RC_WAITING_ROOM) {
-            // we got the result from the "waiting room" UI.
-            if (resultCode == Activity.RESULT_OK) {
-                // ready to start playing
-                Log.d(TAG, "Starting game (waiting room returned OK).");
-                startGamePreparation(true);
-            } else if (resultCode == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
-                // player indicated that they want to leave the room
-                leaveRoom();
-            } else if (resultCode == Activity.RESULT_CANCELED) {
-                // Dialog was cancelled (user pressed back key, for instance). In our game,
-                // this means leaving the room too. In more elaborate games, this could mean
-                // something else (like minimizing the waiting room UI).
-                leaveRoom();
-            }
+            super.onActivityResult(requestCode, resultCode, intent);
         }
-        super.onActivityResult(requestCode, resultCode, intent);
+        catch (Exception e) {
+            Log.e(TAG, "onActivityResult exception " + e);
+        }
     }
 
     // Handle the result of the "Select players UI" we launched when the user clicked the
     // "Invite friends" button. We react by creating a room with those players.
 
     private void handleSelectPlayersResult(int response, Intent data) {
-        if (response != Activity.RESULT_OK) {
-            Log.w(TAG, "*** select players UI cancelled, " + response);
-            onStartMenuRequested();
-            return;
+        try {
+            if (response != Activity.RESULT_OK) {
+                Log.w(TAG, "*** select players UI cancelled, " + response);
+                onStartMenuRequested();
+                return;
+            }
+
+            Log.d(TAG, "Select players UI succeeded.");
+
+            // get the invitee list
+            final ArrayList<String> invitees = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
+            Log.d(TAG, "Invitee count: " + invitees.size());
+
+            // get the automatch criteria
+            Bundle autoMatchCriteria = null;
+            int minAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
+            int maxAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
+            if (minAutoMatchPlayers > 0 || maxAutoMatchPlayers > 0) {
+                autoMatchCriteria = RoomConfig.createAutoMatchCriteria(
+                        minAutoMatchPlayers, maxAutoMatchPlayers, 0);
+                Log.d(TAG, "Automatch criteria: " + autoMatchCriteria);
+            }
+
+            // create the room
+            Log.d(TAG, "Creating room...");
+            requestLoadingScreen();
+            messageQueue.clear();
+            correctLeftPeers.clear();
+            keepScreenOn();
+
+            mRoomConfig = RoomConfig.builder(mRoomUpdateCallback)
+                    .addPlayersToInvite(invitees)
+                    .setOnMessageReceivedListener(mOnRealTimeMessageReceivedListener)
+                    .setRoomStatusUpdateCallback(mRoomStatusUpdateCallback)
+                    .setAutoMatchCriteria(autoMatchCriteria).build();
+            mRealTimeMultiplayerClient.create(mRoomConfig);
+            Log.d(TAG, "Room created, waiting for it to be ready...");
         }
-
-        Log.d(TAG, "Select players UI succeeded.");
-
-        // get the invitee list
-        final ArrayList<String> invitees = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
-        Log.d(TAG, "Invitee count: " + invitees.size());
-
-        // get the automatch criteria
-        Bundle autoMatchCriteria = null;
-        int minAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
-        int maxAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
-        if (minAutoMatchPlayers > 0 || maxAutoMatchPlayers > 0) {
-            autoMatchCriteria = RoomConfig.createAutoMatchCriteria(
-                    minAutoMatchPlayers, maxAutoMatchPlayers, 0);
-            Log.d(TAG, "Automatch criteria: " + autoMatchCriteria);
+        catch (Exception e) {
+            Log.e(TAG, "handleSelectPlayersResult exception: " + e);
         }
-
-        // create the room
-        Log.d(TAG, "Creating room...");
-        requestLoadingScreen();
-        messageQueue.clear();
-        correctLeftPeers.clear();
-        keepScreenOn();
-
-        mRoomConfig = RoomConfig.builder(mRoomUpdateCallback)
-                .addPlayersToInvite(invitees)
-                .setOnMessageReceivedListener(mOnRealTimeMessageReceivedListener)
-                .setRoomStatusUpdateCallback(mRoomStatusUpdateCallback)
-                .setAutoMatchCriteria(autoMatchCriteria).build();
-        mRealTimeMultiplayerClient.create(mRoomConfig);
-        Log.d(TAG, "Room created, waiting for it to be ready...");
     }
 
     // Handle the result of the invitation inbox UI, where the player can pick an invitation
     // to accept. We react by accepting the selected invitation, if any.
     private void handleInvitationInboxResult(int response, Intent data) {
-        if (response != Activity.RESULT_OK) {
-            Log.w(TAG, "*** invitation inbox UI cancelled, " + response);
-            onStartMenuRequested();
-            return;
-        }
+        try {
+            if (response != Activity.RESULT_OK) {
+                Log.w(TAG, "*** invitation inbox UI cancelled, " + response);
+                onStartMenuRequested();
+                return;
+            }
 
-        Log.d(TAG, "Invitation inbox UI succeeded.");
-        Invitation invitation = null;
-        if (data.getExtras() != null) {
-            invitation = data.getExtras().getParcelable(Multiplayer.EXTRA_INVITATION);
-        }
+            Log.d(TAG, "Invitation inbox UI succeeded.");
+            Invitation invitation = null;
+            if (data.getExtras() != null) {
+                invitation = data.getExtras().getParcelable(Multiplayer.EXTRA_INVITATION);
+            }
 
-        // accept invitation
-        if (invitation != null) {
-            acceptInviteToRoom(invitation.getInvitationId());
+            // accept invitation
+            if (invitation != null) {
+                acceptInviteToRoom(invitation.getInvitationId());
+            }
+        }
+        catch (Exception e) {
+            Log.e(TAG, "handleInvitationInboxResult exception: " + e);
         }
     }
 
     // Accept the given invitation.
     void acceptInviteToRoom(String invitationId) {
-        // accept the invitation
-        Log.d(TAG, "Accepting invitation: " + invitationId);
+        try {
+            // accept the invitation
+            Log.d(TAG, "Accepting invitation: " + invitationId);
 
-        mRoomConfig = RoomConfig.builder(mRoomUpdateCallback)
-                .setInvitationIdToAccept(invitationId)
-                .setOnMessageReceivedListener(mOnRealTimeMessageReceivedListener)
-                .setRoomStatusUpdateCallback(mRoomStatusUpdateCallback)
-                .build();
+            mRoomConfig = RoomConfig.builder(mRoomUpdateCallback)
+                    .setInvitationIdToAccept(invitationId)
+                    .setOnMessageReceivedListener(mOnRealTimeMessageReceivedListener)
+                    .setRoomStatusUpdateCallback(mRoomStatusUpdateCallback)
+                    .build();
 
-        requestLoadingScreen();
-        messageQueue.clear();
-        correctLeftPeers.clear();
-        keepScreenOn();
+            requestLoadingScreen();
+            messageQueue.clear();
+            correctLeftPeers.clear();
+            keepScreenOn();
 
-        mRealTimeMultiplayerClient.join(mRoomConfig)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "Room Joined Successfully!");
-                    }
-                });
+            mRealTimeMultiplayerClient.join(mRoomConfig)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d(TAG, "Room Joined Successfully!");
+                        }
+                    });
+        }  catch (Exception e) {
+            Log.e(TAG, "handleInvitationInboxResult exception: " + e);
+        }
     }
 
 
-
-    // Handle back key to make sure we cleanly leave a game if we are in the middle of one
-   /* @Override
-    public boolean onKeyDown(int keyCode, KeyEvent e) {
-        if (keyCode == KeyEvent.KEYCODE_BACK && mCurScreen == R.id.screen_game) {
-            leaveRoom();
-            return true;
-        }
-        return super.onKeyDown(keyCode, e);
-    }*/
-
     // Leave the room.
     void leaveRoom() {
-        Log.d(TAG, "Leaving room.");
-        stopKeepingScreenOn();
-        if (mRoomId != null) {
-            mRealTimeMultiplayerClient.leave(mRoomConfig, mRoomId)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            mRoomId = null;
-                            mRoomConfig = null;
-                        }
-                    });
-            requestLoadingScreen();
-        } else {
-            Log.d(TAG, "Leaving room.... but we are in no room");
-            onStartMenuRequested();
+        try {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mMultiplayer = false;
+                    Log.d(TAG, "Leaving room.");
+                    messageQueue.clear();
+                    stopKeepingScreenOn();
+                    onStartMenuRequested();
+                    if (mRoomId != null) {
+                        mRealTimeMultiplayerClient.leave(mRoomConfig, mRoomId)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        mRoomId = null;
+                                        mRoomConfig = null;
+                                    }
+                                });
+                        onStartMenuRequested();
+                    } else {
+                        Log.d(TAG, "Leaving room.... but we are in no room");
+                        onStartMenuRequested();
+                    }
+                }
+            });
+        } catch (Exception e) {
+            Log.e(TAG, "leave room exceptio " + e);
         }
     }
 
     // Show the waiting room UI to track the progress of other players as they enter the
     // room and get connected.
     void showWaitingRoom(Room room) {
-        // minimum number of players required for our game
-        final int MIN_PLAYERS = Integer.MAX_VALUE;
-        mRealTimeMultiplayerClient.getWaitingRoomIntent(room, MIN_PLAYERS)
-                .addOnSuccessListener(new OnSuccessListener<Intent>() {
-                    @Override
-                    public void onSuccess(Intent intent) {
-                        // show waiting room UI
-                        startActivityForResult(intent, RC_WAITING_ROOM);
-                    }
-                })
-                .addOnFailureListener(createFailureListener("There was a problem getting the waiting room!"));
+        try {
+            if (room == null) {
+                return;
+            }
+            // minimum number of players required for our game
+            final int MIN_PLAYERS = Integer.MAX_VALUE;
+            mRealTimeMultiplayerClient.getWaitingRoomIntent(room, MIN_PLAYERS)
+                    .addOnSuccessListener(new OnSuccessListener<Intent>() {
+                        @Override
+                        public void onSuccess(Intent intent) {
+                            // show waiting room UI
+                            startActivityForResult(intent, RC_WAITING_ROOM);
+                        }
+                    })
+                    .addOnFailureListener(createFailureListener("There was a problem getting the waiting room!"));
+        }
+        catch (Exception e) {
+            Log.e(TAG, "showWaitingRoom exception: " + e);
+        }
+
     }
 
     private InvitationCallback mInvitationCallback = new InvitationCallback() {
@@ -667,71 +729,77 @@ public class MainActivity extends FragmentActivity implements
      */
 
     private void onConnected(GoogleSignInAccount googleSignInAccount) {
-        Log.d(TAG, "onConnected(): connected to Google APIs");
+        try {
+            Log.d(TAG, "onConnected(): connected to Google APIs");
 
-        // Show sign-out button on main menu
-        mStartScreenFragment.handleSignIn(false);
-        mStartScreenFragment.setGreeting(getString(R.string.signed_in_greeting, mDisplayName));
+            // Show sign-out button on main menu
+            mStartScreenFragment.handleSignIn(false);
+            mStartScreenFragment.setGreeting(getString(R.string.signed_in_greeting, mDisplayName));
 
-        if (mSignedInAccount != googleSignInAccount) {
+            if (mSignedInAccount != googleSignInAccount) {
 
-            mSignedInAccount = googleSignInAccount;
+                mSignedInAccount = googleSignInAccount;
 
-            // update the clients
-            mRealTimeMultiplayerClient = Games.getRealTimeMultiplayerClient(this, googleSignInAccount);
-            mInvitationsClient = Games.getInvitationsClient(MainActivity.this, googleSignInAccount);
+                // update the clients
+                mRealTimeMultiplayerClient = Games.getRealTimeMultiplayerClient(this, googleSignInAccount);
+                mInvitationsClient = Games.getInvitationsClient(MainActivity.this, googleSignInAccount);
 
-            // get the playerId from the PlayersClient
-            mPlayersClient = Games.getPlayersClient(this, googleSignInAccount);
-            mPlayersClient.getCurrentPlayer()
-                    .addOnSuccessListener(new OnSuccessListener<Player>() {
+                // get the playerId from the PlayersClient
+                mPlayersClient = Games.getPlayersClient(this, googleSignInAccount);
+                mPlayersClient.getCurrentPlayer()
+                        .addOnSuccessListener(new OnSuccessListener<Player>() {
+                            @Override
+                            public void onSuccess(Player player) {
+                                mPlayerId = player.getPlayerId();
+                            }
+                        })
+                        .addOnFailureListener(createFailureListener("There was a problem getting the player id!"));
+                // Set the greeting appropriately on main menu
+                mPlayersClient.getCurrentPlayer()
+                        .addOnCompleteListener(new OnCompleteListener<Player>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Player> task) {
+                                if (task.isSuccessful()) {
+                                    mDisplayName = task.getResult().getDisplayName();
+                                } else {
+                                    Exception e = task.getException();
+                                    handleException(e, "getString(R.string.players_exception)");
+                                    mDisplayName = "???";
+                                }
+                                mStartScreenFragment.setGreeting(getString(R.string.signed_in_greeting, mDisplayName));
+                            }
+                        });
+            }
+
+            // register listener so we are notified if we receive an invitation to play
+            // while we are in the game
+            mInvitationsClient.registerInvitationCallback(mInvitationCallback);
+
+            // get the invitation from the connection hint
+            // Retrieve the TurnBasedMatch from the connectionHint
+            GamesClient gamesClient = Games.getGamesClient(MainActivity.this, googleSignInAccount);
+            gamesClient.getActivationHint()
+                    .addOnSuccessListener(new OnSuccessListener<Bundle>() {
                         @Override
-                        public void onSuccess(Player player) {
-                            mPlayerId = player.getPlayerId();
+                        public void onSuccess(Bundle hint) {
+                            if (hint != null) {
+                                Invitation invitation =
+                                        hint.getParcelable(Multiplayer.EXTRA_INVITATION);
+
+                                if (invitation != null && invitation.getInvitationId() != null) {
+                                    // retrieve and cache the invitation ID
+                                    Log.d(TAG, "onConnected: connection hint has a room invite!");
+                                    acceptInviteToRoom(invitation.getInvitationId());
+                                }
+                            }
                         }
                     })
-                    .addOnFailureListener(createFailureListener("There was a problem getting the player id!"));
-            // Set the greeting appropriately on main menu
-            mPlayersClient.getCurrentPlayer()
-                    .addOnCompleteListener(new OnCompleteListener<Player>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Player> task) {
-                            if (task.isSuccessful()) {
-                                mDisplayName = task.getResult().getDisplayName();
-                            } else {
-                                Exception e = task.getException();
-                                handleException(e, "getString(R.string.players_exception)");
-                                mDisplayName = "???";
-                            }
-                            mStartScreenFragment.setGreeting(getString(R.string.signed_in_greeting, mDisplayName));
-                        }
-                    });
+                    .addOnFailureListener(createFailureListener("There was a problem getting the activation hint!"));
+        }
+        catch (Exception e) {
+            Log.e(TAG, "onConnected exception: " + e);
         }
 
-        // register listener so we are notified if we receive an invitation to play
-        // while we are in the game
-        mInvitationsClient.registerInvitationCallback(mInvitationCallback);
-
-        // get the invitation from the connection hint
-        // Retrieve the TurnBasedMatch from the connectionHint
-        GamesClient gamesClient = Games.getGamesClient(MainActivity.this, googleSignInAccount);
-        gamesClient.getActivationHint()
-                .addOnSuccessListener(new OnSuccessListener<Bundle>() {
-                    @Override
-                    public void onSuccess(Bundle hint) {
-                        if (hint != null) {
-                            Invitation invitation =
-                                    hint.getParcelable(Multiplayer.EXTRA_INVITATION);
-
-                            if (invitation != null && invitation.getInvitationId() != null) {
-                                // retrieve and cache the invitation ID
-                                Log.d(TAG, "onConnected: connection hint has a room invite!");
-                                acceptInviteToRoom(invitation.getInvitationId());
-                            }
-                        }
-                    }
-                })
-                .addOnFailureListener(createFailureListener("There was a problem getting the activation hint!"));
     }
 
     private OnFailureListener createFailureListener(final String string) {
@@ -744,43 +812,61 @@ public class MainActivity extends FragmentActivity implements
     }
 
     public void onDisconnected() {
-        Log.d(TAG, "onDisconnected()");
+        try {
+            Log.d(TAG, "onDisconnected()");
 
-        mRealTimeMultiplayerClient = null;
-        mInvitationsClient = null;
+            mRealTimeMultiplayerClient = null;
+            mInvitationsClient = null;
 
-        mStartScreenFragment.handleSignIn(true);
-        mStartScreenFragment.setGreeting(getString(R.string.signed_out_greeting));
+            mStartScreenFragment.handleSignIn(true);
+            mStartScreenFragment.setGreeting(getString(R.string.signed_out_greeting));
+        }
+        catch (Exception e) {
+            Log.e(TAG, "onDisconnected exception: " + e);
+        }
     }
+
 
     private RoomStatusUpdateCallback mRoomStatusUpdateCallback = new RoomStatusUpdateCallback() {
         // Called when we are connected to the room. We're not ready to play yet! (maybe not everybody
         // is connected yet).
         @Override
         public void onConnectedToRoom(Room room) {
-            Log.d(TAG, "onConnectedToRoom.");
+            try {
+                Log.d(TAG, "onConnectedToRoom.");
 
-            //get participants and my ID:
-            mParticipants = room.getParticipants();
-            myParticipantId = room.getParticipantId(mPlayerId);
+                //get participants and my ID:
+                mParticipants = room.getParticipants();
+                myParticipantId = room.getParticipantId(mPlayerId);
 
-            // save room ID if its not initialized in onRoomCreated() so we can leave cleanly before the game starts.
-            if (mRoomId == null) {
-                mRoomId = room.getRoomId();
+                // save room ID if its not initialized in onRoomCreated() so we can leave cleanly before the game starts.
+                if (mRoomId == null) {
+                    mRoomId = room.getRoomId();
+                }
+
+                // print out the list of participants (for debug purposes)
+                Log.d(TAG, "Room ID: " + mRoomId);
+                Log.d(TAG, "My ID " + myParticipantId);
+                Log.d(TAG, "<< CONNECTED TO ROOM>>");
             }
-
-            // print out the list of participants (for debug purposes)
-            Log.d(TAG, "Room ID: " + mRoomId);
-            Log.d(TAG, "My ID " + myParticipantId);
-            Log.d(TAG, "<< CONNECTED TO ROOM>>");
+            catch (Exception e) {
+                Log.e(TAG, "onConnected exception: " + e);
+            }
         }
 
         // Called when we get disconnected from the room. We return to the main screen.
         @Override
         public void onDisconnectedFromRoom(Room room) {
-            mRoomId = null;
-            mRoomConfig = null;
-            showGameError();
+            try {
+                Log.d(TAG, "onDisconnectedToRoom.");
+                mRoomId = null;
+                mRoomConfig = null;
+                showGameError();
+            }
+            catch (Exception e) {
+                Log.e(TAG, "onDisconnected exception: " + e);
+            }
+
         }
 
 
@@ -800,6 +886,7 @@ public class MainActivity extends FragmentActivity implements
 
         @Override
         public void onP2PDisconnected(@NonNull String participant) {
+            Log.d(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
         }
 
         @Override
@@ -843,7 +930,7 @@ public class MainActivity extends FragmentActivity implements
                 .setMessage("getString(R.string.game_problem)")
                 .setNeutralButton(android.R.string.ok, null).create();
 
-        // onStartMenuRequested();
+        onStartMenuRequested();
     }
 
     private RoomUpdateCallback mRoomUpdateCallback = new RoomUpdateCallback() {
@@ -851,52 +938,79 @@ public class MainActivity extends FragmentActivity implements
         // Called when room has been created
         @Override
         public void onRoomCreated(int statusCode, Room room) {
-            Log.d(TAG, "onRoomCreated(" + statusCode + ", " + room + ")");
-            if (statusCode != GamesCallbackStatusCodes.OK) {
-                Log.e(TAG, "*** Error: onRoomCreated, status " + statusCode);
-                showGameError();
-                return;
+            try {
+                Log.d(TAG, "onRoomCreated(" + statusCode + ", " + room + ")");
+                if (statusCode != GamesCallbackStatusCodes.OK) {
+                    Log.e(TAG, "*** Error: onRoomCreated, status " + statusCode);
+                    showGameError();
+                    return;
+                }
+
+                // save room ID so we can leave cleanly before the game starts.
+                mRoomId = room.getRoomId();
+
+                // show the waiting room UI
+                showWaitingRoom(room);
+            }
+            catch (Exception e) {
+                Log.e(TAG, "onRoomCreated exception: " + e);
             }
 
-            // save room ID so we can leave cleanly before the game starts.
-            mRoomId = room.getRoomId();
-
-            // show the waiting room UI
-            showWaitingRoom(room);
         }
 
         // Called when room is fully connected.
         @Override
         public void onRoomConnected(int statusCode, Room room) {
-            Log.d(TAG, "onRoomConnected(" + statusCode + ", " + room + ")");
-            if (statusCode != GamesCallbackStatusCodes.OK) {
-                Log.e(TAG, "*** Error: onRoomConnected, status " + statusCode);
-                showGameError();
-                return;
+            try {
+                Log.d(TAG, "onRoomConnected(" + statusCode + ", " + room + ")");
+                if (statusCode != GamesCallbackStatusCodes.OK) {
+                    Log.e(TAG, "*** Error: onRoomConnected, status " + statusCode);
+                    showGameError();
+                    return;
+                }
+                // save room ID so we can leave cleanly before the game starts.
+                mRoomId = room.getRoomId();
+                updateRoom(room);
             }
-            updateRoom(room);
+            catch (Exception e) {
+                Log.e(TAG, "onRoomConnected exception: " + e);
+            }
+
         }
 
         @Override
         public void onJoinedRoom(int statusCode, Room room) {
-            Log.d(TAG, "onJoinedRoom(" + statusCode + ", " + room + ")");
-            if (statusCode != GamesCallbackStatusCodes.OK) {
-                Log.e(TAG, "*** Error: onRoomConnected, status " + statusCode);
-                showGameError();
-                return;
+            try {
+                Log.d(TAG, "onJoinedRoom(" + statusCode + ", " + room + ")");
+                if (statusCode != GamesCallbackStatusCodes.OK) {
+                    Log.e(TAG, "*** Error: onRoomConnected, status " + statusCode);
+                    showGameError();
+                    return;
+                }
+                // save room ID so we can leave cleanly before the game starts.
+                mRoomId = room.getRoomId();
+                // show the waiting room UI
+                showWaitingRoom(room);
+            }
+            catch (Exception e) {
+                Log.e(TAG, "onJoinedRoom exception: " + e);
             }
 
-            // show the waiting room UI
-            showWaitingRoom(room);
         }
 
         // Called when we've successfully left the room (this happens a result of voluntarily leaving
         // via a call to leaveRoom(). If we get disconnected, we get onDisconnectedFromRoom()).
         @Override
         public void onLeftRoom(int statusCode, @NonNull String roomId) {
-            // we have left the room; return to main screen.
-            Log.d(TAG, "onLeftRoom, code " + statusCode);
-            onStartMenuRequested();
+            try {
+                // we have left the room; return to main screen.
+                Log.d(TAG, "onLeftRoom, code " + statusCode);
+                onStartMenuRequested();
+            }
+            catch (Exception e) {
+                Log.e(TAG, "onLeftRoom exception: " + e);
+            }
+
         }
     };
 
@@ -910,79 +1024,103 @@ public class MainActivity extends FragmentActivity implements
 
     void updateRoom(Room room, @NonNull List<String> peersWhoLeft) {
         updateRoom(room);
+        updatePlayer(peersWhoLeft);
+    }
 
-        if (peersWhoLeft.contains(myParticipantId)) {
-            return; // this player left the room too -> so there is nothing to do!
-        }
+    private void updatePlayer(@NonNull List<String> peersWhoLeft) {
+        try {
+            if (peersWhoLeft.contains(myParticipantId)) {
+                return; // this player left the room too -> so there is nothing to do!
+            }
 
-        if (mParticipants.size() - peersWhoLeft.size() - correctLeftPeers.size() < 2) {
-            for (String leftPeer: peersWhoLeft) {
-                boolean leftCorrect = false;
-                for (String leftCorrectId : correctLeftPeers) {
-                    if (leftPeer.equals(leftCorrectId)) {
-                        leftCorrect = true;
+            if (mParticipants.size() - peersWhoLeft.size() - correctLeftPeers.size() < 2) {
+                for (final String leftPeer: peersWhoLeft) {
+                    boolean leftCorrect = false;
+                    for (String leftCorrectId : correctLeftPeers) {
+                        if (leftPeer.equals(leftCorrectId)) {
+                            leftCorrect = true;
+                        }
                     }
-                }
-                if (leftCorrect) { // peer left correct at end of the game
-                    return;
-                }
-                // double secure -> check if game is over...
-                if (mGameView != null && mGameView.getController() != null &&
-                        mGameView.getController().getGameOver() != null &&
-                        mGameView.getController().getGameOver().isVisible()) {
-                    return;
-                }
+                    if (leftCorrect) { // peer left correct at end of the game
+                        return;
+                    }
+                    // double secure -> check if game is over...
+                    if (mGameView != null && mGameView.getController() != null &&
+                            mGameView.getController().getGameOver() != null &&
+                            mGameView.getController().getGameOver().isVisible()) {
+                        return;
+                    }
 
-                // left in the middle of the game, but still leaves the game correct
-                correctLeftPeers.add(leftPeer);
+                    // left in the middle of the game, but still leaves the game correct
+                    correctLeftPeers.add(leftPeer);
 
-                // so a player left in the middle od a game? :(
-                // tell the player
-                if (gameRunning && mGameView != null && mGameView.getController() != null
-                        && mGameView.getController().isGameStarted()) {
-                    Log.d(TAG, "Bye bye " + leftPeer);
-                    mGameView.getController().handleLeftPeer(leftPeer);
+                    // so a player left in the middle od a game? :(
+                    // tell the player
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (gameRunning && mGameView != null && mGameView.getController() != null
+                                    && mGameView.getController().isGameStarted()) {
+                                Log.d(TAG, "Bye bye " + leftPeer);
+                                mGameView.getController().handleLeftPeer(leftPeer);
+                            }
+                            else if (gamePreparationRunning || gameRunning) {
+                                Log.d(TAG, "Bye bye pre " + leftPeer);
+                                // ToDo Show message Error
+                                endGame();
+                            }
+                        }
+                    });
+
                 }
-                else if (gamePreparationRunning || gameRunning) {
-                    Log.d(TAG, "Bye bye pre " + leftPeer);
-                    // ToDo Show message Error
-                    endGame();
+            }
+
+            if (mParticipants.size() - peersWhoLeft.size() - correctLeftPeers.size() >= 2) {
+                for (final String leftPeer: peersWhoLeft) {
+                    boolean leftCorrect = false;
+                    for (final String leftCorrectId : correctLeftPeers) {
+                        if (leftPeer.equals(leftCorrectId)) {
+                            leftCorrect = true;
+                        }
+                    }
+                    if (leftCorrect) { // peer left correct at end of the game
+                        return;
+                    }
+                    // double secure -> check if game is over...
+                    if (mGameView != null && mGameView.getController() != null &&
+                            mGameView.getController().getGameOver() != null &&
+                            mGameView.getController().getGameOver().isVisible()) {
+                        return;
+                    }
+
+                    // left in the middle of the game, but still leaves the game correct
+                    correctLeftPeers.add(leftPeer);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // so a player left in the middle od a game? :(
+                            // tell the player
+                            if (gameRunning && mGameView != null && mGameView.getController() != null
+                                    && mGameView.getController().isGameStarted()) {
+                                Log.d(TAG, "Bye bye " + leftPeer);
+                                mGameView.getController().handleLeftPeer(leftPeer);
+                            }
+                            else if (gamePreparationRunning || gameRunning) {
+                                Log.d(TAG, "Bye bye pre " + leftPeer);
+                                // ToDo Show message Error
+                                endGame();
+                            }
+                        }
+                    });
+
                 }
             }
         }
-
-        if (mParticipants.size() - peersWhoLeft.size() - correctLeftPeers.size() >= 2) {
-            for (String leftPeer: peersWhoLeft) {
-                boolean leftCorrect = false;
-                for (String leftCorrectId : correctLeftPeers) {
-                    if (leftPeer.equals(leftCorrectId)) {
-                        leftCorrect = true;
-                    }
-                }
-                if (leftCorrect) { // peer left correct at end of the game
-                    return;
-                }
-                // double secure -> check if game is over...
-                if (mGameView != null && mGameView.getController() != null &&
-                        mGameView.getController().getGameOver() != null &&
-                        mGameView.getController().getGameOver().isVisible()) {
-                    return;
-                }
-
-                // so a player left in the middle od a game? :(
-                // tell the player
-                if (gameRunning && mGameView != null && mGameView.getController() != null
-                        && mGameView.getController().isGameStarted()) {
-                    Log.d(TAG, "Bye bye " + leftPeer);
-                    mGameView.getController().handleLeftPeer(leftPeer);
-                }
-                else if (gamePreparationRunning || gameRunning) {
-                    Log.d(TAG, "Bye bye pre " + leftPeer);
-                    // ToDo Show message Error
-                    endGame();
-                }
-            }
+        catch (Exception e) {
+            Log.e(TAG, "updatePlayers exception: " + e);
         }
+
     }
 
 
@@ -1005,16 +1143,25 @@ public class MainActivity extends FragmentActivity implements
     OnRealTimeMessageReceivedListener mOnRealTimeMessageReceivedListener = new OnRealTimeMessageReceivedListener() {
         @Override
         public void onRealTimeMessageReceived(@NonNull RealTimeMessage realTimeMessage) {
-            byte[] buf = realTimeMessage.getMessageData();
-            String data = new String(buf);
-            Message message = gson.fromJson(data, Message.class);
-            Log.d(TAG, "Message received: type " + message.type);
-            // don't need messages for singleplayer
-            if (!mMultiplayer) {
-                return;
+            try {
+                // don't need messages for singleplayer
+                if (!mMultiplayer) {
+                    return;
+                }
+                byte[] buf = realTimeMessage.getMessageData();
+                String data = new String(buf);
+                Message message = gson.fromJson(data, Message.class);
+                Log.d(TAG, "Message received: type " + message.type);
+                if (correctLeftPeers.contains(message.senderId)) {
+                    return;
+                }
+                messageQueue.add(message);
+                workOnMessageQueue();
             }
-            messageQueue.add( message);
-            workOnMessageQueue();
+            catch (Exception e) {
+                Log.e(TAG, "message received exception " + e);
+            }
+
         }
     };
 
@@ -1023,74 +1170,91 @@ public class MainActivity extends FragmentActivity implements
     //          -> if the activity is not ready it tries again after a short delay
     //
     private void workOnMessageQueue() {
+        try {
+            if (messageQueue == null || messageQueue.isEmpty()) {
+                return;
+            }
 
-        if (messageQueue.get(0).type == Message.leftGameAtEnd) {
-            correctLeftPeers.add(messageQueue.get(0).senderId);
-            messageQueue.remove(0);
-            return;
-        }
+            if (messageQueue.get(0).type == Message.heartBeat) {
+                String sId = messageQueue.get(0).senderId;
+                messageQueue.remove(0);
+                receiveHeartBeat(sId);
+                return;
+            }
 
-        if (gameRunning) {
-            // should never happen but remove wrong messages which are only to prepare the game
-            // not the game itself
-            if (messageQueue.get(0).type == Message.setHost ||
-                    messageQueue.get(0).type == Message.prepareGame ||
-                    messageQueue.get(0).type == Message.startGame) {
+
+            if (messageQueue.get(0).type == Message.leftGameAtEnd) {
+                correctLeftPeers.add(messageQueue.get(0).senderId);
                 messageQueue.remove(0);
                 return;
             }
-            // push forward to the game controller
-            if (mGameView != null && mGameView.getController() != null) {
-                Message message = messageQueue.get(0);
-                messageQueue.remove(0);
-                mGameView.getController().handleReceivedMessage(message);
-            }
-            // game controller needs more time to get initialized
-            else {
-                tryWorkOnMessageAgainLater();
-            }
-            return;
-        }
 
-        // Main Activity messaged to handle:
-        if (messageQueue.get(0).type == Message.setHost) {
-            if (waitForOnlineInteraction == Message.setHost) {
-                waitForOnlineInteraction = 0;
-                String hostId = messageQueue.get(0).data;
-                messageQueue.remove(0);
-                setHostAndContinue(hostId);
-            }
-            else {
-                tryWorkOnMessageAgainLater();
-            }
-            return;
-        }
-
-        if (messageQueue.get(0).type == Message.prepareGame) {
-            if (waitForOnlineInteraction == Message.prepareGame) {
-                int msgCode = Integer.parseInt(messageQueue.get(0).data);
-                messageQueue.remove(0);
-                mMultiPlayerSettingsFragment.receiveMessage(msgCode);
-            }
-            else {
-                tryWorkOnMessageAgainLater();
-            }
-            return;
-        }
-
-        if (messageQueue.get(0).type == Message.startGame) {
-            if (waitForOnlineInteraction == Message.prepareGame) {
-                waitForOnlineInteraction = 0;
-                startGameParas paras = gson.fromJson(messageQueue.get(0).data, startGameParas.class);
-                messageQueue.remove(0);
-                mMultiPlayerSettingsFragment.setValues(paras.enemies, paras.difficulty, paras.playerLives);
-                startGame(paras, mDisplayName);
-            }
-            else {
-                tryWorkOnMessageAgainLater();
+            if (gameRunning) {
+                // should never happen but remove wrong messages which are only to prepare the game
+                // not the game itself
+                if (messageQueue.get(0).type == Message.setHost ||
+                        messageQueue.get(0).type == Message.prepareGame ||
+                        messageQueue.get(0).type == Message.startGame) {
+                    messageQueue.remove(0);
+                    return;
+                }
+                // push forward to the game controller
+                if (mGameView != null && mGameView.getController() != null) {
+                    Message message = messageQueue.get(0);
+                    messageQueue.remove(0);
+                    mGameView.getController().handleReceivedMessage(message);
+                }
+                // game controller needs more time to get initialized
+                else {
+                    tryWorkOnMessageAgainLater();
+                }
+                return;
             }
 
+            // Main Activity messaged to handle:
+            if (messageQueue.get(0).type == Message.setHost) {
+                if (waitForOnlineInteraction == Message.setHost) {
+                    waitForOnlineInteraction = 0;
+                    String hostId = messageQueue.get(0).data;
+                    messageQueue.remove(0);
+                    setHostAndContinue(hostId);
+                }
+                else {
+                    tryWorkOnMessageAgainLater();
+                }
+                return;
+            }
+
+            if (messageQueue.get(0).type == Message.prepareGame) {
+                if (waitForOnlineInteraction == Message.prepareGame) {
+                    int msgCode = Integer.parseInt(messageQueue.get(0).data);
+                    messageQueue.remove(0);
+                    mMultiPlayerSettingsFragment.receiveMessage(msgCode);
+                }
+                else {
+                    tryWorkOnMessageAgainLater();
+                }
+                return;
+            }
+
+            if (messageQueue.get(0).type == Message.startGame) {
+                if (waitForOnlineInteraction == Message.prepareGame) {
+                    waitForOnlineInteraction = 0;
+                    startGameParas paras = gson.fromJson(messageQueue.get(0).data, startGameParas.class);
+                    messageQueue.remove(0);
+                    mMultiPlayerSettingsFragment.setValues(paras.enemies, paras.difficulty, paras.playerLives);
+                    startGame(paras, mDisplayName);
+                }
+                else {
+                    tryWorkOnMessageAgainLater();
+                }
+            }
         }
+        catch (Exception e) {
+            Log.e(TAG, "workOnMessageQueue exception: " + e);
+        }
+
+
 
     }
 
@@ -1114,26 +1278,38 @@ public class MainActivity extends FragmentActivity implements
     //
     public void broadcastMessage(int type, String data) {
 
-        // playing single-player mode -> nothing to send
-        if (!mMultiplayer) {
-            return;
-        }
-
-        // create message
-        Message message = new Message();
-        message.type = type;
-        message.senderId = myParticipantId;
-        message.data = data;
-        mMsgBuf = null;
         try {
-            mMsgBuf = gson.toJson(message).getBytes("UTF-8");
+            // playing single-player mode -> nothing to send
+            if (!mMultiplayer) {
+                return;
+            }
+
+            // create message
+            Message message = new Message();
+            message.type = type;
+            message.senderId = myParticipantId;
+            message.data = data;
+            mMsgBuf = null;
+            try {
+                mMsgBuf = gson.toJson(message).getBytes("UTF-8");
+            }
+            catch (Exception e) {
+                Log.d(TAG, "send message -> charset");
+            }
+            if (mMsgBuf == null) {
+                return;
+            }
+
+            if (message.type == Message.heartBeat) {
+                broadcastUnreliable();
+            }
+            else {
+                broadcastReliable();
+            }
         }
         catch (Exception e) {
-            Log.d(TAG, "send message -> charset");
+            Log.e(TAG, "broadcast message exception " + e);
         }
-
-        // Send to every other participant.
-        broadcastReliable();
     }
 
 
@@ -1141,49 +1317,60 @@ public class MainActivity extends FragmentActivity implements
     // Broadcast reliable
     //
     private void broadcastReliable() {
-        for (Participant p : mParticipants) {
-            if (p.getParticipantId().equals(myParticipantId)) {
-                continue;
+        try {
+            for (Participant p : mParticipants) {
+                if (p.getParticipantId().equals(myParticipantId)) {
+                    continue;
+                }
+                if (p.getStatus() != Participant.STATUS_JOINED) {
+                    continue;
+                }
+                // final score notification must be sent via reliable message
+                mRealTimeMultiplayerClient.sendReliableMessage(mMsgBuf,
+                        mRoomId, p.getParticipantId(), new RealTimeMultiplayerClient.ReliableMessageSentCallback() {
+                            @Override
+                            public void onRealTimeMessageSent(int statusCode, int tokenId, String recipientParticipantId) {
+                                Log.d(TAG, "RealTime message sent");
+                                Log.d(TAG, "  statusCode: " + statusCode);
+                                //Log.d(TAG, "  tokenId: " + tokenId);
+                                //Log.d(TAG, "  recipientParticipantId: " + recipientParticipantId);
+                            }
+                        })
+                        .addOnSuccessListener(new OnSuccessListener<Integer>() {
+                            @Override
+                            public void onSuccess(Integer tokenId) {
+                                //Log.d(TAG, "Created a reliable message with tokenId: " + tokenId);
+                            }
+                        });
             }
-            if (p.getStatus() != Participant.STATUS_JOINED) {
-                continue;
-            }
-            // final score notification must be sent via reliable message
-            mRealTimeMultiplayerClient.sendReliableMessage(mMsgBuf,
-                    mRoomId, p.getParticipantId(), new RealTimeMultiplayerClient.ReliableMessageSentCallback() {
-                        @Override
-                        public void onRealTimeMessageSent(int statusCode, int tokenId, String recipientParticipantId) {
-                            Log.d(TAG, "RealTime message sent");
-                            Log.d(TAG, "  statusCode: " + statusCode);
-                            Log.d(TAG, "  tokenId: " + tokenId);
-                            Log.d(TAG, "  recipientParticipantId: " + recipientParticipantId);
-                        }
-                    })
-                    .addOnSuccessListener(new OnSuccessListener<Integer>() {
-                        @Override
-                        public void onSuccess(Integer tokenId) {
-                            Log.d(TAG, "Created a reliable message with tokenId: " + tokenId);
-                        }
-                    });
         }
+        catch (Exception e) {
+            Log.e(TAG, "broadCastReliable exception: " + e);
+        }
+
     }
 
 
- /*
-    private void broadcastUnreliable(byte[] msgBuf) {
-        for (Participant p : mParticipants) {
-            if (p.getParticipantId().equals(myParticipantId)) {
-                continue;
+    private void broadcastUnreliable() {
+        try {
+            for (Participant p : mParticipants) {
+                if (p.getParticipantId().equals(myParticipantId)) {
+                    continue;
+                }
+                if (p.getStatus() != Participant.STATUS_JOINED) {
+                    continue;
+                }
+                // it's an interim score notification, so we can use unreliable
+                mRealTimeMultiplayerClient.sendUnreliableMessage(mMsgBuf, mRoomId,
+                        p.getParticipantId());
             }
-            if (p.getStatus() != Participant.STATUS_JOINED) {
-                continue;
-            }
-            // it's an interim score notification, so we can use unreliable
-            mRealTimeMultiplayerClient.sendUnreliableMessage(mMsgBuf, mRoomId,
-                    p.getParticipantId());
         }
+        catch (Exception e) {
+            Log.e(TAG, "onbroadcastUnreliable exception: " + e);
+        }
+
     }
-*/
+
 
 
     //----------------------------------------------------------------------------------------------
@@ -1191,18 +1378,24 @@ public class MainActivity extends FragmentActivity implements
     //
     @Override
     public void onChangeLanguage() {
-        if (LocaleHelper.getLanguage(this).equals("de")) {
-            LocaleHelper.setLocale(this, "");
-            mStartScreenFragment.updateLanguageIcon("");
+        try {
+            if (LocaleHelper.getLanguage(this).equals("de")) {
+                LocaleHelper.setLocale(this, "");
+                mStartScreenFragment.updateLanguageIcon("");
+            }
+            else {
+                LocaleHelper.setLocale(this, "de");
+                mStartScreenFragment.updateLanguageIcon("de");
+            }
+
+            Intent intent = getIntent();
+            finish();
+            startActivity(intent);
         }
-        else {
-            LocaleHelper.setLocale(this, "de");
-            mStartScreenFragment.updateLanguageIcon("de");
+        catch (Exception e) {
+            Log.e(TAG, "onChangeLanguage: " + e);
         }
 
-        Intent intent = getIntent();
-        finish();
-        startActivity(intent);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -1335,16 +1528,22 @@ public class MainActivity extends FragmentActivity implements
     //
     @Override
     public void onSinglePlayerRequested() {
-        switchToFragment(mLoadingScreenFragment, "mLoadingScreenFragment");
-        Handler mHandler = new Handler();
-        Runnable showLoadingScreenThenContinue = new Runnable() {
-            @Override
-            public void run() {
-                mSinglePlayerFragment.prepareSinglePlayerRequested();
-                startGamePreparation(false);
-            }
-        };
-        mHandler.postDelayed(showLoadingScreenThenContinue, 100);
+        try {
+            requestLoadingScreen();
+            Handler mHandler = new Handler();
+            Runnable showLoadingScreenThenContinue = new Runnable() {
+                @Override
+                public void run() {
+                    mSinglePlayerFragment.prepareSinglePlayerRequested();
+                    startGamePreparation(false);
+                }
+            };
+            mHandler.postDelayed(showLoadingScreenThenContinue, 100);
+        }
+        catch (Exception e) {
+            Log.e(TAG, "onSinglePlayerRequested: " + e);
+        }
+
     }
 
 
@@ -1353,46 +1552,61 @@ public class MainActivity extends FragmentActivity implements
     //
     @Override
     public void onMultiPlayerQuickGameRequested() {
-        // user wants to play against a random opponent right now
-        switchToFragment(mLoadingScreenFragment, "mLoadingScreenFragment");
-        Handler mHandler = new Handler();
-        Runnable showLoadingScreenThenContinue = new Runnable() {
-            @Override
-            public void run() {
-                startQuickGame();
-            }
-        };
-        mHandler.postDelayed(showLoadingScreenThenContinue, 10);
+        try {
+            // user wants to play against a random opponent right now
+            requestLoadingScreen();
+            Handler mHandler = new Handler();
+            Runnable showLoadingScreenThenContinue = new Runnable() {
+                @Override
+                public void run() {
+                    startQuickGame();
+                }
+            };
+            mHandler.postDelayed(showLoadingScreenThenContinue, 10);
+        }
+        catch (Exception e) {
+            Log.e(TAG, "onMultiPlayerQuickGameRequested exception: " + e);
+        }
     }
 
     @Override
     public void onMultiPlayerInvitePlayersRequested() {
-        switchToFragment(mLoadingScreenFragment, "mLoadingScreenFragment");
-        // show list of invitable players
-        mRealTimeMultiplayerClient.getSelectOpponentsIntent(1, 3).addOnSuccessListener(
-                new OnSuccessListener<Intent>() {
-                    @Override
-                    public void onSuccess(Intent intent) {
-                        startActivityForResult(intent, RC_SELECT_PLAYERS);
+        try {
+            requestLoadingScreen();
+            // show list of invitable players
+            mRealTimeMultiplayerClient.getSelectOpponentsIntent(1, 3).addOnSuccessListener(
+                    new OnSuccessListener<Intent>() {
+                        @Override
+                        public void onSuccess(Intent intent) {
+                            startActivityForResult(intent, RC_SELECT_PLAYERS);
+                        }
                     }
-                }
-        ).addOnFailureListener(createFailureListener("There was a problem selecting opponents."));
+            ).addOnFailureListener(createFailureListener("There was a problem selecting opponents."));
+        }
+        catch (Exception e) {
+            Log.e(TAG, "onMultiPlayerInvitePlayerRequested exception: " + e);
+        }
+
     }
 
     @Override
     public void onMultiPlayerSeeInvitationsRequested() {
-        // show list of pending invitations
-        switchToFragment(mLoadingScreenFragment, "mLoadingScreenFragment");
-        // show list of pending invitations
-        mInvitationsClient.getInvitationInboxIntent().addOnSuccessListener(
-                new OnSuccessListener<Intent>() {
-                    @Override
-                    public void onSuccess(Intent intent) {
-                        startActivityForResult(intent, RC_INVITATION_INBOX);
+        try {
+            // show list of pending invitations
+            switchToFragment(mLoadingScreenFragment, "mLoadingScreenFragment");
+            // show list of pending invitations
+            mInvitationsClient.getInvitationInboxIntent().addOnSuccessListener(
+                    new OnSuccessListener<Intent>() {
+                        @Override
+                        public void onSuccess(Intent intent) {
+                            startActivityForResult(intent, RC_INVITATION_INBOX);
+                        }
                     }
-                }
-        ).addOnFailureListener(createFailureListener("There was a problem getting the inbox."));
-
+            ).addOnFailureListener(createFailureListener("There was a problem getting the inbox."));
+        }
+        catch (Exception e) {
+            Log.e(TAG, "onMultiPlayerSeeInvitationsRequested exception: " + e);
+        }
     }
 
 
@@ -1403,77 +1617,195 @@ public class MainActivity extends FragmentActivity implements
 
     private boolean gamePreparationRunning = false;
     void startGamePreparation(final boolean multiplayer) {
+        try {
+            gamePreparationRunning = true;
+            requestLoadingScreen();
 
-        gamePreparationRunning = true;
-        requestLoadingScreen();
-
-        //  create the Game View
-        if (waitForNewGame) {
-            Handler handler = new Handler();
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    startGamePreparation(multiplayer);
-                }
-            };
-            handler.postDelayed(runnable, 200);
+            //  create the Game View
+            if (waitForNewGame) {
+                Handler handler = new Handler();
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        startGamePreparation(multiplayer);
+                    }
+                };
+                handler.postDelayed(runnable, 200);
+            }
+            else {
+                Handler myHandler = new Handler();
+                Runnable myRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        prepareStartedGame(multiplayer);
+                    }
+                };
+                myHandler.postDelayed(myRunnable, 10);
+            }
         }
-        else {
-            Handler myHandler = new Handler();
-            Runnable myRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    prepareStartedGame(multiplayer);
-                }
-            };
-            myHandler.postDelayed(myRunnable, 10);
+        catch (Exception e) {
+            Log.e(TAG, "startGamePreparation exception: " + e);
         }
     }
 
+
+    private volatile Integer[] missedHeartBeats = new Integer[4];
+    private volatile boolean heartBeating = false;
+    ScheduledExecutorService executor;
+
+    private void startHeartBeat() {
+        try {
+            heartBeating = true;
+            missedHeartBeats = new Integer[4];
+            missedHeartBeats[0] = 0;
+            missedHeartBeats[1] = 0;
+            missedHeartBeats[2] = 0;
+            missedHeartBeats[3] = 0;
+
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    handleHeartBeats();
+                }
+            };
+            executor = Executors.newScheduledThreadPool(7);
+            executor.scheduleAtFixedRate(r, 0, 5, TimeUnit.SECONDS);
+
+        }
+        catch (Exception e) {
+            Log.e(TAG, "startHeartBeat: " + e);
+            leaveRoom();
+        }
+
+    }
+
+
+    private void handleHeartBeats() {
+        try {
+            if (!heartBeating || !mMultiplayer) {
+                stopHeartBeat();
+                return;
+            }
+            missedHeartBeats[0]++;
+            missedHeartBeats[1]++;
+            missedHeartBeats[2]++;
+            missedHeartBeats[3]++;
+            sendHeartBeat();
+            checkHeartBeat();
+        }
+        catch (Exception e) {
+            Log.e(TAG, "handleHeartBeat exception: " + e);
+        }
+
+    }
+
+
+    private void sendHeartBeat() {
+        broadcastMessage(Message.heartBeat, "");
+    }
+
+    private void checkHeartBeat() {
+        try {
+            for (int i = 0; i < mParticipants.size(); i++) {
+                if (mParticipants.get(i).getParticipantId().equals(myParticipantId) ||
+                        correctLeftPeers.contains(mParticipants.get(i).getParticipantId())) {
+                    continue;
+                }
+
+                if (missedHeartBeats[i] > 3) {
+                    Log.d(TAG, i + "  -> " + mParticipants.get(i).getDisplayName() + "lost connection");
+                    final ArrayList<String> leftPlayers = new ArrayList<>();
+                    leftPlayers.add(mParticipants.get(i).getParticipantId());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            updatePlayer(leftPlayers);
+                        }
+                    });
+                    return;
+                }
+            }
+        }
+        catch (Exception e) {
+            Log.e(TAG, "checkHeartbeat exception: " + e);
+        }
+    }
+
+    private void receiveHeartBeat(String senderId) {
+        for (int i = 0; i < mParticipants.size(); i++) {
+            if (mParticipants.get(i).getParticipantId().equals(senderId)) {
+                missedHeartBeats[i] = 0;
+            }
+        }
+    }
+
+    private void stopHeartBeat() {
+        heartBeating = false;
+        try {
+            executor.shutdown();
+        }
+        catch (Exception e) {
+            Log.w(TAG, "HeartBeat couldn't be stopped");
+        }
+    }
 
     private String gameHostId;
 
     void prepareStartedGame(final boolean multiplayer) {
 
-        mMultiplayer = multiplayer;
+        try {
+            mMultiplayer = multiplayer;
+            startHeartBeat();
 
-        //---- get/set all game starting parameters
-        if (!isSignedIn()) {
-            mDisplayName = "Du";
-        }
-
-        if (multiplayer) {
-            sortParticipants();
-            if (mParticipants.get(0).getParticipantId().equals(myParticipantId)) {
-                int randomNum = ThreadLocalRandom.current().nextInt(0, mParticipants.size());
-                gameHostId = mParticipants.get(randomNum).getParticipantId();
-                broadcastMessage(Message.setHost, gameHostId);
-                setHostAndContinue(gameHostId);
+            //---- get/set all game starting parameters
+            if (!isSignedIn()) {
+                mDisplayName = "Du";
             }
-            else {
-                waitForOnlineInteraction = Message.setHost;
+
+            if (multiplayer) {
+                sortParticipants();
+                if (mParticipants.get(0).getParticipantId().equals(myParticipantId)) {
+                    int randomNum = ThreadLocalRandom.current().nextInt(0, mParticipants.size());
+                    gameHostId = mParticipants.get(randomNum).getParticipantId();
+                    broadcastMessage(Message.setHost, gameHostId);
+                    setHostAndContinue(gameHostId);
+                }
+                else {
+                    waitForOnlineInteraction = Message.setHost;
+                }
+            }
+
+            else { // singleplayer
+
+                startGameParas paras = new startGameParas();
+                paras.enemies = mSinglePlayerFragment.getEnemies();
+                paras.difficulty = mSinglePlayerFragment.getDifficulty();
+                paras.playerLives = mSinglePlayerFragment.getPlayerLives();
+                startGame(paras, mDisplayName);
             }
         }
-
-        else { // singleplayer
-
-            startGameParas paras = new startGameParas();
-            paras.enemies = mSinglePlayerFragment.getEnemies();
-            paras.difficulty = mSinglePlayerFragment.getDifficulty();
-            paras.playerLives = mSinglePlayerFragment.getPlayerLives();
-            startGame(paras, mDisplayName);
+        catch (Exception e) {
+            Log.e(TAG, "prepareStartedGame exception: " + e);
         }
+
+
     }
 
     private void setHostAndContinue(String hostParticipantId) {
-        gameHostId = hostParticipantId;
-        Log.d("----------", "host id " + gameHostId);
-        mMultiPlayerSettingsFragment.prepareMultiPlayerSettingsRequested(mParticipants.size(),
-                gameHostId.equals(myParticipantId));
-        switchToFragment(mMultiPlayerSettingsFragment, "mMultiPlayerSettingsFragment");
-        if (!gameHostId.equals(myParticipantId)) {
-            waitForOnlineInteraction = Message.prepareGame;
+        try {
+            gameHostId = hostParticipantId;
+            Log.d("----------", "host id " + gameHostId);
+            mMultiPlayerSettingsFragment.prepareMultiPlayerSettingsRequested(mParticipants.size(),
+                    gameHostId.equals(myParticipantId));
+            switchToFragment(mMultiPlayerSettingsFragment, "mMultiPlayerSettingsFragment");
+            if (!gameHostId.equals(myParticipantId)) {
+                waitForOnlineInteraction = Message.prepareGame;
+            }
         }
+        catch (Exception e) {
+            Log.e(TAG, "setHostAndContinue exception: " + e);
+        }
+
     }
 
 
@@ -1494,27 +1826,32 @@ public class MainActivity extends FragmentActivity implements
     //
     @Override
     public void onMultiPlayerSettingsStartGameRequested() {
-        mMultiPlayerSettingsFragment.setMultiPlayerSettingsRequested();
-        int player_lives = mMultiPlayerSettingsFragment.getPlayerLives();
-        int difficulty = mMultiPlayerSettingsFragment.getDifficulty();
-        int enemies = mMultiPlayerSettingsFragment.getEnemies();
-        startGameParas paras = new startGameParas();
-        paras.enemies = enemies;
-        paras.difficulty = difficulty;
-        paras.playerLives = player_lives;
-        if (myParticipantId.equals(gameHostId)) {
-            paras.playerPositions = new ArrayList<>();
-            for (Participant p : mParticipants) {
-                paras.playerPositions.add(p.getParticipantId());
+        try {
+            mMultiPlayerSettingsFragment.setMultiPlayerSettingsRequested();
+            int player_lives = mMultiPlayerSettingsFragment.getPlayerLives();
+            int difficulty = mMultiPlayerSettingsFragment.getDifficulty();
+            int enemies = mMultiPlayerSettingsFragment.getEnemies();
+            startGameParas paras = new startGameParas();
+            paras.enemies = enemies;
+            paras.difficulty = difficulty;
+            paras.playerLives = player_lives;
+            if (myParticipantId.equals(gameHostId)) {
+                paras.playerPositions = new ArrayList<>();
+                for (Participant p : mParticipants) {
+                    paras.playerPositions.add(p.getParticipantId());
+                }
+                for (int i = 0; i < enemies; i++) {
+                    paras.playerPositions.add("");
+                }
+                Collections.shuffle(paras.playerPositions);
+                broadcastMessage(Message.startGame, gson.toJson(paras));
             }
-            for (int i = 0; i < enemies; i++) {
-                paras.playerPositions.add("");
-            }
-            Collections.shuffle(paras.playerPositions);
-            broadcastMessage(Message.startGame, gson.toJson(paras));
+            // else can't be called without a message
+            startGame(paras, mDisplayName);
         }
-        // else can't be called without a message
-        startGame(paras, mDisplayName);
+        catch (Exception e) {
+            Log.e(TAG, "onMultiPlayerSettingsStartGameRequested exception: " + e);
+        }
     }
 
     @Override
@@ -1570,37 +1907,40 @@ public class MainActivity extends FragmentActivity implements
 
     public void endGame() {
 
-        if (mMultiplayer) {
-            leaveRoom();
+        try {
+            if (mMultiplayer) {
+                leaveRoom();
+            }
+
+            if (gamePreparationRunning) {
+                onStartMenuRequested();
+            }
+
+            if (gameRunning) {
+                onStartMenuRequested();
+                ((ViewGroup) mGameView.getParent()).removeView(mGameView);
+                mGameView.stopAll = true;
+                gameRunning = false;
+                waitForNewGame = true;
+                Handler handler = new Handler();
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mGameView != null) {
+                            mGameView.clear();
+                            mGameView = null;
+                        }
+                        waitForNewGame = false;
+                        System.gc();
+                    }
+                };
+                handler.postDelayed(runnable, 2000);
+            }
+        }
+        catch (Exception e) {
+            Log.e(TAG, "endGame: " + e);
         }
 
-        if (gamePreparationRunning) {
-            onStartMenuRequested();
-        }
-
-        if (gameRunning) {
-            onStartMenuRequested();
-            ((ViewGroup) mGameView.getParent()).removeView(mGameView);
-            mGameView.stopAll = true;
-            gameRunning = false;
-            waitForNewGame = true;
-            Handler handler = new Handler();
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    if (mGameView != null) {
-                        mGameView.clear();
-                        mGameView = null;
-                    }
-                    if (mMultiplayer) {
-                        leaveRoom();
-                    }
-                    waitForNewGame = false;
-                    System.gc();
-                }
-            };
-            handler.postDelayed(runnable, 2000);
-        }
     }
 
 

@@ -37,4 +37,5 @@ public class Message {
     public final static int gameReady = 17;
     public final static int setHost = 8;
     public final static int leftGameAtEnd = 99;
+    public final static int heartBeat = 33;
 }
