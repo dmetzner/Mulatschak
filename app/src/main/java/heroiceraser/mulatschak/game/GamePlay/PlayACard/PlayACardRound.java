@@ -5,6 +5,8 @@ import android.os.Handler;
 
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
+
 import heroiceraser.mulatschak.Message;
 import heroiceraser.mulatschak.MainActivity;
 import heroiceraser.mulatschak.game.BaseObjects.Card;
@@ -67,6 +69,7 @@ public class PlayACardRound {
             logic.setStartingPlayer(logic.getTurn());
         }
         else {
+            controller.getPlayerById(logic.getTurn()).gameState = Message.gameStateWaitForNextRound;
             controller.turnToNextPlayer(true);
         }
 
@@ -103,6 +106,14 @@ public class PlayACardRound {
             // multiplayer
             else {
                 controller.waitForOnlineInteraction = Message.playACard;
+                ArrayList<String> sa = new ArrayList<>();
+                sa.add(controller.getPlayerById(logic.getTurn()).getOnlineId());
+                for (Card c : controller.getPlayerById(logic.getTurn()).getHand().getCardStack()) {
+                    sa.add("" + c.getId());
+                }
+                Gson gson = new Gson();
+                controller.mainActivity.requestMissedMessage(controller.mainActivity.gameState, Message.requestPlayACard, gson.toJson(sa));
+
                 // wait 4 online interaction
             }
         }
@@ -138,6 +149,12 @@ public class PlayACardRound {
     //  end card round
     //
     private void endCardRound(final GameController controller) {
+        controller.mainActivity.messageQueue.clear();
+        controller.mainActivity.gameState = Message.gameStateWaitForPlayACard;
+        for (MyPlayer player : controller.getPlayerList()) {
+            player.gameState = Message.gameStateWaitForPlayACard;
+        }
+
         GameLogic logic = controller.getLogic();
 
         // choose who has best card on the discard pile

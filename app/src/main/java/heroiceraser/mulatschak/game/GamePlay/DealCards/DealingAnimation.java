@@ -3,6 +3,8 @@ package heroiceraser.mulatschak.game.GamePlay.DealCards;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Point;
+import android.util.Log;
+
 import heroiceraser.mulatschak.game.BaseObjects.Card;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
@@ -133,7 +135,13 @@ public class DealingAnimation {
             // player left and right need a rotation
             bitmap = BitmapMethodes.rotateBitmap(bitmap, (int) rotation_);
         }
-        canvas.drawBitmap(bitmap, card_.getPosition().x, card_.getPosition().y, null);
+
+        try {
+            canvas.drawBitmap(bitmap, card_.getPosition().x, card_.getPosition().y, null);
+        }
+        catch (Exception e) {
+            Log.e("---", "draw dealing cards exception" + e);
+        }
 
         continueAnimation(controller);
     }

@@ -25,6 +25,7 @@ public class CardExchange {
     //
     private CardExchangeLogic card_exchange_logic_;
     private EnemyCardExchangeLogic enemy_card_exchange_logic_;
+    private ArrayList<Integer> cardHandIds;
 
 
     //----------------------------------------------------------------------------------------------
@@ -57,6 +58,7 @@ public class CardExchange {
         GameLogic logic = controller.getLogic();
         
         if (!first_call) {
+            controller.getPlayerById(logic.getTurn()).gameState = Message.gameStateWaitForPlayACard;
             controller.turnToNextPlayer(true);
         }
 
@@ -85,6 +87,14 @@ public class CardExchange {
             }
             else {
                 controller.waitForOnlineInteraction = Message.cardExchange;
+                ArrayList<String> sa = new ArrayList<>();
+                sa.add(controller.getPlayerById(logic.getTurn()).getOnlineId());
+                for (Card c : controller.getPlayerById(logic.getTurn()).getHand().getCardStack()) {
+                    sa.add("" + c.getId());
+                }
+                Gson gson = new Gson();
+                controller.mainActivity.requestMissedMessage(controller.mainActivity.gameState, Message.requestCardExchange, gson.toJson(sa));
+
             }
         }
     }

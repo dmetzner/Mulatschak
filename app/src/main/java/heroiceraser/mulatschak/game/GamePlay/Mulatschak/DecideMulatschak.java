@@ -58,6 +58,10 @@ public class DecideMulatschak {
     void makeMulatschakDecision(boolean first_call, final GameController controller) {
         GameLogic logic = controller.getLogic();
 
+        if (!first_call) {
+            controller.getPlayerById(logic.getTurn()).gameState = Message.gameStateWaitForTrickBids;
+        }
+
         // if someone tries a Mulatschak skip choose Tricks
         if (logic.getTricksToMake() == MakeBidsAnimation.MULATSCHAK) {
             controller.continueAfterTrickBids();
@@ -92,7 +96,9 @@ public class DecideMulatschak {
             // multiplayer
             else {
                 controller.waitForOnlineInteraction = Message.mulatschakDecision;
-                // wait 4 online interaction
+                Gson gson = new Gson();
+                String oId = controller.getPlayerById(logic.getTurn()).getOnlineId();
+                controller.mainActivity.requestMissedMessage(controller.mainActivity.gameState, Message.requestMulatschakDecision, oId);
             }
         }
     }

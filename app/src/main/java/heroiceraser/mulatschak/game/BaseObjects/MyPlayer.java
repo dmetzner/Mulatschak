@@ -2,6 +2,8 @@ package heroiceraser.mulatschak.game.BaseObjects;
 
 
 import com.google.android.gms.games.multiplayer.Participant;
+
+import heroiceraser.mulatschak.Message;
 import heroiceraser.mulatschak.game.GameController;
 
 
@@ -18,6 +20,7 @@ public class MyPlayer {
     private String display_name_;
     private String onlineId;
     private boolean gameStarted;
+    public int gameState;
 
     private int id_;
 
@@ -43,6 +46,7 @@ public class MyPlayer {
         tricks_ = new CardStack();
         enemyLogic = false;
         gameStarted = false;
+        gameState = 0;
     }
 
     public void initMultiplayer() {

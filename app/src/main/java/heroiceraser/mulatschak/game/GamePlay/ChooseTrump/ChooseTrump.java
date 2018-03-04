@@ -74,6 +74,7 @@ public class ChooseTrump {
             }
             else {
                 controller.waitForOnlineInteraction = Message.chooseTrump;
+                controller.mainActivity.requestMissedMessage(controller.mainActivity.gameState, Message.requestChooseTrump, "");
             }
         }
     }

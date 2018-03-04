@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.nfc.Tag;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -859,8 +858,7 @@ public class MainActivity extends FragmentActivity implements
         public void onDisconnectedFromRoom(Room room) {
             try {
                 Log.d(TAG, "onDisconnectedToRoom.");
-                mRoomId = null;
-                mRoomConfig = null;
+                leaveRoom();
                 showGameError();
             }
             catch (Exception e) {
@@ -885,9 +883,7 @@ public class MainActivity extends FragmentActivity implements
         }
 
         @Override
-        public void onP2PDisconnected(@NonNull String participant) {
-            Log.d(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-        }
+        public void onP2PDisconnected(@NonNull String participant) { }
 
         @Override
         public void onP2PConnected(@NonNull String participant) {
@@ -1130,7 +1126,7 @@ public class MainActivity extends FragmentActivity implements
      */
     
     //  data structure to save incoming messages, till they were processed
-    private List<Message> messageQueue = new ArrayList<>();
+    public List<Message> messageQueue = new ArrayList<>();
    
     // used to (un)marshall messages
     private Gson gson = new Gson();
@@ -1151,7 +1147,11 @@ public class MainActivity extends FragmentActivity implements
                 byte[] buf = realTimeMessage.getMessageData();
                 String data = new String(buf);
                 Message message = gson.fromJson(data, Message.class);
+                Log.d(TAG, "---------------------------------------");
                 Log.d(TAG, "Message received: type " + message.type);
+                Log.d(TAG, "GameState " + gameState);
+                Log.d(TAG, "waitFor " + waitForOnlineInteraction);
+                Log.d(TAG, "---------------------------------------");
                 if (correctLeftPeers.contains(message.senderId)) {
                     return;
                 }
@@ -1165,112 +1165,22 @@ public class MainActivity extends FragmentActivity implements
         }
     };
 
-    //
-    //  tries to execute received messaged
-    //          -> if the activity is not ready it tries again after a short delay
-    //
-    private void workOnMessageQueue() {
-        try {
-            if (messageQueue == null || messageQueue.isEmpty()) {
-                return;
-            }
 
-            if (messageQueue.get(0).type == Message.heartBeat) {
-                String sId = messageQueue.get(0).senderId;
-                messageQueue.remove(0);
-                receiveHeartBeat(sId);
-                return;
-            }
-
-
-            if (messageQueue.get(0).type == Message.leftGameAtEnd) {
-                correctLeftPeers.add(messageQueue.get(0).senderId);
-                messageQueue.remove(0);
-                return;
-            }
-
-            if (gameRunning) {
-                // should never happen but remove wrong messages which are only to prepare the game
-                // not the game itself
-                if (messageQueue.get(0).type == Message.setHost ||
-                        messageQueue.get(0).type == Message.prepareGame ||
-                        messageQueue.get(0).type == Message.startGame) {
-                    messageQueue.remove(0);
-                    return;
-                }
-                // push forward to the game controller
-                if (mGameView != null && mGameView.getController() != null) {
-                    Message message = messageQueue.get(0);
-                    messageQueue.remove(0);
-                    mGameView.getController().handleReceivedMessage(message);
-                }
-                // game controller needs more time to get initialized
-                else {
-                    tryWorkOnMessageAgainLater();
-                }
-                return;
-            }
-
-            // Main Activity messaged to handle:
-            if (messageQueue.get(0).type == Message.setHost) {
-                if (waitForOnlineInteraction == Message.setHost) {
-                    waitForOnlineInteraction = 0;
-                    String hostId = messageQueue.get(0).data;
-                    messageQueue.remove(0);
-                    setHostAndContinue(hostId);
-                }
-                else {
-                    tryWorkOnMessageAgainLater();
-                }
-                return;
-            }
-
-            if (messageQueue.get(0).type == Message.prepareGame) {
-                if (waitForOnlineInteraction == Message.prepareGame) {
-                    int msgCode = Integer.parseInt(messageQueue.get(0).data);
-                    messageQueue.remove(0);
-                    mMultiPlayerSettingsFragment.receiveMessage(msgCode);
-                }
-                else {
-                    tryWorkOnMessageAgainLater();
-                }
-                return;
-            }
-
-            if (messageQueue.get(0).type == Message.startGame) {
-                if (waitForOnlineInteraction == Message.prepareGame) {
-                    waitForOnlineInteraction = 0;
-                    startGameParas paras = gson.fromJson(messageQueue.get(0).data, startGameParas.class);
-                    messageQueue.remove(0);
-                    mMultiPlayerSettingsFragment.setValues(paras.enemies, paras.difficulty, paras.playerLives);
-                    startGame(paras, mDisplayName);
-                }
-                else {
-                    tryWorkOnMessageAgainLater();
-                }
-            }
-        }
-        catch (Exception e) {
-            Log.e(TAG, "workOnMessageQueue exception: " + e);
-        }
-
-
-
-    }
 
     //
     //  starts workOnMessageQueue again after a short delay
     //
     private void tryWorkOnMessageAgainLater() {
-        Handler h = new Handler();
+        /*Handler h = new Handler();
         Runnable r = new Runnable() {
             @Override
             public void run() {
-                Log.d("-------------", "w4O: " + waitForOnlineInteraction);
                 workOnMessageQueue();
             }
         };
-        h.postDelayed(r, 100);
+        h.postDelayed(r, 50);
+        */
+        messageQueue.remove(0);
     }
 
     //
@@ -1300,12 +1210,15 @@ public class MainActivity extends FragmentActivity implements
                 return;
             }
 
-            if (message.type == Message.heartBeat) {
-                broadcastUnreliable();
-            }
-            else {
-                broadcastReliable();
-            }
+            broadcastUnreliable();
+
+            Log.d(TAG, "Message sent: " + message.type);
+            //if (message.type == Message.heartBeat) {
+            //    broadcastUnreliable();
+            //}
+            //else {
+            //    broadcastReliable();
+            //}
         }
         catch (Exception e) {
             Log.e(TAG, "broadcast message exception " + e);
@@ -1325,6 +1238,9 @@ public class MainActivity extends FragmentActivity implements
                 if (p.getStatus() != Participant.STATUS_JOINED) {
                     continue;
                 }
+                if (correctLeftPeers.contains(p.getParticipantId())) {
+                    continue;
+                }
                 // final score notification must be sent via reliable message
                 mRealTimeMultiplayerClient.sendReliableMessage(mMsgBuf,
                         mRoomId, p.getParticipantId(), new RealTimeMultiplayerClient.ReliableMessageSentCallback() {
@@ -1332,14 +1248,14 @@ public class MainActivity extends FragmentActivity implements
                             public void onRealTimeMessageSent(int statusCode, int tokenId, String recipientParticipantId) {
                                 Log.d(TAG, "RealTime message sent");
                                 Log.d(TAG, "  statusCode: " + statusCode);
-                                //Log.d(TAG, "  tokenId: " + tokenId);
-                                //Log.d(TAG, "  recipientParticipantId: " + recipientParticipantId);
+                                Log.d(TAG, "  tokenId: " + tokenId);
+                                Log.d(TAG, "  recipientParticipantId: " + recipientParticipantId);
                             }
                         })
                         .addOnSuccessListener(new OnSuccessListener<Integer>() {
                             @Override
                             public void onSuccess(Integer tokenId) {
-                                //Log.d(TAG, "Created a reliable message with tokenId: " + tokenId);
+                                Log.d(TAG, "Created a reliable message with tokenId: " + tokenId);
                             }
                         });
             }
@@ -1347,7 +1263,48 @@ public class MainActivity extends FragmentActivity implements
         catch (Exception e) {
             Log.e(TAG, "broadCastReliable exception: " + e);
         }
+    }
 
+    public void sendUnReliable(String sendToId, int type, String data) {
+
+        try {
+            // playing single-player mode -> nothing to send
+            if (!mMultiplayer) {
+                return;
+            }
+
+            // create message
+            Message message = new Message();
+            message.type = type;
+            message.senderId = myParticipantId;
+            message.data = data;
+            mMsgBuf = null;
+            try {
+                mMsgBuf = gson.toJson(message).getBytes("UTF-8");
+            }
+            catch (Exception e) {
+                Log.d(TAG, "send message -> charset");
+            }
+            if (mMsgBuf == null) {
+                return;
+            }
+
+            if (sendToId.equals(myParticipantId)) {
+                return;
+            }
+            //if (p.getStatus() != Participant.STATUS_JOINED) {
+              //  return;
+            //}
+            if (correctLeftPeers.contains(sendToId)) {
+                return;
+            }
+            // it's an interim score notification, so we can use unreliable
+            mRealTimeMultiplayerClient.sendUnreliableMessage(mMsgBuf, mRoomId,
+                    sendToId);
+        }
+        catch (Exception e) {
+            Log.e(TAG, "broadCastUnReliable exception: " + e);
+        }
     }
 
 
@@ -1358,6 +1315,9 @@ public class MainActivity extends FragmentActivity implements
                     continue;
                 }
                 if (p.getStatus() != Participant.STATUS_JOINED) {
+                    continue;
+                }
+                if (correctLeftPeers.contains(p.getParticipantId())) {
                     continue;
                 }
                 // it's an interim score notification, so we can use unreliable
@@ -1620,6 +1580,8 @@ public class MainActivity extends FragmentActivity implements
         try {
             gamePreparationRunning = true;
             requestLoadingScreen();
+            gameState = 0;
+            waitForOnlineInteraction = 0;
 
             //  create the Game View
             if (waitForNewGame) {
@@ -1669,7 +1631,7 @@ public class MainActivity extends FragmentActivity implements
                 }
             };
             executor = Executors.newScheduledThreadPool(7);
-            executor.scheduleAtFixedRate(r, 0, 5, TimeUnit.SECONDS);
+            executor.scheduleAtFixedRate(r, 0, 1000, TimeUnit.SECONDS);
 
         }
         catch (Exception e) {
@@ -1711,8 +1673,8 @@ public class MainActivity extends FragmentActivity implements
                         correctLeftPeers.contains(mParticipants.get(i).getParticipantId())) {
                     continue;
                 }
-
-                if (missedHeartBeats[i] > 3) {
+                // 20 -> 18*5 = 90 -> 1m30sec
+                if (missedHeartBeats[i] > 18) {
                     Log.d(TAG, i + "  -> " + mParticipants.get(i).getDisplayName() + "lost connection");
                     final ArrayList<String> leftPlayers = new ArrayList<>();
                     leftPlayers.add(mParticipants.get(i).getParticipantId());
@@ -1749,6 +1711,176 @@ public class MainActivity extends FragmentActivity implements
         }
     }
 
+
+    public volatile int gameState = 0;
+
+    //
+    //  tries to execute received messaged
+    //          -> if the activity is not ready it tries again after a short delay
+    //
+    private void workOnMessageQueue() {
+        try {
+            // just in case something went wrong
+            if (messageQueue == null || messageQueue.isEmpty()) {
+                return;
+            }
+
+            // heartBeat will be always received!
+            if (messageQueue.get(0).type == Message.heartBeat) {
+                String sId = messageQueue.get(0).senderId;
+                messageQueue.remove(0);
+                receiveHeartBeat(sId);
+                return;
+            }
+
+            // players that leave are always received too.
+            if (messageQueue.get(0).type == Message.leftGameAtEnd) {
+                correctLeftPeers.add(messageQueue.get(0).senderId);
+                messageQueue.remove(0);
+                return;
+            }
+
+            //
+            // ----- setHost
+            //
+            // game State 0 -> set Host
+            if (messageQueue.get(0).type == Message.setHost) {
+                // already in another state?
+                if (gameState != Message.gameStateWaitForSetHost) {
+                    messageQueue.remove(0);
+                    return;
+                }
+                // ui still working?
+                if (waitForOnlineInteraction != Message.setHost) {
+                    tryWorkOnMessageAgainLater();
+                    return;
+                }
+                waitForOnlineInteraction = 0;
+                String hostId = messageQueue.get(0).data;
+                messageQueue.remove(0);
+                setHostAndContinue(hostId);
+                return;
+            }
+
+            // requested repeated messages
+            if (messageQueue.get(0).type == Message.requestHost) {
+                if (gameState <= Message.gameStateWaitForSetHost) {
+                    tryWorkOnMessageAgainLater();
+                    return;
+                }
+                String sendTo = messageQueue.get(0).senderId;
+                messageQueue.remove(0);
+                sendUnReliable(sendTo, Message.setHost, gameHostId);
+                return;
+            }
+
+            //--------------------
+
+            //
+            // ----- prepare & start Game
+            //
+            // game State 1.0 -> prepare Game   (can be skipped)
+            if (messageQueue.get(0).type == Message.prepareGame) {
+                // already in another state?
+                if (gameState != Message.gameStateWaitForStartGame) {
+                    messageQueue.remove(0);
+                    return;
+                }
+                // ui still working?
+                if (waitForOnlineInteraction != Message.prepareGame) {
+                    tryWorkOnMessageAgainLater();
+                    return;
+                }
+                int msgCode = Integer.parseInt(messageQueue.get(0).data);
+                messageQueue.remove(0);
+                mMultiPlayerSettingsFragment.receiveMessage(msgCode);
+                return;
+            }
+
+            // game State 1.1 -> start Game
+            if (messageQueue.get(0).type == Message.startGame) {
+                // already in another state?
+                if (gameState != Message.gameStateWaitForStartGame) {
+                    messageQueue.remove(0);
+                    return;
+                }
+                // ui still working?
+                if (waitForOnlineInteraction != Message.prepareGame) {
+                    tryWorkOnMessageAgainLater();
+                    return;
+                }
+                waitForOnlineInteraction = 0;
+                paras = gson.fromJson(messageQueue.get(0).data, startGameParas.class);
+                messageQueue.remove(0);
+                mMultiPlayerSettingsFragment.setValues(paras.enemies, paras.difficulty, paras.playerLives);
+                startGame(paras, mDisplayName);
+                return;
+            }
+
+            // requested repeated messages
+            if (messageQueue.get(0).type == Message.requestStartGame) {
+                if (gameState <= 1) {
+                    tryWorkOnMessageAgainLater();
+                    return;
+                }
+                String sendTo = messageQueue.get(0).senderId;
+                messageQueue.remove(0);
+                sendUnReliable(sendTo, Message.startGame, gson.toJson(paras));
+                return;
+            }
+
+
+            //--------------------
+            // game State 2 -> the Game
+            if (gameRunning) {
+                // push forward to the game controller
+                if (mGameView != null && mGameView.getController() != null) {
+                    Message message = messageQueue.get(0);
+                    messageQueue.remove(0);
+                    mGameView.getController().handleReceivedMessage(message);
+                    return;
+                }
+                // game controller needs more time to get initialized
+                else {
+                    tryWorkOnMessageAgainLater();
+                    return;
+                }
+            }
+
+            messageQueue.remove(0);
+            Log.w(TAG, "couldn't proceed a message");
+        }
+        catch (Exception e) {
+            Log.e(TAG, "workOnMessageQueue exception: " + e);
+        }
+    }
+
+
+
+    ScheduledExecutorService rMMexecutor = null;
+    public void requestMissedMessage(final int oldState, final int msgCode, final String data) {
+
+        if (rMMexecutor != null) {
+            rMMexecutor.shutdown();
+            rMMexecutor = null;
+        }
+
+
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                broadcastMessage(msgCode, data);
+                if (gameState != oldState) {
+                    Log.d("rMM", gameState + " --- " + oldState);
+                    rMMexecutor.shutdown();
+                }
+            }
+        };
+        rMMexecutor = Executors.newScheduledThreadPool(5);
+        rMMexecutor.scheduleAtFixedRate(r, 200, 250, TimeUnit.MILLISECONDS);
+    }
+
+
     private String gameHostId;
 
     void prepareStartedGame(final boolean multiplayer) {
@@ -1765,6 +1897,7 @@ public class MainActivity extends FragmentActivity implements
             if (multiplayer) {
                 sortParticipants();
                 if (mParticipants.get(0).getParticipantId().equals(myParticipantId)) {
+                    Log.d(TAG, "I choose the host");
                     int randomNum = ThreadLocalRandom.current().nextInt(0, mParticipants.size());
                     gameHostId = mParticipants.get(randomNum).getParticipantId();
                     broadcastMessage(Message.setHost, gameHostId);
@@ -1772,12 +1905,12 @@ public class MainActivity extends FragmentActivity implements
                 }
                 else {
                     waitForOnlineInteraction = Message.setHost;
+                    requestMissedMessage(gameState, Message.requestHost, "");
                 }
             }
 
             else { // singleplayer
-
-                startGameParas paras = new startGameParas();
+                paras = new startGameParas();
                 paras.enemies = mSinglePlayerFragment.getEnemies();
                 paras.difficulty = mSinglePlayerFragment.getDifficulty();
                 paras.playerLives = mSinglePlayerFragment.getPlayerLives();
@@ -1787,19 +1920,20 @@ public class MainActivity extends FragmentActivity implements
         catch (Exception e) {
             Log.e(TAG, "prepareStartedGame exception: " + e);
         }
-
-
     }
+
 
     private void setHostAndContinue(String hostParticipantId) {
         try {
             gameHostId = hostParticipantId;
+            gameState = Message.gameStateWaitForStartGame;
             Log.d("----------", "host id " + gameHostId);
             mMultiPlayerSettingsFragment.prepareMultiPlayerSettingsRequested(mParticipants.size(),
                     gameHostId.equals(myParticipantId));
             switchToFragment(mMultiPlayerSettingsFragment, "mMultiPlayerSettingsFragment");
             if (!gameHostId.equals(myParticipantId)) {
                 waitForOnlineInteraction = Message.prepareGame;
+                requestMissedMessage(gameState, Message.requestStartGame, "");
             }
         }
         catch (Exception e) {
@@ -1808,18 +1942,7 @@ public class MainActivity extends FragmentActivity implements
 
     }
 
-
-    private void sortParticipants() {
-        Collections.sort(mParticipants, new Comparator<Participant>() {
-            @Override
-            public int compare(Participant p1, Participant p2) {
-                String s1 = p1.getParticipantId();
-                String s2 = p2.getParticipantId();
-                return s1.compareToIgnoreCase(s2);
-            }
-        });
-    }
-
+    private startGameParas paras;
 
     //----------------------------------------------------------------------------------------------
     // start SinglePlayer Game Mode
@@ -1831,7 +1954,7 @@ public class MainActivity extends FragmentActivity implements
             int player_lives = mMultiPlayerSettingsFragment.getPlayerLives();
             int difficulty = mMultiPlayerSettingsFragment.getDifficulty();
             int enemies = mMultiPlayerSettingsFragment.getEnemies();
-            startGameParas paras = new startGameParas();
+            paras = new startGameParas();
             paras.enemies = enemies;
             paras.difficulty = difficulty;
             paras.playerLives = player_lives;
@@ -1846,7 +1969,9 @@ public class MainActivity extends FragmentActivity implements
                 Collections.shuffle(paras.playerPositions);
                 broadcastMessage(Message.startGame, gson.toJson(paras));
             }
-            // else can't be called without a message
+            else {        // else can't be called without a message
+                return;
+            }
             startGame(paras, mDisplayName);
         }
         catch (Exception e) {
@@ -1872,6 +1997,7 @@ public class MainActivity extends FragmentActivity implements
     private void startGame(final startGameParas paras, final String my_name_final) {
         // start the game via the game controller of our game view
 
+        gameState = Message.gameStateWaitForGameReady;
         mGameView = new GameView(this);
         mGameView.setKeepScreenOn(true);
 
@@ -1960,6 +2086,20 @@ public class MainActivity extends FragmentActivity implements
     void stopKeepingScreenOn() {
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
+
+    private void sortParticipants() {
+        Collections.sort(mParticipants, new Comparator<Participant>() {
+            @Override
+            public int compare(Participant p1, Participant p2) {
+                String s1 = p1.getParticipantId();
+                String s2 = p2.getParticipantId();
+                return s1.compareToIgnoreCase(s2);
+            }
+        });
+    }
 }
+
+
+
 
 

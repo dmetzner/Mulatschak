@@ -67,6 +67,7 @@ public class TrickBids {
     //                  -> first makeTrickBids call, bids_view get visible
     //
     public void startTrickBids(GameController controller) {
+        controller.mainActivity.gameState = Message.gameStateWaitForTrickBids;
         bids_view_.setVisible(true);
         makeTrickBids(true, controller); // not first call
     }
@@ -78,6 +79,10 @@ public class TrickBids {
     void makeTrickBids(boolean first_call, GameController controller) {
         GameLogic logic = controller.getLogic();
         GameLayout layout = controller.getLayout();
+
+        if (!first_call) {
+            controller.getPlayerById(logic.getTurn()).gameState = Message.gameStateWaitForChooseTrump;
+        }
 
         controller.turnToNextPlayer(false);
 
@@ -110,6 +115,9 @@ public class TrickBids {
             // multiplayer
             else {
                 controller.waitForOnlineInteraction = Message.trickBids;
+                Gson gson = new Gson();
+                String oId = controller.getPlayerById(logic.getTurn()).getOnlineId();
+                controller.mainActivity.requestMissedMessage(controller.mainActivity.gameState, Message.requestTrickBids, oId);
                 // wait 4 online interaction
             }
         }
