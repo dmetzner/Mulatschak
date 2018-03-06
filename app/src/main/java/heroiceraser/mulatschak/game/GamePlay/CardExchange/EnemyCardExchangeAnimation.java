@@ -213,6 +213,7 @@ public class EnemyCardExchangeAnimation {
     private void oldCardsToTrash(GameController controller) {
         // add old cards to trash
         for (int i = 0; i < exchanged_cards_.size(); i++) {
+            controller.getPlayerById(0).exchanged_cards_.addCard(exchanged_cards_.get(i));
             controller.getTrash().addCard(exchanged_cards_.get(i));
         }
     }

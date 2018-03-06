@@ -30,6 +30,8 @@ public class MyPlayer {
     private int tricks_to_make_;
     private boolean miss_a_turn_;
     private CardStack hand_;
+    public CardStack exchanged_cards_;
+    public CardStack played_cards_;
     private CardStack tricks_;
 
     private boolean enemyLogic;
@@ -43,6 +45,8 @@ public class MyPlayer {
         tricks_to_make_ = GameController.NOT_SET;
         miss_a_turn_ = false;
         hand_ = new CardStack();
+        exchanged_cards_ = new CardStack();
+        played_cards_ = new CardStack();
         tricks_ = new CardStack();
         enemyLogic = false;
         gameStarted = false;

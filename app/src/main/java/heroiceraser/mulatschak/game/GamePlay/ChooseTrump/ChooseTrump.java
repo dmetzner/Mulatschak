@@ -74,7 +74,8 @@ public class ChooseTrump {
             }
             else {
                 controller.waitForOnlineInteraction = Message.chooseTrump;
-                controller.mainActivity.requestMissedMessage(controller.mainActivity.gameState, Message.requestChooseTrump, "");
+                String oId = controller.getPlayerById(logic.getTurn()).getOnlineId();
+                controller.mainActivity.requestMissedMessage(controller.mainActivity.gameState, Message.requestChooseTrump, oId);
             }
         }
     }

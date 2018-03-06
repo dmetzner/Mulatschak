@@ -266,6 +266,7 @@ public class CardExchangeLogic {
 
         // add old cards to trash
         for (int i = 0; i < cardExchangeAnimation.getExchangedCards().size(); i++) {
+            controller.getPlayerById(0).exchanged_cards_.addCard(cardExchangeAnimation.getExchangedCards().get(i));
             controller.getTrash().addCard(cardExchangeAnimation.getExchangedCards().get(i));
         }
     }

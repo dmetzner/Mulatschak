@@ -2,9 +2,14 @@ package heroiceraser.mulatschak.game.GamePlay.AllCardsPlayed;
 
 import android.graphics.Canvas;
 import android.graphics.Point;
+import android.os.Handler;
+import android.util.Log;
+
 
 import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import at.heroiceraser.mulatschak.R;
+import heroiceraser.mulatschak.Message;
+import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
@@ -73,6 +78,48 @@ public class AllCardsPlayedView{
         }
     }
 
+    public void waitOrStartNewRound(final GameController controller) {
+        try {
+            controller.waitForOnlineInteraction = Message.waitForNewRound;
+            if (controller.mainActivity.gameState == Message.gameStateWaitForNewRound) {
+                boolean wait = false;
+                for (MyPlayer p : controller.getPlayerList()) {
+                    if (p.gameState != Message.gameStateWaitForNewRound &&
+                            !p.getOnlineId().equals("") &&
+                                    !p.getOnlineId().equals(controller.myPlayerId)) {
+                        controller.mainActivity.sendUnReliable(p.getOnlineId(), Message.requestWaitForNewRound, "");
+                        wait = true;
+                    }
+                }
+                if (wait) {
+                    Handler h = new Handler();
+                    Runnable r = new Runnable() {
+                        @Override
+                        public void run() {
+                            waitOrStartNewRound(controller);
+                        }
+                    };
+                    h.postDelayed(r, 150);
+                }
+                else {
+                    controller.mainActivity.gameState = Message.gameStateWaitForShuffleDeck;
+                    for (MyPlayer p : controller.getPlayerList()) {
+                        p.gameState = Message.gameStateWaitForShuffleDeck;
+                        p.exchanged_cards_.getCardStack().clear();
+                        p.played_cards_.getCardStack().clear();
+                    }
+                    controller.waitForOnlineInteraction = 0;
+                    controller.prepareNewRound();
+                    controller.startRound();
+                }
+            }
+        }
+        catch (Exception e) {
+            Log.e("All cards played", "exception" + e);
+        }
+
+    }
+
 
     //----------------------------------------------------------------------------------------------
     // Touch Events
@@ -91,7 +138,9 @@ public class AllCardsPlayedView{
             next_round_button_.setVisible(false);
             controller.getNonGamePlayUIContainer().closeAllButtonBarWindows();
             controller.getView().postInvalidateOnAnimation();
-            controller.startRound();
+            controller.mainActivity.gameState = Message.gameStateWaitForNewRound;
+            controller.getPlayerByPosition(0).gameState = Message.gameStateWaitForNewRound;
+            waitOrStartNewRound(controller);
         }
     }
 }

@@ -71,6 +71,5 @@ public class AllCardsPlayed {
         controller.getPlayerInfo().setShowPlayer0Turn(false);
 
         controller.getNonGamePlayUIContainer().getAllCardsPlayedView().startAnimation(controller);
-        controller.prepareNewRound();
     }
 }

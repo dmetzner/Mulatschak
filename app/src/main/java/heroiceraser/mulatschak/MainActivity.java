@@ -1126,7 +1126,7 @@ public class MainActivity extends FragmentActivity implements
      */
     
     //  data structure to save incoming messages, till they were processed
-    public List<Message> messageQueue = new ArrayList<>();
+    public volatile List<Message> messageQueue = new ArrayList<>();
    
     // used to (un)marshall messages
     private Gson gson = new Gson();
@@ -1150,13 +1150,19 @@ public class MainActivity extends FragmentActivity implements
                 Log.d(TAG, "---------------------------------------");
                 Log.d(TAG, "Message received: type " + message.type);
                 Log.d(TAG, "GameState " + gameState);
-                Log.d(TAG, "waitFor " + waitForOnlineInteraction);
-                Log.d(TAG, "---------------------------------------");
                 if (correctLeftPeers.contains(message.senderId)) {
                     return;
                 }
                 messageQueue.add(message);
-                workOnMessageQueue();
+                if (messageQueue.size() > 2 && messageQueue.get(messageQueue.size() - 1).type ==
+                        messageQueue.get(messageQueue.size() - 2).type) {
+                    messageQueue.remove(messageQueue.size() - 1);
+                    Log.d(TAG, "Message removed");
+                }
+                else {
+                    workOnMessageQueue();
+                }
+
             }
             catch (Exception e) {
                 Log.e(TAG, "message received exception " + e);
@@ -1210,9 +1216,8 @@ public class MainActivity extends FragmentActivity implements
                 return;
             }
 
-            broadcastUnreliable();
+            broadcastUnreliable(message);
 
-            Log.d(TAG, "Message sent: " + message.type);
             //if (message.type == Message.heartBeat) {
             //    broadcastUnreliable();
             //}
@@ -1273,6 +1278,10 @@ public class MainActivity extends FragmentActivity implements
                 return;
             }
 
+            if (sendToId.equals("")) {
+                return;
+            }
+
             // create message
             Message message = new Message();
             message.type = type;
@@ -1301,6 +1310,8 @@ public class MainActivity extends FragmentActivity implements
             // it's an interim score notification, so we can use unreliable
             mRealTimeMultiplayerClient.sendUnreliableMessage(mMsgBuf, mRoomId,
                     sendToId);
+
+            Log.d(TAG, "Message sent: " + message.type + "-- to: " + sendToId);
         }
         catch (Exception e) {
             Log.e(TAG, "broadCastUnReliable exception: " + e);
@@ -1308,7 +1319,7 @@ public class MainActivity extends FragmentActivity implements
     }
 
 
-    private void broadcastUnreliable() {
+    private void broadcastUnreliable(Message message) {
         try {
             for (Participant p : mParticipants) {
                 if (p.getParticipantId().equals(myParticipantId)) {
@@ -1323,6 +1334,8 @@ public class MainActivity extends FragmentActivity implements
                 // it's an interim score notification, so we can use unreliable
                 mRealTimeMultiplayerClient.sendUnreliableMessage(mMsgBuf, mRoomId,
                         p.getParticipantId());
+
+                Log.d(TAG, "Message sent: " + message.type);
             }
         }
         catch (Exception e) {
@@ -1877,7 +1890,7 @@ public class MainActivity extends FragmentActivity implements
             }
         };
         rMMexecutor = Executors.newScheduledThreadPool(5);
-        rMMexecutor.scheduleAtFixedRate(r, 200, 250, TimeUnit.MILLISECONDS);
+        rMMexecutor.scheduleAtFixedRate(r, 200, 2500, TimeUnit.MILLISECONDS);
     }
 
 

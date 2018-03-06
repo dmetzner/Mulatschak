@@ -69,7 +69,11 @@ public class PlayACardRound {
             logic.setStartingPlayer(logic.getTurn());
         }
         else {
-            controller.getPlayerById(logic.getTurn()).gameState = Message.gameStateWaitForNextRound;
+            controller.getPlayerById(controller.getLogic().getTurn()).played_cards_.addCard(
+                    controller.getDiscardPile().getCard(
+                            controller.getPlayerById(controller.getLogic().getTurn()).getPosition())
+            );
+            controller.getPlayerById(logic.getTurn()).gameState = Message.gameStateWaitForNextRoundButton;
             controller.turnToNextPlayer(true);
         }
 
@@ -108,9 +112,7 @@ public class PlayACardRound {
                 controller.waitForOnlineInteraction = Message.playACard;
                 ArrayList<String> sa = new ArrayList<>();
                 sa.add(controller.getPlayerById(logic.getTurn()).getOnlineId());
-                for (Card c : controller.getPlayerById(logic.getTurn()).getHand().getCardStack()) {
-                    sa.add("" + c.getId());
-                }
+                sa.add(controller.playACardCounter + "");
                 Gson gson = new Gson();
                 controller.mainActivity.requestMissedMessage(controller.mainActivity.gameState, Message.requestPlayACard, gson.toJson(sa));
 
@@ -154,6 +156,7 @@ public class PlayACardRound {
         for (MyPlayer player : controller.getPlayerList()) {
             player.gameState = Message.gameStateWaitForPlayACard;
         }
+        controller.playACardCounter++;
 
         GameLogic logic = controller.getLogic();
 

@@ -10,6 +10,7 @@ import java.util.List;
 import heroiceraser.mulatschak.Message;
 import heroiceraser.mulatschak.MainActivity;
 import heroiceraser.mulatschak.game.BaseObjects.Card;
+import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GameView;
@@ -87,13 +88,8 @@ public class CardExchange {
             }
             else {
                 controller.waitForOnlineInteraction = Message.cardExchange;
-                ArrayList<String> sa = new ArrayList<>();
-                sa.add(controller.getPlayerById(logic.getTurn()).getOnlineId());
-                for (Card c : controller.getPlayerById(logic.getTurn()).getHand().getCardStack()) {
-                    sa.add("" + c.getId());
-                }
-                Gson gson = new Gson();
-                controller.mainActivity.requestMissedMessage(controller.mainActivity.gameState, Message.requestCardExchange, gson.toJson(sa));
+                String oId = controller.getPlayerById(logic.getTurn()).getOnlineId();
+                controller.mainActivity.requestMissedMessage(controller.mainActivity.gameState, Message.requestCardExchange, oId);
 
             }
         }
@@ -106,10 +102,19 @@ public class CardExchange {
 
     public void handleOnlineInteraction(ArrayList<Integer> handCardsToRemoveIds, GameController controller) {
         controller.waitForOnlineInteraction = Message.noMessage;
+        MyPlayer player = controller.getPlayerById(controller.getLogic().getTurn());
+        ArrayList<Integer> handCardsToRemovePos = new ArrayList<>();
+        for (int i = 0; i < handCardsToRemoveIds.size(); i++) {
+            for (int j = 0; j < player.getHand().getCardStack().size(); j++) {
+                if (handCardsToRemoveIds.get(i) == player.getHand().getCardAt(j).getId()) {
+                    handCardsToRemovePos.add(j);
+                }
+            }
+        }
 
         enemy_card_exchange_logic_.exchangeCardOnline(
                 controller.getPlayerById(controller.getLogic().getTurn()),
-                controller, handCardsToRemoveIds);
+                controller, handCardsToRemovePos);
     }
 
     void handleMainPlayersDecision(GameController controller) {
@@ -122,7 +127,7 @@ public class CardExchange {
             List<Card> playerHand = controller.getPlayerById(0).getHand().getCardStack();
             for (int i = 0; i < playerHand.size(); i++) {
                 if (playerHand.get(i).getFixedPosition().y != playerHand.get(i).getPosition().y) {
-                    cardHandIds.add(i);
+                    cardHandIds.add(playerHand.get(i).getId());
                 }
             }
             activity.broadcastMessage(Message.cardExchange, gson.toJson(cardHandIds));

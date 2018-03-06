@@ -35,7 +35,8 @@ public class Message {
     public final static int gameStateWaitForChooseTrump           = 6;
     public final static int gameStateWaitForCardExchange           = 7;
     public final static int gameStateWaitForPlayACard           = 8;
-    public final static int gameStateWaitForNextRound           = 9;
+    public final static int gameStateWaitForNextRoundButton           = 9;
+    public final static int gameStateWaitForNewRound           = 10;
 
     public final static int setHost                     = 1000;
     public final static int requestHost                 = 1001;
@@ -65,6 +66,9 @@ public class Message {
 
     public final static int playACard                   = 9000;
     public final static int requestPlayACard            = 9001;
+
+    public final static int waitForNewRound             = 10000;
+    public final static int requestWaitForNewRound      = 10001;
 
     public final static int chatMessage = 10;
     public final static int leftGameAtEnd = 99;
