@@ -74,7 +74,7 @@ public class PlayACardRound {
                     controller.getDiscardPile().getCard(
                             controller.getPlayerById(controller.getLogic().getTurn()).getPosition())
             );
-            controller.getPlayerById(logic.getTurn()).gameState = Message.gameStateWaitForNextRoundButton;
+            controller.getPlayerById(logic.getTurn()).gameState++;
             controller.turnToNextPlayer(true);
         }
 
@@ -129,12 +129,14 @@ public class PlayACardRound {
 
 
     public void handleEnemyAction(final GameController controller) {
+        controller.getPlayerById(controller.getLogic().getTurn()).gameState = Message.gameStateWaitForNextRoundButton;
         enemy_play_a_card_logic_.playACard(controller,
                 controller.getPlayerById(controller.getLogic().getTurn()));
     }
 
 
     public void handleOnlineInteraction(int cardId, GameController controller) {
+        controller.getPlayerById(controller.getLogic().getTurn()).gameState = Message.gameStateWaitForNextRoundButton;
         controller.waitForOnlineInteraction = Message.noMessage;
 
         enemy_play_a_card_logic_.playACardOnline(controller,
@@ -143,6 +145,7 @@ public class PlayACardRound {
     }
 
     void handleMainPlayersDecision(GameController controller) {
+        controller.getPlayerById(controller.getLogic().getTurn()).gameState = Message.gameStateWaitForNextRoundButton;
         if (controller.multiplayer_) {
             // broadcast to all the decision
             MainActivity activity = (MainActivity) controller.getView().getContext();
@@ -226,7 +229,7 @@ public class PlayACardRound {
     //                              -> clear discard pile & call next round
     //
     private void prepareNextCardRound(final GameController controller, boolean muli) {
-        controller.mainActivity.gameState = Message.gameStateWaitForPlayACard;
+        controller.mainActivity.gameState++;
         for (MyPlayer player : controller.getPlayerList()) {
             player.gameState = Message.gameStateWaitForPlayACard;
         }

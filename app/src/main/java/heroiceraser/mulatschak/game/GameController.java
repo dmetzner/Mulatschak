@@ -832,18 +832,22 @@ public class GameController{
             multiplayer_ = false;
         }
 
-        switch (waitForOnlineInteraction) {
+        int code = waitForOnlineInteraction;
 
-            case Message.gameReady:
-                if (!playerPresentation) {
-                    startGame();
-                }
-                break;
+        if (code == Message.gameStateWaitForShuffleDeck && myPlayerId.equals(hostOnlineId)) {
+            shuffleDeck();
+        }
 
-            case Message.shuffledDeck:
-                shuffleDeck();
-                continueAfterShuffledDeck();
-                break;
+
+        if (leftPlayer.getId() != logic_.getTurn()) {
+            return;
+        }
+        else {
+            waitForOnlineInteraction = Message.noMessage;
+            leftPlayer.gameState++;
+        }
+
+        switch (code) {
 
             case Message.mulatschakDecision:
                 getGamePlay().getDecideMulatschak().handleEnemyAction(this);
@@ -904,7 +908,7 @@ public class GameController{
                 mainActivity.sendUnReliable(requestFromId, msgCode, data);
             }
         };
-        rMMexecutor3 = Executors.newScheduledThreadPool(7);
+        rMMexecutor3 = Executors.newScheduledThreadPool(1);
         rMMexecutor3.scheduleAtFixedRate(r, 1000, 1000, TimeUnit.MILLISECONDS);
     }
 
@@ -932,7 +936,7 @@ public class GameController{
                 }
                 break;
             case Message.requestGameReady:
-                if (mainActivity.gameState <= Message.gameStateWaitForGameReady) {
+                if (mainActivity.gameState < Message.gameStateWaitForGameReady && !getPlayerById(0).isGameStarted()) {
                     return;
                 }
                 mainActivity.sendUnReliable(message.senderId, Message.gameReady, "");
@@ -966,7 +970,7 @@ public class GameController{
                 if (!message.senderId.equals(getPlayerById(logic_.getTurn()).getOnlineId())) {
                     return;
                 }
-                getPlayerByOnlineId(message.senderId).gameState = Message.gameStateWaitForTrickBids;
+                //getPlayerByOnlineId(message.senderId).gameState = Message.gameStateWaitForTrickBids;
                 Log.d("-------", "M received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());
                 receiveMulatschakDecision(message);
                 break;
@@ -991,7 +995,7 @@ public class GameController{
                 if (!message.senderId.equals(getPlayerById(logic_.getTurn()).getOnlineId())) {
                     return;
                 }
-                getPlayerByOnlineId(message.senderId).gameState = Message.gameStateWaitForChooseTrump;
+                //getPlayerByOnlineId(message.senderId).gameState = Message.gameStateWaitForChooseTrump;
                 Log.d("-------", "T received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());
                 receiveTrickBids(message);
                 break;
@@ -1035,7 +1039,7 @@ public class GameController{
                 if (!message.senderId.equals(getPlayerById(logic_.getTurn()).getOnlineId())) {
                     return;
                 }
-                getPlayerByOnlineId(message.senderId).gameState = Message.gameStateWaitForPlayACard;
+                // getPlayerByOnlineId(message.senderId).gameState = Message.gameStateWaitForPlayACard;
                 Log.d("-------", "CEX received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());
                 receiveCardExchange(message);
                 break;
@@ -1051,30 +1055,31 @@ public class GameController{
 
 
             case Message.playACard:
-                if (mainActivity.gameState != Message.gameStateWaitForPlayACard) {
+                if (mainActivity.gameState < Message.gameStateWaitForPlayACard + playACardCounter ||
+                        mainActivity.gameState > Message.gameStateWaitForPlayACard5) {
                     return;
                 }
                 if (!message.senderId.equals(getPlayerById(logic_.getTurn()).getOnlineId())) {
                     return;
                 }
-                getPlayerByOnlineId(message.senderId).gameState = Message.gameStateWaitForNextRoundButton;
-                Log.d("-------", "PC received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());
                 receivePlayACard(message);
                 break;
 
             case Message.requestPlayACard:
-                if (mainActivity.gameState < Message.gameStateWaitForPlayACard) {
+                if (mainActivity.gameState < Message.gameStateWaitForPlayACard + playACardCounter) {
                     return;
                 }
                 Type listType = new TypeToken<ArrayList<String>>() {}.getType();
                 Gson gson = new Gson();
                 ArrayList<String> data = gson.fromJson(message.data, listType);
-                if (getPlayerByOnlineId(data.get(0)).gameState <= Message.gameStateWaitForPlayACard) {
+                if (getPlayerByOnlineId(data.get(0)).gameState <= Message.gameStateWaitForPlayACard + playACardCounter) {
                     return;
                 }
                 Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + " to send him PC");
                 sendPlayACard(data.get(0), Integer.parseInt(data.get(1)), message.senderId);
                 break;
+
+
 
 
             case Message.waitForNewRound:
@@ -1181,10 +1186,17 @@ public class GameController{
         Gson gson = new Gson();
         mainActivity.sendUnReliable(sendTo, Message.playACard, gson.toJson(id));
     }
+
     private void receivePlayACard(final Message message) {
-        if (waitForOnlineInteraction == Message.playACard) {
+        int code = waitForOnlineInteraction;
+        waitForOnlineInteraction = 0;
+        if (code == Message.playACard) {
             Gson gson = new Gson();
             int cardId = gson.fromJson(message.data, int.class);
+            if (5 - getPlayerById(logic_.getTurn()).getHand().getCardStack().size() != playACardCounter) {
+                return;
+            }
+            Log.d("-------", "PC received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());
             game_play_.getPlayACardRound().handleOnlineInteraction(cardId, this);
         }
     }
