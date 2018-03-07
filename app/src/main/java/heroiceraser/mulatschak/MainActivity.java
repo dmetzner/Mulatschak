@@ -56,6 +56,7 @@ import java.util.concurrent.TimeUnit;
 
 import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.Fragments.MultiPlayerSettingsFragment;
+import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.Fragments.GameScreenFragment;
 import heroiceraser.mulatschak.Fragments.LoadingScreenFragment;
@@ -858,8 +859,9 @@ public class MainActivity extends FragmentActivity implements
         public void onDisconnectedFromRoom(Room room) {
             try {
                 Log.d(TAG, "onDisconnectedToRoom.");
-                leaveRoom();
-                showGameError();
+                endGame();
+                // leaveRoom();
+                // showGameError(); -> we can stay in the game and play against bots ;)
             }
             catch (Exception e) {
                 Log.e(TAG, "onDisconnected exception: " + e);
@@ -925,8 +927,13 @@ public class MainActivity extends FragmentActivity implements
         new AlertDialog.Builder(this)
                 .setMessage("getString(R.string.game_problem)")
                 .setNeutralButton(android.R.string.ok, null).create();
-
-        onStartMenuRequested();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                endGame();
+                onStartMenuRequested();
+            }
+        });
     }
 
     private RoomUpdateCallback mRoomUpdateCallback = new RoomUpdateCallback() {
@@ -1147,9 +1154,9 @@ public class MainActivity extends FragmentActivity implements
                 byte[] buf = realTimeMessage.getMessageData();
                 String data = new String(buf);
                 Message message = gson.fromJson(data, Message.class);
-                Log.d(TAG, "---------------------------------------");
-                Log.d(TAG, "Message received: type " + message.type);
-                Log.d(TAG, "GameState " + gameState);
+                // Log.d(TAG, "---------------------------------------");
+                // Log.d(TAG, "Message received: type " + message.type);
+                // Log.d(TAG, "GameState " + gameState);
                 if (correctLeftPeers.contains(message.senderId)) {
                     return;
                 }
@@ -1218,12 +1225,6 @@ public class MainActivity extends FragmentActivity implements
 
             broadcastUnreliable(message);
 
-            //if (message.type == Message.heartBeat) {
-            //    broadcastUnreliable();
-            //}
-            //else {
-            //    broadcastReliable();
-            //}
         }
         catch (Exception e) {
             Log.e(TAG, "broadcast message exception " + e);
@@ -1311,7 +1312,7 @@ public class MainActivity extends FragmentActivity implements
             mRealTimeMultiplayerClient.sendUnreliableMessage(mMsgBuf, mRoomId,
                     sendToId);
 
-            Log.d(TAG, "Message sent: " + message.type + "-- to: " + sendToId);
+           // Log.d(TAG, "Message sent: " + message.type + "-- to: " + sendToId);
         }
         catch (Exception e) {
             Log.e(TAG, "broadCastUnReliable exception: " + e);
@@ -1335,7 +1336,7 @@ public class MainActivity extends FragmentActivity implements
                 mRealTimeMultiplayerClient.sendUnreliableMessage(mMsgBuf, mRoomId,
                         p.getParticipantId());
 
-                Log.d(TAG, "Message sent: " + message.type);
+                // Log.d(TAG, "Message sent: " + message.type);
             }
         }
         catch (Exception e) {
@@ -1595,6 +1596,7 @@ public class MainActivity extends FragmentActivity implements
             requestLoadingScreen();
             gameState = 0;
             waitForOnlineInteraction = 0;
+            correctLeftPeers.clear();
 
             //  create the Game View
             if (waitForNewGame) {
@@ -1644,7 +1646,7 @@ public class MainActivity extends FragmentActivity implements
                 }
             };
             executor = Executors.newScheduledThreadPool(7);
-            executor.scheduleAtFixedRate(r, 0, 1000, TimeUnit.SECONDS);
+            executor.scheduleAtFixedRate(r, 0, 5, TimeUnit.SECONDS);
 
         }
         catch (Exception e) {
@@ -1686,7 +1688,7 @@ public class MainActivity extends FragmentActivity implements
                         correctLeftPeers.contains(mParticipants.get(i).getParticipantId())) {
                     continue;
                 }
-                // 20 -> 18*5 = 90 -> 1m30sec
+                //  -> 18*5 = 90 -> 1m30sec
                 if (missedHeartBeats[i] > 18) {
                     Log.d(TAG, i + "  -> " + mParticipants.get(i).getDisplayName() + "lost connection");
                     final ArrayList<String> leftPlayers = new ArrayList<>();
@@ -1871,28 +1873,52 @@ public class MainActivity extends FragmentActivity implements
 
 
     ScheduledExecutorService rMMexecutor = null;
-    public void requestMissedMessage(final int oldState, final int msgCode, final String data) {
+    public void requestMissedMessage(final String requestFromId, final int oldState, final int msgCode, final String data) {
 
         if (rMMexecutor != null) {
             rMMexecutor.shutdown();
             rMMexecutor = null;
         }
 
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                if (gameState != oldState) {
+                    Log.d("rMM", gameState + " --- " + oldState);
+                    rMMexecutor.shutdown();
+                    return;
+                }
+                sendUnReliable(requestFromId, msgCode, data);
+            }
+        };
+        rMMexecutor = Executors.newScheduledThreadPool(15);
+        rMMexecutor.scheduleAtFixedRate(r, 1000, 1000, TimeUnit.MILLISECONDS);
+    }
+
+    ScheduledExecutorService rMMexecutor2 = null;
+    public void requestMissedMessageFromAll(final int oldState, final int msgCode, final String data) {
+
+        if (rMMexecutor2 != null) {
+            rMMexecutor2.shutdown();
+            rMMexecutor2 = null;
+        }
 
         Runnable r = new Runnable() {
             @Override
             public void run() {
-                broadcastMessage(msgCode, data);
                 if (gameState != oldState) {
                     Log.d("rMM", gameState + " --- " + oldState);
-                    rMMexecutor.shutdown();
+                    rMMexecutor2.shutdown();
+                    return;
                 }
+                broadcastMessage(msgCode, data);
             }
         };
-        rMMexecutor = Executors.newScheduledThreadPool(5);
-        rMMexecutor.scheduleAtFixedRate(r, 200, 2500, TimeUnit.MILLISECONDS);
+        rMMexecutor2 = Executors.newScheduledThreadPool(15);
+        rMMexecutor2.scheduleAtFixedRate(r, 1000, 1000, TimeUnit.MILLISECONDS);
     }
 
+    // nr 3 is controller
 
     private String gameHostId;
 
@@ -1918,7 +1944,7 @@ public class MainActivity extends FragmentActivity implements
                 }
                 else {
                     waitForOnlineInteraction = Message.setHost;
-                    requestMissedMessage(gameState, Message.requestHost, "");
+                    requestMissedMessageFromAll(gameState, Message.requestHost, "");
                 }
             }
 
@@ -1946,7 +1972,7 @@ public class MainActivity extends FragmentActivity implements
             switchToFragment(mMultiPlayerSettingsFragment, "mMultiPlayerSettingsFragment");
             if (!gameHostId.equals(myParticipantId)) {
                 waitForOnlineInteraction = Message.prepareGame;
-                requestMissedMessage(gameState, Message.requestStartGame, "");
+                requestMissedMessage(gameHostId, gameState, Message.requestStartGame, "");
             }
         }
         catch (Exception e) {

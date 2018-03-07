@@ -1,5 +1,7 @@
 package heroiceraser.mulatschak.game.GamePlay.TrickBids;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -67,7 +69,6 @@ public class TrickBids {
     //                  -> first makeTrickBids call, bids_view get visible
     //
     public void startTrickBids(GameController controller) {
-        controller.mainActivity.gameState = Message.gameStateWaitForTrickBids;
         bids_view_.setVisible(true);
         makeTrickBids(true, controller); // not first call
     }
@@ -117,7 +118,12 @@ public class TrickBids {
                 controller.waitForOnlineInteraction = Message.trickBids;
                 Gson gson = new Gson();
                 String oId = controller.getPlayerById(logic.getTurn()).getOnlineId();
-                controller.mainActivity.requestMissedMessage(controller.mainActivity.gameState, Message.requestTrickBids, oId);
+                Log.d("-------", "wait for " +
+                        controller.getPlayerById(controller.getLogic().getTurn()).getDisplayName()
+                        + " to make trick bids");
+                controller.requestMissedMessagePlayerCheck(controller.fillGameStates(),
+                        controller.getPlayerById(controller.getLogic().getTurn()).getOnlineId(),
+                        controller.mainActivity.gameState, Message.requestTrickBids, oId);
                 // wait 4 online interaction
             }
         }
@@ -142,6 +148,7 @@ public class TrickBids {
             Gson gson = new Gson();
             activity.broadcastMessage(Message.trickBids, gson.toJson(buttonId));
         }
+        Log.d("-------", "I made my trick bids");
 
         setTricks(controller, buttonId, 0);
     }

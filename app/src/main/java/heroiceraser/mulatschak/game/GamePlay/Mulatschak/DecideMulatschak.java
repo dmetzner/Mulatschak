@@ -2,6 +2,7 @@ package heroiceraser.mulatschak.game.GamePlay.Mulatschak;
 
 import android.graphics.Canvas;
 import android.os.Handler;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -98,7 +99,12 @@ public class DecideMulatschak {
                 controller.waitForOnlineInteraction = Message.mulatschakDecision;
                 Gson gson = new Gson();
                 String oId = controller.getPlayerById(logic.getTurn()).getOnlineId();
-                controller.mainActivity.requestMissedMessage(controller.mainActivity.gameState, Message.requestMulatschakDecision, oId);
+                Log.d("-------", "wait for " +
+                                controller.getPlayerById(controller.getLogic().getTurn()).getDisplayName()
+                        + " muli decision");
+                controller.requestMissedMessagePlayerCheck(controller.fillGameStates(),
+                        controller.getPlayerById(controller.getLogic().getTurn()).getOnlineId(),
+                        controller.mainActivity.gameState, Message.requestMulatschakDecision, oId);
             }
         }
     }
@@ -138,6 +144,8 @@ public class DecideMulatschak {
             Gson gson = new Gson();
             activity.broadcastMessage(Message.mulatschakDecision, gson.toJson(muli));
         }
+
+        Log.d("-------", "I made my Muli decision");
 
         if (muli) {
             controller.getGamePlay().getDecideMulatschak().setMulatschakUp(controller);

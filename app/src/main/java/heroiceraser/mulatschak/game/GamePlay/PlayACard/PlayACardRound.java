@@ -2,6 +2,7 @@ package heroiceraser.mulatschak.game.GamePlay.PlayACard;
 
 import android.graphics.Canvas;
 import android.os.Handler;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -114,7 +115,12 @@ public class PlayACardRound {
                 sa.add(controller.getPlayerById(logic.getTurn()).getOnlineId());
                 sa.add(controller.playACardCounter + "");
                 Gson gson = new Gson();
-                controller.mainActivity.requestMissedMessage(controller.mainActivity.gameState, Message.requestPlayACard, gson.toJson(sa));
+                Log.d("-------", "wait for " +
+                        controller.getPlayerById(controller.getLogic().getTurn()).getDisplayName()
+                        + " to play a card");
+                controller.requestMissedMessagePlayerCheck(controller.fillGameStates(),
+                        controller.getPlayerById(controller.getLogic().getTurn()).getOnlineId(),
+                        controller.mainActivity.gameState, Message.requestPlayACard, gson.toJson(sa));
 
                 // wait 4 online interaction
             }
@@ -145,19 +151,13 @@ public class PlayACardRound {
             Gson gson = new Gson();
             activity.broadcastMessage(Message.playACard, gson.toJson(cardId));
         }
+        Log.d("-------", "I played a Card");
     }
 
     //----------------------------------------------------------------------------------------------
     //  end card round
     //
     private void endCardRound(final GameController controller) {
-        controller.mainActivity.messageQueue.clear();
-        controller.mainActivity.gameState = Message.gameStateWaitForPlayACard;
-        for (MyPlayer player : controller.getPlayerList()) {
-            player.gameState = Message.gameStateWaitForPlayACard;
-        }
-        controller.playACardCounter++;
-
         GameLogic logic = controller.getLogic();
 
         // choose who has best card on the discard pile
@@ -226,6 +226,11 @@ public class PlayACardRound {
     //                              -> clear discard pile & call next round
     //
     private void prepareNextCardRound(final GameController controller, boolean muli) {
+        controller.mainActivity.gameState = Message.gameStateWaitForPlayACard;
+        for (MyPlayer player : controller.getPlayerList()) {
+            player.gameState = Message.gameStateWaitForPlayACard;
+        }
+        controller.playACardCounter++;
         roundEnded = false;
         controller.getDiscardPile().setOverlaysVisible(false);
         controller.getDiscardPile().clear();

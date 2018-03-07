@@ -246,7 +246,7 @@ public class CardExchangeLogic {
             controller.getGamePlay().getDealCards().takeCardFromDeck(controller.getPlayerById(0), controller.getDeck());
             Card card = controller.getPlayerById(0).getHand().getCardAt(controller.getPlayerById(0)
                     .getAmountOfCardsInHand() - 1);
-            card.setPosition(exchanged_cards.get(i).getPosition());
+            card.setPosition(exchanged_cards.get(i).getFixedPosition());
             card.setFixedPosition(exchanged_cards.get(i).getFixedPosition());
 
             // but right now just have them in the animation container
@@ -279,9 +279,19 @@ public class CardExchangeLogic {
 
         // now really move tha cards to the hand and set positions correctly
         for (Card card : cardExchangeAnimation.getNewDrawnCards()) {
-            card.setPosition(card.getFixedPosition());
+            boolean inserted = false;
+            MyPlayer myPlayer_ = controller.getPlayerById(0);
+            for (int i = 0; i < myPlayer_.getHand().getCardStack().size(); i++) {
+                if (myPlayer_.getHand().getCardAt(i).getPosition().x < card.getPosition().x) {
+                    myPlayer_.getHand().getCardStack().add(i, card);
+                    inserted = true;
+                    break;
+                }
+            }
+            if (!inserted) {
+                myPlayer_.getHand().addCard(card);
+            }
             card.setVisible(true);
-            controller.getPlayerById(0).getHand().addCard(card);
         }
         endCardExchange(controller);
     }

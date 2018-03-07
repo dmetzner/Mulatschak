@@ -1,6 +1,7 @@
 package heroiceraser.mulatschak.game.GamePlay.ChooseTrump;
 
 import android.os.Handler;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -75,7 +76,12 @@ public class ChooseTrump {
             else {
                 controller.waitForOnlineInteraction = Message.chooseTrump;
                 String oId = controller.getPlayerById(logic.getTurn()).getOnlineId();
-                controller.mainActivity.requestMissedMessage(controller.mainActivity.gameState, Message.requestChooseTrump, oId);
+                Log.d("-------", "wait for " +
+                        controller.getPlayerById(controller.getLogic().getTurn()).getDisplayName()
+                        + " to choose trump");
+                controller.requestMissedMessagePlayerCheck(controller.fillGameStates(),
+                        controller.getPlayerById(controller.getLogic().getTurn()).getOnlineId(),
+                        controller.mainActivity.gameState, Message.requestChooseTrump, oId);
             }
         }
     }
@@ -109,6 +115,9 @@ public class ChooseTrump {
             Gson gson = new Gson();
             activity.broadcastMessage(Message.chooseTrump, gson.toJson(trump));
         }
+
+        Log.d("-------", "I've choosen the trump");
+
         setTrump(controller, trump);
     }
 

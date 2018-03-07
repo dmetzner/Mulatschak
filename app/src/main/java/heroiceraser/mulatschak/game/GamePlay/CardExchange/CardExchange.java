@@ -1,6 +1,7 @@
 package heroiceraser.mulatschak.game.GamePlay.CardExchange;
 
 import android.graphics.Canvas;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -89,8 +90,12 @@ public class CardExchange {
             else {
                 controller.waitForOnlineInteraction = Message.cardExchange;
                 String oId = controller.getPlayerById(logic.getTurn()).getOnlineId();
-                controller.mainActivity.requestMissedMessage(controller.mainActivity.gameState, Message.requestCardExchange, oId);
-
+                Log.d("-------", "wait for " +
+                        controller.getPlayerById(controller.getLogic().getTurn()).getDisplayName()
+                        + " card exchange");
+                controller.requestMissedMessagePlayerCheck(controller.fillGameStates(),
+                        controller.getPlayerById(controller.getLogic().getTurn()).getOnlineId(),
+                        controller.mainActivity.gameState, Message.requestCardExchange, oId);
             }
         }
     }
@@ -132,7 +137,7 @@ public class CardExchange {
             }
             activity.broadcastMessage(Message.cardExchange, gson.toJson(cardHandIds));
         }
-
+        Log.d("-------", "I made my card exchange");
         card_exchange_logic_.exchangeCards(controller);
     }
 
