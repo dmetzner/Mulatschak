@@ -190,23 +190,31 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
 
         try {
             resetMultiPlayerSettingsRequested();
+
+            if (players >= 4) {
+                enemies_2_radioButton.setVisibility(View.GONE);
+                enemies_1_radioButton.setVisibility(View.GONE);
+                difficulty_easy_radioButton.setVisibility(View.GONE);
+                difficulty_normal_radioButton.setVisibility(View.GONE);
+                difficulty_hard_radioButton.setVisibility(View.GONE);
+                enemies_2_radioButton.setEnabled(false);
+                enemies_1_radioButton.setEnabled(false);
+                difficulty_easy_radioButton.setEnabled(false);
+                difficulty_normal_radioButton.setEnabled(false);
+                difficulty_hard_radioButton.setEnabled(false);
+            }
+            else if (players == 3) {
+                enemies_2_radioButton.setEnabled(false);
+                enemies_2_radioButton.setVisibility(View.GONE);
+            }
             if (host) {
-                if (players >= 4) {
-                    enemies_2_radioButton.setEnabled(false);
-                    enemies_1_radioButton.setEnabled(false);
-                    difficulty_easy_radioButton.setEnabled(false);
-                    difficulty_normal_radioButton.setEnabled(false);
-                    difficulty_hard_radioButton.setEnabled(false);
-                }
-                else if (players == 3) {
-                    enemies_2_radioButton.setEnabled(false);
-                }
                 difficultyText.setText(getString(R.string.multi_player_settings_difficulty_text));
                 enemiesText.setText(getString(R.string.multi_player_settings_player_amount_text));
                 startGameButton.setVisibility(View.VISIBLE);
                 notHostText.setVisibility(View.GONE);
                 notCreatedYet = false;
             }
+            // no host
             else {
                 enemies_2_radioButton.setEnabled(false);
                 enemies_1_radioButton.setEnabled(false);
@@ -237,6 +245,14 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
         difficulty_hard_radioButton.setEnabled(true);
         player_lives_seekBar.setEnabled(true);
         startGameButton.setEnabled(true);
+        enemies_0_radioButton.setVisibility(View.VISIBLE);
+        enemies_1_radioButton.setVisibility(View.VISIBLE);
+        enemies_2_radioButton.setVisibility(View.VISIBLE);
+        difficulty_easy_radioButton.setVisibility(View.VISIBLE);
+        difficulty_normal_radioButton.setVisibility(View.VISIBLE);
+        difficulty_hard_radioButton.setVisibility(View.VISIBLE);
+        player_lives_seekBar.setVisibility(View.VISIBLE);
+        startGameButton.setVisibility(View.VISIBLE);
     }
 
 

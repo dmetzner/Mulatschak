@@ -137,7 +137,7 @@ public class MainActivity extends FragmentActivity implements
     String mIncomingInvitationId = null;
 
     // Message buffer for sending messages
-    byte[] mMsgBuf = new byte[2];
+    //byte[] mMsgBuf = new byte[2];
 
     // to save data local
     SharedPreferences mySharedPreference;
@@ -651,7 +651,6 @@ public class MainActivity extends FragmentActivity implements
                     mMultiplayer = false;
                     Log.d(TAG, "Leaving room.");
                     messageQueue.clear();
-                    stopKeepingScreenOn();
                     onStartMenuRequested();
                     if (mRoomId != null) {
                         mRealTimeMultiplayerClient.leave(mRoomConfig, mRoomId)
@@ -666,6 +665,33 @@ public class MainActivity extends FragmentActivity implements
                     } else {
                         Log.d(TAG, "Leaving room.... but we are in no room");
                         onStartMenuRequested();
+                    }
+                }
+            });
+        } catch (Exception e) {
+            Log.e(TAG, "leave room exceptio " + e);
+        }
+    }
+
+    void onlyLeaveRoom() {
+        try {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mMultiplayer = false;
+                    Log.d(TAG, "Leaving room.");
+                    messageQueue.clear();
+                    if (mRoomId != null) {
+                        mRealTimeMultiplayerClient.leave(mRoomConfig, mRoomId)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        mRoomId = null;
+                                        mRoomConfig = null;
+                                    }
+                                });
+                    } else {
+                        Log.d(TAG, "Leaving room.... but we are in no room");
                     }
                 }
             });
@@ -859,8 +885,7 @@ public class MainActivity extends FragmentActivity implements
         public void onDisconnectedFromRoom(Room room) {
             try {
                 Log.d(TAG, "onDisconnectedToRoom.");
-                endGame();
-                // leaveRoom();
+                onlyLeaveRoom();
                 // showGameError(); -> we can stay in the game and play against bots ;)
             }
             catch (Exception e) {
@@ -1006,9 +1031,10 @@ public class MainActivity extends FragmentActivity implements
         @Override
         public void onLeftRoom(int statusCode, @NonNull String roomId) {
             try {
-                // we have left the room; return to main screen.
                 Log.d(TAG, "onLeftRoom, code " + statusCode);
-                onStartMenuRequested();
+                if (!gameRunning) {
+                    onStartMenuRequested();
+                }
             }
             catch (Exception e) {
                 Log.e(TAG, "onLeftRoom exception: " + e);
@@ -1212,18 +1238,18 @@ public class MainActivity extends FragmentActivity implements
             message.type = type;
             message.senderId = myParticipantId;
             message.data = data;
-            mMsgBuf = null;
+            byte[] msgBuf =  null;
             try {
-                mMsgBuf = gson.toJson(message).getBytes("UTF-8");
+                msgBuf = gson.toJson(message).getBytes("UTF-8");
             }
             catch (Exception e) {
                 Log.d(TAG, "send message -> charset");
             }
-            if (mMsgBuf == null) {
+            if (msgBuf == null) {
                 return;
             }
 
-            broadcastUnreliable(message);
+            broadcastUnreliable(msgBuf, message);
 
         }
         catch (Exception e) {
@@ -1235,7 +1261,7 @@ public class MainActivity extends FragmentActivity implements
     //
     // Broadcast reliable
     //
-    private void broadcastReliable() {
+    private void broadcastReliable(byte[] msgBuf) {
         try {
             for (Participant p : mParticipants) {
                 if (p.getParticipantId().equals(myParticipantId)) {
@@ -1248,7 +1274,7 @@ public class MainActivity extends FragmentActivity implements
                     continue;
                 }
                 // final score notification must be sent via reliable message
-                mRealTimeMultiplayerClient.sendReliableMessage(mMsgBuf,
+                mRealTimeMultiplayerClient.sendReliableMessage(msgBuf,
                         mRoomId, p.getParticipantId(), new RealTimeMultiplayerClient.ReliableMessageSentCallback() {
                             @Override
                             public void onRealTimeMessageSent(int statusCode, int tokenId, String recipientParticipantId) {
@@ -1288,28 +1314,32 @@ public class MainActivity extends FragmentActivity implements
             message.type = type;
             message.senderId = myParticipantId;
             message.data = data;
-            mMsgBuf = null;
+            byte[] msgBuf = null;
             try {
-                mMsgBuf = gson.toJson(message).getBytes("UTF-8");
+                msgBuf = gson.toJson(message).getBytes("UTF-8");
             }
             catch (Exception e) {
                 Log.d(TAG, "send message -> charset");
             }
-            if (mMsgBuf == null) {
+            if (msgBuf == null) {
                 return;
             }
 
             if (sendToId.equals(myParticipantId)) {
                 return;
             }
-            //if (p.getStatus() != Participant.STATUS_JOINED) {
-              //  return;
-            //}
+            for (Participant p : mParticipants) {
+                if (p.getParticipantId().equals(sendToId) &&
+                        p.getStatus() != Participant.STATUS_JOINED) {
+                    return;
+                }
+            }
+
             if (correctLeftPeers.contains(sendToId)) {
                 return;
             }
             // it's an interim score notification, so we can use unreliable
-            mRealTimeMultiplayerClient.sendUnreliableMessage(mMsgBuf, mRoomId,
+            mRealTimeMultiplayerClient.sendUnreliableMessage(msgBuf, mRoomId,
                     sendToId);
 
            // Log.d(TAG, "Message sent: " + message.type + "-- to: " + sendToId);
@@ -1320,7 +1350,7 @@ public class MainActivity extends FragmentActivity implements
     }
 
 
-    private void broadcastUnreliable(Message message) {
+    private void broadcastUnreliable(byte[] msgBuf, Message message) {
         try {
             for (Participant p : mParticipants) {
                 if (p.getParticipantId().equals(myParticipantId)) {
@@ -1333,7 +1363,7 @@ public class MainActivity extends FragmentActivity implements
                     continue;
                 }
                 // it's an interim score notification, so we can use unreliable
-                mRealTimeMultiplayerClient.sendUnreliableMessage(mMsgBuf, mRoomId,
+                mRealTimeMultiplayerClient.sendUnreliableMessage(msgBuf, mRoomId,
                         p.getParticipantId());
 
                 // Log.d(TAG, "Message sent: " + message.type);
@@ -1457,8 +1487,12 @@ public class MainActivity extends FragmentActivity implements
         Log.d(TAG, "-----------------------------------------------------------------------------");
 
         Fragment active_frag = getVisibleFragment();
+        if (!gameRunning && active_frag != null && active_frag.getTag() != null &&
+                (active_frag.getTag().equals("mGameScreenFragment"))) {
+            onStartMenuRequested();
+        }
 
-        if (active_frag != null && active_frag.getTag() != null &&
+        else if (active_frag != null && active_frag.getTag() != null &&
                 (active_frag.getTag().equals("mGameScreenFragment") ||
                 (active_frag.getTag().equals("mMultiPlayerSettingsFragment")))) {
             new AlertDialog.Builder(this)
@@ -1515,6 +1549,7 @@ public class MainActivity extends FragmentActivity implements
             mHandler.postDelayed(showLoadingScreenThenContinue, 100);
         }
         catch (Exception e) {
+            onStartMenuRequested();
             Log.e(TAG, "onSinglePlayerRequested: " + e);
         }
 
@@ -1539,6 +1574,7 @@ public class MainActivity extends FragmentActivity implements
             mHandler.postDelayed(showLoadingScreenThenContinue, 10);
         }
         catch (Exception e) {
+            onStartMenuRequested();
             Log.e(TAG, "onMultiPlayerQuickGameRequested exception: " + e);
         }
     }
@@ -1558,6 +1594,7 @@ public class MainActivity extends FragmentActivity implements
             ).addOnFailureListener(createFailureListener("There was a problem selecting opponents."));
         }
         catch (Exception e) {
+            onStartMenuRequested();
             Log.e(TAG, "onMultiPlayerInvitePlayerRequested exception: " + e);
         }
 
@@ -1579,6 +1616,7 @@ public class MainActivity extends FragmentActivity implements
             ).addOnFailureListener(createFailureListener("There was a problem getting the inbox."));
         }
         catch (Exception e) {
+            onStartMenuRequested();
             Log.e(TAG, "onMultiPlayerSeeInvitationsRequested exception: " + e);
         }
     }
@@ -2045,6 +2083,7 @@ public class MainActivity extends FragmentActivity implements
             @Override
             public void run() {
                 gameRunning = true;
+                keepGameScreen();
                 try {
                     switchToFragment(mGameScreenFragment, "mGameScreenFragment");
                     mGameView.getController().init(
@@ -2069,38 +2108,72 @@ public class MainActivity extends FragmentActivity implements
         mHandler.postDelayed(showGameScreenThenContinue, 10);
     }
 
+    private void keepGameScreen() {
+        Handler mHandler = new Handler();
+        Runnable kr = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (getVisibleFragment() == null ||
+                            !getVisibleFragment().getTag().equals("mGameScreenFragment")) {
+                        switchToFragment(mGameScreenFragment, "mGameScreenFragment");
+                    }
+
+                } catch (Exception e) {
+                    Log.e(TAG, "keep game screen error " + e);
+                    endGame();
+                }
+            }
+        };
+        mHandler.postDelayed(kr, 2500);
+    }
+
 
     public void endGame() {
 
         try {
-            if (mMultiplayer) {
-                leaveRoom();
-            }
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    requestLoadingScreen();
+                    Handler h = new Handler();
+                    Runnable r = new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mMultiplayer) {
+                                leaveRoom();
+                            }
 
-            if (gamePreparationRunning) {
-                onStartMenuRequested();
-            }
+                            stopKeepingScreenOn();
+                            if (gamePreparationRunning) {
+                                onStartMenuRequested();
+                            }
 
-            if (gameRunning) {
-                onStartMenuRequested();
-                ((ViewGroup) mGameView.getParent()).removeView(mGameView);
-                mGameView.stopAll = true;
-                gameRunning = false;
-                waitForNewGame = true;
-                Handler handler = new Handler();
-                Runnable runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mGameView != null) {
-                            mGameView.clear();
-                            mGameView = null;
+                            if (gameRunning) {
+                                onStartMenuRequested();
+                                ((ViewGroup) mGameView.getParent()).removeView(mGameView);
+                                mGameView.stopAll = true;
+                                gameRunning = false;
+                                waitForNewGame = true;
+                                Handler handler = new Handler();
+                                Runnable runnable = new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (mGameView != null) {
+                                            mGameView.clear();
+                                            mGameView = null;
+                                        }
+                                        waitForNewGame = false;
+                                        System.gc();
+                                    }
+                                };
+                                handler.postDelayed(runnable, 2000);
+                            }
                         }
-                        waitForNewGame = false;
-                        System.gc();
-                    }
-                };
-                handler.postDelayed(runnable, 2000);
-            }
+                    };
+                    h.postDelayed(r, 20);
+                }
+            });
         }
         catch (Exception e) {
             Log.e(TAG, "endGame: " + e);

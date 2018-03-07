@@ -84,6 +84,12 @@ public class EnemyCardExchangeLogic {
         handleToLessCardsInDeck(card_exchange_animation_.getExchangedCards(), myPlayer,
                 controller.getDeck().getCardStack().size());
 
+        // can't change 4
+        if (card_exchange_animation_.getExchangedCards().size() == 4) {
+            card_exchange_animation_.getExchangedCards().add(myPlayer.getHand().getCardAt(0));
+            myPlayer.getHand().getCardStack().remove(0);
+        }
+
         // no cards to change? -> nothing to do
         if (card_exchange_animation_.getExchangedCards().size() <= 0) {
             endCardExchange(controller);

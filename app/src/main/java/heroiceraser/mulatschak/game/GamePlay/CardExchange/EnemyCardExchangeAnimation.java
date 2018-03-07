@@ -360,7 +360,7 @@ public class EnemyCardExchangeAnimation {
 
         if (myPlayer_.getPosition() == 0) {
             // < x
-            for (int i = 0; i < myPlayer_.getHand().getCardStack().size(); i++) {
+            for (int i = 0; i > myPlayer_.getHand().getCardStack().size(); i++) {
                 if (myPlayer_.getHand().getCardAt(i).getPosition().x < card.getPosition().x) {
                     myPlayer_.getHand().getCardStack().add(i, card);
                     inserted = true;

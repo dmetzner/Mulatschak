@@ -786,6 +786,7 @@ public class GameController{
 
 
     public void lastPlayerLeftSoLetMeWin() {
+        view_.enableUpdateCanvasThread();
         for (int i = 0; i < getAmountOfPlayers(); i++) {
             getPlayerById(i).setLives(1);
             if (getPlayerById(i).getPosition() == 0) {

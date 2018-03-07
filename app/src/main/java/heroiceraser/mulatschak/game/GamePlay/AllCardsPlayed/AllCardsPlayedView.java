@@ -64,6 +64,7 @@ public class AllCardsPlayedView{
         controller.getView().enableUpdateCanvasThread();
         controller.getNonGamePlayUIContainer().closeAllButtonBarWindows();
         controller.getNonGamePlayUIContainer().getStatistics().setVisible(true);
+        controller.getLogic().setMulatschakRound(false);
         next_round_button_.setVisible(true);
     }
 
@@ -137,6 +138,7 @@ public class AllCardsPlayedView{
         if (next_round_button_.touchEventUp(X, Y)) {
             next_round_button_.setVisible(false);
             controller.getNonGamePlayUIContainer().closeAllButtonBarWindows();
+            controller.getDiscardPile().setVisible(false);
             controller.getView().postInvalidateOnAnimation();
             controller.mainActivity.gameState = Message.gameStateWaitForNewRound;
             controller.getPlayerByPosition(0).gameState = Message.gameStateWaitForNewRound;
