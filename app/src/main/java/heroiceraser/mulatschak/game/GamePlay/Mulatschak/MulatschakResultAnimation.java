@@ -133,6 +133,7 @@ public class MulatschakResultAnimation {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
+                textField = null;
                 controller.getGamePlay().getAllCardsPlayed().allCardsArePlayedLogic(controller);
             }
         };
@@ -144,11 +145,11 @@ public class MulatschakResultAnimation {
 
     public void draw(Canvas canvas, GameController controller) {
         if (textField != null) {
-            background4Player0Animations.draw(canvas);
-            textField.draw(canvas);
-            textField2.draw(canvas);
+                background4Player0Animations.draw(canvas);
+                textField.draw(canvas);
+                textField2.draw(canvas);
             if (animating) {
-                continueAnimation(controller);
+                    continueAnimation(controller);
             }
         }
     }

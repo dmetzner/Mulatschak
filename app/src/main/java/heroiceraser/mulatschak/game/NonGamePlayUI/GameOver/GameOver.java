@@ -167,6 +167,7 @@ public class GameOver {
     private void backToMainMenu(final GameController controller) {
         controller.getView().stopAll = true;
         MainActivity mainActivity = (MainActivity) controller.getView().getContext();
+        mainActivity.requestLoadingScreen();
         mainActivity.broadcastMessage(Message.leftGameAtEnd, "");
         Handler handler = new Handler();
         Runnable runnable = new Runnable() {
@@ -176,7 +177,7 @@ public class GameOver {
                 mainActivity.endGame();
             }
         };
-       handler.postDelayed(runnable, 1000);
+       handler.postDelayed(runnable, 100);
     }
 
 

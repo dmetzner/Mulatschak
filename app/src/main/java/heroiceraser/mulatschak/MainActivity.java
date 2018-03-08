@@ -124,7 +124,7 @@ public class MainActivity extends FragmentActivity implements
     RoomConfig mRoomConfig;
 
     // Are we playing in multiplayer mode?
-    boolean mMultiplayer = false;
+    public boolean mMultiplayer = false;
 
     // The participants in the currently active game
     ArrayList<Participant> mParticipants = null;
@@ -886,6 +886,12 @@ public class MainActivity extends FragmentActivity implements
             try {
                 Log.d(TAG, "onDisconnectedToRoom.");
                 onlyLeaveRoom();
+                ArrayList<String> leftPeers = new ArrayList<>();
+                for (Participant p : mParticipants) {
+                    leftPeers.add(p.getParticipantId());
+                }
+
+                updatePlayer(leftPeers);
                 // showGameError(); -> we can stay in the game and play against bots ;)
             }
             catch (Exception e) {
@@ -1058,21 +1064,21 @@ public class MainActivity extends FragmentActivity implements
 
     private void updatePlayer(@NonNull List<String> peersWhoLeft) {
         try {
-            if (peersWhoLeft.contains(myParticipantId)) {
-                return; // this player left the room too -> so there is nothing to do!
-            }
+            // if (peersWhoLeft.contains(myParticipantId)) {
+               // return; // this player left the room too -> so there is nothing to do!
+            // }
 
             if (mParticipants.size() - peersWhoLeft.size() - correctLeftPeers.size() < 2) {
-                for (final String leftPeer: peersWhoLeft) {
-                    boolean leftCorrect = false;
-                    for (String leftCorrectId : correctLeftPeers) {
-                        if (leftPeer.equals(leftCorrectId)) {
-                            leftCorrect = true;
-                        }
+                for (final String leftPeer : peersWhoLeft) {
+
+                    if (leftPeer.equals(myParticipantId)) {
+                        continue;
                     }
-                    if (leftCorrect) { // peer left correct at end of the game
-                        return;
+
+                    if (correctLeftPeers.contains(leftPeer)) {
+                        continue;
                     }
+
                     // double secure -> check if game is over...
                     if (mGameView != null && mGameView.getController() != null &&
                             mGameView.getController().getGameOver() != null &&
@@ -1106,14 +1112,13 @@ public class MainActivity extends FragmentActivity implements
 
             if (mParticipants.size() - peersWhoLeft.size() - correctLeftPeers.size() >= 2) {
                 for (final String leftPeer: peersWhoLeft) {
-                    boolean leftCorrect = false;
-                    for (final String leftCorrectId : correctLeftPeers) {
-                        if (leftPeer.equals(leftCorrectId)) {
-                            leftCorrect = true;
-                        }
+
+                    if (leftPeer.equals(myParticipantId)) {
+                        continue;
                     }
-                    if (leftCorrect) { // peer left correct at end of the game
-                        return;
+
+                    if (correctLeftPeers.contains(leftPeer)) {
+                        continue;
                     }
                     // double secure -> check if game is over...
                     if (mGameView != null && mGameView.getController() != null &&

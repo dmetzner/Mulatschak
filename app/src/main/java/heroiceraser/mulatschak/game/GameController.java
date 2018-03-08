@@ -816,8 +816,8 @@ public class GameController{
             leftPlayer.setOnlineId("");
             for (Participant p : participants_) {
                 if (getPlayerByOnlineId(p.getParticipantId()) != null &&
-                        !getPlayerByOnlineId(p.getParticipantId()).equals("")) {
-                    hostOnlineId = p.getParticipantId();
+                        !p.getParticipantId().equals("")) {
+                    hostOnlineId = p.getParticipantId(); // no computer enemy should be a host
                     break;
                 }
             }
@@ -830,6 +830,7 @@ public class GameController{
         int onlinePlayers = getAmountOfOnlinePlayer();
         if (onlinePlayers < 2) {
             multiplayer_ = false;
+            mainActivity.mMultiplayer = false; // stops heartbeat!
         }
 
         int code = waitForOnlineInteraction;

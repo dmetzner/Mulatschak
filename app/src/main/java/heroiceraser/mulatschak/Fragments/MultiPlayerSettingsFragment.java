@@ -202,6 +202,7 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
                 difficulty_easy_radioButton.setEnabled(false);
                 difficulty_normal_radioButton.setEnabled(false);
                 difficulty_hard_radioButton.setEnabled(false);
+                difficultyText.setVisibility(View.GONE);
             }
             else if (players == 3) {
                 enemies_2_radioButton.setEnabled(false);
@@ -237,6 +238,7 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
     }
 
     private void resetMultiPlayerSettingsRequested() {
+        difficultyText.setVisibility(View.VISIBLE);
         enemies_0_radioButton.setEnabled(true);
         enemies_1_radioButton.setEnabled(true);
         enemies_2_radioButton.setEnabled(true);
@@ -253,6 +255,7 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
         difficulty_hard_radioButton.setVisibility(View.VISIBLE);
         player_lives_seekBar.setVisibility(View.VISIBLE);
         startGameButton.setVisibility(View.VISIBLE);
+        player_lives_textView.setText( getString(R.string.single_player_settings_player_lives_text_default));
     }
 
 
