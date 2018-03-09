@@ -25,6 +25,15 @@ public class BidsField extends DrawableObject{
     private float radius;
     private int strokeWidth;
     private Paint circlePaintBorder;
+
+    public Paint getCirclePaintDefault() {
+        return circlePaintDefault;
+    }
+
+    public void setCirclePaintDefault(Paint circlePaintDefault) {
+        this.circlePaintDefault = circlePaintDefault;
+    }
+
     private Paint circlePaintDefault;
 
     //---- Text
@@ -72,12 +81,14 @@ public class BidsField extends DrawableObject{
         }
         circlePaintBorder.setStrokeWidth(strokeWidth);
         circlePaintBorder.setStyle(Paint.Style.STROKE);
+        circlePaintBorder.setAlpha(255);
 
         //---- fill
         circlePaintDefault = new Paint();
         circlePaintDefault.setColor(view.getResources().getColor(R.color.metallic_blue));
         circlePaintDefault.setAntiAlias(true);
         circlePaintDefault.setStyle(Paint.Style.FILL);
+        circlePaintBorder.setAlpha(255);
 
         //---- text
         textPaint = new TextPaint();

@@ -174,7 +174,7 @@ public class GameOver {
             @Override
             public void run() {
                 MainActivity mainActivity = (MainActivity) controller.getView().getContext();
-                mainActivity.endGame();
+                mainActivity.endGame(controller.getPlayerById(0).getLives() <= 0);
             }
         };
        handler.postDelayed(runnable, 100);

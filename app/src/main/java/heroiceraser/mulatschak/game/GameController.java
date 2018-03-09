@@ -399,7 +399,7 @@ public class GameController{
         switch (game_play_.getTrickBids().getHighestBid(controller)) {
             case 0:  // start a new round if every player said 0 tricks
                 // ToDo animation
-                logic_.raiseMultiplier();
+                logic_.raiseMultiplier(controller);
                 setTurn(logic_.getDealer());
                 mHandler.postDelayed(newRoundRunnable, 3000);
                 break;

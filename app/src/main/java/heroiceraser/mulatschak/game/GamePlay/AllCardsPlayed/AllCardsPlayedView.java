@@ -80,6 +80,13 @@ public class AllCardsPlayedView{
     }
 
     public void waitOrStartNewRound(final GameController controller) {
+
+        if (!controller.multiplayer_) {
+            controller.prepareNewRound();
+            controller.startRound();
+            return;
+        }
+
         try {
             controller.waitForOnlineInteraction = Message.waitForNewRound;
             if (controller.mainActivity.gameState == Message.gameStateWaitForNewRound) {

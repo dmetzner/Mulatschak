@@ -216,7 +216,7 @@ public class TrickBids {
 
         else {
             controller.getPlayerById(id).setTricksToMake(0);
-            bids_view_.startAnimation(controller, playerPos, "-");
+            bids_view_.startAnimation(controller, playerPos, "0");
         }
 
         // there have to be at least two active players every round!

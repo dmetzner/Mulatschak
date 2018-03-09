@@ -101,6 +101,7 @@ public class GameView extends View {
         drawBackground(canvas);
          if (!controller_.getGameOver().isVisible()) {
              drawDiscardPile(canvas);
+             drawMultiplier(canvas);
              drawBidsView(canvas);
              drawTrumpView(canvas);
              drawPlayerInfo(canvas);
@@ -130,6 +131,10 @@ public class GameView extends View {
 
     private void drawBackground(Canvas canvas) {
         controller_.getNonGamePlayUIContainer().drawBackground(canvas);
+    }
+
+    private void drawMultiplier(Canvas canvas) {
+        controller_.getGamePlay().getMultiplierView().draw(canvas);
     }
 
     private void drawMulatschakResult(Canvas canvas) {

@@ -1,10 +1,15 @@
 package heroiceraser.mulatschak.game.GamePlay.TrickBids;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.support.v4.graphics.ColorUtils;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.os.Handler;
 
+import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
+import heroiceraser.mulatschak.game.BaseObjects.Card;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 
@@ -25,6 +30,9 @@ public class BidsView extends DrawableObject{
     private boolean ending_animation_;
     private int winner_id_;           // needed to know which bid field stays visible for the round
     private long start_time_;
+    int color1;
+    int color2;
+    int color3;
 
 
     //----------------------------------------------------------------------------------------------
@@ -83,6 +91,9 @@ public class BidsView extends DrawableObject{
         bidsField.startAnimation(controller, start_pos, final_pos);
         start_time_ = System.currentTimeMillis();
         bids_field_list_[pos] = bidsField;
+        color1 = controller.getView().getResources().getColor(R.color.metallic_blue);
+        color2 = Color.GRAY;
+        color3 = Color.RED;
     }
 
 
@@ -126,7 +137,8 @@ public class BidsView extends DrawableObject{
     void startEndingAnimation(final int winner_pos, GameLayout layout) {
         final GameLayout layoutF = layout;
         Handler handler = new Handler();
-        Runnable runnable = new Runnable() {
+
+        Runnable moveOnlyWinnerRunnable = new Runnable() {
             @Override
             public void run() {
                 ending_animation_ = true;
@@ -143,7 +155,28 @@ public class BidsView extends DrawableObject{
                 start_time_ = System.currentTimeMillis();
             }
         };
-        handler.postDelayed(runnable, 500);
+
+        Runnable moveEmAllRunnable = new Runnable() {
+            @Override
+            public void run() {
+                ending_animation_ = true;
+                winner_id_ = winner_pos;
+                for (int i = 0; i < bids_field_list_.length; i++) {
+                    if (bids_field_list_[i] == null) {
+                        continue;
+                    }
+                    Point end_position = layoutF.getTrickBidsGamePlayPositions().get(i);
+                    Point offset = new Point (end_position);
+                    offset.x -= bids_field_list_[i].getPosition().x;
+                    offset.y -= bids_field_list_[i].getPosition().y;
+                    bids_field_list_[i].setOffset(offset);
+                    bids_field_list_[i].setStartPos(
+                            bids_field_list_[i].getPosition());
+                }
+                start_time_ = System.currentTimeMillis();
+            }
+        };
+        handler.postDelayed(moveEmAllRunnable, 1000);
 
     }
 
@@ -172,6 +205,28 @@ public class BidsView extends DrawableObject{
                 continue;
             }
 
+            bids_field_list_[i].setPosition(
+                    (int) (bids_field_list_[i].getStartPos().x +
+                            bids_field_list_[i].getOffset().x * percentage),
+                    (int) (bids_field_list_[i].getStartPos().y +
+                            bids_field_list_[i].getOffset().y * percentage) );
+
+
+
+            if (i != winner_id_) {
+
+                int color = color2;
+                if (controller.getPlayerByPosition(i).getMissATurn()) {
+                    color = color3;
+                }
+                color = interpolateColorInCIEL(color1, color, (float) percentage);
+
+                Paint p = bids_field_list_[i].getCirclePaintDefault();
+                p.setColor(color);
+                bids_field_list_[i].setCirclePaintDefault(p);
+            }
+
+            /*
             if ( i == winner_id_ ) {
                 bids_field_list_[i].setPosition(
                         (int) (bids_field_list_[i].getStartPos().x +
@@ -190,6 +245,7 @@ public class BidsView extends DrawableObject{
                 bids_field_list_[i].updateAlpha(new_alpha);
             }
 
+*/
             // reduce size
             double size_percentage = 1 - percentage;
             bids_field_list_[i].changeSizeBasedOnPercentage(size_percentage);
@@ -201,6 +257,32 @@ public class BidsView extends DrawableObject{
         }
     }
 
+    private double interpolate(double a, double b, double percentage) {
+        return (a + ((b - a) * percentage));
+    }
+
+    /*
+    private int interpolateColor(int a, int b, float proportion) {
+        float[] hsva = new float[3];
+        float[] hsvb = new float[3];
+        Color.colorToHSV(a, hsva);
+        Color.colorToHSV(b, hsvb);
+        for (int i = 0; i < 3; i++) {
+            hsvb[i] = interpolate(hsva[i], hsvb[i], proportion);
+        }
+        return Color.HSVToColor(hsvb);
+    } */
+
+    public int interpolateColorInCIEL(int a, int b, double percentage) {
+        double[] ciel1 = new double[3];
+        double[] ciel2 = new double[3];
+        ColorUtils.colorToLAB(a, ciel1);
+        ColorUtils.colorToLAB(b, ciel2);
+        for (int i = 0; i < 3; i++) {
+            ciel2[i] = interpolate(ciel1[i], ciel2[i], percentage);
+        }
+        return ColorUtils.LABToColor(ciel2[0], ciel2[1], ciel2[2]);
+    }
 
     //----------------------------------------------------------------------------------------------
     //  reset

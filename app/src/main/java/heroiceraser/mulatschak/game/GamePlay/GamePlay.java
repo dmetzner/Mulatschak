@@ -6,6 +6,7 @@ import heroiceraser.mulatschak.game.GamePlay.Mulatschak.MulatschakResultAnimatio
 import heroiceraser.mulatschak.game.GamePlay.CardExchange.CardExchange;
 import heroiceraser.mulatschak.game.GamePlay.ChooseTrump.ChooseTrump;
 import heroiceraser.mulatschak.game.GamePlay.DealCards.DealCards;
+import heroiceraser.mulatschak.game.GamePlay.MultiplierView.MultiplierView;
 import heroiceraser.mulatschak.game.GamePlay.PlayACard.PlayACardRound;
 import heroiceraser.mulatschak.game.GamePlay.Mulatschak.DecideMulatschak;
 import heroiceraser.mulatschak.game.GamePlay.TrickBids.TrickBids;
@@ -26,10 +27,12 @@ public class GamePlay {
     private DecideMulatschak decideMulatschak;
     private TrickBids trickBids;
     private ChooseTrump chooseTrump;
+    private MultiplierView multiplierView;
     private CardExchange cardExchange;
     private PlayACardRound playACardRound;
     private AllCardsPlayed allCardsPlayed;
     private MulatschakResultAnimation mulatschakResultAnimation;
+
 
 
     //----------------------------------------------------------------------------------------------
@@ -40,6 +43,7 @@ public class GamePlay {
         decideMulatschak = new DecideMulatschak();
         trickBids = new TrickBids();
         chooseTrump = new ChooseTrump();
+        multiplierView = new MultiplierView();
         cardExchange = new CardExchange();
         allCardsPlayed = new AllCardsPlayed();
         playACardRound = new PlayACardRound();
@@ -55,6 +59,7 @@ public class GamePlay {
         decideMulatschak.init(view);
         trickBids.init(view);
         chooseTrump.init(view);
+        multiplierView.init(view);
         cardExchange.init(view);
         playACardRound.init(view);
         // allCardsPlayed -> needed only once in a while, generate everything at call
@@ -106,5 +111,9 @@ public class GamePlay {
 
     public MulatschakResultAnimation getMulatschakResultAnimation() {
         return mulatschakResultAnimation;
+    }
+
+    public MultiplierView getMultiplierView() {
+        return multiplierView;
     }
 }

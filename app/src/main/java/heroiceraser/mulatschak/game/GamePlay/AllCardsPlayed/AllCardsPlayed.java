@@ -55,7 +55,7 @@ public class AllCardsPlayed {
 
         // update player lives & reset multiplier
         upl.updatePlayerLives(controller);
-        logic.resetMultiplier();
+        logic.resetMultiplier(controller);
 
         // update lives for statistic tab
         ui.getStatistics().updatePlayerLives(controller);

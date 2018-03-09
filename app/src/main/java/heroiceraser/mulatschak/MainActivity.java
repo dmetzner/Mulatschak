@@ -1,6 +1,7 @@
 package heroiceraser.mulatschak;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,12 +21,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.drive.Drive;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesActivityResultCodes;
 import com.google.android.gms.games.GamesCallbackStatusCodes;
 import com.google.android.gms.games.GamesClient;
 import com.google.android.gms.games.GamesClientStatusCodes;
 import com.google.android.gms.games.InvitationsClient;
+import com.google.android.gms.games.LeaderboardsClient;
 import com.google.android.gms.games.Player;
 import com.google.android.gms.games.PlayersClient;
 import com.google.android.gms.games.RealTimeMultiplayerClient;
@@ -63,6 +66,9 @@ import heroiceraser.mulatschak.Fragments.LoadingScreenFragment;
 import heroiceraser.mulatschak.Fragments.SinglePlayerFragment;
 import heroiceraser.mulatschak.Fragments.StartScreenFragment;
 import heroiceraser.mulatschak.helpers.LocaleHelper;
+
+import static com.google.android.gms.games.leaderboard.LeaderboardVariant.COLLECTION_PUBLIC;
+import static com.google.android.gms.games.leaderboard.LeaderboardVariant.TIME_SPAN_ALL_TIME;
 
 
 public class MainActivity extends FragmentActivity implements
@@ -238,7 +244,9 @@ public class MainActivity extends FragmentActivity implements
         // load sign in preference
         // Create the Google Api Client with access to the Play Game and Drive services.
         mGoogleSignInClient = GoogleSignIn.getClient(this, new GoogleSignInOptions
-                .Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN).build());
+                .Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
+                .requestScopes(Drive.SCOPE_APPFOLDER)
+                .build());
 
 
         mySharedPreference = getSharedPreferences("MyMuliData", 0);
@@ -2134,6 +2142,50 @@ public class MainActivity extends FragmentActivity implements
     }
 
 
+    public void endGame(boolean game_won) {
+
+        // ToDo try to fetch from a server
+
+        try {
+
+            // ToDo LeaderboardsClient lc =
+
+            int games_played = mySharedPreference.getInt("games_played", 0) + 1;
+            mySharedPreference.edit().putInt("games_played", games_played).apply();
+            Games.getLeaderboardsClient(this, GoogleSignIn.getLastSignedInAccount(this))
+                    .submitScore(getString(R.string.leaderboard_games_played_id), games_played);
+
+            int games_won = 0;
+            int games_lost = 0;
+            if (game_won) {
+                games_won = mySharedPreference.getInt("games_won", 0) + 1;
+                mySharedPreference.edit().putInt("games_won", games_won).apply();
+                Games.getLeaderboardsClient(this, GoogleSignIn.getLastSignedInAccount(this))
+                        .submitScore(getString(R.string.leaderboard_online_wins_id), games_won);
+            }
+            else {
+                games_lost = mySharedPreference.getInt("games_lost", 0) + 1;
+                mySharedPreference.edit().putInt("games_lost", games_lost).apply();
+            }
+
+            double winRate = (games_won * 100.0) / games_played;
+            Games.getLeaderboardsClient(this, GoogleSignIn.getLastSignedInAccount(this))
+                    .submitScore(getString(R.string.leaderboard_win_rate_id), (long) winRate * 100);
+
+        }
+        catch (Exception e) {
+            Log.e(TAG,"saving data failed");
+        }
+
+
+        /*
+        Games.getLeaderboardsClient(this, GoogleSignIn.getLastSignedInAccount(this))
+                .loadCurrentPlayerLeaderboardScore(getString(R.string.leaderboard_online_wins_id),
+                        TIME_SPAN_ALL_TIME, COLLECTION_PUBLIC); */
+        endGame();
+    }
+
+
     public void endGame() {
 
         try {
@@ -2183,7 +2235,6 @@ public class MainActivity extends FragmentActivity implements
         catch (Exception e) {
             Log.e(TAG, "endGame: " + e);
         }
-
     }
 
 

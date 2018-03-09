@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Mulatschak</string>
     <string name="title_activity_game">GameActivity</string>
@@ -41,12 +42,10 @@
     <string name="player_presentation_greeting">Hi</string>
     <string name="player_presentation_intro">Your enemies are:</string>
 
-
     <!-- :::::::::::::::: Mulatschak Round ::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="mulatschak">Mulatschak</string>
     <string name="mulatschak_failed_2">failed</string>
     <string name="mulatschak_succeeded_2">succeeded</string>
-
 
     <!-- :::::::::::::::::::: SinglePlayer Settings :::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="single_player_settings_title">SinglePlayer</string>
@@ -127,14 +126,11 @@
     <string name="card_exchange_button_4">Change Four Cards</string>
     <string name="card_exchange_button_5">Change All Cards</string>
 
-
     <!-- :::::::::::::::::::: Game Menu :::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="animation_speed_title">Animations</string>
     <string name="animation_speed_slow">Slow</string>
     <string name="animation_speed_normal">Normal</string>
     <string name="animation_speed_fast">Fast</string>
     <string name="animation_speed_no_animations">Off</string>
-
-
 
 </resources>

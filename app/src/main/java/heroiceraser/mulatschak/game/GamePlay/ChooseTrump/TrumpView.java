@@ -35,9 +35,6 @@ public class TrumpView extends DrawableObject {
     private Point game_position_;
     private boolean ending_animation_running_;
     private Point game_size_;
-    private TextPaint text_paint_;
-    private Point multi_pos_;
-    private String multi_text_;
 
 
     //----------------------------------------------------------------------------------------------
@@ -51,7 +48,6 @@ public class TrumpView extends DrawableObject {
         paint_ = new Paint();
         game_position_ = new Point();
         game_size_ = new Point();
-        text_paint_ = new TextPaint();
     }
 
 
@@ -74,21 +70,12 @@ public class TrumpView extends DrawableObject {
                 view.getController().getLayout().getSectors().get(2).y +
                         (int) (view.getController().getLayout().getSectors().get(1).y * 0.1)
         );
+
         game_size_ = new Point(view.getController().getLayout().getPlayerInfoSize());
         game_size_.x *= 0.8;
         game_size_.y *= 0.9;
-
         paint_.setAlpha(255);
 
-        multi_text_ = "";
-        multi_pos_ = new Point(game_position_);
-        multi_pos_.x += game_size_.x * 1.1;
-        multi_pos_.y += game_size_.y * 0.7;
-
-        text_paint_.setStyle(Paint.Style.FILL);
-        text_paint_.setAntiAlias(true);
-        text_paint_.setColor(Color.BLACK);
-        text_paint_.setTextSize(game_size_.y * 0.45f);
 
         setVisible(false);
     }
@@ -99,7 +86,7 @@ public class TrumpView extends DrawableObject {
     //
     public void startAnimation(int active_symbol, int player_id, GameController controller) {
         if (active_symbol == MulatschakDeck.HEART) {
-            controller.getLogic().raiseMultiplier();
+            controller.getLogic().raiseMultiplier(controller);
         }
         active_id_ = "trumps_basic_" + active_symbol;
         start_time_ = System.currentTimeMillis();
@@ -117,14 +104,6 @@ public class TrumpView extends DrawableObject {
                 end_position_.y - start_position_.y);
         setPosition(start_position_);
         paint_.setAlpha(255);
-
-        int multiplier = controller.getLogic().getMultiplier();
-        if (multiplier > 1) {
-            multi_text_ = "x" + multiplier;
-        }
-        else {
-            multi_text_ = "";
-        }
 
         setVisible(true);
         animation_running_ = true;
@@ -218,8 +197,6 @@ public class TrumpView extends DrawableObject {
             if (active_bitmap_ != null) {
                 canvas.drawBitmap(active_bitmap_, getPosition().x, getPosition().y, paint_);
             }
-
-            canvas.drawText(multi_text_, multi_pos_.x, multi_pos_.y, text_paint_);
 
             if (animation_running_) {
                 continueAnimation(controller);

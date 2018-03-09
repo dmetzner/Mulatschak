@@ -29,6 +29,12 @@
 
     <!-- :::::::::::::::: Player Info Pop Up ::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="player_info_title_bar_name">Spieler Profil</string>
+    <string name="last_player_left_title_bar_name">Spieler verloren</string>
+    <string name="last_player_left_info">"%1$s hat das Spiel verlassen!"</string>
+    <string name="player_left_info">"%1$s hat das Spiel verlassen!"</string>
+    <string name="last_player_left_explanation">Drück Ja um das Spiel zu beenden oder drück Nein um den Spieler mit einem Bot zu ersetzen.</string>
+    <string name="player_left_explanation">Der Spieler wurde durch einen Bot ersetzt</string>
+    <string name="okay">OK</string>
 
     <!-- ::::::::::::::::::::::: Player Info ::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="player_info_active_player_is_0">Du bist am Zug</string>
@@ -36,12 +42,10 @@
     <string name="player_presentation_greeting">Hi</string>
     <string name="player_presentation_intro">Deine Gegner sind</string>
 
-
     <!-- :::::::::::::::: Mulatschak Round ::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="mulatschak">Mulatschak</string>
     <string name="mulatschak_failed_2">fehlgeschlagen</string>
     <string name="mulatschak_succeeded_2">erfolgreich</string>
-
 
     <!-- :::::::::::::::::::: SinglePlayer Settings :::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="single_player_settings_title">Einzelspieler</string>
@@ -122,13 +126,11 @@
     <string name="card_exchange_button_4"> Vier Karten tauschen</string>
     <string name="card_exchange_button_5"> Alle Karten tauschen</string>
 
-
     <!-- :::::::::::::::::::: Game Menu :::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="animation_speed_title">Animationen</string>
     <string name="animation_speed_slow">Langsam</string>
     <string name="animation_speed_normal">Normal</string>
     <string name="animation_speed_fast">Schnell</string>
     <string name="animation_speed_no_animations">Aus</string>
-
 
 </resources>

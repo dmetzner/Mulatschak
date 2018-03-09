@@ -99,15 +99,17 @@ public class GameLogic {
         return first_bidder;
     }
 
-    public void raiseMultiplier() {
+    public void raiseMultiplier(GameController controller) {
         this.multiplier_ *= 2;
-        if (multiplier_ > 32) {
-            multiplier_ = 32;
+        if (multiplier_ > 64) {
+            multiplier_ = 64;
         }
+        controller.getGamePlay().getMultiplierView().updateMultiplier(multiplier_);
     }
 
-    public void resetMultiplier() {
+    public void resetMultiplier(GameController controller) {
         this.multiplier_ = 1;
+        controller.getGamePlay().getMultiplierView().updateMultiplier(multiplier_);
     }
 
     public boolean isAValidCardPlay(Card card_to_play, CardStack hand, DiscardPile dp) {
