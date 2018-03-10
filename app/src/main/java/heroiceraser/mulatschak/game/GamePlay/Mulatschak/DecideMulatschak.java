@@ -99,9 +99,9 @@ public class DecideMulatschak {
                 controller.waitForOnlineInteraction = Message.mulatschakDecision;
                 Gson gson = new Gson();
                 String oId = controller.getPlayerById(logic.getTurn()).getOnlineId();
-                Log.d("-------", "wait for " +
+                if (controller.DEBUG) { Log.d("-------", "wait for " +
                                 controller.getPlayerById(controller.getLogic().getTurn()).getDisplayName()
-                        + " muli decision");
+                        + " muli decision"); }
                 controller.requestMissedMessagePlayerCheck(controller.fillGameStates(),
                         controller.getPlayerById(controller.getLogic().getTurn()).getOnlineId(),
                         controller.mainActivity.gameState, Message.requestMulatschakDecision, oId);
@@ -145,7 +145,7 @@ public class DecideMulatschak {
             activity.broadcastMessage(Message.mulatschakDecision, gson.toJson(muli));
         }
 
-        Log.d("-------", "I made my Muli decision");
+        if (controller.DEBUG) { Log.d("-------", "I made my Muli decision"); }
 
         if (muli) {
             controller.getGamePlay().getDecideMulatschak().setMulatschakUp(controller);

@@ -19,5 +19,7 @@
 
     <color name="trans_black">#28000000</color>
 
+    <color name="my_red">#dd2233</color>
+
 
 </resources>

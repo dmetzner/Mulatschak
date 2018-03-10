@@ -76,9 +76,9 @@ public class ChooseTrump {
             else {
                 controller.waitForOnlineInteraction = Message.chooseTrump;
                 String oId = controller.getPlayerById(logic.getTurn()).getOnlineId();
-                Log.d("-------", "wait for " +
+                if (controller.DEBUG) { Log.d("-------", "wait for " +
                         controller.getPlayerById(controller.getLogic().getTurn()).getDisplayName()
-                        + " to choose trump");
+                        + " to choose trump"); }
                 controller.requestMissedMessagePlayerCheck(controller.fillGameStates(),
                         controller.getPlayerById(controller.getLogic().getTurn()).getOnlineId(),
                         controller.mainActivity.gameState, Message.requestChooseTrump, oId);
@@ -116,7 +116,7 @@ public class ChooseTrump {
             activity.broadcastMessage(Message.chooseTrump, gson.toJson(trump));
         }
 
-        Log.d("-------", "I've choosen the trump");
+        if (controller.DEBUG) {Log.d("-------", "I've choosen the trump");}
 
         setTrump(controller, trump);
     }

@@ -53,7 +53,7 @@ public class GameView extends View {
                 thread_.join();
             }
             catch (Exception e) {
-                Log.w("GameThread", "Join Excpetion" + e);
+                if (controller_.DEBUG) { Log.w("GameThread", "Join Excpetion" + e); }
             }
         }
         controller_.clear();
@@ -304,7 +304,7 @@ public class GameView extends View {
             thread_.join();
         }
         catch (Exception e) {
-            Log.w("GameThread", "Join Excpetion");
+            if (controller_.DEBUG) { Log.w("GameThread", "Join Excpetion"); }
         }
     }
 

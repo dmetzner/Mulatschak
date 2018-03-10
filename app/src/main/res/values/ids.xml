@@ -2,15 +2,37 @@
 <resources>
     <!-- app_id -->
     <string name="app_id" translatable="false">503710650507</string>
+        <!-- package_name -->
+    <string name="package_name" translatable="false">at.heroiceraser.mulatschak</string>
 
+        <!-- achievement First Game -->
+    <string name="achievement_first_game" translatable="false">CgkIi6H6u9QOEAIQCQ</string>
+        <!-- achievement First win -->
+    <string name="achievement_first_win" translatable="false">CgkIi6H6u9QOEAIQCg</string>
+        <!-- achievement Never give up -->
+    <string name="achievement_never_give_up" translatable="false">CgkIi6H6u9QOEAIQCw</string>
+        <!-- achievement Winning is everything -->
+    <string name="achievement_winning_is_everything" translatable="false">CgkIi6H6u9QOEAIQDA</string>
+        <!-- achievement Play all time -->
+    <string name="achievement_play_all_time" translatable="false">CgkIi6H6u9QOEAIQDQ</string>
+        <!-- achievement Pro Gamer -->
+    <string name="achievement_pro_gamer" translatable="false">CgkIi6H6u9QOEAIQDg</string>
+        <!-- achievement Friendship -->
+    <string name="achievement_friendship" translatable="false">CgkIi6H6u9QOEAIQDw</string>
+        <!-- achievement At least you tried -->
+    <string name="achievement_at_least_you_tried" translatable="false">CgkIi6H6u9QOEAIQEA</string>
+        <!-- achievement MULATSCHAK -->
+    <string name="achievement_mulatschak" translatable="false">CgkIi6H6u9QOEAIQEQ</string>
+        <!-- leaderboard Wins -->
 
-    <string name="leaderboard_wins_id" translatable="false">CgkIi6H6u9QOEAIQBQ</string>
-    <string name="leaderboard_games_played_id" translatable="false"> CgkIi6H6u9QOEAIQBw</string>
-    <string name="leaderboard_win_rate_id" translatable="false">CgkIi6H6u9QOEAIQCA</string>
+    <string name="leaderboard_wins" translatable="false">CgkIi6H6u9QOEAIQBQ</string>
+        <!-- leaderboard Games Played -->
+    <string name="leaderboard_games_played" translatable="false">CgkIi6H6u9QOEAIQBw</string>
+        <!-- leaderboard Win Rate -->
+    <string name="leaderboard_win_rate" translatable="false">CgkIi6H6u9QOEAIQCA</string>
 
-
+        <!-- event Games Played -->
     <string name="event_games_played" translatable="false">CgkIi6H6u9QOEAIQBg</string>
-
-
-
+        <!-- event Wins -->
+    <string name="event_wins" translatable="false">CgkIi6H6u9QOEAIQEg</string>
 </resources>

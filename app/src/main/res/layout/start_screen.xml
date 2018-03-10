@@ -8,6 +8,81 @@
     android:orientation="vertical"
     android:background="@color/startScreenDark">
 
+    <!-- INVITATION POPUP -->
+    <LinearLayout
+        android:id="@+id/invitation_popup"
+        style="@style/InvPopup">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/metallic_blue"
+            android:padding="20dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/incoming_invitation_text"
+                    style="@style/InvPopupText"
+                    android:layout_width="247dp" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:gravity="center">
+                <Button
+                    android:id="@+id/button_accept_popup_invitation"
+                    style="@style/InvPopupButton"
+                    android:text="@string/accept_popup_invite"
+                    android:layout_marginRight="15dp"/>
+
+                <Button
+                    android:id="@+id/button_decline_popup_invitation"
+                    style="@style/InvPopupButton"
+                    android:text="@string/decline_popup_invite"
+                    android:layout_marginLeft="15dp"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+    <!-- Error POPUP -->
+    <LinearLayout
+        android:id="@+id/error_popup"
+        style="@style/InvPopup"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/my_red"
+            android:padding="15dp"
+            android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/error_text"
+                    style="@style/InvPopupText"
+                    android:text="@string/error_text"
+                    android:textSize="15sp"
+                    android:layout_width="247dp" />
+                <Button
+                    android:id="@+id/button_accept_error"
+                    style="@style/InvPopupButton"
+                    android:text="@string/decline_popup_invite"
+                    android:layout_marginRight="10dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,6 +93,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
 
             <LinearLayout
                 android:layout_width="match_parent"

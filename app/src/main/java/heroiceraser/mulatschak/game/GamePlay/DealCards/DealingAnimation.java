@@ -140,7 +140,7 @@ public class DealingAnimation {
             canvas.drawBitmap(bitmap, card_.getPosition().x, card_.getPosition().y, null);
         }
         catch (Exception e) {
-            Log.e("---", "draw dealing cards exception" + e);
+            if (controller.DEBUG) { Log.e("---", "draw dealing cards exception" + e); }
         }
 
         continueAnimation(controller);

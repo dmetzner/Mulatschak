@@ -14,6 +14,7 @@ import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBarWindows.GameStatistic
 import heroiceraser.mulatschak.game.NonGamePlayUI.ButtonBarWindows.GameTricks.GameTricks;
 import heroiceraser.mulatschak.game.NonGamePlayUI.GameOver.GameOver;
 import heroiceraser.mulatschak.game.NonGamePlayUI.ChatView.ChatView;
+import heroiceraser.mulatschak.game.NonGamePlayUI.PlayerInfo.ConnectionProblem;
 import heroiceraser.mulatschak.game.NonGamePlayUI.SideBorders.SideBorders;
 
 
@@ -41,6 +42,8 @@ public class NonGamePlayUIContainer {
     private AllCardsPlayedView all_cards_played_view_;  // all cards played view
     private GameOver gameOver;
 
+    private ConnectionProblem connectionProblem;
+
 
 
     //----------------------------------------------------------------------------------------------
@@ -61,6 +64,7 @@ public class NonGamePlayUIContainer {
         chatView = new ChatView();
         chat = new GameChat();
 
+        connectionProblem = new ConnectionProblem();
     }
 
 
@@ -79,6 +83,8 @@ public class NonGamePlayUIContainer {
         chat.init(view);
         all_cards_played_view_.init(view);
         gameOver.init(view);
+
+        connectionProblem.init(view);
     }
 
 
@@ -105,6 +111,8 @@ public class NonGamePlayUIContainer {
         // additional layout decoration
         side_borders_.draw(canvas);
         decoration_.draw(canvas);
+
+        connectionProblem.draw(canvas);
     }
 
     public void drawBackground(Canvas canvas) {
@@ -131,6 +139,7 @@ public class NonGamePlayUIContainer {
         tricks_.setVisible(false);
         menu_.setVisible(false);
     }
+
 
     //----------------------------------------------------------------------------------------------
     //  Getter & Setter
@@ -165,6 +174,10 @@ public class NonGamePlayUIContainer {
 
     public GameChat getChat() {
         return chat;
+    }
+
+    public ConnectionProblem getConnectionProblem() {
+        return connectionProblem;
     }
 
 }

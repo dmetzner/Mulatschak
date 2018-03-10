@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
+import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.Message;
 import heroiceraser.mulatschak.MainActivity;
 import heroiceraser.mulatschak.game.BaseObjects.Card;
@@ -115,9 +116,9 @@ public class PlayACardRound {
                 sa.add(controller.getPlayerById(logic.getTurn()).getOnlineId());
                 sa.add(controller.playACardCounter + "");
                 Gson gson = new Gson();
-                Log.d("-------", "wait for " +
+                if (controller.DEBUG) {Log.d("-------", "wait for " +
                         controller.getPlayerById(controller.getLogic().getTurn()).getDisplayName()
-                        + " to play a card");
+                        + " to play a card"); }
                 controller.requestMissedMessagePlayerCheck(controller.fillGameStates(),
                         controller.getPlayerById(controller.getLogic().getTurn()).getOnlineId(),
                         controller.mainActivity.gameState, Message.requestPlayACard, gson.toJson(sa));
@@ -154,7 +155,7 @@ public class PlayACardRound {
             Gson gson = new Gson();
             activity.broadcastMessage(Message.playACard, gson.toJson(cardId));
         }
-        Log.d("-------", "I played a Card");
+        if (controller.DEBUG) { Log.d("-------", "I played a Card"); }
     }
 
     //----------------------------------------------------------------------------------------------
@@ -183,6 +184,7 @@ public class PlayACardRound {
         if (logic.isMulatschakRound() && logic.getRoundWinnerId() != logic.getTrumpPlayerId()) {
             controller.getPlayerInfo().setShowPlayer0Turn(false);
             controller.getGamePlay().getMulatschakResultAnimation().init(controller, false);
+            controller.mainActivity.unlockAchievement(R.string.achievement_at_least_you_tried);
             handler.postDelayed(runnable,
                     (int) (1500 * controller.getSettings().getAnimationSpeed().getSpeedFactor()));
             // end of animation calls allCardsPlayedLogic
@@ -194,6 +196,7 @@ public class PlayACardRound {
                 logic.isMulatschakRound()) {
             controller.getPlayerInfo().setShowPlayer0Turn(false);
             controller.getGamePlay().getMulatschakResultAnimation().init(controller, true);
+            controller.mainActivity.unlockAchievement(R.string.achievement_mulatschak);
             handler.postDelayed(runnable,
                     (int) (1500 * controller.getSettings().getAnimationSpeed().getSpeedFactor()));
             // end of animation calls allCardsPlayedLogic

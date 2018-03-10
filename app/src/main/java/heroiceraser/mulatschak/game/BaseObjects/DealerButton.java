@@ -63,7 +63,6 @@ public class DealerButton extends DrawableObject{
             if (animation_running_) {
                 continueMoveAnimation(controller);
             }
-
         }
     }
 
