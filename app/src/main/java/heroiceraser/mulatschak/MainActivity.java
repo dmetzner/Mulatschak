@@ -54,6 +54,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -1724,18 +1725,20 @@ public class MainActivity extends FragmentActivity implements
     }
 
 
-    private volatile Integer[] missedHeartBeats = new Integer[4];
+    private volatile HashMap<String, Integer> missedHeartBeats = new HashMap<>();
     private volatile boolean heartBeating = false;
     ScheduledExecutorService executor;
 
     private void startHeartBeat() {
         try {
+            if (!mMultiplayer) {
+                return;
+            }
             heartBeating = true;
-            missedHeartBeats = new Integer[4];
-            missedHeartBeats[0] = 0;
-            missedHeartBeats[1] = 0;
-            missedHeartBeats[2] = 0;
-            missedHeartBeats[3] = 0;
+            missedHeartBeats = new HashMap<>();
+            for (Participant p : mParticipants) {
+                missedHeartBeats.put(p.getParticipantId(), 1);
+            }
 
             Runnable r = new Runnable() {
                 @Override
@@ -1761,10 +1764,9 @@ public class MainActivity extends FragmentActivity implements
                 stopHeartBeat();
                 return;
             }
-            missedHeartBeats[0]++;
-            missedHeartBeats[1]++;
-            missedHeartBeats[2]++;
-            missedHeartBeats[3]++;
+            for (Participant p : mParticipants) {
+                missedHeartBeats.put(p.getParticipantId(), missedHeartBeats.get(p.getParticipantId()) + 1);
+            }
             sendHeartBeat();
             checkHeartBeat();
         }
@@ -1782,23 +1784,26 @@ public class MainActivity extends FragmentActivity implements
     private void checkHeartBeat() {
         try {
             boolean connectionProblem = false;
-            for (int i = 0; i < mParticipants.size(); i++) {
-                if (mParticipants.get(i).getParticipantId().equals(myParticipantId) ||
-                        correctLeftPeers.contains(mParticipants.get(i).getParticipantId())) {
+            if (mGameView == null || mGameView.getController() == null) {
+                return;
+            }
+            for (Participant p : mParticipants) {
+                if (p.getParticipantId().equals(myParticipantId) ||
+                        correctLeftPeers.contains(p.getParticipantId())) {
                     continue;
                 }
 
-                if (missedHeartBeats[i] > 10 && mGameView != null && mGameView.getController() != null
+                if (missedHeartBeats.get(p.getParticipantId()) > 10 && mGameView != null && mGameView.getController() != null
                         && mGameView.getController().getNonGamePlayUIContainer() != null &&
                         mGameView.getController().getNonGamePlayUIContainer().getConnectionProblem() != null) {
                     connectionProblem = true;
                 }
 
                 //  -> 18*5 = 90 -> 1m30sec
-                if (missedHeartBeats[i] > 90) {
-                    if (DEBUG) {Log.d(TAG, i + "  -> " + mParticipants.get(i).getDisplayName() + "lost connection");}
+                if (missedHeartBeats.get(p.getParticipantId()) > 90) {
+                    if (DEBUG) {Log.d(TAG, p.getDisplayName() + "lost connection");}
                     final ArrayList<String> leftPlayers = new ArrayList<>();
-                    leftPlayers.add(mParticipants.get(i).getParticipantId());
+                    leftPlayers.add(p.getParticipantId());
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -1826,7 +1831,7 @@ public class MainActivity extends FragmentActivity implements
     private void receiveHeartBeat(String senderId) {
         for (int i = 0; i < mParticipants.size(); i++) {
             if (mParticipants.get(i).getParticipantId().equals(senderId)) {
-                missedHeartBeats[i] = 0;
+                missedHeartBeats.put(mParticipants.get(i).getParticipantId(), 0);
             }
         }
     }
@@ -2041,7 +2046,9 @@ public class MainActivity extends FragmentActivity implements
 
         try {
             mMultiplayer = multiplayer;
-            startHeartBeat();
+            if (mMultiplayer) {
+                startHeartBeat();
+            }
 
             //---- get/set all game starting parameters
             if (!isSignedIn()) {
@@ -2231,7 +2238,11 @@ public class MainActivity extends FragmentActivity implements
                     public void onComplete(@NonNull Task<AnnotatedData<EventBuffer>> task) {
                         if (task.isSuccessful()) {
                             // Process all the events.
-                            for (Event event : task.getResult().get()) {
+                            EventBuffer eb = task.getResult().get();
+                            if (eb == null) {
+                                return;
+                            }
+                            for (Event event : eb) {
                                 if (DEBUG) {Log.d(TAG, "loaded event " + event.getName());}
                                 if (event.getEventId().equals(getString(R.string.event_games_played))) {
                                     gamesPlayed = event.getValue();
@@ -2240,6 +2251,7 @@ public class MainActivity extends FragmentActivity implements
                                     gameWins = event.getValue();
                                 }
                             }
+                            eb.release();
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {

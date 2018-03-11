@@ -123,7 +123,7 @@ public class AllCardsPlayedView{
             }
         }
         catch (Exception e) {
-            Log.e("All cards played", "exception" + e);
+            if (controller.DEBUG){ Log.e("All cards played", "exception" + e); }
         }
 
     }

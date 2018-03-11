@@ -41,6 +41,13 @@ public class MyButton extends DrawableObject{
     //----------------------------------------------------------------------------------------------
     //  init
     //
+    public void init(GameView view, Point position, Point size, Bitmap image, String text) {
+        Bitmap bitmap = BitmapMethodes.getResizedBitmap(image, size.x, size.y);
+        setBitmap(bitmap);
+        init(view, position, size.x, size.y, "", text);
+    }
+
+
     public void init(GameView view, Point position, Point size, String image_name, String text) {
         init(view, position, size.x, size.y, image_name, text);
     }

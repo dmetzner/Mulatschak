@@ -112,10 +112,16 @@ public class DiscardPile extends DrawableObject {
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas) {
+    public void draw(Canvas canvas, GameController controller) {
         if (isVisible()) {
             // draw discard pile
             for (int j = 0; j < positions_.size(); j++) {
+                if (controller.getAmountOfPlayers() == 2 && (j == 1 || j > 2)) {
+                    continue;
+                }
+                if (controller.getAmountOfPlayers() == 3 && (j > 2)) {
+                    continue;
+                }
                 if (getCard(j) == null || getCard(j).getBitmap() == null) {
                     canvas.drawBitmap(getBitmap(),
                             getPoint(j).x,
@@ -140,6 +146,12 @@ public class DiscardPile extends DrawableObject {
                     .getRoundWinnerId()).getPosition();
             for (int j = 0; j < positions_.size(); j++) {
                 if (j != roundWinnerPos) {
+                    if (controller.getAmountOfPlayers() == 2 && (j == 1 || j > 2)) {
+                        continue;
+                    }
+                    if (controller.getAmountOfPlayers() == 3 && (j > 2)) {
+                        continue;
+                    }
                     canvas.drawBitmap(overlay_lost_,
                             getPoint(j).x,
                             getPoint(j).y, null);

@@ -202,7 +202,6 @@ public class PlayACardLogic {
             invalid_move_symbol_running_ = false;
             invalid_symbol_alpha_ = 0;
             controller.getGamePlay().getPlayACardRound().playACard(false, controller);
-
         }
     }
 

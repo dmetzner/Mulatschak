@@ -1,6 +1,8 @@
 package heroiceraser.mulatschak.game;
 
 
+import android.util.Log;
+
 import heroiceraser.mulatschak.game.BaseObjects.Card;
 import heroiceraser.mulatschak.game.BaseObjects.CardStack;
 import heroiceraser.mulatschak.game.BaseObjects.DiscardPile;
@@ -253,7 +255,10 @@ public class GameLogic {
             }
 
         }
-
+        if (highest_card_owner_pos == GameController.NOT_SET) {
+            Log.e("too fast touch events", "this error sucks... I know");
+            return;
+        }
         round_winner_id_ = controller.getPlayerByPosition(highest_card_owner_pos).getId();
     }
 

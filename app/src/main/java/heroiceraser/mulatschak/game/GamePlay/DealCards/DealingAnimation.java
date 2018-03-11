@@ -86,30 +86,36 @@ public class DealingAnimation {
             new_card_ = true;
         }
 
-        card_.setPosition(new Point(start_pos_.x + (int) (position_offset_.x * percentage),
-                start_pos_.y + (int) (position_offset_.y * percentage)));
+        try {
+            card_.setPosition(new Point(start_pos_.x + (int) (position_offset_.x * percentage),
+                    start_pos_.y + (int) (position_offset_.y * percentage)));
 
-        rotation_ = max_rotation_ * percentage;
+            rotation_ = max_rotation_ * percentage;
 
-        if (new_card_) {
-            new_card_ = false;
-            card_.setVisible(true);
-            card_.setFixedPosition(new Point(card_.getPosition()));
-            drawn_cards_++;
-            nextPlayer(controller.getAmountOfPlayers());
-            if (drawn_cards_ == cards_to_draw_) {
-                animation_running_ = false;
-                controller.continueAfterDealingAnimation();
-            }
-            else {
-                MyPlayer player = controller.getPlayerById(player_id_);
-                card_ = player.getHand().getCardAt(drawn_cards_ / controller.getAmountOfPlayers());
-                calculateEndPositions(controller.getPlayerById(player_id_), controller);
-                calculatePositionOffsets();
-                calculateRotation(controller.getPlayerById(player_id_).getPosition());
-                start_time_ = System.currentTimeMillis();
+            if (new_card_) {
+                new_card_ = false;
+                card_.setVisible(true);
+                card_.setFixedPosition(new Point(card_.getPosition()));
+                drawn_cards_++;
+                nextPlayer(controller.getAmountOfPlayers());
+                if (drawn_cards_ == cards_to_draw_) {
+                    animation_running_ = false;
+                    controller.continueAfterDealingAnimation();
+                }
+                else {
+                    MyPlayer player = controller.getPlayerById(player_id_);
+                    card_ = player.getHand().getCardAt(drawn_cards_ / controller.getAmountOfPlayers());
+                    calculateEndPositions(controller.getPlayerById(player_id_), controller);
+                    calculatePositionOffsets();
+                    calculateRotation(controller.getPlayerById(player_id_).getPosition());
+                    start_time_ = System.currentTimeMillis();
+                }
             }
         }
+        catch (Exception e) {
+            if (controller.DEBUG) { Log.e("dealing cards ",  "exception" + e); }
+        }
+
     }
 
     //----------------------------------------------------------------------------------------------

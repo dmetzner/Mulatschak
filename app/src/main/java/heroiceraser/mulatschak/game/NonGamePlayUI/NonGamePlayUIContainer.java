@@ -112,7 +112,7 @@ public class NonGamePlayUIContainer {
         side_borders_.draw(canvas);
         decoration_.draw(canvas);
 
-        connectionProblem.draw(canvas);
+        connectionProblem.draw(canvas, controller);
     }
 
     public void drawBackground(Canvas canvas) {

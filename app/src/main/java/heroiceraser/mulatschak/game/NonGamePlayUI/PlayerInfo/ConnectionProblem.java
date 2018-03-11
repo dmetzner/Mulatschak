@@ -6,6 +6,8 @@ import android.graphics.Paint;
 
 import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
+import heroiceraser.mulatschak.game.GameController;
+import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.helpers.BitmapMethodes;
 
@@ -32,8 +34,9 @@ public class ConnectionProblem extends DrawableObject {
         setVisible(false);
     }
 
-    public void draw(Canvas canvas) {
+    public void draw(Canvas canvas, GameController controller) {
         if (isVisible() && getBitmap() != null) {
+
 
             long time = System.currentTimeMillis();
 
@@ -54,6 +57,8 @@ public class ConnectionProblem extends DrawableObject {
             canvas.drawCircle(getPosition().x + getWidth() / 2,
                     getPosition().y + getHeight() / 2, (getHeight() / 1.5f), circlePaint);
             canvas.drawBitmap(bmp, getPosition().x, getPosition().y, null);
+
+            controller.getView().postInvalidate();
         }
     }
 

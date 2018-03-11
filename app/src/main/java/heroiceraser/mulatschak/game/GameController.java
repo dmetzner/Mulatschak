@@ -1,12 +1,21 @@
 package heroiceraser.mulatschak.game;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.widget.ImageView;
 
+import com.google.android.gms.common.images.ImageManager;
 import com.google.android.gms.games.multiplayer.Participant;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.FileOutputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -167,7 +176,6 @@ public class GameController {
         settings_.init(view_);
         initPlayers(enemies, sortedPlayerIds);                                      // special multi
         resetPlayerLives();
-        setPlayerPositions();
         player_info_.init(view_);
         non_game_play_ui_.init(view_);
         player_info_.startPresentation(this);
@@ -462,7 +470,9 @@ public class GameController {
         discardPile_.setVisible(true);
         player_info_.setShowPlayer0Turn(true);
         playACardCounter = 0;
-        nextCardRound(true); // first call
+        logic_.setStartingPlayer(logic_.getTrumpPlayerId());
+        logic_.setTurn(logic_.getTrumpPlayerId());
+        getGamePlay().getPlayACardRound().playACard(true, this);
     }
 
 
@@ -472,10 +482,6 @@ public class GameController {
     //                      -> playACard gets called for ever player once
     //                          then nextCard Round should get called again
     //
-
-    private void nextCardRound(boolean x) {
-        getGamePlay().getPlayACardRound().playACard(true, this);
-    }
 
     public void nextCardRound() {
 
@@ -490,7 +496,16 @@ public class GameController {
             return;
         }
 
+        if (playACardCounter >= 5) {
+            if (DEBUG) { Log.w("Play A Card Bug", "but at least we catch it"); }
+            // still don't know how this happens, but return for god sake
+            return;
+        }
+
         // next round
+        if (DEBUG) { Log.d("Next Round", "___________________________________"); }
+        logic_.setStartingPlayer(logic_.getRoundWinnerId());
+        logic_.setTurn(logic_.getRoundWinnerId());
         getGamePlay().getPlayACardRound().playACard(true, this);
     }
 
@@ -578,12 +593,107 @@ public class GameController {
                 setDisplayName(getPlayerById(i));
                 getPlayerById(i).setId(i);
                 if (i == 0) {
+                    getPlayerById(i).setDisplayName("Du");
+                    getPlayerById(i).setOnlineId("Du");
                     getPlayerById(i).setEnemyLogic(false);
                 }
                 else {
                     getPlayerById(i).setEnemyLogic(true);
                 }
             }
+        }
+
+        setPlayerPositions();
+
+        if (!multiplayer_) {
+            return;
+        }
+
+        final GameController gc = this;
+
+        for (final Participant pa : participants_) {
+
+            for (final MyPlayer mp : getPlayerList()) {
+                try {
+                    if (pa.getParticipantId().equals(mp.getOnlineId())) {
+
+                        ImageManager IM = ImageManager.create(view_.getContext());
+                        switch (mp.getPosition()) {
+                            case GameLayout.POSITION_BOTTOM:
+                                IM.loadImage(myOnImageLoadedListenerBottom, pa.getIconImageUri());
+                                break;
+                            case GameLayout.POSITION_LEFT:
+                                IM.loadImage(myOnImageLoadedListenerLeft, pa.getIconImageUri());
+                                break;
+                            case GameLayout.POSITION_TOP:
+                                IM.loadImage(myOnImageLoadedListenerTop, pa.getIconImageUri());
+                                break;
+                            case GameLayout.POSITION_RIGHT:
+                                IM.loadImage(myOnImageLoadedListenerRight, pa.getIconImageUri());
+                                break;
+                        }
+                    }
+                }
+                catch (Exception e) {
+                    if (DEBUG){ Log.e("controller", "uri exception" + e); }
+                }
+            }
+        }
+    }
+
+    private ImageManager.OnImageLoadedListener myOnImageLoadedListenerBottom = new ImageManager.OnImageLoadedListener() {
+
+        @Override
+        public void onImageLoaded(Uri arg0, Drawable drawable, boolean arg2) {
+            if(drawable != null) {
+                Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
+                setProfilePic(bitmap, GameLayout.POSITION_BOTTOM);
+            }
+        }
+    };
+
+    private ImageManager.OnImageLoadedListener myOnImageLoadedListenerLeft = new ImageManager.OnImageLoadedListener() {
+
+        @Override
+        public void onImageLoaded(Uri arg0, Drawable drawable, boolean arg2) {
+            if(drawable != null) {
+                Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
+                setProfilePic(bitmap, GameLayout.POSITION_LEFT);
+            }
+        }
+    };
+
+    private ImageManager.OnImageLoadedListener myOnImageLoadedListenerTop = new ImageManager.OnImageLoadedListener() {
+
+        @Override
+        public void onImageLoaded(Uri arg0, Drawable drawable, boolean arg2) {
+            if(drawable != null) {
+                Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
+                setProfilePic(bitmap, GameLayout.POSITION_TOP);
+            }
+        }
+    };
+
+    private ImageManager.OnImageLoadedListener myOnImageLoadedListenerRight = new ImageManager.OnImageLoadedListener() {
+
+        @Override
+        public void onImageLoaded(Uri arg0, Drawable drawable, boolean arg2) {
+            if(drawable != null) {
+                Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
+                setProfilePic(bitmap, GameLayout.POSITION_RIGHT);
+            }
+        }
+    };
+
+    private void setProfilePic(Bitmap bitmap, int pos) {
+
+        MyPlayer mp = getPlayerByPosition(pos);
+        mp.setProfileImage(bitmap);
+
+        if (DEBUG){Log.d("---", "lets set pb for " + pos); }
+
+        if (mp.getProfileImage() != null) {
+              player_info_.initButton(mp.getPosition(), this);
         }
     }
 
