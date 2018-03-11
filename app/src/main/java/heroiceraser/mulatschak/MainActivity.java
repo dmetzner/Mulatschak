@@ -368,7 +368,6 @@ public class MainActivity extends FragmentActivity implements
                                 if (DEBUG) {Log.d(TAG, "signInSilently(): success");}
                                 onConnected(task.getResult());
                             } else {
-                                mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.signin_other_error));
                                 if (DEBUG) {Log.d(TAG, "signInSilently(): failure", task.getException());}
                                 onDisconnected();
                             }
@@ -508,7 +507,7 @@ public class MainActivity extends FragmentActivity implements
 
                     onDisconnected();
 
-                    mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, message);
+                    mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.signin_other_error));
                 }
             } else if (requestCode == RC_SELECT_PLAYERS) {
                 // we got the result from the "select players" UI -- ready to create the room

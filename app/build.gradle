@@ -13,8 +13,8 @@ android {
 
         minSdkVersion android_min_sdk_version
         targetSdkVersion android_compile_version
-        versionCode 5
-        versionName "5.0"
+        versionCode 6
+        versionName "6.0"
     }
 
     buildTypes {
