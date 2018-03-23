@@ -6,6 +6,7 @@ import android.support.v4.graphics.ColorUtils;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.os.Handler;
+import android.util.Log;
 
 import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
@@ -94,6 +95,34 @@ public class BidsView extends DrawableObject{
         color1 = controller.getView().getResources().getColor(R.color.metallic_blue);
         color2 = Color.GRAY;
         color3 = Color.RED;
+        animate(controller);
+    }
+
+
+    private boolean isAnAnimationRunning() {
+        for (BidsField bf : bids_field_list_) {
+            if (bf != null && bf.isAnimationRunning()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    private void animate(GameController controller) {
+        while (ending_animation_ || isAnAnimationRunning()) {
+            int pos = 0;
+            for (BidsField bf : bids_field_list_) {
+                if (bf != null && bf.isAnimationRunning()) {
+                    continueStartAnimation(controller, pos);
+                }
+                pos++;
+            }
+            // keep animation running
+            if (ending_animation_) {
+                continueEndingAnimation(controller);
+            }
+        }
     }
 
 
@@ -136,8 +165,7 @@ public class BidsView extends DrawableObject{
     //
     void startEndingAnimation(final int winner_pos, GameLayout layout) {
         final GameLayout layoutF = layout;
-        Handler handler = new Handler();
-
+        /*
         Runnable moveOnlyWinnerRunnable = new Runnable() {
             @Override
             public void run() {
@@ -159,24 +187,33 @@ public class BidsView extends DrawableObject{
         Runnable moveEmAllRunnable = new Runnable() {
             @Override
             public void run() {
-                ending_animation_ = true;
-                winner_id_ = winner_pos;
-                for (int i = 0; i < bids_field_list_.length; i++) {
-                    if (bids_field_list_[i] == null) {
-                        continue;
-                    }
-                    Point end_position = layoutF.getTrickBidsGamePlayPositions().get(i);
-                    Point offset = new Point (end_position);
-                    offset.x -= bids_field_list_[i].getPosition().x;
-                    offset.y -= bids_field_list_[i].getPosition().y;
-                    bids_field_list_[i].setOffset(offset);
-                    bids_field_list_[i].setStartPos(
-                            bids_field_list_[i].getPosition());
-                }
-                start_time_ = System.currentTimeMillis();
             }
         };
-        handler.postDelayed(moveEmAllRunnable, 1000);
+        handler.postDelayed(moveEmAllRunnable, 1000); */
+
+        try {
+            Thread.sleep(1000);
+        }
+        catch (Exception e) {
+            Log.e("--", "Sleeping not possible");
+        }
+
+
+        ending_animation_ = true;
+        winner_id_ = winner_pos;
+        for (int i = 0; i < bids_field_list_.length; i++) {
+            if (bids_field_list_[i] == null) {
+                continue;
+            }
+            Point end_position = layoutF.getTrickBidsGamePlayPositions().get(i);
+            Point offset = new Point (end_position);
+            offset.x -= bids_field_list_[i].getPosition().x;
+            offset.y -= bids_field_list_[i].getPosition().y;
+            bids_field_list_[i].setOffset(offset);
+            bids_field_list_[i].setStartPos(
+                    bids_field_list_[i].getPosition());
+        }
+        start_time_ = System.currentTimeMillis();
 
     }
 
@@ -253,7 +290,6 @@ public class BidsView extends DrawableObject{
 
         if (percentage >= 1) {
             ending_animation_ = false;
-            controller.continueAfterTrickBids();
         }
     }
 

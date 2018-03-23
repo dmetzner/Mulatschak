@@ -110,40 +110,47 @@ class DecideMulatschakAnimation {
     //----------------------------------------------------------------------------------------------
     //  Touch Events
     //
-    void touchEventDown(int X, int Y) {
+    synchronized void touchEventDown(int X, int Y) {
        if (animationRunning) {
            yesButton.touchEventDown(X, Y);
            noButton.touchEventDown(X, Y);
        }
     }
 
-    void touchEventMove(int X, int Y) {
+    synchronized void touchEventMove(int X, int Y) {
         if (animationRunning) {
             yesButton.touchEventMove(X, Y);
             noButton.touchEventMove(X, Y);
         }
     }
 
-    void touchEventUp(int X, int Y, GameController controller) {
+    synchronized void touchEventUp(int X, int Y) {
         if (animationRunning) {
             if (yesButton.touchEventUp(X, Y)) {
+                decision = true;
                 animationRunning = false;
-                controller.getGamePlay().getDecideMulatschak()
-                        .handleMainPlayersDecision(true, controller);
             }
             if (noButton.touchEventUp(X, Y)) {
+                decision = false;
                 animationRunning = false;
-                controller.getGamePlay().getDecideMulatschak()
-                        .handleMainPlayersDecision(false, controller);
             }
         }
     }
 
+    private boolean decision = false;
 
     //----------------------------------------------------------------------------------------------
     //  Getter & Setter
     //
-    void turnOnAnimation() {
+    synchronized void turnOnAnimation() {
         this.animationRunning = true;
+    }
+
+    boolean isAnimationRunning() {
+        return animationRunning;
+    }
+
+    public boolean getDecision() {
+        return decision;
     }
 }

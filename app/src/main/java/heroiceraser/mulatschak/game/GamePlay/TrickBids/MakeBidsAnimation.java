@@ -175,7 +175,7 @@ public class MakeBidsAnimation {
     // Touch Events
     //                  trick bid buttons
     //
-    public void touchEventDown(int X, int Y) {
+    synchronized public void touchEventDown(int X, int Y) {
         if (!animatingNumbers) {
             return;
         }
@@ -184,7 +184,7 @@ public class MakeBidsAnimation {
         }
     }
 
-    public void touchEventMove(int X, int Y) {
+    synchronized public void touchEventMove(int X, int Y) {
         if (!animatingNumbers) {
             return;
         }
@@ -193,23 +193,29 @@ public class MakeBidsAnimation {
         }
     }
 
-    public void touchEventUp(int X, int Y, GameController controller) {
+    synchronized public void touchEventUp(int X, int Y, GameController controller) {
         if (!animatingNumbers) {
             return;
         }
         for (int i = 0; i < numberButtons.size(); i++) {
             if (numberButtons.get(i).touchEventDown(X, Y)) {
+                tricks_button_id = i;
                 animatingNumbers = false;
-                controller.getGamePlay().getTrickBids().handleMainPlayersDecision(i, controller);
             }
         }
     }
+
+    public int tricks_button_id = -1;
 
     //----------------------------------------------------------------------------------------------
     // Getter & Setter
     //
     void turnOnAnimationNumbers() {
         animatingNumbers = true;
+    }
+
+    boolean isAnimatingNumbers() {
+        return animatingNumbers;
     }
 
     List<MyButton> getNumberButtons() {

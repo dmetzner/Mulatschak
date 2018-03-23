@@ -4,6 +4,8 @@ package heroiceraser.mulatschak.game.GamePlay.Mulatschak;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.os.Handler;
+import android.util.Log;
+
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GamePlay.TrickBids.BidsField;
@@ -49,6 +51,13 @@ public class MulatschakActivateAnimation {
         active = true;
         startAnimation = true;
         startTime = System.currentTimeMillis();
+        animate(controller);
+    }
+
+    private void animate(GameController controller) {
+        while(startAnimation || endAnimation) {
+            continueStartAnimation(controller);
+        }
     }
 
 
@@ -58,9 +67,6 @@ public class MulatschakActivateAnimation {
     public void draw(Canvas canvas, GameController controller) {
         if (active) {
             bidsField.draw(canvas);
-            if (startAnimation || endAnimation) {
-                continueStartAnimation(controller);
-            }
         }
     }
 
@@ -106,20 +112,20 @@ public class MulatschakActivateAnimation {
                     bidsField.getPosition().y - bidsField.getStartPos().y);
                 bidsField.setOffset(offset);
                 startAnimation = false;
-                Handler myHandler = new Handler();
-                Runnable myRunnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        startTime = System.currentTimeMillis();
-                        endAnimation = true;
-                    }
-                };
-                myHandler.postDelayed(myRunnable, (int) (500 * speed_factor));
+                try {
+                    Thread.sleep(500);
+                }
+                catch (Exception e) {
+                    Log.e("---", "Sleeping not possible");
+                }
+
+                startTime = System.currentTimeMillis();
+                endAnimation = true;
             }
             else {
-                endAnimation = false;
                 bidsField.setAnimationRunning(false);
                 controller.getGamePlay().getDecideMulatschak().makeMulatschakDecision(false, controller);
+                endAnimation = false;
             }
         }
     }

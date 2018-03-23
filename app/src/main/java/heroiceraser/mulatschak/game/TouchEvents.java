@@ -17,7 +17,7 @@ class TouchEvents {
     //----------------------------------------------------------------------------------------------
     // Down
     //
-    void ActionDown(GameController controller, int X, int Y) {
+    synchronized void ActionDown(GameController controller, int X, int Y) {
 
         // enables a update thread for the canvas, in case there is no running update thread
         controller.getView().enableUpdateCanvasThreadOnly4TouchEvents();
@@ -87,7 +87,7 @@ class TouchEvents {
     //----------------------------------------------------------------------------------------------
     // MOVE
     //
-    void ActionMove(GameController controller, int X, int Y) {
+    synchronized void ActionMove(GameController controller, int X, int Y) {
 
         //------------------------
         controller.getView().postInvalidateOnAnimation();
@@ -154,7 +154,7 @@ class TouchEvents {
     //----------------------------------------------------------------------------------------------
     // Action UP
     //
-    void ActionUp(GameController controller, int X, int Y) {
+    synchronized void ActionUp(GameController controller, int X, int Y) {
 
         controller.getView().disableUpdateCanvasThreadOnly4TouchEvents();
         //------------------------
@@ -204,7 +204,7 @@ class TouchEvents {
 
         //------------------------
         //------------------- DecideMulatschak -----------------------------------------------------
-        controller.getGamePlay().getDecideMulatschak().touchEventUp(X, Y, controller);
+        controller.getGamePlay().getDecideMulatschak().touchEventUp(X, Y);
 
         //------------------------
         //------------------- Trick Bids -----------------------------------------------------------

@@ -102,8 +102,10 @@ public class TrickBids {
         if (logic.getTurn() == 0) {
             makeBidsAnimation.prepareAnimationButtons(controller);
             makeBidsAnimation.turnOnAnimationNumbers();
-            controller.getView().disableUpdateCanvasThread();
-            // makeTrickBids should get called when player chooses his tricks
+            while (makeBidsAnimation.isAnimatingNumbers()) {
+                controller.gamePlayThreadWait();
+            }
+            handleMainPlayersDecision(makeBidsAnimation.tricks_button_id, controller);
         }
         else if (logic.getTurn() != 0) {
             controller.getView().enableUpdateCanvasThread();
@@ -246,6 +248,9 @@ public class TrickBids {
         return highest_bid;
     }
 
+    public boolean noBidsWereMade(GameController controller) {
+        return getHighestBid(controller) == 0;
+    }
 
     //----------------------------------------------------------------------------------------------
     //  Getter

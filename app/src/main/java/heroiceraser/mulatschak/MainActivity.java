@@ -91,7 +91,7 @@ public class MainActivity extends FragmentActivity implements
     // tag for debug logging
     final String TAG = "MainActivity";
 
-    public final Boolean DEBUG = false;
+    public final Boolean DEBUG = true;
 
     // bool if an actual game is active
     private boolean gameRunning;

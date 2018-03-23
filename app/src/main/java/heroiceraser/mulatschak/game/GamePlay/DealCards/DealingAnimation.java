@@ -65,8 +65,14 @@ public class DealingAnimation {
         rotation_ = max_rotation_;
         start_time_ = System.currentTimeMillis();
         animation_running_ = true;
+        animate(controller);
     }
 
+    private void animate(GameController controller) {
+        while (animation_running_) {
+            continueAnimation(controller);
+        }
+    }
 
     //----------------------------------------------------------------------------------------------
     //  continue Animation
@@ -74,7 +80,7 @@ public class DealingAnimation {
     //              ... sets all variables to their actual value based on a time percentage
     //               - animation time gets reset after ever card
     //
-    private void continueAnimation(GameController controller) {
+    public void continueAnimation(GameController controller) {
         double animation_factor = controller.getSettings().getAnimationSpeed().getSpeedFactor();
         double max_time = 150 * animation_factor;
         long time = System.currentTimeMillis();
@@ -100,7 +106,7 @@ public class DealingAnimation {
                 nextPlayer(controller.getAmountOfPlayers());
                 if (drawn_cards_ == cards_to_draw_) {
                     animation_running_ = false;
-                    controller.continueAfterDealingAnimation();
+                    return;
                 }
                 else {
                     MyPlayer player = controller.getPlayerById(player_id_);
@@ -115,7 +121,6 @@ public class DealingAnimation {
         catch (Exception e) {
             if (controller.DEBUG) { Log.e("dealing cards ",  "exception" + e); }
         }
-
     }
 
     //----------------------------------------------------------------------------------------------
@@ -148,9 +153,8 @@ public class DealingAnimation {
         catch (Exception e) {
             if (controller.DEBUG) { Log.e("---", "draw dealing cards exception" + e); }
         }
-
-        continueAnimation(controller);
     }
+
 
 
     //----------------------------------------------------------------------------------------------
@@ -228,5 +232,9 @@ public class DealingAnimation {
                         (layout.getCardHeight() * card_number) / layout.getOverlapFactor(player.getPosition()) );
                 break;
         }
+    }
+
+    public boolean isAnimationRunning() {
+        return animation_running_;
     }
 }

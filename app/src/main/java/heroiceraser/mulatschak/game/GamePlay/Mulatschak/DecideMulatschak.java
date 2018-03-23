@@ -65,7 +65,6 @@ public class DecideMulatschak {
 
         // if someone tries a Mulatschak skip choose Tricks
         if (logic.getTricksToMake() == MakeBidsAnimation.MULATSCHAK) {
-            controller.continueAfterTrickBids();
             return;
         }
 
@@ -75,15 +74,16 @@ public class DecideMulatschak {
         // all players had their chance to try a mulatschak  --> return
         if (!first_call && logic.getTurn() == logic.getFirstBidder(controller.getAmountOfPlayers())) {
             logic.setTurn(logic.getDealer());
-            controller.continueAfterDecideMulatschak();
             return;
         }
 
         // Player 0 -> Choose Animation Muli, (Yes or NO?)
         if (logic.getTurn() == 0) {
             decideMulatschakAnimation.turnOnAnimation();
-            controller.getView().disableUpdateCanvasThread();
-            //animation calls make makeMul again
+            while (decideMulatschakAnimation.isAnimationRunning()) {
+                controller.gamePlayThreadWait();
+            }
+            handleMainPlayersDecision(decideMulatschakAnimation.getDecision(), controller);
         }
 
         // Enemies
@@ -97,7 +97,6 @@ public class DecideMulatschak {
             // multiplayer
             else {
                 controller.waitForOnlineInteraction = Message.mulatschakDecision;
-                Gson gson = new Gson();
                 String oId = controller.getPlayerById(logic.getTurn()).getOnlineId();
                 if (controller.DEBUG) { Log.d("-------", "wait for " +
                                 controller.getPlayerById(controller.getLogic().getTurn()).getDisplayName()
@@ -105,39 +104,32 @@ public class DecideMulatschak {
                 controller.requestMissedMessagePlayerCheck(controller.fillGameStates(),
                         controller.getPlayerById(controller.getLogic().getTurn()).getOnlineId(),
                         controller.mainActivity.gameState, Message.requestMulatschakDecision, oId);
+
+                while (controller.getPlayerById(logic.getTurn()).gameState == Message.gameStateWaitForMulatschakDecision) {
+                    controller.gamePlayThreadWait();
+                }
+                handleOnlineInteraction(muli, controller);
             }
         }
     }
 
+    private boolean muli = false;
+
     public void handleEnemyAction(final GameController controller) {
+        controller.getPlayerById(controller.getLogic().getTurn()).gameState++;
         if (enemyDecideMulatschakLogic.decideMulatschak(controller)) {
             setMulatschakUp(controller);
             return;
         }
-        // simulate thinking
-        Handler myHandler = new Handler();
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                makeMulatschakDecision(false, controller);
-            }
-        };
-        double animation_factor =  controller.getSettings().getAnimationSpeed().getSpeedFactor();
-        myHandler.postDelayed(runnable, (int) (500 * animation_factor));
+        // todo simulate thinking? btw animation at least
+        controller.gamePlayThreadWait();
+        controller.gamePlayThreadWait();
+        controller.gamePlayThreadWait();
+        makeMulatschakDecision(false, controller);
     }
 
-    public void handleOnlineInteraction(boolean muli, GameController controller) {
-        controller.waitForOnlineInteraction = Message.noMessage;
-        if (muli) {
-            setMulatschakUp(controller);
-        }
-        else {
-            makeMulatschakDecision(false, controller);
-        }
-    }
-
-    void handleMainPlayersDecision(boolean muli, GameController controller) {
-
+    private void handleMainPlayersDecision(boolean muli, GameController controller) {
+        controller.getPlayerById(controller.getLogic().getTurn()).gameState++;
         if (controller.multiplayer_) {
             // broadcast to all the decision
             MainActivity activity = (MainActivity) controller.getView().getContext();
@@ -155,6 +147,34 @@ public class DecideMulatschak {
             controller.getGamePlay().getDecideMulatschak().makeMulatschakDecision(false, controller);
         }
     }
+
+    private void handleOnlineInteraction(boolean muli, GameController controller) {
+        if (muli) {
+            setMulatschakUp(controller);
+        }
+        else {
+            makeMulatschakDecision(false, controller);
+        }
+    }
+
+    synchronized public void sendMulatschakDecision(GameController controller, String sendTo, boolean muli) {
+        Gson gson = new Gson();
+        controller.mainActivity.sendUnReliable(sendTo, Message.mulatschakDecision, gson.toJson(muli));
+    }
+
+    synchronized public void receiveMulatschakDecision(GameController controller, final Message message) {
+        if (controller.waitForOnlineInteraction == Message.mulatschakDecision) {
+            if (controller.getPlayerByOnlineId(message.senderId).gameState == Message.gameStateWaitForMulatschakDecision) {
+                Gson gson = new Gson();
+                controller.waitForOnlineInteraction = Message.noMessage;
+                boolean muli = gson.fromJson(message.data, boolean.class);
+                controller.getPlayerByOnlineId(message.senderId).gameState++;
+                this.muli = muli;
+            }
+        }
+    }
+
+
 
     //----------------------------------------------------------------------------------------------
     //  startRound
@@ -190,15 +210,15 @@ public class DecideMulatschak {
     //----------------------------------------------------------------------------------------------
     //  Touch Events
     //
-    public void touchEventDown(int X, int Y) {
+    synchronized public void touchEventDown(int X, int Y) {
         decideMulatschakAnimation.touchEventDown(X, Y);
     }
 
-    public void touchEventMove(int X, int Y) {
+    synchronized public void touchEventMove(int X, int Y) {
         decideMulatschakAnimation.touchEventMove(X, Y);
     }
 
-    public void touchEventUp(int X, int Y, GameController controller) {
-        decideMulatschakAnimation.touchEventUp(X, Y, controller);
+    synchronized public void touchEventUp(int X, int Y) {
+        decideMulatschakAnimation.touchEventUp(X, Y);
     }
 }
