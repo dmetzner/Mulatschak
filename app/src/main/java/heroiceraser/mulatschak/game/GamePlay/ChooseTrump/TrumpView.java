@@ -107,6 +107,19 @@ public class TrumpView extends DrawableObject {
 
         setVisible(true);
         animation_running_ = true;
+        animate(controller);
+    }
+
+
+    private void animate(GameController controller) {
+        while (animation_running_ || ending_animation_running_) {
+            if (animation_running_) {
+                continueAnimation(controller);
+            }
+            if (ending_animation_running_) {
+                continueEndingAnimation(controller);
+            }
+        }
     }
 
 
@@ -183,7 +196,6 @@ public class TrumpView extends DrawableObject {
             setHeight(game_size_.y);
             active_bitmap_ = BitmapMethodes
                     .loadBitmap(controller.getView(), active_id_, getWidth(), getHeight());
-            controller.continueAfterTrumpWasChosen();
         }
     }
 
@@ -196,14 +208,6 @@ public class TrumpView extends DrawableObject {
 
             if (active_bitmap_ != null) {
                 canvas.drawBitmap(active_bitmap_, getPosition().x, getPosition().y, paint_);
-            }
-
-            if (animation_running_) {
-                continueAnimation(controller);
-            }
-
-            if (ending_animation_running_) {
-                continueEndingAnimation(controller);
             }
         }
     }

@@ -271,40 +271,60 @@ public class GameController {
             @Override
             public void run() {
                 while (true) {
-                    if (DEBUG) {Log.d("------------", "StartRound -----------------------------------------------------------");}
+                    if (DEBUG) {
+                        Log.d("------------", "StartRound -----------------------------------------------------------");
+                    }
                     startRound();
                     dealer_button_.startMoveAnimation(controller, getPlayerById(logic_.getDealer()).getPosition());
 
 
-                    if (DEBUG) {Log.d("------------", "Shuffle  && Deal Cards -----------------------------------------------------------");}
+                    if (DEBUG) {
+                        Log.d("------------", "Shuffle  && Deal Cards -----------------------------------------------------------");
+                    }
                     setGameState(Message.gameStateWaitForShuffleDeck);
                     shuffleDeck();
                     gamePlayDealCards();
 
-                    if (DEBUG) {Log.d("------------", "decide Muli -----------------------------------------------------------");}
-                    if (DEBUG) {Log.d("------------", "Turn: " + getPlayerById(logic_.getTurn()).getDisplayName() + " -----------------------------------------------------------");}
+                    if (DEBUG) {
+                        Log.d("------------", "decide Muli -----------------------------------------------------------");
+                    }
+                    if (DEBUG) {
+                        Log.d("------------", "Turn: " + getPlayerById(logic_.getTurn()).getDisplayName() + " -----------------------------------------------------------");
+                    }
                     setGameState(Message.gameStateWaitForMulatschakDecision);
                     mulatschakDecision();
 
-                    if (DEBUG) {Log.d("------------", "trick bids -----------------------------------------------------------");}
+                    if (DEBUG) {
+                        Log.d("------------", "trick bids -----------------------------------------------------------");
+                    }
                     setGameState(Message.gameStateWaitForTrickBids);
                     trickBids();
 
-                    setGameState(Message.gameStateWaitForChooseTrump);
-                    for (MyPlayer player : getPlayerList()) {
-                        if (DEBUG) {Log.d("------------", player.getDisplayName() + ": " + player.getTricksToMake() + " tricks to make");}
+
+                    if (DEBUG) {
+                        Log.d("------------", "check tricks -> new round?  -----------------------------------------------------------");
+                        for (MyPlayer player : getPlayerList()) {
+                            if (DEBUG) {
+                                Log.d("------------", player.getDisplayName() + ": " + player.getTricksToMake() + " tricks to make");
+                            }
+                        }
                     }
+                    if (game_play_.getTrickBids().noBidsWereMade(controller)) {
+                        Log.d("------------", "double Round  -----------------------------------------------------------");
+                        prepareDoublePointsRound();
+                        continue;
+                    }
+
+                    if (DEBUG) {Log.d("------------", "choose trump -----------------------------------------------------------");}
+                    setGameState(Message.gameStateWaitForChooseTrump);
+                    chooseTrump();
                     while(DEBUG) {
                         // todo all new round
                     }
 
-                    if (game_play_.getTrickBids().noBidsWereMade(controller)) {
-                        prepareDoublePointsRound();
-                        continue;
-                    }
-                    if (DEBUG) {Log.d("------------", "choose trump -----------------------------------------------------------");}
-                    chooseTrump();
-
+                    if (DEBUG) {Log.d("------------", "card exchange -----------------------------------------------------------");}
+                    setGameState(Message.gameStateWaitForCardExchange);
+                    cardExchange();
 
                 }
             }
@@ -456,7 +476,7 @@ public class GameController {
             getPlayerHandsView().setMissATurnInfoVisible(true);
         }
 
-        // checkButton the highest bid
+        // HeartRound
         if (game_play_.getTrickBids().getHighestBid(this) == 1) {
             // heart round -> no trumps to choose
             logic_.setTrump(MulatschakDeck.HEART);
@@ -464,6 +484,7 @@ public class GameController {
             game_play_.getChooseTrump().getTrumpView()
                     .startAnimation(MulatschakDeck.HEART, logic_.getTrumpPlayerId(), this);
         }
+        // default round
         else {
             setTurn(logic_.getTrumpPlayerId());
             game_play_.getChooseTrump().letHighestBidderChooseTrump(this);
@@ -482,7 +503,7 @@ public class GameController {
     //----------------------------------------------------------------------------------------------
     //  continueAfterTrumpWasChosen
     //
-    public void continueAfterTrumpWasChosen() {
+    public void cardExchange() {
         if (DEBUG) {Log.d("------------", "exchange cards -----------------------------------------------------------");}
         mainActivity.gameState = Message.gameStateWaitForCardExchange;
         for (MyPlayer player : getPlayerList()) {
