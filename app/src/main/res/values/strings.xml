@@ -52,6 +52,29 @@
     <string name="mulatschak_failed_2">failed</string>
     <string name="mulatschak_succeeded_2">succeeded</string>
 
+
+    <!-- :::::::::::::::::::: Policy & Help         :::::::::::::::::::::::::::::::::::::::::::: -->
+    <string name="policy">Privacy Policy</string>
+    <string name="rules">Game Rules &amp; Explanation</string>
+    <string name="policy_text"><![CDATA[
+    <p>This app was developed by <b>Metzner Daniel</b>. </p><br/>
+        <p> For more information send an email to <a href="heroiceraser@gmail.com"> heroiceraser@gmail.com </a></p>
+        <br/>
+        <h2>Additional Costs</h2>
+        <p> This app needs an internet connection for multiplayer mode, which can lead to additional costs. </p>
+        <br/>
+        <h2>Your private data</h2>
+        <p>This app allows you to sign in via Google Play. If this service is used, your Google Play
+        nickname, the profile picture and the game results will be made public.
+        Those can be seen by every user via the leaderboards or during an active game. The data is
+        not stored on any non-Google server. Furthermore, the usage behavior of users is NOT evaluated.
+        </p>
+       <br/>
+        <h2>Not happy?</h2>
+        <p> If you disagree with this privacy policy, you can use the app for at least the single player
+            mode, but it is important that you do not sign in through Google Play and keep your internet turned off.</p>
+]]></string>
+
     <!-- :::::::::::::::::::: SinglePlayer Settings :::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="single_player_settings_title">SinglePlayer</string>
 

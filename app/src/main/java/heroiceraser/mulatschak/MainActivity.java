@@ -63,21 +63,23 @@ import java.util.concurrent.TimeUnit;
 
 import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.Fragments.MultiPlayerSettingsFragment;
+import heroiceraser.mulatschak.Fragments.PrivacyPolicyFragment;
+import heroiceraser.mulatschak.Fragments.RulesFragment;
+import heroiceraser.mulatschak.Fragments.WebViewActivity;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.Fragments.GameScreenFragment;
 import heroiceraser.mulatschak.Fragments.LoadingScreenFragment;
 import heroiceraser.mulatschak.Fragments.SinglePlayerFragment;
 import heroiceraser.mulatschak.Fragments.StartScreenFragment;
+import heroiceraser.mulatschak.helpers.DetectConnection;
 import heroiceraser.mulatschak.helpers.LocaleHelper;
 
 
 public class MainActivity extends FragmentActivity implements
         // StartScreen  -> Single/Multi MyPlayer, Sign in/out, Achievements, Leaderboards
         StartScreenFragment.Listener,
-        // SinglePlayer Settings
-        SinglePlayerFragment.Listener,
-        // MultiPlayer Settings
-         MultiPlayerSettingsFragment.Listener {
+        SinglePlayerFragment.Listener,  MultiPlayerSettingsFragment.Listener,
+        PrivacyPolicyFragment.Listener, RulesFragment.Listener  {
 
     // Fragments
     List<Fragment> fragList = new ArrayList<>();
@@ -86,6 +88,8 @@ public class MainActivity extends FragmentActivity implements
     MultiPlayerSettingsFragment mMultiPlayerSettingsFragment;
     LoadingScreenFragment mLoadingScreenFragment;
     GameScreenFragment mGameScreenFragment;
+    PrivacyPolicyFragment mPrivacyPolicyFragment;
+    RulesFragment mRulesFragment;
     GameView mGameView;
 
     // tag for debug logging
@@ -229,10 +233,14 @@ public class MainActivity extends FragmentActivity implements
         mMultiPlayerSettingsFragment =  new MultiPlayerSettingsFragment();
         mLoadingScreenFragment =        new LoadingScreenFragment();
         mGameScreenFragment =           new GameScreenFragment();
+        mPrivacyPolicyFragment =        new PrivacyPolicyFragment();
+        mRulesFragment =                new RulesFragment();
 
         mStartScreenFragment.setListener(this);
         mSinglePlayerFragment.setListener(this);
         mMultiPlayerSettingsFragment.setListener(this);
+        mPrivacyPolicyFragment.setListener(this);
+        mRulesFragment.setListener(this);
 
         // add initial fragment (welcome fragment)
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container,
@@ -1434,6 +1442,39 @@ public class MainActivity extends FragmentActivity implements
         }
         catch (Exception e) {
             Log.e(TAG, "onChangeLanguage: " + e);
+        }
+
+    }
+
+    //----------------------------------------------------------------------------------------------
+    //
+    @Override
+    public void onPolicyRequested() {
+        try {
+            boolean internetConection = DetectConnection.checkInternetConnection(getApplicationContext());
+            if (internetConection) {
+                Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
+                startActivity(intent);
+            }
+            else {
+                switchToFragment(mPrivacyPolicyFragment, "mPolicyFragment");
+            }
+        }
+        catch (Exception e) {
+            Log.e(TAG, "privacy policy req exception:: " + e);
+        }
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    //
+    @Override
+    public void onRulesRequested() {
+        try {
+            switchToFragment(mRulesFragment, "mRulesFragment");
+        }
+        catch (Exception e) {
+            Log.e(TAG, "rules req exception:: " + e);
         }
 
     }

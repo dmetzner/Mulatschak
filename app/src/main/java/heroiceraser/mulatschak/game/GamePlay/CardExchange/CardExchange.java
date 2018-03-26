@@ -122,7 +122,7 @@ public class CardExchange {
                 controller, handCardsToRemovePos);
     }
 
-    void handleMainPlayersDecision(GameController controller) {
+    private void handleMainPlayersDecision(GameController controller) {
 
         if (controller.multiplayer_) {
             // broadcast to all the decision

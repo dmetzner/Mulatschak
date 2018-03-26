@@ -93,10 +93,9 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
                     android:padding="0dp"
-                    >
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp">
 
 
                     <ImageView
@@ -114,84 +113,83 @@
                         android:id="@+id/hello"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
                         android:layout_marginBottom="20dp"
-                        android:textSize="20sp"
+                        android:layout_marginTop="10dp"
+                        android:text="Hallo"
                         android:textColor="@color/white"
-                        android:text="Hallo"/>
+                        android:textSize="20sp" />
 
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
                         android:background="@color/startScreenLight"
+                        android:gravity="center"
                         android:orientation="vertical"
-                        android:paddingRight="10dp"
+                        android:paddingBottom="25dp"
                         android:paddingLeft="10dp"
-                        android:paddingTop="25dp"
-                        android:paddingBottom="25dp">
+                        android:paddingRight="10dp"
+                        android:paddingTop="25dp">
 
                         <TextView
                             android:id="@+id/singleview"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="10dp"
-                            android:textSize="20sp"
                             android:text="@string/single_player_settings_title"
-                            android:textColor="@color/my_dark_gray" />
+                            android:textColor="@color/my_dark_gray"
+                            android:textSize="20sp" />
 
                         <Button
                             android:id="@+id/single_player_button"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/multi_player_settings_quick_game_button"
-                            android:textSize="25sp">
-                        </Button>
+                            android:textSize="25sp"></Button>
 
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="@color/startScreenDark"
                         android:gravity="center"
                         android:orientation="vertical"
-                        android:background="@color/startScreenDark"
-                        android:paddingRight="10dp"
+                        android:paddingBottom="25dp"
                         android:paddingLeft="10dp"
-                        android:paddingBottom="25dp">
+                        android:paddingRight="10dp">
 
                         <TextView
                             android:id="@+id/multiview"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="25dp"
                             android:layout_marginBottom="10dp"
-                            android:textSize="20sp"
+                            android:layout_marginTop="25dp"
+                            android:text="@string/multi_player_settings_title"
                             android:textColor="@color/white"
-                            android:text="@string/multi_player_settings_title" />
+                            android:textSize="20sp" />
 
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_marginTop="0dp">
+                            android:layout_marginTop="0dp"
+                            android:orientation="horizontal">
 
 
-                        <Button
-                            android:id="@+id/multi_player_quick_game_button"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.48"
-                            android:text="@string/multi_player_settings_quick_game_button" />
+                            <Button
+                                android:id="@+id/multi_player_quick_game_button"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.48"
+                                android:text="@string/multi_player_settings_quick_game_button" />
 
-                        <Button
-                            android:id="@+id/multi_player_invite_button"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.48"
-                            android:text="@string/multi_player_settings_invite_button" />
+                            <Button
+                                android:id="@+id/multi_player_invite_button"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.48"
+                                android:text="@string/multi_player_settings_invite_button" />
 
                         </LinearLayout>
 
@@ -207,21 +205,21 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="@color/startScreenLight"
                         android:gravity="center"
                         android:orientation="vertical"
-                        android:background="@color/startScreenLight"
-                        android:paddingRight="10dp"
+                        android:paddingBottom="10dp"
                         android:paddingLeft="10dp"
-                        android:paddingBottom="15dp">
+                        android:paddingRight="10dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:layout_marginBottom="10dp"
-                        android:textSize="16sp"
-                        android:textColor="@color/my_dark_gray"
-                        android:text="@string/see_your_progress" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:layout_marginTop="20dp"
+                            android:text="@string/see_your_progress"
+                            android:textColor="@color/my_dark_gray"
+                            android:textSize="16sp" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -244,6 +242,36 @@
                                 android:text="@string/show_leaderboards"
                                 android:textSize="13sp" />
                         </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/startScreenDark"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:paddingTop="10dp"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp">
+
+
+                            <Button
+                                android:id="@+id/policy_button"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="48"
+                                android:layout_marginTop="10dp"
+                                android:text="@string/policy"
+                                android:textSize="18sp" />
+
+                            <Button
+                                android:id="@+id/rules_button"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="7dp"
+                                android:layout_weight="48"
+                                android:text="@string/rules"
+                                android:textSize="18sp" />
                     </LinearLayout>
 
                 </LinearLayout>

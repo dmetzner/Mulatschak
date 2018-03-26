@@ -84,9 +84,6 @@ public class CardExchangeLogic {
             // Use the value of the resource.
             String buttonText = view.getContext().getString(resId);
             button.init(view, position, width, height, "button_blue_metallic_large", buttonText);
-            if (i == 4) {
-                button.setEnabled(false);
-            }
 
             exchangeButtons.add(button);
         }
@@ -320,9 +317,9 @@ public class CardExchangeLogic {
         }
 
         // taking four cards is not allowed
-        if (activeButton == 4) {
-            exchangeButtons.get(activeButton).setEnabled(false);
-        }
+        // if (activeButton == 4) {
+           // exchangeButtons.get(activeButton).setEnabled(false);
+        //}
 
         return exchangeButtons.get(activeButton);
     }
