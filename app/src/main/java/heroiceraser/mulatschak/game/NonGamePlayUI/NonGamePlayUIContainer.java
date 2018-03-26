@@ -99,7 +99,7 @@ public class NonGamePlayUIContainer {
         gameOver.draw(canvas);
 
         // Display Overlays with the functionality
-        statistics_.draw(canvas);
+        statistics_.draw(canvas, controller);
         tricks_.draw(canvas, controller);
         menu_.draw(canvas);
 

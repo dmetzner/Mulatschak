@@ -93,17 +93,16 @@ public class GameStatistics extends ButtonBarWindow {
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas) {
+    public void draw(Canvas canvas, GameController controller) {
         if (isVisible()) {
 
             super.drawBackground(canvas);
             super.drawTitle(canvas);
 
             // display names & lives
-            drawStateOfTheGame(canvas, players_);
+            drawStateOfTheGame(canvas, players_, controller);
         }
     }
-
 
     //----------------------------------------------------------------------------------------------
     //  draw State of the game
@@ -114,12 +113,17 @@ public class GameStatistics extends ButtonBarWindow {
     //                                    name_3      *lives*
     //                                    ...
     //
-    private void drawStateOfTheGame(Canvas canvas, int players) {
+    private void drawStateOfTheGame(Canvas canvas, int players, GameController controller) {
+
 
         for (int i = 0; i < players; i++) {
             canvas.save();
             Point pos = new Point(display_name_text_pos_);
-            pos.y += (int) (text_paint_.getTextSize() * 2) * i;
+
+            int offset = Integer.parseInt(String.valueOf(
+                    display_name_layouts_.get(i).getText().charAt(0))) - 1;
+
+            pos.y += (int) (text_paint_.getTextSize() * 2) * offset;
 
             canvas.translate(pos.x, pos.y);
             if (display_name_layouts_.size() > i && display_name_layouts_.get(i) != null) {

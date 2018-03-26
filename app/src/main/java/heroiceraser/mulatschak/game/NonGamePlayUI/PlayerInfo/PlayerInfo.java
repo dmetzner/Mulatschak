@@ -291,7 +291,6 @@ public class PlayerInfo extends DrawableObject implements
     public void initButton(int pos, GameController controller) {
         if (pos >= 4) throw new AssertionError();
         MyButton b = new MyButton();
-        Log.d("--------------", controller.getLayout().getPlayerInfoSize()+"~~~~~~~~~~~~~~~~~~~~");
         switch (pos) {
             case GameLayout.POSITION_LEFT:
                 b.init(controller.getView(), controller.getLayout().getPlayerInfoLeftPos(),
