@@ -226,7 +226,6 @@ public class CardExchangeLogic {
             if (!hand.getCardAt(i).getPosition().equals(hand.getCardAt(i).getFixedPosition())) {
                 container.add(hand.getCardAt(i));
                 hand.getCardStack().remove(i);
-                Log.d("--------> ", "removed at: " + i);
                 i--;
             }
         }
@@ -284,7 +283,6 @@ public class CardExchangeLogic {
                 if (myPlayer_.getHand().getCardAt(i).getPosition().x > card.getPosition().x) {
                     myPlayer_.getHand().getCardStack().add(i, card);
                     inserted = true;
-                    Log.d("---------->", "inserted at: " + i);
                     break;
                 }
             }

@@ -24,6 +24,9 @@
     <string name="decline_popup_invite">Hide</string>
     <string name="is_inviting_you">is challenging you to a game!</string>
 
+    <string name="error_text">ERROR!</string>
+    <string name="error_game_canceled">Error: Game was canceled! Try again later.</string>
+
     <!-- :::::::::::::::: back button :::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="close">close</string>
     <string name="are_you_sure_to_close_message">"Are you sure you want to end %1$s?"</string>
@@ -73,6 +76,10 @@
         <h2>Not happy?</h2>
         <p> If you disagree with this privacy policy, you can use the app for at least the single player
             mode, but it is important that you do not sign in through Google Play and keep your internet turned off.</p>
+]]></string>
+
+    <string name="rules_text"><![CDATA[
+    <p>To Do</p>
 ]]></string>
 
     <!-- :::::::::::::::::::: SinglePlayer Settings :::::::::::::::::::::::::::::::::::::::::::: -->

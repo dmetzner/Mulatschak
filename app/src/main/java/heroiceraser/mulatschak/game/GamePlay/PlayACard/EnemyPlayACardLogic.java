@@ -63,6 +63,7 @@ public class EnemyPlayACardLogic {
 
         if (myPlayer.getMissATurn()) {
             controller.getGamePlay().getPlayACardRound().playACard(false, controller);
+            return;
         }
 
         boolean valid = false;
@@ -95,7 +96,6 @@ public class EnemyPlayACardLogic {
 
 
     void playACardOnline(GameController controller, MyPlayer myPlayer, int cardId) {
-
 
         int posId = 0;
 

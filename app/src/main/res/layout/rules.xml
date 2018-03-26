@@ -10,7 +10,7 @@
 
     <!-- :::::::::::::::::::: Back Button :::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <Button
-        android:id="@+id/single_player_settings_back_button"
+        android:id="@+id/rules_back_button"
         style="@style/BackButton"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
@@ -33,7 +33,7 @@
 
 
             <TextView
-                android:id="@+id/single_player_settings_title"
+                android:id="@+id/rules_title"
                 style="@style/SettingsTitleText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -43,10 +43,10 @@
                 android:text="@string/policy" />
 
             <TextView
-                android:id="@+id/single_player_settings_player_amount_text"
+                android:id="@+id/rules_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/policy_text"
+                android:text="@string/rules"
                 android:gravity="fill"
                 android:textColor="@color/my_dark_gray"
                 android:textSize="14sp" />

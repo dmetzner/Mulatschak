@@ -50,6 +50,38 @@
 
         </LinearLayout>
 
+    </LinearLayout>
+        <!-- Error POPUP -->
+    <LinearLayout
+        android:id="@+id/error_popup"
+        style="@style/InvPopup"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/my_red"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:padding="8dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp">
+
+            <TextView
+                android:id="@+id/error_text"
+                style="@style/InvPopupText"
+                android:layout_height="wrap_content"
+                android:text="@string/error_text"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/button_accept_error"
+                style="@style/InvPopupButton"
+                android:layout_marginRight="15dp"
+                android:layout_marginLeft="5dp"
+                android:text="@string/decline_popup_invite" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -145,7 +177,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/multi_player_settings_quick_game_button"
-                            android:textSize="25sp"></Button>
+                            android:textSize="25sp"/>
 
                     </LinearLayout>
 
@@ -252,7 +284,8 @@
                         android:orientation="vertical"
                         android:paddingTop="10dp"
                         android:paddingLeft="10dp"
-                        android:paddingRight="10dp">
+                        android:paddingRight="10dp"
+                        android:paddingBottom="10dp">
 
 
                             <Button

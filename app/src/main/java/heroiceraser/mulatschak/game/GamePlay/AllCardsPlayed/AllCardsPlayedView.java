@@ -94,7 +94,7 @@ public class AllCardsPlayedView{
                 for (MyPlayer p : controller.getPlayerList()) {
                     if (p.gameState != Message.gameStateWaitForNewRound &&
                             !p.getOnlineId().equals("") &&
-                                    !p.getOnlineId().equals(controller.myPlayerId)) {
+                            !p.getOnlineId().equals(controller.myPlayerId)) {
                         controller.mainActivity.sendUnReliable(p.getOnlineId(), Message.requestWaitForNewRound, "");
                         wait = true;
                     }
@@ -123,7 +123,7 @@ public class AllCardsPlayedView{
             }
         }
         catch (Exception e) {
-            Log.e("All cards played", "exception" + e);
+            if (controller.DEBUG){ Log.e("All cards played", "exception" + e); }
         }
 
     }

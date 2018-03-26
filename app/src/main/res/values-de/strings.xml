@@ -24,6 +24,46 @@
     <string name="decline_popup_invite">Verstecken</string>
     <string name="is_inviting_you">fordert dich zu einem Spiel heraus!</string>
 
+    <string name="error_text">Fehler!</string>
+    <string name="error_game_canceled">Fehler: Spiel wurde abgebrochen. Versuchs später nochmal.</string>
+
+    <!-- :::::::::::::::::::: Policy & Help         :::::::::::::::::::::::::::::::::::::::::::: -->
+    <string name="policy">Datenschutzerklärung</string>
+    <string name="rules">Spielregeln</string>
+    <string name="policy_text"><![CDATA[
+    <p>Diese App wurde von <b>Metzner Daniel</b> entwickelt. </p><br/>
+        <p> Für mehr Informationen schreiben sie eine Email an <a href="heroiceraser@gmail.com"> heroiceraser@gmail.com </a></p>
+        <br/>
+        <h2>Zusätzliche Kosten</h2>
+        <p>     Diese App benötigt für den Multiplayer Modus eine Internetverbindung, über welche Kosten Anfallen können! </p>
+        <br/>
+        <h2>Deine privaten Daten</h2>
+        <p>  Diese App ermöglicht es sich über Google Play anzumelden. Wird dieser Service in Anspruch genommen,
+         so werden dein Google Play Nickname, so wie das Profilbild mitsamt den Spielergebnissen öffentlich gemacht.
+          Diese können von jedem anderen User über die Ranglisten bzw. während eines aktiven Spiels gesehen werden.
+          Die Daten werden auf keinem nicht zu Google gehörigen Server gespeichert. Des Weiteren wird das Nutzungsverhalten von Usern NICHT ausgewertet.
+        </p>
+       <br/>
+        <h2>Nicht glücklich?</h2>
+        <p> Wenn Sie mit dieser Datenschutzerklärung nicht einverstanden sind, können Sie die App zumindest
+        für den Einzelspieler Modus nutzen. Wichtig ist, dass Sie sich dann nicht über Google Play anmelden,
+        bzw ihr Internet deaktivieren.</p>
+]]></string>
+
+    <string name="rules_text"><![CDATA[
+    <p>To Do</p>
+]]></string>
+
+
+    Diese App wurde von Metzner Daniel entwickelt. Für mehr Informationen schreiben sie eine Email an heroiceraser@gmail.com
+
+    Diese App benötigt für den Multiplayer Modus eine Internetverbindung, über welche Kosten Anfallen können!
+
+    Diese App ermöglicht es sich über Google Play anzumelden. Wird dieser Service in Anspruch genommen, so werden dein Google Play Nickname, so wie das Profilbild mitsamt den Spielergebnissen öffentlich gemacht. Diese können von jedem anderen User über die Ranglisten bzw. während eines aktiven Spiels gesehen werden. Die Daten werden auf keinem nicht zu Google gehörigen Server gespeichert. Des Weiteren wird das Nutzungsverhalten von Usern NICHT ausgewertet.
+
+    Wenn Sie mit dieser Datenschutzerklärung nicht einverstanden sind, können Sie die App zumindest für den Einzelspieler Modus nutzen. Wichtig ist, dass Sie sich dann nicht über Google Play anmelden, bzw ihr Internet deaktivieren.
+
+
     <!-- :::::::::::::::: back button :::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="close">beenden?</string>
     <string name="are_you_sure_to_close_message">"Bist du sicher dass du %1$s beenden möchtest?"</string>

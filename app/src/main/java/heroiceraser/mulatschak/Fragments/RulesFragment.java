@@ -1,9 +1,11 @@
 package heroiceraser.mulatschak.Fragments;
 
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,12 +31,21 @@ public class RulesFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.singleplayer_settings, container, false);
+        View v = inflater.inflate(R.layout.rules, container, false);
         final int[] CLICKABLES = new int[]{
-                R.id.single_player_settings_back_button,
+                R.id.rules_back_button,
         };
         for (int i : CLICKABLES) {
             v.findViewById(i).setOnClickListener(this);
+        }
+
+        TextView tv = v.findViewById(R.id.rules_text);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            tv.setText(Html.fromHtml(getString(R.string.rules_text), Html.FROM_HTML_MODE_COMPACT));
+        }
+        else {
+            tv.setText(Html.fromHtml(getString(R.string.rules_text)));
         }
 
         return v;
@@ -47,7 +58,7 @@ public class RulesFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.single_player_settings_back_button:
+            case R.id.rules_back_button:
                 mListener.onStartMenuRequested();
                 break;
         }

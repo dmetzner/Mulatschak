@@ -58,7 +58,7 @@ public class CardExchange {
 
     public void makeCardExchange(boolean first_call, GameController controller) {
         GameLogic logic = controller.getLogic();
-        
+
         if (!first_call) {
             controller.getPlayerById(logic.getTurn()).gameState = Message.gameStateWaitForPlayACard;
             controller.turnToNextPlayer(true);
@@ -90,9 +90,9 @@ public class CardExchange {
             else {
                 controller.waitForOnlineInteraction = Message.cardExchange;
                 String oId = controller.getPlayerById(logic.getTurn()).getOnlineId();
-                Log.d("-------", "wait for " +
+                if (controller.DEBUG){ Log.d("-------", "wait for " +
                         controller.getPlayerById(controller.getLogic().getTurn()).getDisplayName()
-                        + " card exchange");
+                        + " card exchange"); }
                 controller.requestMissedMessagePlayerCheck(controller.fillGameStates(),
                         controller.getPlayerById(controller.getLogic().getTurn()).getOnlineId(),
                         controller.mainActivity.gameState, Message.requestCardExchange, oId);
@@ -137,7 +137,7 @@ public class CardExchange {
             }
             activity.broadcastMessage(Message.cardExchange, gson.toJson(cardHandIds));
         }
-        Log.d("-------", "I made my card exchange");
+        if (controller.DEBUG){ Log.d("-------", "I made my card exchange"); }
         card_exchange_logic_.exchangeCards(controller);
     }
 
@@ -153,6 +153,7 @@ public class CardExchange {
             enemy_card_exchange_logic_.draw(canvas, controller);
         }
     }
+
 
 
     //----------------------------------------------------------------------------------------------

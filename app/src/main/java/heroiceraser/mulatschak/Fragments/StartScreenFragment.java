@@ -70,7 +70,7 @@ public class StartScreenFragment extends Fragment implements OnClickListener {
                 R.id.multi_player_invitations_button,
                 R.id.button_accept_popup_invitation,
                 R.id.button_decline_popup_invitation,
-                R.id.button_e
+                // R.id.button_e
                 R.id.policy_button,
                 R.id.rules_button
         };
@@ -190,6 +190,9 @@ public class StartScreenFragment extends Fragment implements OnClickListener {
                 break;
             case R.id.rules_button:
                 mListener.onRulesRequested();
+                break;
+            case R.id.button_accept_error:
+                mListener.onErrorAccepted();
                 break;
         }
     }

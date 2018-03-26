@@ -87,7 +87,7 @@ public class MulatschakDeck extends CardStack {
         }
 
         if (getCardStack().size() != CARDS_PER_DECK) {
-            Log.e("Mulatschak Deck", "Not enough Cards");
+            if (view.getController().DEBUG) {Log.e("Mulatschak Deck", "Not enough Cards"); }
         }
 
         setVisible(true);
@@ -111,7 +111,6 @@ public class MulatschakDeck extends CardStack {
     }
 
 
-
     public static int getCardSuit(Card card) {
         return (card.getId() / 100) % CARD_SUITS;
     }
@@ -119,5 +118,4 @@ public class MulatschakDeck extends CardStack {
     public static int getCardValue(Card card) {
         return (card.getId() % 100);
     }
-
 }

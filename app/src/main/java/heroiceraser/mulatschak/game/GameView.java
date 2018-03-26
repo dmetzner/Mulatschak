@@ -53,7 +53,7 @@ public class GameView extends View {
                 thread_.join();
             }
             catch (Exception e) {
-                Log.w("GameThread", "Join Excpetion" + e);
+                if (controller_.DEBUG) { Log.w("GameThread", "Join Excpetion" + e); }
             }
         }
         controller_.clear();
@@ -99,24 +99,24 @@ public class GameView extends View {
         }
 
         drawBackground(canvas);
-         if (!controller_.getGameOver().isVisible()) {
-             drawDiscardPile(canvas);
-             drawMultiplier(canvas);
-             drawBidsView(canvas);
-             drawTrumpView(canvas);
-             drawPlayerInfo(canvas);
-             drawDealerButton(canvas);
+        if (!controller_.getGameOver().isVisible()) {
+            drawDiscardPile(canvas);
+            drawMultiplier(canvas);
+            drawBidsView(canvas);
+            drawTrumpView(canvas);
+            drawPlayerInfo(canvas);
+            drawDealerButton(canvas);
 
-             drawHandCards(canvas);
+            drawHandCards(canvas);
 
-             drawDecideMulatschak(canvas);
-             drawMakeTrickBidsAnimation(canvas);
-             drawChooseTrumpAnimation(canvas);
-             drawDealingAnimation(canvas);
-             drawPlayACardAnimation(canvas);
-             drawExchangeCardsAnimation(canvas);
-             drawMulatschakResult(canvas);
-         }
+            drawDecideMulatschak(canvas);
+            drawMakeTrickBidsAnimation(canvas);
+            drawChooseTrumpAnimation(canvas);
+            drawDealingAnimation(canvas);
+            drawPlayACardAnimation(canvas);
+            drawExchangeCardsAnimation(canvas);
+            drawMulatschakResult(canvas);
+        }
         drawNonGamePlayUI(canvas);
 
         thread_.now = System.currentTimeMillis();
@@ -182,7 +182,7 @@ public class GameView extends View {
     }
 
     private void drawDiscardPile(Canvas canvas) {
-        controller_.getDiscardPile().draw(canvas);
+        controller_.getDiscardPile().draw(canvas, controller_);
         controller_.getDiscardPile().drawOverlays(canvas, controller_);
     }
 
@@ -199,6 +199,8 @@ public class GameView extends View {
         controller_.getPlayerHandsView().drawMissATurn(canvas);
     }
 
+
+    long time = 0;
 
     //----------------------------------------------------------------------------------------------
     //  onTouchEvent
@@ -227,7 +229,11 @@ public class GameView extends View {
                     f.x = event.getX(pointerIndex);
                     f.y = event.getY(pointerIndex);
                     mActivePointers.put(pointerId, f);
-                    controller_.getTouchEvents().ActionDown(controller_, (int) f.x, (int) f.y);
+                    if (time < System.currentTimeMillis() + 200) {
+                        time = System.currentTimeMillis();
+                        controller_.getTouchEvents().ActionDown(controller_, (int) f.x, (int) f.y);
+                    }
+
                     break;
                 case MotionEvent.ACTION_MOVE:
                     for (int size = event.getPointerCount(), i = 0; i < size; i++) {
@@ -235,8 +241,11 @@ public class GameView extends View {
                         if (point != null) {
                             point.x = event.getX(i);
                             point.y = event.getY(i);
-                            controller_.getTouchEvents().ActionMove(controller_,
-                                    (int) point.x, (int) point.y);
+                            if (time < System.currentTimeMillis() + 200) {
+                                time = System.currentTimeMillis();
+                                controller_.getTouchEvents().ActionMove(controller_,
+                                        (int) point.x, (int) point.y);
+                            }
                         }
                     }
                     break;
@@ -250,8 +259,11 @@ public class GameView extends View {
                         if (point != null) {
                             point.x = event.getX(pointerId);
                             point.y = event.getY(pointerId);
-                            controller_.getTouchEvents().ActionUp(controller_,
-                                    (int) point.x, (int) point.y);
+                            if (time < System.currentTimeMillis() + 200) {
+                                time = System.currentTimeMillis();
+                                controller_.getTouchEvents().ActionUp(controller_,
+                                        (int) point.x, (int) point.y);
+                            }
                         }
 
                         mActivePointers.remove(pointerId);
@@ -299,13 +311,13 @@ public class GameView extends View {
             return;
         }
 
-        getThread().setRunning(false);
+        /* getThread().setRunning(false);
         try {
             thread_.join();
         }
         catch (Exception e) {
-            Log.w("GameThread", "Join Excpetion");
-        }
+            if (controller_.DEBUG) { Log.w("GameThread", "Join Excpetion"); }
+        } */
     }
 
     public synchronized void disableUpdateCanvasThreadOnly4TouchEvents() {

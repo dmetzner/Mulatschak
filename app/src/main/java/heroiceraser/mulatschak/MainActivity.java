@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.opengl.Visibility;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -55,6 +56,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -94,6 +96,8 @@ public class MainActivity extends FragmentActivity implements
 
     // tag for debug logging
     final String TAG = "MainActivity";
+
+    public final Boolean DEBUG = false;
 
     // bool if an actual game is active
     private boolean gameRunning;
@@ -176,7 +180,7 @@ public class MainActivity extends FragmentActivity implements
             }
         }
         catch (Exception e) {
-            Log.e(TAG, "getVisibleFragment" + e);
+            if (DEBUG) {Log.e(TAG, "getVisibleFragment" + e);}
         }
         return null;
     }
@@ -190,7 +194,7 @@ public class MainActivity extends FragmentActivity implements
                     .commitAllowingStateLoss();
         }
         catch (Exception e) {
-            Log.e(TAG, "switchToFragment" + e);
+            if (DEBUG) {Log.e(TAG, "switchToFragment" + e);}
         }
     }
 
@@ -215,7 +219,7 @@ public class MainActivity extends FragmentActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.d(TAG, "**** got onCreate");
+        if (DEBUG) {Log.d(TAG, "**** got onCreate");}
 
         gameRunning = false;
         waitForOnlineInteraction = 0;
@@ -264,7 +268,7 @@ public class MainActivity extends FragmentActivity implements
     //
     @Override
     public void onStart() {
-        Log.d(TAG, "**** got onSart");
+        if (DEBUG) { Log.d(TAG, "**** got onSart"); }
         super.onStart();
     }
 
@@ -275,7 +279,7 @@ public class MainActivity extends FragmentActivity implements
     protected void onResume() {
 
         super.onResume();
-        Log.d(TAG, "**** got onResume");
+        if (DEBUG) {Log.d(TAG, "**** got onResume"); }
 
         if (gameRunning) {
             keepScreenOn();
@@ -311,7 +315,7 @@ public class MainActivity extends FragmentActivity implements
     // Activity is going to the background. We have to leave the current room.
     @Override
     public void onStop() {
-        Log.d(TAG, "**** got onStop");
+        if (DEBUG) {Log.d(TAG, "**** got onStop");}
 
         // if we're in a room, leave it.        // not happy with the api -> prefer resource leaks
         // leaveRoom();                        // ToDo find better idea
@@ -327,7 +331,7 @@ public class MainActivity extends FragmentActivity implements
     //
     @Override
     public void onDestroy() {
-        Log.d(TAG, "**** got onDestroy");
+        if (DEBUG) {Log.d(TAG, "**** got onDestroy");}
 
         leaveRoom();// not happy with the api -> prefer resource leaks // ToDo find better idea
         super.onDestroy();
@@ -352,7 +356,7 @@ public class MainActivity extends FragmentActivity implements
             startActivityForResult(mGoogleSignInClient.getSignInIntent(), RC_SIGN_IN);
         }
         catch (Exception e) {
-            Log.e(TAG, "startSignInIntent " + e);
+            if (DEBUG) {Log.e(TAG, "startSignInIntent " + e);}
         }
     }
 
@@ -364,32 +368,32 @@ public class MainActivity extends FragmentActivity implements
     public void signInSilently() {
 
         try {
-            Log.d(TAG, "signInSilently()");
+            if (DEBUG) {Log.d(TAG, "signInSilently()");}
 
             mGoogleSignInClient.silentSignIn().addOnCompleteListener(this,
                     new OnCompleteListener<GoogleSignInAccount>() {
                         @Override
                         public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
                             if (task.isSuccessful()) {
-                                Log.d(TAG, "signInSilently(): success");
+                                if (DEBUG) {Log.d(TAG, "signInSilently(): success");}
                                 onConnected(task.getResult());
                             } else {
-                                Log.d(TAG, "signInSilently(): failure", task.getException());
+                                if (DEBUG) {Log.d(TAG, "signInSilently(): failure", task.getException());}
                                 onDisconnected();
                             }
                         }
                     });
         } catch (Exception e) {
-            Log.e(TAG, "signInSilently " + e);
+            if (DEBUG) {Log.e(TAG, "signInSilently " + e);}
         }
     }
 
     public void signOut() {
         try {
-            Log.d(TAG, "signOut()");
+            if (DEBUG) {Log.d(TAG, "signOut()");}
 
             if (!isSignedIn()) {
-                Log.w(TAG, "signOut() called, but was not signed in!");
+                if (DEBUG) {Log.w(TAG, "signOut() called, but was not signed in!");}
                 return;
             }
 
@@ -399,7 +403,7 @@ public class MainActivity extends FragmentActivity implements
                         public void onComplete(@NonNull Task<Void> task) {
 
                             if (task.isSuccessful()) {
-                                Log.d(TAG, "signOut(): success");
+                                if (DEBUG) {Log.d(TAG, "signOut(): success");}
                             } else {
                                 handleException(task.getException(), "signOut() failed!");
                             }
@@ -408,7 +412,7 @@ public class MainActivity extends FragmentActivity implements
                         }
                     });
         } catch (Exception e) {
-            Log.e(TAG, "signOut " + e);
+            if (DEBUG) {Log.e(TAG, "signOut " + e);}
         }
     }
 
@@ -437,25 +441,25 @@ public class MainActivity extends FragmentActivity implements
             case GamesCallbackStatusCodes.OK:
                 break;
             case GamesClientStatusCodes.MULTIPLAYER_ERROR_NOT_TRUSTED_TESTER:
-                errorString = "getString(R.string.status_multiplayer_error_not_trusted_tester)";
+                errorString = "status_multiplayer_error_not_trusted_tester";
                 break;
             case GamesClientStatusCodes.MATCH_ERROR_ALREADY_REMATCHED:
-                errorString = "getString(R.string.match_error_already_rematched)";
+                errorString = "match_error_already_rematched";
                 break;
             case GamesClientStatusCodes.NETWORK_ERROR_OPERATION_FAILED:
-                errorString = "getString(R.string.network_error_operation_failed)";
+                errorString = "network_error_operation_failed";
                 break;
             case GamesClientStatusCodes.INTERNAL_ERROR:
-                errorString = "getString(R.string.internal_error)";
+                errorString = "internal_error";
                 break;
             case GamesClientStatusCodes.MATCH_ERROR_INACTIVE_MATCH:
-                errorString = "getString(R.string.match_error_inactive_match)";
+                errorString = "match_error_inactive_match";
                 break;
             case GamesClientStatusCodes.MATCH_ERROR_LOCALLY_MODIFIED:
-                errorString = "getString(R.string.match_error_locally_modified)";
+                errorString = "match_error_locally_modified";
                 break;
             default:
-                errorString = "getString(R.string.unexpected_status, GamesClientStatusCodes.getStatusCodeString(status))";
+                errorString = "unexpected_status";
                 break;
         }
 
@@ -465,11 +469,7 @@ public class MainActivity extends FragmentActivity implements
 
         String message = "getString(R.string.status_exception_error, details, status, exception)";
 
-        new AlertDialog.Builder(MainActivity.this)
-                .setTitle("Error")
-                .setMessage(message + "\n" + errorString)
-                .setNeutralButton(android.R.string.ok, null)
-                .show();
+        mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, errorString);
     }
 
     void startQuickGame() {
@@ -491,7 +491,8 @@ public class MainActivity extends FragmentActivity implements
             mRealTimeMultiplayerClient.create(mRoomConfig);
         }
         catch (Exception e) {
-            Log.e(TAG, "startQuickGame exception " + e);
+            mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_game_canceled));
+            if (DEBUG) {Log.e(TAG, "startQuickGame exception " + e); }
         }
 
     }
@@ -516,10 +517,7 @@ public class MainActivity extends FragmentActivity implements
 
                     onDisconnected();
 
-                    new AlertDialog.Builder(this)
-                            .setMessage(message)
-                            .setNeutralButton(android.R.string.ok, null)
-                            .show();
+                    mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.signin_other_error));
                 }
             } else if (requestCode == RC_SELECT_PLAYERS) {
                 // we got the result from the "select players" UI -- ready to create the room
@@ -534,7 +532,7 @@ public class MainActivity extends FragmentActivity implements
                 // we got the result from the "waiting room" UI.
                 if (resultCode == Activity.RESULT_OK) {
                     // ready to start playing
-                    Log.d(TAG, "Starting game (waiting room returned OK).");
+                    if (DEBUG) {Log.d(TAG, "Starting game (waiting room returned OK).");}
                     startGamePreparation(true);
                 } else if (resultCode == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
                     // player indicated that they want to leave the room
@@ -552,7 +550,8 @@ public class MainActivity extends FragmentActivity implements
             super.onActivityResult(requestCode, resultCode, intent);
         }
         catch (Exception e) {
-            Log.e(TAG, "onActivityResult exception " + e);
+            mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_text));
+            if (DEBUG) {Log.e(TAG, "onActivityResult exception " + e);}
         }
     }
 
@@ -562,16 +561,16 @@ public class MainActivity extends FragmentActivity implements
     private void handleSelectPlayersResult(int response, Intent data) {
         try {
             if (response != Activity.RESULT_OK) {
-                Log.w(TAG, "*** select players UI cancelled, " + response);
+                if (DEBUG) {Log.w(TAG, "*** select players UI cancelled, " + response);}
                 onStartMenuRequested();
                 return;
             }
 
-            Log.d(TAG, "Select players UI succeeded.");
+            if (DEBUG) {Log.d(TAG, "Select players UI succeeded.");}
 
             // get the invitee list
             final ArrayList<String> invitees = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
-            Log.d(TAG, "Invitee count: " + invitees.size());
+            if (DEBUG) {Log.d(TAG, "Invitee count: " + invitees.size());}
 
             // get the automatch criteria
             Bundle autoMatchCriteria = null;
@@ -580,11 +579,11 @@ public class MainActivity extends FragmentActivity implements
             if (minAutoMatchPlayers > 0 || maxAutoMatchPlayers > 0) {
                 autoMatchCriteria = RoomConfig.createAutoMatchCriteria(
                         minAutoMatchPlayers, maxAutoMatchPlayers, 0);
-                Log.d(TAG, "Automatch criteria: " + autoMatchCriteria);
+                if (DEBUG) {Log.d(TAG, "Automatch criteria: " + autoMatchCriteria);}
             }
 
             // create the room
-            Log.d(TAG, "Creating room...");
+            if (DEBUG) {Log.d(TAG, "Creating room...");}
             requestLoadingScreen();
             messageQueue.clear();
             correctLeftPeers.clear();
@@ -597,10 +596,11 @@ public class MainActivity extends FragmentActivity implements
                     .setRoomStatusUpdateCallback(mRoomStatusUpdateCallback)
                     .setAutoMatchCriteria(autoMatchCriteria).build();
             mRealTimeMultiplayerClient.create(mRoomConfig);
-            Log.d(TAG, "Room created, waiting for it to be ready...");
+            if (DEBUG) {Log.d(TAG, "Room created, waiting for it to be ready...");}
         }
         catch (Exception e) {
-            Log.e(TAG, "handleSelectPlayersResult exception: " + e);
+            mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_game_canceled));
+            if (DEBUG) {Log.e(TAG, "handleSelectPlayersResult exception: " + e);}
         }
     }
 
@@ -609,12 +609,12 @@ public class MainActivity extends FragmentActivity implements
     private void handleInvitationInboxResult(int response, Intent data) {
         try {
             if (response != Activity.RESULT_OK) {
-                Log.w(TAG, "*** invitation inbox UI cancelled, " + response);
+                if (DEBUG) {Log.w(TAG, "*** invitation inbox UI cancelled, " + response);}
                 onStartMenuRequested();
                 return;
             }
 
-            Log.d(TAG, "Invitation inbox UI succeeded.");
+            if (DEBUG) {Log.d(TAG, "Invitation inbox UI succeeded.");}
             Invitation invitation = null;
             if (data.getExtras() != null) {
                 invitation = data.getExtras().getParcelable(Multiplayer.EXTRA_INVITATION);
@@ -626,7 +626,8 @@ public class MainActivity extends FragmentActivity implements
             }
         }
         catch (Exception e) {
-            Log.e(TAG, "handleInvitationInboxResult exception: " + e);
+            mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_game_canceled));
+            if (DEBUG) {Log.e(TAG, "handleInvitationInboxResult exception: " + e);}
         }
     }
 
@@ -634,7 +635,7 @@ public class MainActivity extends FragmentActivity implements
     void acceptInviteToRoom(String invitationId) {
         try {
             // accept the invitation
-            Log.d(TAG, "Accepting invitation: " + invitationId);
+            if (DEBUG) {Log.d(TAG, "Accepting invitation: " + invitationId);}
 
             mRoomConfig = RoomConfig.builder(mRoomUpdateCallback)
                     .setInvitationIdToAccept(invitationId)
@@ -653,11 +654,12 @@ public class MainActivity extends FragmentActivity implements
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            Log.d(TAG, "Room Joined Successfully!");
+                            if (DEBUG) {Log.d(TAG, "Room Joined Successfully!");}
                         }
                     });
         }  catch (Exception e) {
-            Log.e(TAG, "handleInvitationInboxResult exception: " + e);
+            mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_game_canceled));
+            if (DEBUG) {Log.e(TAG, "handleInvitationInboxResult exception: " + e);}
         }
     }
 
@@ -669,7 +671,7 @@ public class MainActivity extends FragmentActivity implements
                 @Override
                 public void run() {
                     mMultiplayer = false;
-                    Log.d(TAG, "Leaving room.");
+                    if (DEBUG) {Log.d(TAG, "Leaving room.");}
                     messageQueue.clear();
                     onStartMenuRequested();
                     if (mRoomId != null) {
@@ -683,13 +685,13 @@ public class MainActivity extends FragmentActivity implements
                                 });
                         onStartMenuRequested();
                     } else {
-                        Log.d(TAG, "Leaving room.... but we are in no room");
+                        if (DEBUG) {Log.d(TAG, "Leaving room.... but we are in no room");}
                         onStartMenuRequested();
                     }
                 }
             });
         } catch (Exception e) {
-            Log.e(TAG, "leave room exceptio " + e);
+            if (DEBUG) {Log.e(TAG, "leave room exception " + e);}
         }
     }
 
@@ -699,7 +701,7 @@ public class MainActivity extends FragmentActivity implements
                 @Override
                 public void run() {
                     mMultiplayer = false;
-                    Log.d(TAG, "Leaving room.");
+                    if (DEBUG) {Log.d(TAG, "Leaving room.");}
                     messageQueue.clear();
                     if (mRoomId != null) {
                         mRealTimeMultiplayerClient.leave(mRoomConfig, mRoomId)
@@ -711,12 +713,12 @@ public class MainActivity extends FragmentActivity implements
                                     }
                                 });
                     } else {
-                        Log.d(TAG, "Leaving room.... but we are in no room");
+                        if (DEBUG) {Log.d(TAG, "Leaving room.... but we are in no room");}
                     }
                 }
             });
         } catch (Exception e) {
-            Log.e(TAG, "leave room exceptio " + e);
+            if (DEBUG) {Log.e(TAG, "leave room exception " + e);}
         }
     }
 
@@ -740,7 +742,8 @@ public class MainActivity extends FragmentActivity implements
                     .addOnFailureListener(createFailureListener("There was a problem getting the waiting room!"));
         }
         catch (Exception e) {
-            Log.e(TAG, "showWaitingRoom exception: " + e);
+            mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_game_canceled));
+            if (DEBUG) {Log.e(TAG, "showWaitingRoom exception: " + e);}
         }
 
     }
@@ -763,7 +766,7 @@ public class MainActivity extends FragmentActivity implements
 
             if (mIncomingInvitationId != null && mIncomingInvitationId.equals(invitationId)) {
                 mIncomingInvitationId = null;
-                Log.d("Tag", "nice");
+                if (DEBUG) {Log.d("Tag", "Invitation removed");}
                 mStartScreenFragment.setInvitationPopUpVisibility(View.GONE, "");
             }
         }
@@ -788,6 +791,14 @@ public class MainActivity extends FragmentActivity implements
         // can still be found in all invitations
     }
 
+    @Override
+    public void onErrorAccepted() {
+        // user wants to accept the invitation shown on the invitation popup
+        // (the one we got through the OnInvitationReceivedListener).
+        mStartScreenFragment.setErrorPopUpVisibility(View.GONE, "");
+        // can still be found in all invitations
+    }
+
     /*
      * CALLBACKS SECTION. This section shows how we implement the several games
      * API callbacks.
@@ -795,7 +806,7 @@ public class MainActivity extends FragmentActivity implements
 
     private void onConnected(GoogleSignInAccount googleSignInAccount) {
         try {
-            Log.d(TAG, "onConnected(): connected to Google APIs");
+            if (DEBUG) {Log.d(TAG, "onConnected(): connected to Google APIs");}
 
             // Show sign-out button on main menu
             mStartScreenFragment.handleSignIn(false);
@@ -853,7 +864,7 @@ public class MainActivity extends FragmentActivity implements
 
                                 if (invitation != null && invitation.getInvitationId() != null) {
                                     // retrieve and cache the invitation ID
-                                    Log.d(TAG, "onConnected: connection hint has a room invite!");
+                                    if (DEBUG) {Log.d(TAG, "onConnected: connection hint has a room invite!");}
                                     acceptInviteToRoom(invitation.getInvitationId());
                                 }
                             }
@@ -862,7 +873,8 @@ public class MainActivity extends FragmentActivity implements
                     .addOnFailureListener(createFailureListener("There was a problem getting the activation hint!"));
         }
         catch (Exception e) {
-            Log.e(TAG, "onConnected exception: " + e);
+            mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_text));
+            if (DEBUG) {Log.e(TAG, "onConnected exception: " + e);}
         }
 
     }
@@ -878,7 +890,7 @@ public class MainActivity extends FragmentActivity implements
 
     public void onDisconnected() {
         try {
-            Log.d(TAG, "onDisconnected()");
+            if (DEBUG) {Log.d(TAG, "onDisconnected()");}
 
             mRealTimeMultiplayerClient = null;
             mInvitationsClient = null;
@@ -887,7 +899,8 @@ public class MainActivity extends FragmentActivity implements
             mStartScreenFragment.setGreeting(getString(R.string.signed_out_greeting));
         }
         catch (Exception e) {
-            Log.e(TAG, "onDisconnected exception: " + e);
+            mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_text));
+            if (DEBUG) {Log.e(TAG, "onDisconnected exception: " + e);}
         }
     }
 
@@ -898,7 +911,7 @@ public class MainActivity extends FragmentActivity implements
         @Override
         public void onConnectedToRoom(Room room) {
             try {
-                Log.d(TAG, "onConnectedToRoom.");
+                if (DEBUG) {Log.d(TAG, "onConnectedToRoom.");}
 
                 //get participants and my ID:
                 mParticipants = room.getParticipants();
@@ -910,12 +923,13 @@ public class MainActivity extends FragmentActivity implements
                 }
 
                 // print out the list of participants (for debug purposes)
-                Log.d(TAG, "Room ID: " + mRoomId);
-                Log.d(TAG, "My ID " + myParticipantId);
-                Log.d(TAG, "<< CONNECTED TO ROOM>>");
+                if (DEBUG) {Log.d(TAG, "Room ID: " + mRoomId);}
+                if (DEBUG) {Log.d(TAG, "My ID " + myParticipantId);}
+                if (DEBUG) {Log.d(TAG, "<< CONNECTED TO ROOM>>");}
             }
             catch (Exception e) {
-                Log.e(TAG, "onConnected exception: " + e);
+                mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_text));
+                if (DEBUG) {Log.e(TAG, "onConnected exception: " + e);}
             }
         }
 
@@ -923,7 +937,7 @@ public class MainActivity extends FragmentActivity implements
         @Override
         public void onDisconnectedFromRoom(Room room) {
             try {
-                Log.d(TAG, "onDisconnectedToRoom.");
+                if (DEBUG) {Log.d(TAG, "onDisconnectedToRoom.");}
                 onlyLeaveRoom();
                 ArrayList<String> leftPeers = new ArrayList<>();
                 for (Participant p : mParticipants) {
@@ -934,7 +948,8 @@ public class MainActivity extends FragmentActivity implements
                 // showGameError(); -> we can stay in the game and play against bots ;)
             }
             catch (Exception e) {
-                Log.e(TAG, "onDisconnected exception: " + e);
+                mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_text));
+                if (DEBUG) {Log.e(TAG, "onDisconnected exception: " + e);}
             }
 
         }
@@ -1002,6 +1017,7 @@ public class MainActivity extends FragmentActivity implements
             public void run() {
                 endGame();
                 onStartMenuRequested();
+                mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_game_canceled));
             }
         });
     }
@@ -1012,9 +1028,9 @@ public class MainActivity extends FragmentActivity implements
         @Override
         public void onRoomCreated(int statusCode, Room room) {
             try {
-                Log.d(TAG, "onRoomCreated(" + statusCode + ", " + room + ")");
+                if (DEBUG) {Log.d(TAG, "onRoomCreated(" + statusCode + ", " + room + ")");}
                 if (statusCode != GamesCallbackStatusCodes.OK) {
-                    Log.e(TAG, "*** Error: onRoomCreated, status " + statusCode);
+                    if (DEBUG) {Log.e(TAG, "*** Error: onRoomCreated, status " + statusCode);}
                     showGameError();
                     return;
                 }
@@ -1026,7 +1042,8 @@ public class MainActivity extends FragmentActivity implements
                 showWaitingRoom(room);
             }
             catch (Exception e) {
-                Log.e(TAG, "onRoomCreated exception: " + e);
+                mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_text));
+                if (DEBUG) {Log.e(TAG, "onRoomCreated exception: " + e);}
             }
 
         }
@@ -1035,9 +1052,9 @@ public class MainActivity extends FragmentActivity implements
         @Override
         public void onRoomConnected(int statusCode, Room room) {
             try {
-                Log.d(TAG, "onRoomConnected(" + statusCode + ", " + room + ")");
+                if (DEBUG) {Log.d(TAG, "onRoomConnected(" + statusCode + ", " + room + ")");}
                 if (statusCode != GamesCallbackStatusCodes.OK) {
-                    Log.e(TAG, "*** Error: onRoomConnected, status " + statusCode);
+                    if (DEBUG) {Log.e(TAG, "*** Error: onRoomConnected, status " + statusCode);}
                     showGameError();
                     return;
                 }
@@ -1046,7 +1063,8 @@ public class MainActivity extends FragmentActivity implements
                 updateRoom(room);
             }
             catch (Exception e) {
-                Log.e(TAG, "onRoomConnected exception: " + e);
+                mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_text));
+                if (DEBUG) {Log.e(TAG, "onRoomConnected exception: " + e);}
             }
 
         }
@@ -1054,9 +1072,9 @@ public class MainActivity extends FragmentActivity implements
         @Override
         public void onJoinedRoom(int statusCode, Room room) {
             try {
-                Log.d(TAG, "onJoinedRoom(" + statusCode + ", " + room + ")");
+                if (DEBUG) {Log.d(TAG, "onJoinedRoom(" + statusCode + ", " + room + ")");}
                 if (statusCode != GamesCallbackStatusCodes.OK) {
-                    Log.e(TAG, "*** Error: onRoomConnected, status " + statusCode);
+                    if (DEBUG) {Log.e(TAG, "*** Error: onRoomConnected, status " + statusCode);}
                     showGameError();
                     return;
                 }
@@ -1066,7 +1084,8 @@ public class MainActivity extends FragmentActivity implements
                 showWaitingRoom(room);
             }
             catch (Exception e) {
-                Log.e(TAG, "onJoinedRoom exception: " + e);
+                mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_text));
+                if (DEBUG) {Log.e(TAG, "onJoinedRoom exception: " + e);}
             }
 
         }
@@ -1076,13 +1095,14 @@ public class MainActivity extends FragmentActivity implements
         @Override
         public void onLeftRoom(int statusCode, @NonNull String roomId) {
             try {
-                Log.d(TAG, "onLeftRoom, code " + statusCode);
+                if (DEBUG) {Log.d(TAG, "onLeftRoom, code " + statusCode);}
                 if (!gameRunning) {
                     onStartMenuRequested();
                 }
             }
             catch (Exception e) {
-                Log.e(TAG, "onLeftRoom exception: " + e);
+                mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_text));
+                if (DEBUG) {Log.e(TAG, "onLeftRoom exception: " + e);}
             }
 
         }
@@ -1135,11 +1155,11 @@ public class MainActivity extends FragmentActivity implements
                         public void run() {
                             if (gameRunning && mGameView != null && mGameView.getController() != null
                                     && mGameView.getController().isGameStarted()) {
-                                Log.d(TAG, "Bye bye " + leftPeer);
+                                if (DEBUG) {Log.d(TAG, "Bye bye " + leftPeer);}
                                 mGameView.getController().handleLeftPeer(leftPeer);
                             }
                             else if (gamePreparationRunning || gameRunning) {
-                                Log.d(TAG, "Bye bye pre " + leftPeer);
+                                if (DEBUG) {Log.d(TAG, "Bye bye pre " + leftPeer);}
                                 // ToDo Show message Error
                                 endGame();
                             }
@@ -1176,11 +1196,11 @@ public class MainActivity extends FragmentActivity implements
                             // tell the player
                             if (gameRunning && mGameView != null && mGameView.getController() != null
                                     && mGameView.getController().isGameStarted()) {
-                                Log.d(TAG, "Bye bye " + leftPeer);
+                                if (DEBUG) {Log.d(TAG, "Bye bye " + leftPeer);}
                                 mGameView.getController().handleLeftPeer(leftPeer);
                             }
                             else if (gamePreparationRunning || gameRunning) {
-                                Log.d(TAG, "Bye bye pre " + leftPeer);
+                                if (DEBUG) {Log.d(TAG, "Bye bye pre " + leftPeer);}
                                 // ToDo Show message Error
                                 endGame();
                             }
@@ -1191,7 +1211,8 @@ public class MainActivity extends FragmentActivity implements
             }
         }
         catch (Exception e) {
-            Log.e(TAG, "updatePlayers exception: " + e);
+            mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_text));
+            if (DEBUG) {Log.e(TAG, "updatePlayers exception: " + e);}
         }
 
     }
@@ -1224,9 +1245,7 @@ public class MainActivity extends FragmentActivity implements
                 byte[] buf = realTimeMessage.getMessageData();
                 String data = new String(buf);
                 Message message = gson.fromJson(data, Message.class);
-                // Log.d(TAG, "---------------------------------------");
-                // Log.d(TAG, "Message received: type " + message.type);
-                // Log.d(TAG, "GameState " + gameState);
+                // if (DEBUG) {Log.d(TAG, "Message received: type " + message.type);}
                 if (correctLeftPeers.contains(message.senderId)) {
                     return;
                 }
@@ -1234,7 +1253,7 @@ public class MainActivity extends FragmentActivity implements
                 if (messageQueue.size() > 2 && messageQueue.get(messageQueue.size() - 1).type ==
                         messageQueue.get(messageQueue.size() - 2).type) {
                     messageQueue.remove(messageQueue.size() - 1);
-                    Log.d(TAG, "Message removed");
+                    if (DEBUG) {Log.d(TAG, "Message removed");}
                 }
                 else {
                     workOnMessageQueue();
@@ -1242,7 +1261,7 @@ public class MainActivity extends FragmentActivity implements
 
             }
             catch (Exception e) {
-                Log.e(TAG, "message received exception " + e);
+                if (DEBUG) {Log.e(TAG, "message received exception " + e);}
             }
 
         }
@@ -1287,7 +1306,7 @@ public class MainActivity extends FragmentActivity implements
                 msgBuf = gson.toJson(message).getBytes("UTF-8");
             }
             catch (Exception e) {
-                Log.d(TAG, "send message -> charset");
+                if (DEBUG) {Log.d(TAG, "send message -> charset");}
             }
             if (msgBuf == null) {
                 return;
@@ -1297,7 +1316,7 @@ public class MainActivity extends FragmentActivity implements
 
         }
         catch (Exception e) {
-            Log.e(TAG, "broadcast message exception " + e);
+            if (DEBUG) {Log.e(TAG, "broadcast message exception " + e);}
         }
     }
 
@@ -1322,22 +1341,22 @@ public class MainActivity extends FragmentActivity implements
                         mRoomId, p.getParticipantId(), new RealTimeMultiplayerClient.ReliableMessageSentCallback() {
                             @Override
                             public void onRealTimeMessageSent(int statusCode, int tokenId, String recipientParticipantId) {
-                                Log.d(TAG, "RealTime message sent");
-                                Log.d(TAG, "  statusCode: " + statusCode);
-                                Log.d(TAG, "  tokenId: " + tokenId);
-                                Log.d(TAG, "  recipientParticipantId: " + recipientParticipantId);
+                                if (DEBUG) {Log.d(TAG, "RealTime message sent");}
+                                if (DEBUG) {Log.d(TAG, "  statusCode: " + statusCode);}
+                                if (DEBUG) {Log.d(TAG, "  tokenId: " + tokenId);}
+                                if (DEBUG) {Log.d(TAG, "  recipientParticipantId: " + recipientParticipantId);}
                             }
                         })
                         .addOnSuccessListener(new OnSuccessListener<Integer>() {
                             @Override
                             public void onSuccess(Integer tokenId) {
-                                Log.d(TAG, "Created a reliable message with tokenId: " + tokenId);
+                                if (DEBUG) {Log.d(TAG, "Created a reliable message with tokenId: " + tokenId);}
                             }
                         });
             }
         }
         catch (Exception e) {
-            Log.e(TAG, "broadCastReliable exception: " + e);
+            if (DEBUG) {Log.e(TAG, "broadCastReliable exception: " + e);}
         }
     }
 
@@ -1363,7 +1382,7 @@ public class MainActivity extends FragmentActivity implements
                 msgBuf = gson.toJson(message).getBytes("UTF-8");
             }
             catch (Exception e) {
-                Log.d(TAG, "send message -> charset");
+                if (DEBUG) {Log.d(TAG, "send message -> charset");}
             }
             if (msgBuf == null) {
                 return;
@@ -1386,10 +1405,10 @@ public class MainActivity extends FragmentActivity implements
             mRealTimeMultiplayerClient.sendUnreliableMessage(msgBuf, mRoomId,
                     sendToId);
 
-           // Log.d(TAG, "Message sent: " + message.type + "-- to: " + sendToId);
+           // if (DEBUG) {Log.d(TAG, "Message sent: " + message.type + "-- to: " + sendToId);
         }
         catch (Exception e) {
-            Log.e(TAG, "broadCastUnReliable exception: " + e);
+            if (DEBUG) {Log.e(TAG, "broadCastUnReliable exception: " + e);}
         }
     }
 
@@ -1410,11 +1429,11 @@ public class MainActivity extends FragmentActivity implements
                 mRealTimeMultiplayerClient.sendUnreliableMessage(msgBuf, mRoomId,
                         p.getParticipantId());
 
-                // Log.d(TAG, "Message sent: " + message.type);
+                // if (DEBUG) {Log.d(TAG, "Message sent: " + message.type);
             }
         }
         catch (Exception e) {
-            Log.e(TAG, "onbroadcastUnreliable exception: " + e);
+            if (DEBUG) {Log.e(TAG, "onbroadcastUnreliable exception: " + e);}
         }
 
     }
@@ -1457,7 +1476,7 @@ public class MainActivity extends FragmentActivity implements
                 startActivity(intent);
             }
             else {
-                switchToFragment(mPrivacyPolicyFragment, "mPolicyFragment");
+                switchToFragment(mPrivacyPolicyFragment, "mPrivacyPolicyFragment");
             }
         }
         catch (Exception e) {
@@ -1537,7 +1556,7 @@ public class MainActivity extends FragmentActivity implements
     @Override
     public void onSignInButtonClicked() {
         // start the sign-in flow
-        Log.d(TAG, "Sign-in button clicked");
+        if (DEBUG) {Log.d(TAG, "Sign-in button clicked");}
         startSignInIntent();
     }
 
@@ -1548,7 +1567,7 @@ public class MainActivity extends FragmentActivity implements
     public void onSignOutButtonClicked() {
         // user wants to sign out
         // sign out.
-        Log.d(TAG, "Sign-out button clicked");
+        if (DEBUG) {Log.d(TAG, "Sign-out button clicked");}
         signOut();
     }
 
@@ -1561,7 +1580,7 @@ public class MainActivity extends FragmentActivity implements
     @Override
     public void onBackPressed() {
 
-        Log.d(TAG, "-----------------------------------------------------------------------------");
+        if (DEBUG) {Log.d(TAG, "Back Pressed");}
 
         Fragment active_frag = getVisibleFragment();
         if (!gameRunning && active_frag != null && active_frag.getTag() != null &&
@@ -1628,7 +1647,8 @@ public class MainActivity extends FragmentActivity implements
         }
         catch (Exception e) {
             onStartMenuRequested();
-            Log.e(TAG, "onSinglePlayerRequested: " + e);
+            mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_text));
+            if (DEBUG) {Log.e(TAG, "onSinglePlayerRequested: " + e);}
         }
 
     }
@@ -1654,7 +1674,8 @@ public class MainActivity extends FragmentActivity implements
         }
         catch (Exception e) {
             onStartMenuRequested();
-            Log.e(TAG, "onMultiPlayerQuickGameRequested exception: " + e);
+            mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_text));
+            if (DEBUG) {Log.e(TAG, "onMultiPlayerQuickGameRequested exception: " + e);}
         }
     }
 
@@ -1674,7 +1695,8 @@ public class MainActivity extends FragmentActivity implements
         }
         catch (Exception e) {
             onStartMenuRequested();
-            Log.e(TAG, "onMultiPlayerInvitePlayerRequested exception: " + e);
+            mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_text));
+            if (DEBUG) {Log.e(TAG, "onMultiPlayerInvitePlayerRequested exception: " + e);}
         }
 
     }
@@ -1696,7 +1718,8 @@ public class MainActivity extends FragmentActivity implements
         }
         catch (Exception e) {
             onStartMenuRequested();
-            Log.e(TAG, "onMultiPlayerSeeInvitationsRequested exception: " + e);
+            mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_text));
+            if (DEBUG) {Log.e(TAG, "onMultiPlayerSeeInvitationsRequested exception: " + e);}
         }
     }
 
@@ -1738,23 +1761,26 @@ public class MainActivity extends FragmentActivity implements
             }
         }
         catch (Exception e) {
-            Log.e(TAG, "startGamePreparation exception: " + e);
+            mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_game_canceled));
+            if (DEBUG) {Log.e(TAG, "startGamePreparation exception: " + e);}
         }
     }
 
 
-    private volatile Integer[] missedHeartBeats = new Integer[4];
+    private volatile HashMap<String, Integer> missedHeartBeats = new HashMap<>();
     private volatile boolean heartBeating = false;
     ScheduledExecutorService executor;
 
     private void startHeartBeat() {
         try {
+            if (!mMultiplayer) {
+                return;
+            }
             heartBeating = true;
-            missedHeartBeats = new Integer[4];
-            missedHeartBeats[0] = 0;
-            missedHeartBeats[1] = 0;
-            missedHeartBeats[2] = 0;
-            missedHeartBeats[3] = 0;
+            missedHeartBeats = new HashMap<>();
+            for (Participant p : mParticipants) {
+                missedHeartBeats.put(p.getParticipantId(), 1);
+            }
 
             Runnable r = new Runnable() {
                 @Override
@@ -1763,11 +1789,11 @@ public class MainActivity extends FragmentActivity implements
                 }
             };
             executor = Executors.newScheduledThreadPool(7);
-            executor.scheduleAtFixedRate(r, 0, 5, TimeUnit.SECONDS);
+            executor.scheduleAtFixedRate(r, 0, 1, TimeUnit.SECONDS);
 
         }
         catch (Exception e) {
-            Log.e(TAG, "startHeartBeat: " + e);
+            if (DEBUG) {Log.e(TAG, "startHeartBeat: " + e);}
             leaveRoom();
         }
 
@@ -1780,15 +1806,14 @@ public class MainActivity extends FragmentActivity implements
                 stopHeartBeat();
                 return;
             }
-            missedHeartBeats[0]++;
-            missedHeartBeats[1]++;
-            missedHeartBeats[2]++;
-            missedHeartBeats[3]++;
+            for (Participant p : mParticipants) {
+                missedHeartBeats.put(p.getParticipantId(), missedHeartBeats.get(p.getParticipantId()) + 1);
+            }
             sendHeartBeat();
             checkHeartBeat();
         }
         catch (Exception e) {
-            Log.e(TAG, "handleHeartBeat exception: " + e);
+            if (DEBUG) {Log.e(TAG, "handleHeartBeat exception: " + e);}
         }
 
     }
@@ -1801,23 +1826,26 @@ public class MainActivity extends FragmentActivity implements
     private void checkHeartBeat() {
         try {
             boolean connectionProblem = false;
-            for (int i = 0; i < mParticipants.size(); i++) {
-                if (mParticipants.get(i).getParticipantId().equals(myParticipantId) ||
-                        correctLeftPeers.contains(mParticipants.get(i).getParticipantId())) {
+            if (mGameView == null || mGameView.getController() == null) {
+                return;
+            }
+            for (Participant p : mParticipants) {
+                if (p.getParticipantId().equals(myParticipantId) ||
+                        correctLeftPeers.contains(p.getParticipantId())) {
                     continue;
                 }
 
-                if (missedHeartBeats[i] > 3 && mGameView != null && mGameView.getController() != null
+                if (missedHeartBeats.get(p.getParticipantId()) > 10 && mGameView != null && mGameView.getController() != null
                         && mGameView.getController().getNonGamePlayUIContainer() != null &&
                         mGameView.getController().getNonGamePlayUIContainer().getConnectionProblem() != null) {
                     connectionProblem = true;
                 }
 
                 //  -> 18*5 = 90 -> 1m30sec
-                if (missedHeartBeats[i] > 18) {
-                    Log.d(TAG, i + "  -> " + mParticipants.get(i).getDisplayName() + "lost connection");
+                if (missedHeartBeats.get(p.getParticipantId()) > 90) {
+                    if (DEBUG) {Log.d(TAG, p.getDisplayName() + "lost connection");}
                     final ArrayList<String> leftPlayers = new ArrayList<>();
-                    leftPlayers.add(mParticipants.get(i).getParticipantId());
+                    leftPlayers.add(p.getParticipantId());
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -1827,19 +1855,25 @@ public class MainActivity extends FragmentActivity implements
                     return;
                 }
             }
-            if (connectionProblem) {
-                mGameView.getController().getNonGamePlayUIContainer().getConnectionProblem().setVisible(true);
+            if (connectionProblem != mGameView.getController().getNonGamePlayUIContainer().getConnectionProblem().isVisible()) {
+                if (connectionProblem) {
+                    mGameView.getController().getNonGamePlayUIContainer().getConnectionProblem().setVisible(true);
+                }
+                else {
+                    mGameView.getController().getNonGamePlayUIContainer().getConnectionProblem().setVisible(false);
+                }
+                mGameView.postInvalidate();
             }
         }
         catch (Exception e) {
-            Log.e(TAG, "checkHeartbeat exception: " + e);
+            if (DEBUG) {Log.e(TAG, "checkHeartbeat exception: " + e);}
         }
     }
 
     private void receiveHeartBeat(String senderId) {
         for (int i = 0; i < mParticipants.size(); i++) {
             if (mParticipants.get(i).getParticipantId().equals(senderId)) {
-                missedHeartBeats[i] = 0;
+                missedHeartBeats.put(mParticipants.get(i).getParticipantId(), 0);
             }
         }
     }
@@ -1850,7 +1884,7 @@ public class MainActivity extends FragmentActivity implements
             executor.shutdown();
         }
         catch (Exception e) {
-            Log.w(TAG, "HeartBeat couldn't be stopped");
+            if (DEBUG) {Log.w(TAG, "HeartBeat couldn't be stopped");}
         }
     }
 
@@ -1991,10 +2025,10 @@ public class MainActivity extends FragmentActivity implements
             }
 
             messageQueue.remove(0);
-            Log.w(TAG, "couldn't proceed a message");
+            if (DEBUG) {Log.w(TAG, "couldn't proceed a message");}
         }
         catch (Exception e) {
-            Log.e(TAG, "workOnMessageQueue exception: " + e);
+            if (DEBUG) {Log.e(TAG, "workOnMessageQueue exception: " + e);}
         }
     }
 
@@ -2012,7 +2046,7 @@ public class MainActivity extends FragmentActivity implements
             @Override
             public void run() {
                 if (gameState != oldState) {
-                    Log.d("rMM", gameState + " --- " + oldState);
+                    if (DEBUG) {Log.d("rMM", gameState + " --- " + oldState);}
                     rMMexecutor.shutdown();
                     return;
                 }
@@ -2020,7 +2054,7 @@ public class MainActivity extends FragmentActivity implements
             }
         };
         rMMexecutor = Executors.newScheduledThreadPool(15);
-        rMMexecutor.scheduleAtFixedRate(r, 1000, 1000, TimeUnit.MILLISECONDS);
+        rMMexecutor.scheduleAtFixedRate(r, 250, 250, TimeUnit.MILLISECONDS);
     }
 
     ScheduledExecutorService rMMexecutor2 = null;
@@ -2035,7 +2069,7 @@ public class MainActivity extends FragmentActivity implements
             @Override
             public void run() {
                 if (gameState != oldState) {
-                    Log.d("rMM", gameState + " --- " + oldState);
+                    if (DEBUG) {Log.d("rMM", gameState + " --- " + oldState);}
                     rMMexecutor2.shutdown();
                     return;
                 }
@@ -2043,7 +2077,7 @@ public class MainActivity extends FragmentActivity implements
             }
         };
         rMMexecutor2 = Executors.newScheduledThreadPool(15);
-        rMMexecutor2.scheduleAtFixedRate(r, 1000, 1000, TimeUnit.MILLISECONDS);
+        rMMexecutor2.scheduleAtFixedRate(r, 250, 250, TimeUnit.MILLISECONDS);
     }
 
     // nr 3 is controller
@@ -2054,7 +2088,9 @@ public class MainActivity extends FragmentActivity implements
 
         try {
             mMultiplayer = multiplayer;
-            startHeartBeat();
+            if (mMultiplayer) {
+                startHeartBeat();
+            }
 
             //---- get/set all game starting parameters
             if (!isSignedIn()) {
@@ -2064,7 +2100,7 @@ public class MainActivity extends FragmentActivity implements
             if (multiplayer) {
                 sortParticipants();
                 if (mParticipants.get(0).getParticipantId().equals(myParticipantId)) {
-                    Log.d(TAG, "I choose the host");
+                    if (DEBUG) {Log.d(TAG, "I choose the host");}
                     int randomNum = ThreadLocalRandom.current().nextInt(0, mParticipants.size());
                     gameHostId = mParticipants.get(randomNum).getParticipantId();
                     broadcastMessage(Message.setHost, gameHostId);
@@ -2085,7 +2121,9 @@ public class MainActivity extends FragmentActivity implements
             }
         }
         catch (Exception e) {
-            Log.e(TAG, "prepareStartedGame exception: " + e);
+            mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_game_canceled));
+            endGame();
+            if (DEBUG) {Log.e(TAG, "prepareStartedGame exception: " + e);}
         }
     }
 
@@ -2094,7 +2132,7 @@ public class MainActivity extends FragmentActivity implements
         try {
             gameHostId = hostParticipantId;
             gameState = Message.gameStateWaitForStartGame;
-            Log.d("----------", "host id " + gameHostId);
+            if (DEBUG) {Log.d("----------", "host id " + gameHostId);}
             mMultiPlayerSettingsFragment.prepareMultiPlayerSettingsRequested(mParticipants.size(),
                     gameHostId.equals(myParticipantId));
             switchToFragment(mMultiPlayerSettingsFragment, "mMultiPlayerSettingsFragment");
@@ -2104,7 +2142,9 @@ public class MainActivity extends FragmentActivity implements
             }
         }
         catch (Exception e) {
-            Log.e(TAG, "setHostAndContinue exception: " + e);
+            mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_game_canceled));
+            endGame();
+            if (DEBUG) {Log.e(TAG, "setHostAndContinue exception: " + e);}
         }
 
     }
@@ -2142,7 +2182,9 @@ public class MainActivity extends FragmentActivity implements
             startGame(paras, mDisplayName);
         }
         catch (Exception e) {
-            Log.e(TAG, "onMultiPlayerSettingsStartGameRequested exception: " + e);
+            mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_game_canceled));
+            endGame();
+            if (DEBUG) {Log.e(TAG, "onMultiPlayerSettingsStartGameRequested exception: " + e);}
         }
     }
 
@@ -2188,7 +2230,8 @@ public class MainActivity extends FragmentActivity implements
                             paras.playerPositions);
                 }
                 catch (Exception e) {
-                    Log.e(TAG, "game error: " + e);
+                    mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_game_canceled));
+                    if (DEBUG) {Log.e(TAG, "game error: " + e);}
                     endGame();
                 }
             }
@@ -2210,7 +2253,7 @@ public class MainActivity extends FragmentActivity implements
                     }
 
                 } catch (Exception e) {
-                    Log.e(TAG, "keep game screen error " + e);
+                    if (DEBUG) {Log.e(TAG, "keep game screen error " + e);}
                     endGame();
                 }
             }
@@ -2237,8 +2280,12 @@ public class MainActivity extends FragmentActivity implements
                     public void onComplete(@NonNull Task<AnnotatedData<EventBuffer>> task) {
                         if (task.isSuccessful()) {
                             // Process all the events.
-                            for (Event event : task.getResult().get()) {
-                                Log.d(TAG, "loaded event " + event.getName());
+                            EventBuffer eb = task.getResult().get();
+                            if (eb == null) {
+                                return;
+                            }
+                            for (Event event : eb) {
+                                if (DEBUG) {Log.d(TAG, "loaded event " + event.getName());}
                                 if (event.getEventId().equals(getString(R.string.event_games_played))) {
                                     gamesPlayed = event.getValue();
                                 }
@@ -2246,8 +2293,13 @@ public class MainActivity extends FragmentActivity implements
                                     gameWins = event.getValue();
                                 }
                             }
-
-                            setLeaderBoardsAndAchievements();
+                            eb.release();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    setLeaderBoardsAndAchievements();
+                                }
+                            });
                         } else {
                             // Handle Error
                             Exception exception = task.getException();
@@ -2256,9 +2308,10 @@ public class MainActivity extends FragmentActivity implements
                                 ApiException apiException = (ApiException) exception;
                                 statusCode = apiException.getStatusCode();
                             }
-                            Log.e(TAG, "receive events exception");
+                            if (DEBUG) {Log.e(TAG, "receive events exception");}
                             // showError(statusCode);
                         }
+                        releaseInstance();
                     }
                 });
     }
@@ -2278,7 +2331,7 @@ public class MainActivity extends FragmentActivity implements
             // gets continued with setting leaderboards
         }
         catch (Exception e) {
-            Log.e(TAG,"leaderboarding failed");
+            if (DEBUG) {Log.e(TAG,"leaderboarding failed");}
         }
 
         endGame();
@@ -2339,8 +2392,17 @@ public class MainActivity extends FragmentActivity implements
 
     }
 
-    public void unlockAchievement(int id) {
+    public void unlockAchievement(final int id) {
 
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                unlockOnUi(id);
+            }
+        });
+    }
+
+    private void unlockOnUi(int id) {
         if (GoogleSignIn.getLastSignedInAccount(this) == null) {
             return;
         }
@@ -2348,8 +2410,6 @@ public class MainActivity extends FragmentActivity implements
         Games.getAchievementsClient(this, GoogleSignIn.getLastSignedInAccount(this))
                 .unlock(getString(id));
     }
-
-
 
 
 
@@ -2400,7 +2460,9 @@ public class MainActivity extends FragmentActivity implements
             });
         }
         catch (Exception e) {
-            Log.e(TAG, "endGame: " + e);
+            onStartMenuRequested();
+            mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_game_canceled));;
+            if (DEBUG) {Log.e(TAG, "endGame: " + e);}
         }
     }
 
