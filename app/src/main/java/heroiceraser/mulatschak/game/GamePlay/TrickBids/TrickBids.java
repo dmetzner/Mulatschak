@@ -118,9 +118,9 @@ public class TrickBids {
                 controller.waitForOnlineInteraction = Message.trickBids;
                 Gson gson = new Gson();
                 String oId = controller.getPlayerById(logic.getTurn()).getOnlineId();
-                if (controller.DEBUG) { Log.d("-------", "wait for " +
+                Log.d("-------", "wait for " +
                         controller.getPlayerById(controller.getLogic().getTurn()).getDisplayName()
-                        + " to make trick bids"); }
+                        + " to make trick bids");
                 controller.requestMissedMessagePlayerCheck(controller.fillGameStates(),
                         controller.getPlayerById(controller.getLogic().getTurn()).getOnlineId(),
                         controller.mainActivity.gameState, Message.requestTrickBids, oId);
@@ -148,7 +148,7 @@ public class TrickBids {
             Gson gson = new Gson();
             activity.broadcastMessage(Message.trickBids, gson.toJson(buttonId));
         }
-        if (controller.DEBUG) { Log.d("-------", "I made my trick bids"); }
+        Log.d("-------", "I made my trick bids");
 
         setTricks(controller, buttonId, 0);
     }

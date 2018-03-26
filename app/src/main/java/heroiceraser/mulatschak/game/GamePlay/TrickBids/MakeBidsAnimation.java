@@ -175,7 +175,7 @@ public class MakeBidsAnimation {
     // Touch Events
     //                  trick bid buttons
     //
-    public void touchEventDown(int X, int Y) {
+    synchronized public void touchEventDown(int X, int Y) {
         if (!animatingNumbers) {
             return;
         }
@@ -184,7 +184,7 @@ public class MakeBidsAnimation {
         }
     }
 
-    public void touchEventMove(int X, int Y) {
+    synchronized public void touchEventMove(int X, int Y) {
         if (!animatingNumbers) {
             return;
         }
@@ -193,7 +193,7 @@ public class MakeBidsAnimation {
         }
     }
 
-    public void touchEventUp(int X, int Y, GameController controller) {
+    synchronized public void touchEventUp(int X, int Y, GameController controller) {
         if (!animatingNumbers) {
             return;
         }

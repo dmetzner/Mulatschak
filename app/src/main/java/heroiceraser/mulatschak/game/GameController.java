@@ -1,21 +1,12 @@
 package heroiceraser.mulatschak.game;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.util.Log;
-import android.widget.ImageView;
 
-import com.google.android.gms.common.images.ImageManager;
 import com.google.android.gms.games.multiplayer.Participant;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.FileOutputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,13 +31,12 @@ import heroiceraser.mulatschak.game.BaseObjects.PlayerHandsView;
 import heroiceraser.mulatschak.game.NonGamePlayUI.PlayerInfo.PlayerInfo;
 
 
-public class GameController {
+public class GameController{
 
     //----------------------------------------------------------------------------------------------
     //  Constants
     //
     public static int NOT_SET = -9999;
-    public boolean DEBUG;
 
     //----------------------------------------------------------------------------------------------
     //  Member Variables
@@ -127,7 +117,6 @@ public class GameController {
     //
     public GameController(GameView view) {
         mainActivity = (MainActivity) view.getContext();
-        DEBUG = mainActivity.DEBUG;
         view_ = view;
         enable_drawing_ = false;
         playerPresentation = false;
@@ -176,29 +165,30 @@ public class GameController {
         settings_.init(view_);
         initPlayers(enemies, sortedPlayerIds);                                      // special multi
         resetPlayerLives();
+        setPlayerPositions();
         player_info_.init(view_);
         non_game_play_ui_.init(view_);
         player_info_.startPresentation(this);
 
         long time = System.currentTimeMillis() - start;
-        if (DEBUG) {Log.d("gebrauchte start zeit: ", time + "");}
+        Log.d("gebrauchte start zeit: ", time + "");
 
         // init the rest while the players get presented
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 long start = System.currentTimeMillis();
-                if (DEBUG) {Log.d("--", 6 + " - " + System.currentTimeMillis());}
+                Log.d("--", 6 + " - " + System.currentTimeMillis());
                 discardPile_.init(view_);
-                if (DEBUG) {Log.d("--", 7 + " - " + System.currentTimeMillis());}
+                Log.d("--", 7 + " - " + System.currentTimeMillis());
                 game_play_.init(view_);
-                if (DEBUG) {Log.d("--", 8 + " - " + System.currentTimeMillis());}
+                Log.d("--", 8 + " - " + System.currentTimeMillis());
                 deck_.initDeck(view_);
-                if (DEBUG) {Log.d("--", 9 + " - " + System.currentTimeMillis());}
+                Log.d("--", 9 + " - " + System.currentTimeMillis());
                 dealer_button_.init(view_);
-                if (DEBUG) {Log.d("--", 10 + " - " + System.currentTimeMillis());}
+                Log.d("--", 10 + " - " + System.currentTimeMillis());
                 playerHandsView.init(view_);
-                if (DEBUG) {Log.d("--", 11 + " - " + System.currentTimeMillis());}
+                Log.d("--", 11 + " - " + System.currentTimeMillis());
 
                 // tell everyone my game is fully laoded
                 getPlayerByPosition(0).setGameStarted(true);
@@ -206,7 +196,7 @@ public class GameController {
 
                 enable_drawing_ = true;
                 long time = System.currentTimeMillis() - start;
-                if (DEBUG) {Log.d("gebrauchte zeit init2:", time + "");}
+                Log.d("gebrauchte zeit init2:", time + "");
             }
         };
         Thread t = new Thread(runnable);
@@ -216,7 +206,7 @@ public class GameController {
     public void startGame() {
 
         if (enable_drawing_) {
-            if (DEBUG) {Log.d(".......", "start game");}
+            Log.d(".......", "start game");
             playerPresentation = false;
             if (multiplayer_) {
 
@@ -234,7 +224,7 @@ public class GameController {
                 if (mGameForAllStarted) {
                     gameStarted = true;
                     mainActivity.gameState++;
-                    if (DEBUG) {Log.d("----------", "host id " + Integer.toString(getPlayerByOnlineId(hostOnlineId).getId()));}
+                    Log.d("----------", "host id " + Integer.toString(getPlayerByOnlineId(hostOnlineId).getId()));
                     chooseHostAsDealer(getPlayerByOnlineId(hostOnlineId).getId());
                     startRound();
                 }
@@ -265,7 +255,7 @@ public class GameController {
     //  startRound
     //
     public void startRound() {
-        if (DEBUG) {Log.d("------------", "StartRound -----------------------------------------------------------");}
+        Log.d("------------", "StartRound -----------------------------------------------------------");
         mainActivity.gameState = Message.gameStateWaitForShuffleDeck;
         for (MyPlayer player : getPlayerList()) {
             player.gameState = Message.gameStateWaitForShuffleDeck;
@@ -297,21 +287,21 @@ public class GameController {
         //gameModerator.startRoundMessage(non_game_play_ui_.getChatView(),
         //        getPlayerById(logic_.getDealer()).getDisplayName());
         dealer_button_.startMoveAnimation(this, getPlayerById(logic_.getDealer()).getPosition());
-        if (DEBUG) {Log.d("------------", "-----------------------------------------------------------");}
+        Log.d("------------", "-----------------------------------------------------------");
         shuffleDeck();
     }
 
 
     private void continueAfterShuffledDeck() {
-        if (DEBUG) {Log.d("------------", "Shuffled -----------------------------------------------------------");}
+        Log.d("------------", "Shuffled -----------------------------------------------------------");
         for (int i = 0; i < 10; i++) {
-            if (DEBUG) {Log.d("Deck is: ", " " + deck_.getCardAt(i).getId());}
+            Log.d("Deck is: ", " " + deck_.getCardAt(i).getId());
         }
         game_play_.getDealCards().dealCards(this);  // starts an dealing animation
     }
 
     private void shuffleDeck() {
-        if (DEBUG) {Log.d("------------", "Shuffle -----------------------------------------------------------");}
+        Log.d("------------", "Shuffle -----------------------------------------------------------");
         if (multiplayer_) {
             if (myPlayerId.equals(hostOnlineId)) {
                 deck_.shuffleDeck();
@@ -320,7 +310,7 @@ public class GameController {
                     originalShuffledDeck.add(deck_.getCardAt(i).getId());
                 }
                 for (int i = 0; i < 10; i++) {
-                    if (DEBUG) {Log.d("Deck: should be ", " " + deck_.getCardAt(i).getId());}
+                    Log.d("Deck: should be ", " " + deck_.getCardAt(i).getId());
                 }
                 sendShuffledDeck();
                 mainActivity.gameState = Message.gameStateWaitForMulatschakDecision;
@@ -343,7 +333,7 @@ public class GameController {
             return;
         }
         for (int i = 0; i < 10; i++) {
-            if (DEBUG) {Log.d("Deck: send", " " + originalShuffledDeck.get(i));}
+            Log.d("Deck: send", " " + originalShuffledDeck.get(i));
         }
         Gson gson = new Gson();
         mainActivity.sendUnReliable(sendToId, Message.shuffledDeck, gson.toJson(originalShuffledDeck));
@@ -351,7 +341,7 @@ public class GameController {
 
     private void sendShuffledDeck() {
         for (int i = 0; i < 10; i++) {
-            if (DEBUG) {Log.d("Deck: send to All", " " + originalShuffledDeck.get(i));}
+            Log.d("Deck: send to All", " " + originalShuffledDeck.get(i));
         }
         Gson gson = new Gson();
         mainActivity.broadcastMessage(Message.shuffledDeck, gson.toJson(originalShuffledDeck));
@@ -362,8 +352,8 @@ public class GameController {
     //  continueAfterDealingAnimation
     //
     public void continueAfterDealingAnimation() {
-        if (DEBUG) {Log.d("------------", "decide Muli -----------------------------------------------------------");}
-        if (DEBUG) {Log.d("------------", "Turn: " + getPlayerById(logic_.getTurn()).getDisplayName() + " -----------------------------------------------------------");}
+        Log.d("------------", "decide Muli -----------------------------------------------------------");
+        Log.d("------------", "Turn: " + getPlayerById(logic_.getTurn()).getDisplayName() + " -----------------------------------------------------------");
         game_play_.getDecideMulatschak().startMulatschakDecision(this);
     }
 
@@ -372,7 +362,7 @@ public class GameController {
     //  continueAfterDecideMulatschak
     //
     public void continueAfterDecideMulatschak() {
-        if (DEBUG) {Log.d("------------", "trick bids -----------------------------------------------------------");}
+        Log.d("------------", "trick bids -----------------------------------------------------------");
         mainActivity.gameState = Message.gameStateWaitForTrickBids;
         for (MyPlayer player : getPlayerList()) {
             player.gameState = Message.gameStateWaitForTrickBids;
@@ -385,11 +375,11 @@ public class GameController {
     //  continueAfterTrickBids
     //
     public void continueAfterTrickBids() {
-        if (DEBUG) {Log.d("------------", "choose trumps -----------------------------------------------------------");}
+        Log.d("------------", "choose trumps -----------------------------------------------------------");
         mainActivity.gameState = Message.gameStateWaitForChooseTrump;
         for (MyPlayer player : getPlayerList()) {
             player.gameState = Message.gameStateWaitForChooseTrump;
-            if (DEBUG) {Log.d("------------", player.getDisplayName() + ": " + player.getTricksToMake() + " tricks to make");}
+            Log.d("------------", player.getDisplayName() + ": " + player.getTricksToMake() + " tricks to make");
         }
         if (getPlayerByPosition(0).getMissATurn()) {
             getPlayerHandsView().setMissATurnInfoVisible(true);
@@ -433,14 +423,14 @@ public class GameController {
     //  continueAfterTrumpWasChosen
     //
     public void continueAfterTrumpWasChosen() {
-        if (DEBUG) {Log.d("------------", "exchange cards -----------------------------------------------------------");}
+        Log.d("------------", "exchange cards -----------------------------------------------------------");
         mainActivity.gameState = Message.gameStateWaitForCardExchange;
         for (MyPlayer player : getPlayerList()) {
             player.gameState = Message.gameStateWaitForCardExchange;
             for (Card c : player.getHand().getCardStack()) {
-                if (DEBUG) {Log.d("------------", player.getDisplayName() + ": " + c.getId() + "");}
+                Log.d("------------", player.getDisplayName() + ": " + c.getId() + "");
             }
-            if (DEBUG) {Log.d("---------", "-----");}
+            Log.d("---------", "-----");
         }
         game_play_.getTrickBids().getBidsView().setVisible(true);
         setTurn(logic_.getTrumpPlayerId());
@@ -458,21 +448,19 @@ public class GameController {
     //  continueAfterCardExchange
     //
     public void continueAfterCardExchange() {
-        if (DEBUG) {Log.d("------------", "play a card -----------------------------------------------------------");}
+        Log.d("------------", "play a card -----------------------------------------------------------");
         mainActivity.gameState = Message.gameStateWaitForPlayACard;
         for (MyPlayer player : getPlayerList()) {
             player.gameState = Message.gameStateWaitForPlayACard;
             for (Card c : player.getHand().getCardStack()) {
-                if (DEBUG) {Log.d("------------", player.getDisplayName() + ": " + c.getId() + "");}
+                Log.d("------------", player.getDisplayName() + ": " + c.getId() + "");
             }
-            if (DEBUG) {Log.d("---------", "-----");}
+            Log.d("---------", "-----");
         }
         discardPile_.setVisible(true);
         player_info_.setShowPlayer0Turn(true);
         playACardCounter = 0;
-        logic_.setStartingPlayer(logic_.getTrumpPlayerId());
-        logic_.setTurn(logic_.getTrumpPlayerId());
-        getGamePlay().getPlayACardRound().playACard(true, this);
+        nextCardRound(true); // first call
     }
 
 
@@ -482,6 +470,10 @@ public class GameController {
     //                      -> playACard gets called for ever player once
     //                          then nextCard Round should get called again
     //
+
+    private void nextCardRound(boolean x) {
+        getGamePlay().getPlayACardRound().playACard(true, this);
+    }
 
     public void nextCardRound() {
 
@@ -496,16 +488,7 @@ public class GameController {
             return;
         }
 
-        if (playACardCounter >= 5) {
-            if (DEBUG) { Log.w("Play A Card Bug", "but at least we catch it"); }
-            // still don't know how this happens, but return for god sake
-            return;
-        }
-
         // next round
-        if (DEBUG) { Log.d("Next Round", "___________________________________"); }
-        logic_.setStartingPlayer(logic_.getRoundWinnerId());
-        logic_.setTurn(logic_.getRoundWinnerId());
         getGamePlay().getPlayACardRound().playACard(true, this);
     }
 
@@ -576,7 +559,7 @@ public class GameController {
 
             // check debug
             for (int i = 0; i < myPlayer_list_.size(); i++) {
-                if (DEBUG) {Log.d("P", "" + myPlayer_list_.get(i).getDisplayName() + " -- " + myPlayer_list_.get(i).getOnlineId());}
+                Log.d("P", "" + myPlayer_list_.get(i).getDisplayName() + " -- " + myPlayer_list_.get(i).getOnlineId());
                 getPlayerById(i).setId(i);
             }
         }
@@ -593,107 +576,12 @@ public class GameController {
                 setDisplayName(getPlayerById(i));
                 getPlayerById(i).setId(i);
                 if (i == 0) {
-                    getPlayerById(i).setDisplayName("Du");
-                    getPlayerById(i).setOnlineId("Du");
                     getPlayerById(i).setEnemyLogic(false);
                 }
                 else {
                     getPlayerById(i).setEnemyLogic(true);
                 }
             }
-        }
-
-        setPlayerPositions();
-
-        if (!multiplayer_) {
-            return;
-        }
-
-        final GameController gc = this;
-
-        for (final Participant pa : participants_) {
-
-            for (final MyPlayer mp : getPlayerList()) {
-                try {
-                    if (pa.getParticipantId().equals(mp.getOnlineId())) {
-
-                        ImageManager IM = ImageManager.create(view_.getContext());
-                        switch (mp.getPosition()) {
-                            case GameLayout.POSITION_BOTTOM:
-                                IM.loadImage(myOnImageLoadedListenerBottom, pa.getIconImageUri());
-                                break;
-                            case GameLayout.POSITION_LEFT:
-                                IM.loadImage(myOnImageLoadedListenerLeft, pa.getIconImageUri());
-                                break;
-                            case GameLayout.POSITION_TOP:
-                                IM.loadImage(myOnImageLoadedListenerTop, pa.getIconImageUri());
-                                break;
-                            case GameLayout.POSITION_RIGHT:
-                                IM.loadImage(myOnImageLoadedListenerRight, pa.getIconImageUri());
-                                break;
-                        }
-                    }
-                }
-                catch (Exception e) {
-                    if (DEBUG){ Log.e("controller", "uri exception" + e); }
-                }
-            }
-        }
-    }
-
-    private ImageManager.OnImageLoadedListener myOnImageLoadedListenerBottom = new ImageManager.OnImageLoadedListener() {
-
-        @Override
-        public void onImageLoaded(Uri arg0, Drawable drawable, boolean arg2) {
-            if(drawable != null) {
-                Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
-                setProfilePic(bitmap, GameLayout.POSITION_BOTTOM);
-            }
-        }
-    };
-
-    private ImageManager.OnImageLoadedListener myOnImageLoadedListenerLeft = new ImageManager.OnImageLoadedListener() {
-
-        @Override
-        public void onImageLoaded(Uri arg0, Drawable drawable, boolean arg2) {
-            if(drawable != null) {
-                Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
-                setProfilePic(bitmap, GameLayout.POSITION_LEFT);
-            }
-        }
-    };
-
-    private ImageManager.OnImageLoadedListener myOnImageLoadedListenerTop = new ImageManager.OnImageLoadedListener() {
-
-        @Override
-        public void onImageLoaded(Uri arg0, Drawable drawable, boolean arg2) {
-            if(drawable != null) {
-                Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
-                setProfilePic(bitmap, GameLayout.POSITION_TOP);
-            }
-        }
-    };
-
-    private ImageManager.OnImageLoadedListener myOnImageLoadedListenerRight = new ImageManager.OnImageLoadedListener() {
-
-        @Override
-        public void onImageLoaded(Uri arg0, Drawable drawable, boolean arg2) {
-            if(drawable != null) {
-                Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
-                setProfilePic(bitmap, GameLayout.POSITION_RIGHT);
-            }
-        }
-    };
-
-    private void setProfilePic(Bitmap bitmap, int pos) {
-
-        MyPlayer mp = getPlayerByPosition(pos);
-        mp.setProfileImage(bitmap);
-
-        if (DEBUG){Log.d("---", "lets set pb for " + pos); }
-
-        if (mp.getProfileImage() != null) {
-              player_info_.initButton(mp.getPosition(), this);
         }
     }
 
@@ -882,11 +770,11 @@ public class GameController {
             return;
         }
 
-        if (DEBUG) {Log.d("--------------", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");}
+        Log.d("--------------", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         int onlinePlayers = getAmountOfOnlinePlayer();
-        if (DEBUG) {Log.d("--------------", "op: " + onlinePlayers);}
+        Log.d("--------------", "op: " + onlinePlayers);
 
-        if (DEBUG) {Log.d("--_>", "" + Thread.currentThread().getId());}
+        Log.d("--_>", "" + Thread.currentThread().getId());
 
         if (onlinePlayers == 2) {
             player_info_.makeLastPlayerPopUp(leftPeerPlayer);
@@ -1007,13 +895,13 @@ public class GameController {
             @Override
             public void run() {
                 if (mainActivity.gameState != oldState) {
-                    if (DEBUG) {Log.d("rMM", mainActivity.gameState + " --- " + oldState);}
+                    Log.d("rMM", mainActivity.gameState + " --- " + oldState);
                     rMMexecutor3.shutdown();
                     return;
                 }
                 for (int i = 0; i < getAmountOfPlayers(); i++) {
                     if (gameStates.get(i) != getPlayerById(i).gameState) {
-                        if (DEBUG) {Log.d("rMM P ", mainActivity.gameState + " --- " + oldState);}
+                        Log.d("rMM P ", mainActivity.gameState + " --- " + oldState);
                         rMMexecutor3.shutdown();
                         return;
                     }
@@ -1022,7 +910,7 @@ public class GameController {
             }
         };
         rMMexecutor3 = Executors.newScheduledThreadPool(1);
-        rMMexecutor3.scheduleAtFixedRate(r, 1000, 250, TimeUnit.MILLISECONDS);
+        rMMexecutor3.scheduleAtFixedRate(r, 1000, 1000, TimeUnit.MILLISECONDS);
     }
 
     public int playACardCounter = 0;
@@ -1060,7 +948,7 @@ public class GameController {
                 if (mainActivity.gameState != Message.gameStateWaitForShuffleDeck) {
                     return;
                 }
-                if (DEBUG) {Log.d("-------", "S received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());}
+                Log.d("-------", "S received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());
                 mainActivity.gameState = Message.gameStateWaitForMulatschakDecision;
                 for (MyPlayer player : getPlayerList()) {
                     player.gameState = Message.gameStateWaitForMulatschakDecision;
@@ -1071,7 +959,7 @@ public class GameController {
                 if (mainActivity.gameState <= Message.gameStateWaitForShuffleDeck) {
                     return;
                 }
-                if (DEBUG) {Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + " to send him S");}
+                Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + " to send him S");
                 sendShuffledDeck(message.senderId);
                 break;
 
@@ -1084,7 +972,7 @@ public class GameController {
                     return;
                 }
                 //getPlayerByOnlineId(message.senderId).gameState = Message.gameStateWaitForTrickBids;
-                if (DEBUG) {Log.d("-------", "M received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());}
+                Log.d("-------", "M received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());
                 receiveMulatschakDecision(message);
                 break;
             case Message.requestMulatschakDecision:
@@ -1097,7 +985,7 @@ public class GameController {
                         message.data.equals(getPlayerById(logic_.getTrumpPlayerId()).getOnlineId())) {
                     muli = true;
                 }
-                if (DEBUG) {Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + " to send him M");}
+                Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + " to send him M");
                 sendMulatschakDecision(message.senderId, muli);
                 break;
 
@@ -1109,7 +997,7 @@ public class GameController {
                     return;
                 }
                 //getPlayerByOnlineId(message.senderId).gameState = Message.gameStateWaitForChooseTrump;
-                if (DEBUG) {Log.d("-------", "T received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());}
+                Log.d("-------", "T received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());
                 receiveTrickBids(message);
                 break;
             case Message.requestTrickBids:
@@ -1119,7 +1007,7 @@ public class GameController {
                 }
                 if (getPlayerByOnlineId(message.data) != null) {
                     int tricksButton = getPlayerByOnlineId(message.data).getTricksToMake() + 1;
-                    if (DEBUG) {Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + "to send him TB");}
+                    Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + "to send him TB");
                     sendTrickBids(message.senderId, tricksButton);
                 }
                 break;
@@ -1131,7 +1019,7 @@ public class GameController {
                     return;
                 }
                 mainActivity.gameState = Message.gameStateWaitForCardExchange;
-                if (DEBUG) {Log.d("-------", "CH received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());}
+                Log.d("-------", "CH received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());
                 receiveChooseTrump(message);
                 break;
             case Message.requestChooseTrump:
@@ -1139,7 +1027,7 @@ public class GameController {
                     return;
                 }
                 int trump = logic_.getTrump() - 1;
-                if (DEBUG) {Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + " to send him CH");}
+                Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + " to send him CH");
                 sendChooseTrump(message.senderId, trump);
                 break;
 
@@ -1153,7 +1041,7 @@ public class GameController {
                     return;
                 }
                 // getPlayerByOnlineId(message.senderId).gameState = Message.gameStateWaitForPlayACard;
-                if (DEBUG) {Log.d("-------", "CEX received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());}
+                Log.d("-------", "CEX received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());
                 receiveCardExchange(message);
                 break;
 
@@ -1162,7 +1050,7 @@ public class GameController {
                         getPlayerByOnlineId(message.data).gameState <= Message.gameStateWaitForCardExchange) {
                     return;
                 }
-                if (DEBUG) {Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + " to send him CEX");}
+                Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + " to send him CEX");
                 sendCardExchange(message.data, message.senderId);
                 break;
 
@@ -1188,7 +1076,7 @@ public class GameController {
                 if (getPlayerByOnlineId(data.get(0)).gameState <= Message.gameStateWaitForPlayACard + playACardCounter) {
                     return;
                 }
-                if (DEBUG) {Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + " to send him PC");}
+                Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + " to send him PC");
                 sendPlayACard(data.get(0), Integer.parseInt(data.get(1)), message.senderId);
                 break;
 
@@ -1199,7 +1087,7 @@ public class GameController {
                 if (mainActivity.gameState != Message.gameStateWaitForNewRound) {
                     return;
                 }
-                if (DEBUG) {Log.d("-------", "NR");}
+                Log.d("-------", "NR");
                 receiveNextRound(message);
                 break;
 
@@ -1208,7 +1096,7 @@ public class GameController {
                         mainActivity.gameState > Message.gameStateWaitForMulatschakDecision) {
                     return;
                 }
-                if (DEBUG) {Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + " to send him NR");}
+                Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + " to send him NR");
                 mainActivity.sendUnReliable(message.senderId, Message.waitForNewRound, "");
                 break;
 
@@ -1224,7 +1112,7 @@ public class GameController {
             ArrayList<Integer> cardIds = gson.fromJson(message.data, listType);
             waitForOnlineInteraction = Message.noMessage;
             for (int i = 0; i < 10; i++) {
-                if (DEBUG) {Log.d("Deck: what we got ", " " + cardIds.get(i));}
+                Log.d("Deck: what we got ", " " + cardIds.get(i));
             }
             deck_.sortByIdList(cardIds);
             continueAfterShuffledDeck();
@@ -1309,7 +1197,7 @@ public class GameController {
             if (5 - getPlayerById(logic_.getTurn()).getHand().getCardStack().size() != playACardCounter) {
                 return;
             }
-            if (DEBUG) {Log.d("-------", "PC received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());}
+            Log.d("-------", "PC received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());
             game_play_.getPlayACardRound().handleOnlineInteraction(cardId, this);
         }
     }
@@ -1348,7 +1236,7 @@ public class GameController {
         try {
             return myPlayer_list_.get(id);
         } catch (Exception e) {
-            if (DEBUG) {Log.e("con", "player not found by online id");}
+            Log.e("con", "player not found by online id");
             return null;
         }
     }
@@ -1362,11 +1250,11 @@ public class GameController {
                 }
             }
         } catch (Exception e) {
-            if (DEBUG) {Log.e("con", "player not found by online id");}
+            Log.e("con", "player not found by online id");
             return null;
         }
 
-        if (DEBUG) {Log.e("con", "player not found by online id");}
+        Log.w("con", "player not found by online id");
         return null;
     }
 
@@ -1379,10 +1267,10 @@ public class GameController {
                 }
             }
         } catch (Exception e) {
-            if (DEBUG) {Log.e("con", "player not found by online id");}
+            Log.e("con", "player not found by online id");
             return null;
         }
-        if (DEBUG) {Log.e("con", "player not found by pos");}
+        Log.w("con", "player not found by pos");
         return null;
     }
 

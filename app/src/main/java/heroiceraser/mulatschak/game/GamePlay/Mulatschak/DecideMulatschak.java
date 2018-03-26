@@ -99,9 +99,9 @@ public class DecideMulatschak {
                 controller.waitForOnlineInteraction = Message.mulatschakDecision;
                 Gson gson = new Gson();
                 String oId = controller.getPlayerById(logic.getTurn()).getOnlineId();
-                if (controller.DEBUG) { Log.d("-------", "wait for " +
+                Log.d("-------", "wait for " +
                                 controller.getPlayerById(controller.getLogic().getTurn()).getDisplayName()
-                        + " muli decision"); }
+                        + " muli decision");
                 controller.requestMissedMessagePlayerCheck(controller.fillGameStates(),
                         controller.getPlayerById(controller.getLogic().getTurn()).getOnlineId(),
                         controller.mainActivity.gameState, Message.requestMulatschakDecision, oId);
@@ -145,7 +145,7 @@ public class DecideMulatschak {
             activity.broadcastMessage(Message.mulatschakDecision, gson.toJson(muli));
         }
 
-        if (controller.DEBUG) { Log.d("-------", "I made my Muli decision"); }
+        Log.d("-------", "I made my Muli decision");
 
         if (muli) {
             controller.getGamePlay().getDecideMulatschak().setMulatschakUp(controller);
@@ -190,15 +190,15 @@ public class DecideMulatschak {
     //----------------------------------------------------------------------------------------------
     //  Touch Events
     //
-    public void touchEventDown(int X, int Y) {
+    public synchronized void touchEventDown(int X, int Y) {
         decideMulatschakAnimation.touchEventDown(X, Y);
     }
 
-    public void touchEventMove(int X, int Y) {
+    synchronized public void touchEventMove(int X, int Y) {
         decideMulatschakAnimation.touchEventMove(X, Y);
     }
 
-    public void touchEventUp(int X, int Y, GameController controller) {
+    synchronized public void touchEventUp(int X, int Y, GameController controller) {
         decideMulatschakAnimation.touchEventUp(X, Y, controller);
     }
 }

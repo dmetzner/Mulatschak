@@ -65,11 +65,10 @@ public class PlayACardRound {
     //  Constructor
     //
     public void playACard(final boolean first_call, final GameController controller) {
-        if (controller.DEBUG) {Log.d("_", "PLAY A CARD"); }
         GameLogic logic = controller.getLogic();
 
         if (first_call) {
-            if (controller.DEBUG){ Log.d("starting with", " : " + controller.getLogic().getTurn()); }
+            logic.setStartingPlayer(logic.getTurn());
         }
         else {
             controller.getPlayerById(controller.getLogic().getTurn()).played_cards_.addCard(
@@ -78,29 +77,26 @@ public class PlayACardRound {
             );
             controller.getPlayerById(logic.getTurn()).gameState++;
             controller.turnToNextPlayer(true);
-            if (controller.DEBUG){Log.d("turn is", " : " + controller.getLogic().getTurn());}
         }
 
         // only allowed if turn is player 0
-            if (controller.DEBUG){Log.d("AUS", "-");}
         controller.getGamePlay().getPlayACardRound().setCardMovable(false);
 
         // every player played played a card
         if (!first_call && logic.getTurn() == logic.getStartingPlayer()) {
-            if (controller.DEBUG){Log.d("ENDE", "-------------");}
             endCardRound(controller);
             return;
         }
 
         // player skips this round
         if (controller.getPlayerById(logic.getTurn()).getMissATurn()) {
+            controller.turnToNextPlayer(true);
             playACard(false, controller);
             return;
         }
 
         // player 0 -> allow card movement
         if (logic.getTurn() == 0) {
-            if (controller.DEBUG){Log.d("EIN", "_");}
             controller.getGamePlay().getPlayACardRound().setCardMovable(true);
             controller.getView().disableUpdateCanvasThread();
             // touch event calls playACard
@@ -120,9 +116,9 @@ public class PlayACardRound {
                 sa.add(controller.getPlayerById(logic.getTurn()).getOnlineId());
                 sa.add(controller.playACardCounter + "");
                 Gson gson = new Gson();
-                if (controller.DEBUG) {Log.d("-------", "wait for " +
+                Log.d("-------", "wait for " +
                         controller.getPlayerById(controller.getLogic().getTurn()).getDisplayName()
-                        + " to play a card"); }
+                        + " to play a card");
                 controller.requestMissedMessagePlayerCheck(controller.fillGameStates(),
                         controller.getPlayerById(controller.getLogic().getTurn()).getOnlineId(),
                         controller.mainActivity.gameState, Message.requestPlayACard, gson.toJson(sa));
@@ -159,7 +155,7 @@ public class PlayACardRound {
             Gson gson = new Gson();
             activity.broadcastMessage(Message.playACard, gson.toJson(cardId));
         }
-        if (controller.DEBUG) { Log.d("-------", "I played a Card"); }
+        Log.d("-------", "I played a Card");
     }
 
     //----------------------------------------------------------------------------------------------
@@ -188,9 +184,7 @@ public class PlayACardRound {
         if (logic.isMulatschakRound() && logic.getRoundWinnerId() != logic.getTrumpPlayerId()) {
             controller.getPlayerInfo().setShowPlayer0Turn(false);
             controller.getGamePlay().getMulatschakResultAnimation().init(controller, false);
-            if (logic.getTrumpPlayerId() == 0) {
-                controller.mainActivity.unlockAchievement(R.string.achievement_at_least_you_tried);
-            }
+            controller.mainActivity.unlockAchievement(R.string.achievement_at_least_you_tried);
             handler.postDelayed(runnable,
                     (int) (1500 * controller.getSettings().getAnimationSpeed().getSpeedFactor()));
             // end of animation calls allCardsPlayedLogic
@@ -202,9 +196,7 @@ public class PlayACardRound {
                 logic.isMulatschakRound()) {
             controller.getPlayerInfo().setShowPlayer0Turn(false);
             controller.getGamePlay().getMulatschakResultAnimation().init(controller, true);
-            if (logic.getTrumpPlayerId() == 0) {
-                controller.mainActivity.unlockAchievement(R.string.achievement_mulatschak);
-            }
+            controller.mainActivity.unlockAchievement(R.string.achievement_mulatschak);
             handler.postDelayed(runnable,
                     (int) (1500 * controller.getSettings().getAnimationSpeed().getSpeedFactor()));
             // end of animation calls allCardsPlayedLogic
@@ -291,7 +283,7 @@ public class PlayACardRound {
     //----------------------------------------------------------------------------------------------
     //  Touch Events
     //
-    public void touchEventDown(int X, int Y, GameController controller) {
+    synchronized public void touchEventDown(int X, int Y, GameController controller) {
 
         // else the round just skips to the next round if player 0 is the last one to play a card
         if (!roundEnded) {
@@ -309,7 +301,7 @@ public class PlayACardRound {
 
     }
 
-    public void touchEventMove(int X, int Y, GameController controller) {
+    synchronized public void touchEventMove(int X, int Y, GameController controller) {
         if (!roundEnded) {
             play_a_card_logic_.touchActionMove(controller, X, Y);
             return;
@@ -318,7 +310,7 @@ public class PlayACardRound {
         touched = touched && isDiscardPileTouched(X, Y, controller.getDiscardPile());
     }
 
-    public void touchEventUp(int X, int Y, GameController controller) {
+    synchronized public void touchEventUp(int X, int Y, GameController controller) {
         if (!roundEnded) {
             play_a_card_logic_.touchActionUp(controller);
             return;

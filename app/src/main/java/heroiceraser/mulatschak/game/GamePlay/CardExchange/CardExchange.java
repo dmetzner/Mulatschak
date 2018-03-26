@@ -90,9 +90,9 @@ public class CardExchange {
             else {
                 controller.waitForOnlineInteraction = Message.cardExchange;
                 String oId = controller.getPlayerById(logic.getTurn()).getOnlineId();
-                if (controller.DEBUG){ Log.d("-------", "wait for " +
+                Log.d("-------", "wait for " +
                         controller.getPlayerById(controller.getLogic().getTurn()).getDisplayName()
-                        + " card exchange"); }
+                        + " card exchange");
                 controller.requestMissedMessagePlayerCheck(controller.fillGameStates(),
                         controller.getPlayerById(controller.getLogic().getTurn()).getOnlineId(),
                         controller.mainActivity.gameState, Message.requestCardExchange, oId);
@@ -137,7 +137,7 @@ public class CardExchange {
             }
             activity.broadcastMessage(Message.cardExchange, gson.toJson(cardHandIds));
         }
-        if (controller.DEBUG){ Log.d("-------", "I made my card exchange"); }
+        Log.d("-------", "I made my card exchange");
         card_exchange_logic_.exchangeCards(controller);
     }
 
@@ -160,7 +160,7 @@ public class CardExchange {
     //                  cards touchable, to prepare
     //                  exchange button
     //
-    public void touchEventDown(int X, int Y, GameController controller) {
+    synchronized public void touchEventDown(int X, int Y, GameController controller) {
         if (!card_exchange_logic_.isAnimationRunning()) {
             return;
         }
@@ -180,14 +180,14 @@ public class CardExchange {
         card_exchange_logic_.getButton().touchEventDown(X, Y);
     }
 
-    public void touchEventMove(int X, int Y) {
+    synchronized public void touchEventMove(int X, int Y) {
         if (!card_exchange_logic_.isAnimationRunning()) {
             return;
         }
         card_exchange_logic_.getButton().touchEventMove(X, Y);
     }
 
-    public void touchEventUp(int X, int Y, GameController controller) {
+    synchronized public void touchEventUp(int X, int Y, GameController controller) {
         if (!card_exchange_logic_.isAnimationRunning()) {
             return;
         }

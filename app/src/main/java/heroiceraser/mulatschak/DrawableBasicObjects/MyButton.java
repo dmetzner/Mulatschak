@@ -41,13 +41,6 @@ public class MyButton extends DrawableObject{
     //----------------------------------------------------------------------------------------------
     //  init
     //
-    public void init(GameView view, Point position, Point size, Bitmap image, String text) {
-        Bitmap bitmap = BitmapMethodes.getResizedBitmap(image, size.x, size.y);
-        setBitmap(bitmap);
-        init(view, position, size.x, size.y, "", text);
-    }
-
-
     public void init(GameView view, Point position, Point size, String image_name, String text) {
         init(view, position, size.x, size.y, image_name, text);
     }
@@ -139,7 +132,7 @@ public class MyButton extends DrawableObject{
     //----------------------------------------------------------------------------------------------
     //  Touch Events
     //
-    public boolean touchEventDown(int X, int Y) {
+    synchronized public boolean touchEventDown(int X, int Y) {
         if (isVisible() && isEnabled() &&
                 X >= getPosition().x && X < getPosition().x + getWidth() &&
                 Y >= getPosition().y && Y < getPosition().y + getHeight()) {
@@ -149,7 +142,7 @@ public class MyButton extends DrawableObject{
         return false;
     }
 
-    public void touchEventMove(int X, int Y) {
+    synchronized public void touchEventMove(int X, int Y) {
         if (isVisible() && isEnabled() && isPressed()) {
             if ( X >= getPosition().x && X < getPosition().x + getWidth() &&
                     Y >= getPosition().y && Y < getPosition().y + getHeight()) {
@@ -161,7 +154,7 @@ public class MyButton extends DrawableObject{
         }
     }
 
-    public boolean touchEventUp(int X, int Y) {
+    synchronized public boolean touchEventUp(int X, int Y) {
         if (isVisible() && isEnabled() && isPressed()) {
             if (X >= getPosition().x && X < getPosition().x + getWidth() &&
                     Y >= getPosition().y && Y < getPosition().y + getHeight()) {

@@ -110,21 +110,21 @@ class DecideMulatschakAnimation {
     //----------------------------------------------------------------------------------------------
     //  Touch Events
     //
-    void touchEventDown(int X, int Y) {
+    synchronized void touchEventDown(int X, int Y) {
        if (animationRunning) {
            yesButton.touchEventDown(X, Y);
            noButton.touchEventDown(X, Y);
        }
     }
 
-    void touchEventMove(int X, int Y) {
+    synchronized void touchEventMove(int X, int Y) {
         if (animationRunning) {
             yesButton.touchEventMove(X, Y);
             noButton.touchEventMove(X, Y);
         }
     }
 
-    void touchEventUp(int X, int Y, GameController controller) {
+    synchronized void touchEventUp(int X, int Y, GameController controller) {
         if (animationRunning) {
             if (yesButton.touchEventUp(X, Y)) {
                 animationRunning = false;

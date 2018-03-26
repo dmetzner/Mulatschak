@@ -50,44 +50,8 @@
 
         </LinearLayout>
 
-    </LinearLayout>
-
-
-    <!-- Error POPUP -->
-    <LinearLayout
-        android:id="@+id/error_popup"
-        style="@style/InvPopup"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/my_red"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:padding="8dp"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp">
-
-            <TextView
-                android:id="@+id/error_text"
-                style="@style/InvPopupText"
-                android:layout_height="wrap_content"
-                android:text="@string/error_text"
-                android:textSize="15sp" />
-
-            <Button
-                android:id="@+id/button_accept_error"
-                style="@style/InvPopupButton"
-                android:layout_marginRight="12dp"
-                android:layout_marginLeft="5dp"
-                android:text="@string/decline_popup_invite" />
-
-        </LinearLayout>
 
     </LinearLayout>
-
-
 
     <ScrollView
         android:layout_width="match_parent"

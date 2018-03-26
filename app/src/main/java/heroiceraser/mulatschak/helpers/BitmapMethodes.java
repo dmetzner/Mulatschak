@@ -11,13 +11,8 @@ import android.util.Log;
 import heroiceraser.mulatschak.game.GameView;
 
 
-
 public final class BitmapMethodes {
-    
-    static final boolean DEBUG = false;
-    
-    private BitmapMethodes() {
-    }
+    private BitmapMethodes() {}
 
     public static String getStringOfFixedLength(String s, int length) {
         if (s.length() > length) {
@@ -36,13 +31,13 @@ public final class BitmapMethodes {
         String package_name = "drawable";
 
         if (width <= 0) {
-            if (DEBUG) {Log.w("loadBitmap",
-                    "Image: " + image_name + " -> width has to be greater than 0");}
+            Log.w("loadBitmap",
+                    "Image: " + image_name + " -> width has to be greater than 0");
             return null;
         }
         if (height <= 0) {
-            if (DEBUG) {Log.w("loadBitmap",
-                    "Image: " + image_name +  "-> height has to be greater than 0");}
+            Log.w("loadBitmap",
+                    "Image: " + image_name +  "-> height has to be greater than 0");
             return null;
         }
 
@@ -50,8 +45,8 @@ public final class BitmapMethodes {
                 .getIdentifier(image_name, package_name, view.getContext().getPackageName());
 
         if (resourceId == 0) {
-            if (DEBUG) {Log.w("loadBitmap",
-                    "Image Name: " + image_name + " does not exist in package: " + package_name);}
+            Log.w("loadBitmap",
+                    "Image Name: " + image_name + " does not exist in package: " + package_name);
             return null;
         }
 
@@ -59,7 +54,7 @@ public final class BitmapMethodes {
                 BitmapFactory.decodeResource(view.getContext().getResources(),resourceId);
 
         if (bitmap == null) {
-            if (DEBUG) {Log.w("loadBitmap", "Decoding Image: " + image_name + " failed");}
+            Log.w("loadBitmap", "Decoding Image: " + image_name + " failed");
             return null;
         }
 

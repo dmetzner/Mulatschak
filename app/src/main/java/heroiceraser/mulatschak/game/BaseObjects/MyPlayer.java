@@ -1,8 +1,6 @@
 package heroiceraser.mulatschak.game.BaseObjects;
 
 
-import android.graphics.Bitmap;
-
 import com.google.android.gms.games.multiplayer.Participant;
 
 import heroiceraser.mulatschak.Message;
@@ -36,8 +34,6 @@ public class MyPlayer {
     public CardStack played_cards_;
     private CardStack tricks_;
 
-    private Bitmap profileImage;
-
     private boolean enemyLogic;
 
     //----------------------------------------------------------------------------------------------
@@ -55,7 +51,6 @@ public class MyPlayer {
         enemyLogic = false;
         gameStarted = false;
         gameState = 0;
-        profileImage = null;
     }
 
     public void initMultiplayer() {
@@ -176,14 +171,6 @@ public class MyPlayer {
 
     public void setGameStarted(boolean gameStarted) {
         this.gameStarted = gameStarted;
-    }
-
-    public void setProfileImage(Bitmap bitmap) {
-        profileImage = bitmap;
-    }
-
-    public Bitmap getProfileImage() {
-        return profileImage;
     }
 }
 

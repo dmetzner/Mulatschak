@@ -24,9 +24,6 @@
     <string name="decline_popup_invite">Verstecken</string>
     <string name="is_inviting_you">fordert dich zu einem Spiel heraus!</string>
 
-    <string name="error_text">Fehler!</string>
-    <string name="error_game_canceled">Fehler: Spiel wurde abgebrochen. Versuchs später nochmal.</string>
-
     <!-- :::::::::::::::: back button :::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="close">beenden?</string>
     <string name="are_you_sure_to_close_message">"Bist du sicher dass du %1$s beenden möchtest?"</string>

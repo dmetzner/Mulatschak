@@ -99,7 +99,7 @@ public class ChooseTrumpAnimation {
     // Touch Events
     //                  trump buttons
     //
-    public void touchEventDown(int X, int Y) {
+    synchronized public void touchEventDown(int X, int Y) {
         if (!animatingTrumps) {
             return;
         }
@@ -108,7 +108,7 @@ public class ChooseTrumpAnimation {
         }
     }
 
-    public void touchEventMove(int X, int Y) {
+    synchronized public void touchEventMove(int X, int Y) {
         if (!animatingTrumps) {
             return;
         }
@@ -117,7 +117,7 @@ public class ChooseTrumpAnimation {
         }
     }
 
-    public void touchEventUp(int X, int Y, GameController controller) {
+    synchronized public void touchEventUp(int X, int Y, GameController controller) {
         if (!animatingTrumps) {
             return;
         }

@@ -24,10 +24,6 @@
     <string name="decline_popup_invite">Hide</string>
     <string name="is_inviting_you">is challenging you to a game!</string>
 
-    <string name="error_text">ERROR!</string>
-    <string name="error_game_canceled">Error: Game was canceled! Try again later.</string>
-
-
     <!-- :::::::::::::::: back button :::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="close">close</string>
     <string name="are_you_sure_to_close_message">"Are you sure you want to end %1$s?"</string>
