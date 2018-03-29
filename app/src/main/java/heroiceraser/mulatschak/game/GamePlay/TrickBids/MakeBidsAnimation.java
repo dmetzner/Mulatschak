@@ -86,7 +86,7 @@ public class MakeBidsAnimation {
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas, GameController controller) {
+    public synchronized void draw(Canvas canvas, GameController controller) {
         if (animatingNumbers) {
             background.draw(canvas);
             controller.getPlayerHandsView().drawPlayer0Hand(canvas, controller);

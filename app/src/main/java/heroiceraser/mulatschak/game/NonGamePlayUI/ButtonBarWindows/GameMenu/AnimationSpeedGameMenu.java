@@ -96,7 +96,7 @@ public class AnimationSpeedGameMenu {
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas) {
+    public synchronized void draw(Canvas canvas) {
         radioButtonGroup.draw(canvas);
         title.draw(canvas);
     }
@@ -106,15 +106,15 @@ public class AnimationSpeedGameMenu {
     // Touch Events
     //              -> Touch up sets the correct Speed in the Game Settings
     //
-    void touchEventDown(int X, int Y) {
+    synchronized void touchEventDown(int X, int Y) {
         radioButtonGroup.touchEventDown(X, Y);
     }
 
-    void touchEventMove(int X, int Y) {
+    synchronized void touchEventMove(int X, int Y) {
         radioButtonGroup.touchEventMove(X, Y);
     }
 
-    void touchEventUp(int X, int Y, GameController controller) {
+    synchronized void touchEventUp(int X, int Y, GameController controller) {
         if (radioButtonGroup.touchEventUp(X, Y)) {
 
             int id = radioButtonGroup.getCheckedButton().getId();

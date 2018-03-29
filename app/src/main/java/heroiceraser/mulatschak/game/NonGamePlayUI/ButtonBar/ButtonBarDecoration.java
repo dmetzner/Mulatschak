@@ -25,7 +25,7 @@ public class ButtonBarDecoration extends DrawableObject{
         setBitmap(BitmapMethodes.loadBitmap(view, "button_bar_decoration", getWidth(), getHeight()));
     }
 
-    public void draw(Canvas canvas) {
+    public synchronized void draw(Canvas canvas) {
         canvas.drawBitmap(getBitmap(), getPosition().x, getPosition().y, null);
     }
 

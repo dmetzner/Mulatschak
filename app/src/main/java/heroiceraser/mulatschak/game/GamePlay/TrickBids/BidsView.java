@@ -53,7 +53,7 @@ public class BidsView extends DrawableObject{
     //          -> draws all bid fields
     //          -> keeps ending animation running if running
     //
-    public void draw(Canvas canvas, GameController controller) {
+    public synchronized void draw(Canvas canvas, GameController controller) {
         if (!isVisible()) {
             return;
         }

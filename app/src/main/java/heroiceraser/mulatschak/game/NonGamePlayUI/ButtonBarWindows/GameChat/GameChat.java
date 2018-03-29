@@ -145,7 +145,7 @@ public class GameChat extends ButtonBarWindow {
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas) {
+    public synchronized void draw(Canvas canvas) {
         if (isVisible()) {
 
             super.drawBackground(canvas);

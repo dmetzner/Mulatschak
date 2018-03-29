@@ -34,7 +34,7 @@ public class SideBorders extends DrawableObject{
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas) {
+    public synchronized void draw(Canvas canvas) {
         canvas.drawBitmap(getBitmap(), getPosition().x, getPosition().y, null);
     }
 }

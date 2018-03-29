@@ -78,11 +78,11 @@ public class CardExchange {
             // handle the card exchange buttons (-> to less cards in deck to exchange to much cards)
             card_exchange_logic_.handleExchangeButtons(controller.getDeck().getCardStack().size());
             card_exchange_logic_.startAnimation();
-            controller.getView().disableUpdateCanvasThread();
+            //controller.getView().disableUpdateCanvasThread();
         }
 
         else if (logic.getTurn() != 0) {
-            controller.getView().enableUpdateCanvasThread();
+            //controller.getView().enableUpdateCanvasThread();
             // single player
             if (controller.getPlayerById(logic.getTurn()).isEnemyLogic()) {
                 handleEnemyAction(controller);
@@ -144,7 +144,7 @@ public class CardExchange {
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas, GameController controller) {
+    public synchronized void draw(Canvas canvas, GameController controller) {
 
         if (card_exchange_logic_.isAnimationRunning()) {
             card_exchange_logic_.draw(canvas, controller);

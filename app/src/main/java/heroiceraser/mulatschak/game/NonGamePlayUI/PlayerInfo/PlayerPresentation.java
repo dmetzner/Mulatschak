@@ -90,7 +90,7 @@ public class PlayerPresentation {
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas, List<MyButton> buttons, final GameController controller) {
+    public synchronized void draw(Canvas canvas, List<MyButton> buttons, final GameController controller) {
 
         double maxTime = 2500 * controller.getSettings().getAnimationSpeed().getSpeedFactor();
         long timeNow = System.currentTimeMillis();
@@ -208,7 +208,7 @@ public class PlayerPresentation {
     //----------------------------------------------------------------------------------------------
     //  draw presented buttons
     //
-    private void drawPresentedButtons(Canvas canvas, List<MyButton> buttons, GameController controller) {
+    private synchronized void drawPresentedButtons(Canvas canvas, List<MyButton> buttons, GameController controller) {
         for (int i = 0; i <= controller.getPlayerById(presentationId).getPosition(); i++) {
             if (buttons != null && buttons.size() > i) {
                 if (buttons.get(i) != null) {
@@ -233,7 +233,7 @@ public class PlayerPresentation {
     // Touch Events
     //                  allow to skip the presentations
     //
-    public void touchEventDown(int X, int Y) {
+    public synchronized void touchEventDown(int X, int Y) {
         if (!animationRunning) {
             return;
         }
@@ -243,7 +243,7 @@ public class PlayerPresentation {
         }
     }
 
-    public void touchEventUp(int X, int Y) {
+    public synchronized void touchEventUp(int X, int Y) {
         if (!animationRunning) {
             return;
         }

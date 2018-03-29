@@ -67,7 +67,7 @@ public class MySimpleTextField {
         initLayout();
     }
 
-    public void draw(Canvas canvas) {
+    public synchronized void draw(Canvas canvas) {
         if (isVisible()) {
             canvas.save();
             canvas.translate(position_.x, position_.y);

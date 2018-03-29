@@ -181,7 +181,7 @@ public class CardExchangeLogic {
                 cardExchangeAnimation.getNewDrawnCards());
 
         // start a wonderful spinning animation -> enables canvas thread
-        controller.getView().enableUpdateCanvasThread();
+        //controller.getView().enableUpdateCanvasThread();
         cardExchangeAnimation.startSpinning(controller);
 
         // --> gets continued by draw method
@@ -192,7 +192,7 @@ public class CardExchangeLogic {
     //  draw:
     //        draws the spinning animations, or the correct exchange button (with a helptext)
     //
-    public void draw(Canvas canvas, GameController controller) {
+    public synchronized void draw(Canvas canvas, GameController controller) {
 
         // spinning animation
         if (cardExchangeAnimation.isSpinning()) {

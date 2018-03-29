@@ -90,7 +90,7 @@ public class TrumpView extends DrawableObject {
         }
         active_id_ = "trumps_basic_" + active_symbol;
         start_time_ = System.currentTimeMillis();
-        controller.getView().enableUpdateCanvasThread();
+        //controller.getView().enableUpdateCanvasThread();
         if (player_id >= 0 && player_id < controller.getAmountOfPlayers()) {
             start_position_ = new Point(controller.getLayout()
                     .getPlayerInfoPositions().get(
@@ -191,7 +191,7 @@ public class TrumpView extends DrawableObject {
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas, GameController controller) {
+    public synchronized void draw(Canvas canvas, GameController controller) {
         if (isVisible()) {
 
             if (active_bitmap_ != null) {

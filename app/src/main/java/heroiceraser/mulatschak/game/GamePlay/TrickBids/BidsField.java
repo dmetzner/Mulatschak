@@ -110,7 +110,7 @@ public class BidsField extends DrawableObject{
     //          -> draws a circle with a border and a text in it
     //          -> continues ending animation if it's running
     //
-    public void draw(Canvas canvas) {
+    public synchronized void draw(Canvas canvas) {
         if (isVisible()) {
 
             // reduce radius by the stroke width
@@ -142,7 +142,7 @@ public class BidsField extends DrawableObject{
     //                             max alpha, min radius
     //
     public void startAnimation(GameController controller, Point startPos, Point endPos) {
-        controller.getView().enableUpdateCanvasThread();
+        //controller.getView().enableUpdateCanvasThread();
         calculatePositionOffset(startPos, endPos);
         this.startPos = startPos;
         animationRunning = true;

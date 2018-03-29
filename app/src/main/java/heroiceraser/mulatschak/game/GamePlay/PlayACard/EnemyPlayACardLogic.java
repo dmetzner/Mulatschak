@@ -189,7 +189,7 @@ public class EnemyPlayACardLogic {
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas, GameController controller) {
+    public synchronized void draw(Canvas canvas, GameController controller) {
 
         if (!animation_running_) {
             return;

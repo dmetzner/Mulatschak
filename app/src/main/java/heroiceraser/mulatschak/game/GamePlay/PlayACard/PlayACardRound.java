@@ -55,7 +55,7 @@ public class PlayACardRound {
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas, GameController controller) {
+    public synchronized void draw(Canvas canvas, GameController controller) {
         play_a_card_logic_.draw(canvas, controller);
         enemy_play_a_card_logic_.draw(canvas, controller);
     }
@@ -102,13 +102,13 @@ public class PlayACardRound {
         if (logic.getTurn() == 0) {
             if (controller.DEBUG){Log.d("EIN", "_");}
             controller.getGamePlay().getPlayACardRound().setCardMovable(true);
-            controller.getView().disableUpdateCanvasThread();
+            //controller.getView().disableUpdateCanvasThread();
             // touch event calls playACard
         }
 
         // enemies
         else if (logic.getTurn() != 0) {
-            controller.getView().enableUpdateCanvasThread();
+            //controller.getView().enableUpdateCanvasThread();
             // single player
             if (controller.getPlayerById(logic.getTurn()).isEnemyLogic()) {
                 handleEnemyAction(controller);

@@ -55,7 +55,7 @@ public class MulatschakActivateAnimation {
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas, GameController controller) {
+    public synchronized void draw(Canvas canvas, GameController controller) {
         if (active) {
             bidsField.draw(canvas);
             if (startAnimation || endAnimation) {

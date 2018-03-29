@@ -1,21 +1,19 @@
 package heroiceraser.mulatschak.game;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Handler;
-import android.provider.MediaStore;
+
 import android.util.Log;
-import android.widget.ImageView;
+
 
 import com.google.android.gms.common.images.ImageManager;
 import com.google.android.gms.games.multiplayer.Participant;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.FileOutputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -293,7 +291,7 @@ public class GameController {
         }
 
         // start round -> move dealer button, and deal the cards
-        view_.enableUpdateCanvasThread();
+        //view_.enableUpdateCanvasThread();
         //gameModerator.startRoundMessage(non_game_play_ui_.getChatView(),
         //        getPlayerById(logic_.getDealer()).getDisplayName());
         dealer_button_.startMoveAnimation(this, getPlayerById(logic_.getDealer()).getPosition());
@@ -493,12 +491,6 @@ public class GameController {
         if (game_play_.getAllCardsPlayed().areAllCardsPlayed(this)) {
             getPlayerHandsView().setMissATurnInfoVisible(false);
             game_play_.getAllCardsPlayed().allCardsArePlayedLogic(this);
-            return;
-        }
-
-        if (playACardCounter >= 5) {
-            if (DEBUG) { Log.w("Play A Card Bug", "but at least we catch it"); }
-            // still don't know how this happens, but return for god sake
             return;
         }
 
@@ -898,7 +890,7 @@ public class GameController {
 
 
     public void lastPlayerLeftSoLetMeWin() {
-        view_.enableUpdateCanvasThread();
+        //view_.enableUpdateCanvasThread();
         for (int i = 0; i < getAmountOfPlayers(); i++) {
             getPlayerById(i).setLives(1);
             if (getPlayerById(i).getPosition() == 0) {
@@ -1026,192 +1018,192 @@ public class GameController {
     }
 
     public int playACardCounter = 0;
+    private final Object lock = new Object();
 
     public synchronized void handleReceivedMessage(final Message message) {
         if (!enable_drawing_) {
             return;
         }
-        switch (message.type) {
-            case Message.chatMessage:
-                non_game_play_ui_.getChatView().addMessage(getPlayerByOnlineId(message.senderId), message.data, this);
-                break;
+        synchronized (lock) {
+            switch (message.type) {
+                case Message.chatMessage:
+                    non_game_play_ui_.getChatView().addMessage(getPlayerByOnlineId(message.senderId), message.data, this);
+                    break;
 
-            case Message.gameReady:
-                if (mainActivity.gameState != Message.gameStateWaitForGameReady) {
-                    return;
-                }
-                MyPlayer p = getPlayerByOnlineId(message.senderId);
-                if (p != null) {
-                    p.setGameStarted(true);
-                }
-                if (!playerPresentation) {
-                    startGame();
-                }
-                break;
-            case Message.requestGameReady:
-                if (mainActivity.gameState < Message.gameStateWaitForGameReady && !getPlayerById(0).isGameStarted()) {
-                    return;
-                }
-                mainActivity.sendUnReliable(message.senderId, Message.gameReady, "");
-                break;
-
-
-            case Message.shuffledDeck:
-                if (mainActivity.gameState != Message.gameStateWaitForShuffleDeck) {
-                    return;
-                }
-                if (DEBUG) {Log.d("-------", "S received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());}
-                mainActivity.gameState = Message.gameStateWaitForMulatschakDecision;
-                for (MyPlayer player : getPlayerList()) {
-                    player.gameState = Message.gameStateWaitForMulatschakDecision;
-                }
-                receiveShuffledDeck(message);
-                break;
-            case Message.requestShuffledDeck:
-                if (mainActivity.gameState <= Message.gameStateWaitForShuffleDeck) {
-                    return;
-                }
-                if (DEBUG) {Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + " to send him S");}
-                sendShuffledDeck(message.senderId);
-                break;
+                case Message.gameReady:
+                    if (mainActivity.gameState != Message.gameStateWaitForGameReady) {
+                        return;
+                    }
+                    MyPlayer p = getPlayerByOnlineId(message.senderId);
+                    if (p != null) {
+                        p.setGameStarted(true);
+                    }
+                    if (!playerPresentation) {
+                        startGame();
+                    }
+                    break;
+                case Message.requestGameReady:
+                    if (mainActivity.gameState < Message.gameStateWaitForGameReady && !getPlayerById(0).isGameStarted()) {
+                        return;
+                    }
+                    mainActivity.sendUnReliable(message.senderId, Message.gameReady, "");
+                    break;
 
 
-            case Message.mulatschakDecision:
-                if (mainActivity.gameState != Message.gameStateWaitForMulatschakDecision) {
-                    return;
-                }
-                if (!message.senderId.equals(getPlayerById(logic_.getTurn()).getOnlineId())) {
-                    return;
-                }
-                //getPlayerByOnlineId(message.senderId).gameState = Message.gameStateWaitForTrickBids;
-                if (DEBUG) {Log.d("-------", "M received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());}
-                receiveMulatschakDecision(message);
-                break;
-            case Message.requestMulatschakDecision:
-                if (mainActivity.gameState < Message.gameStateWaitForMulatschakDecision ||
-                        getPlayerByOnlineId(message.data).gameState <= Message.gameStateWaitForMulatschakDecision) {
-                    return;
-                }
-                boolean muli = false;
-                if (logic_.isMulatschakRound() &&
-                        message.data.equals(getPlayerById(logic_.getTrumpPlayerId()).getOnlineId())) {
-                    muli = true;
-                }
-                if (DEBUG) {Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + " to send him M");}
-                sendMulatschakDecision(message.senderId, muli);
-                break;
-
-            case Message.trickBids:
-                if (mainActivity.gameState != Message.gameStateWaitForTrickBids) {
-                    return;
-                }
-                if (!message.senderId.equals(getPlayerById(logic_.getTurn()).getOnlineId())) {
-                    return;
-                }
-                //getPlayerByOnlineId(message.senderId).gameState = Message.gameStateWaitForChooseTrump;
-                if (DEBUG) {Log.d("-------", "T received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());}
-                receiveTrickBids(message);
-                break;
-            case Message.requestTrickBids:
-                if (mainActivity.gameState < Message.gameStateWaitForTrickBids ||
-                        getPlayerByOnlineId(message.data).gameState <= Message.gameStateWaitForTrickBids) {
-                    return;
-                }
-                if (getPlayerByOnlineId(message.data) != null) {
-                    int tricksButton = getPlayerByOnlineId(message.data).getTricksToMake() + 1;
-                    if (DEBUG) {Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + "to send him TB");}
-                    sendTrickBids(message.senderId, tricksButton);
-                }
-                break;
+                case Message.shuffledDeck:
+                    if (mainActivity.gameState != Message.gameStateWaitForShuffleDeck) {
+                        return;
+                    }
+                    if (DEBUG) {Log.d("-------", "S received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());}
+                    mainActivity.gameState = Message.gameStateWaitForMulatschakDecision;
+                    for (MyPlayer player : getPlayerList()) {
+                        player.gameState = Message.gameStateWaitForMulatschakDecision;
+                    }
+                    receiveShuffledDeck(message);
+                    break;
+                case Message.requestShuffledDeck:
+                    if (mainActivity.gameState <= Message.gameStateWaitForShuffleDeck) {
+                        return;
+                    }
+                    if (DEBUG) {Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + " to send him S");}
+                    sendShuffledDeck(message.senderId);
+                    break;
 
 
+                case Message.mulatschakDecision:
+                    if (mainActivity.gameState != Message.gameStateWaitForMulatschakDecision) {
+                        return;
+                    }
+                    if (!message.senderId.equals(getPlayerById(logic_.getTurn()).getOnlineId())) {
+                        return;
+                    }
+                    //getPlayerByOnlineId(message.senderId).gameState = Message.gameStateWaitForTrickBids;
+                    if (DEBUG) {Log.d("-------", "M received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());}
+                    receiveMulatschakDecision(message);
+                    break;
+                case Message.requestMulatschakDecision:
+                    if (mainActivity.gameState < Message.gameStateWaitForMulatschakDecision ||
+                            getPlayerByOnlineId(message.data).gameState <= Message.gameStateWaitForMulatschakDecision) {
+                        return;
+                    }
+                    boolean muli = false;
+                    if (logic_.isMulatschakRound() &&
+                            message.data.equals(getPlayerById(logic_.getTrumpPlayerId()).getOnlineId())) {
+                        muli = true;
+                    }
+                    if (DEBUG) {Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + " to send him M");}
+                    sendMulatschakDecision(message.senderId, muli);
+                    break;
 
-            case Message.chooseTrump:
-                if (mainActivity.gameState != Message.gameStateWaitForChooseTrump) {
-                    return;
-                }
-                mainActivity.gameState = Message.gameStateWaitForCardExchange;
-                if (DEBUG) {Log.d("-------", "CH received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());}
-                receiveChooseTrump(message);
-                break;
-            case Message.requestChooseTrump:
-                if (mainActivity.gameState <= Message.gameStateWaitForChooseTrump) {
-                    return;
-                }
-                int trump = logic_.getTrump() - 1;
-                if (DEBUG) {Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + " to send him CH");}
-                sendChooseTrump(message.senderId, trump);
-                break;
+                case Message.trickBids:
+                    if (mainActivity.gameState != Message.gameStateWaitForTrickBids) {
+                        return;
+                    }
+                    if (!message.senderId.equals(getPlayerById(logic_.getTurn()).getOnlineId())) {
+                        return;
+                    }
+                    //getPlayerByOnlineId(message.senderId).gameState = Message.gameStateWaitForChooseTrump;
+                    if (DEBUG) {Log.d("-------", "T received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());}
+                    receiveTrickBids(message);
+                    break;
+                case Message.requestTrickBids:
+                    if (mainActivity.gameState < Message.gameStateWaitForTrickBids ||
+                            getPlayerByOnlineId(message.data).gameState <= Message.gameStateWaitForTrickBids) {
+                        return;
+                    }
+                    if (getPlayerByOnlineId(message.data) != null) {
+                        int tricksButton = getPlayerByOnlineId(message.data).getTricksToMake() + 1;
+                        if (DEBUG) {Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + "to send him TB");}
+                        sendTrickBids(message.senderId, tricksButton);
+                    }
+                    break;
 
 
 
-            case Message.cardExchange:
-                if (mainActivity.gameState != Message.gameStateWaitForCardExchange) {
-                    return;
-                }
-                if (!message.senderId.equals(getPlayerById(logic_.getTurn()).getOnlineId())) {
-                    return;
-                }
-                // getPlayerByOnlineId(message.senderId).gameState = Message.gameStateWaitForPlayACard;
-                if (DEBUG) {Log.d("-------", "CEX received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());}
-                receiveCardExchange(message);
-                break;
-
-            case Message.requestCardExchange:
-                if (mainActivity.gameState < Message.gameStateWaitForCardExchange ||
-                        getPlayerByOnlineId(message.data).gameState <= Message.gameStateWaitForCardExchange) {
-                    return;
-                }
-                if (DEBUG) {Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + " to send him CEX");}
-                sendCardExchange(message.data, message.senderId);
-                break;
-
-
-            case Message.playACard:
-                if (mainActivity.gameState < Message.gameStateWaitForPlayACard + playACardCounter ||
-                        mainActivity.gameState > Message.gameStateWaitForPlayACard5) {
-                    return;
-                }
-                if (!message.senderId.equals(getPlayerById(logic_.getTurn()).getOnlineId())) {
-                    return;
-                }
-                receivePlayACard(message);
-                break;
-
-            case Message.requestPlayACard:
-                if (mainActivity.gameState < Message.gameStateWaitForPlayACard + playACardCounter) {
-                    return;
-                }
-                Type listType = new TypeToken<ArrayList<String>>() {}.getType();
-                Gson gson = new Gson();
-                ArrayList<String> data = gson.fromJson(message.data, listType);
-                if (getPlayerByOnlineId(data.get(0)).gameState <= Message.gameStateWaitForPlayACard + playACardCounter) {
-                    return;
-                }
-                if (DEBUG) {Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + " to send him PC");}
-                sendPlayACard(data.get(0), Integer.parseInt(data.get(1)), message.senderId);
-                break;
+                case Message.chooseTrump:
+                    if (mainActivity.gameState != Message.gameStateWaitForChooseTrump) {
+                        return;
+                    }
+                    mainActivity.gameState = Message.gameStateWaitForCardExchange;
+                    if (DEBUG) {Log.d("-------", "CH received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());}
+                    receiveChooseTrump(message);
+                    break;
+                case Message.requestChooseTrump:
+                    if (mainActivity.gameState <= Message.gameStateWaitForChooseTrump) {
+                        return;
+                    }
+                    int trump = logic_.getTrump() - 1;
+                    if (DEBUG) {Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + " to send him CH");}
+                    sendChooseTrump(message.senderId, trump);
+                    break;
 
 
 
+                case Message.cardExchange:
+                    if (mainActivity.gameState != Message.gameStateWaitForCardExchange) {
+                        return;
+                    }
+                    if (!message.senderId.equals(getPlayerById(logic_.getTurn()).getOnlineId())) {
+                        return;
+                    }
+                    // getPlayerByOnlineId(message.senderId).gameState = Message.gameStateWaitForPlayACard;
+                    if (DEBUG) {Log.d("-------", "CEX received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());}
+                    receiveCardExchange(message);
+                    break;
 
-            case Message.waitForNewRound:
-                if (mainActivity.gameState != Message.gameStateWaitForNewRound) {
-                    return;
-                }
-                if (DEBUG) {Log.d("-------", "NR");}
-                receiveNextRound(message);
-                break;
+                case Message.requestCardExchange:
+                    if (mainActivity.gameState < Message.gameStateWaitForCardExchange ||
+                            getPlayerByOnlineId(message.data).gameState <= Message.gameStateWaitForCardExchange) {
+                        return;
+                    }
+                    if (DEBUG) {Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + " to send him CEX");}
+                    sendCardExchange(message.data, message.senderId);
+                    break;
 
-            case Message.requestWaitForNewRound:
-                if (mainActivity.gameState < Message.gameStateWaitForNewRound &&
-                        mainActivity.gameState > Message.gameStateWaitForMulatschakDecision) {
-                    return;
-                }
-                if (DEBUG) {Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + " to send him NR");}
-                mainActivity.sendUnReliable(message.senderId, Message.waitForNewRound, "");
-                break;
 
+                case Message.playACard:
+                    if (mainActivity.gameState < Message.gameStateWaitForPlayACard + playACardCounter ||
+                            mainActivity.gameState > Message.gameStateWaitForPlayACard5) {
+                        return;
+                    }
+                    if (!message.senderId.equals(getPlayerById(logic_.getTurn()).getOnlineId())) {
+                        return;
+                    }
+                    receivePlayACard(message);
+                    break;
+
+                case Message.requestPlayACard:
+                    if (mainActivity.gameState < Message.gameStateWaitForPlayACard + playACardCounter) {
+                        return;
+                    }
+                    Type listType = new TypeToken<ArrayList<String>>() {}.getType();
+                    Gson gson = new Gson();
+                    ArrayList<String> data = gson.fromJson(message.data, listType);
+                    if (getPlayerByOnlineId(data.get(0)).gameState <= Message.gameStateWaitForPlayACard + playACardCounter) {
+                        return;
+                    }
+                    if (DEBUG) {Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + " to send him PC");}
+                    sendPlayACard(data.get(0), Integer.parseInt(data.get(1)), message.senderId);
+                    break;
+
+
+                case Message.waitForNewRound:
+                    if (mainActivity.gameState != Message.gameStateWaitForNewRound) {
+                        return;
+                    }
+                    if (DEBUG) {Log.d("-------", "NR");}
+                    receiveNextRound(message);
+                    break;
+
+                case Message.requestWaitForNewRound:
+                    if (mainActivity.gameState < Message.gameStateWaitForNewRound &&
+                            mainActivity.gameState > Message.gameStateWaitForMulatschakDecision) {
+                        return;
+                    }
+                    if (DEBUG) {Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + " to send him NR");}
+                    mainActivity.sendUnReliable(message.senderId, Message.waitForNewRound, "");
+                    break;
+            }
         }
     }
 

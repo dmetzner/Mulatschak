@@ -44,7 +44,7 @@ public class MyTextField {
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas) {
+    public synchronized void draw(Canvas canvas) {
         if (visible) {
             if (fitTextSizeForMaxWidth && maxWidth != 0) {
                 TextPaint tmpPaint = new TextPaint(textPaint);

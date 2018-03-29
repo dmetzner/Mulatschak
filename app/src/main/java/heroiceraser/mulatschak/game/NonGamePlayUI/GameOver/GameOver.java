@@ -106,7 +106,7 @@ public class GameOver {
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas) {
+    public synchronized void draw(Canvas canvas) {
         if (isVisible()) {
             background.draw(canvas);
             background.draw(canvas);

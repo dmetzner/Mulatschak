@@ -34,7 +34,7 @@ public class ConnectionProblem extends DrawableObject {
         setVisible(false);
     }
 
-    public void draw(Canvas canvas, GameController controller) {
+    public synchronized void draw(Canvas canvas, GameController controller) {
         if (isVisible() && getBitmap() != null) {
 
 

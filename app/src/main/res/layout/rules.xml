@@ -40,7 +40,7 @@
                 android:layout_marginBottom="30dp"
                 android:textColor="@color/my_dark_gray"
                 android:layout_marginTop="20dp"
-                android:text="@string/policy" />
+                android:text="@string/rules" />
 
             <TextView
                 android:id="@+id/rules_text"

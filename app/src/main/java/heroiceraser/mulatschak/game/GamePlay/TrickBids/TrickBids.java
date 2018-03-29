@@ -102,11 +102,11 @@ public class TrickBids {
         if (logic.getTurn() == 0) {
             makeBidsAnimation.prepareAnimationButtons(controller);
             makeBidsAnimation.turnOnAnimationNumbers();
-            controller.getView().disableUpdateCanvasThread();
+            //controller.getView().disableUpdateCanvasThread();
             // makeTrickBids should get called when player chooses his tricks
         }
         else if (logic.getTurn() != 0) {
-            controller.getView().enableUpdateCanvasThread();
+            //controller.getView().enableUpdateCanvasThread();
 
             // single player
             if (controller.getPlayerById(logic.getTurn()).isEnemyLogic()) {

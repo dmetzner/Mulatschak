@@ -22,7 +22,7 @@ class TouchEvents {
 
         synchronized (lock) {
             // enables a update thread for the canvas, in case there is no running update thread
-            controller.getView().enableUpdateCanvasThreadOnly4TouchEvents();
+            //controller.getView().enableUpdateCanvasThreadOnly4TouchEvents();
             //------------------------
             controller.getView().postInvalidateOnAnimation();
 
@@ -166,7 +166,7 @@ class TouchEvents {
     synchronized void ActionUp(GameController controller, int X, int Y) {
 
         synchronized (lock) {
-            controller.getView().disableUpdateCanvasThreadOnly4TouchEvents();
+            //controller.getView().disableUpdateCanvasThreadOnly4TouchEvents();
             //------------------------
             controller.getView().postInvalidateOnAnimation();
 

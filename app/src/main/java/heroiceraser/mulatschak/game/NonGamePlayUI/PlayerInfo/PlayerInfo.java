@@ -316,7 +316,7 @@ public class PlayerInfo extends DrawableObject implements
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas) {
+    public synchronized void draw(Canvas canvas) {
         if (isVisible()) {
 
             if (activePlayer == 0 && showPlayer0Turn) {
@@ -355,7 +355,7 @@ public class PlayerInfo extends DrawableObject implements
     //----------------------------------------------------------------------------------------------
     //  draw Presentation
     //
-    public void drawPresentation(Canvas canvas, final GameController controller) {
+    public synchronized void drawPresentation(Canvas canvas, final GameController controller) {
         presentation.draw(canvas, buttonsDefault, controller);
     }
 

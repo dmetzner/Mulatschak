@@ -91,7 +91,7 @@ public class NonGamePlayUIContainer {
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas, GameController controller) {
+    public synchronized void draw(Canvas canvas, GameController controller) {
 
         chatView.draw(canvas);
         button_bar_.draw(canvas);
@@ -99,7 +99,7 @@ public class NonGamePlayUIContainer {
         gameOver.draw(canvas);
 
         // Display Overlays with the functionality
-        statistics_.draw(canvas, controller);
+        statistics_.draw(canvas);
         tricks_.draw(canvas, controller);
         menu_.draw(canvas);
 
@@ -115,7 +115,7 @@ public class NonGamePlayUIContainer {
         connectionProblem.draw(canvas, controller);
     }
 
-    public void drawBackground(Canvas canvas) {
+    public synchronized void drawBackground(Canvas canvas) {
         background.draw(canvas);
     }
 

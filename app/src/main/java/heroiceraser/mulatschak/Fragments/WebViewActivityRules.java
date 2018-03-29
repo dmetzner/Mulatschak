@@ -6,18 +6,17 @@ import android.webkit.WebView;
 
 import at.heroiceraser.mulatschak.R;
 
-public class WebViewActivity extends Activity {
+public class WebViewActivityRules extends Activity {
 
     private WebView webView;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.privacy_policy_online);
+        setContentView(R.layout.web_view);
 
         webView = (WebView) findViewById(R.id.webView1);
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.loadUrl("https://sites.google.com/view/privacypolicymulatschak");
-
+        webView.getSettings().setJavaScriptEnabled(false);
+        webView.loadUrl("https://sites.google.com/view/mulatschak-regeln");
     }
 
 }

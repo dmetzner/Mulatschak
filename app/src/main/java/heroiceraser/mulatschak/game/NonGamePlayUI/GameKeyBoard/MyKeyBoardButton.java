@@ -89,7 +89,7 @@ public class MyKeyBoardButton extends DrawableObject{
     //----------------------------------------------------------------------------------------------
     //  Draw
     //
-    public void draw(Canvas canvas) {
+    public synchronized void draw(Canvas canvas) {
         if (!isVisible()) {
             return;
         }

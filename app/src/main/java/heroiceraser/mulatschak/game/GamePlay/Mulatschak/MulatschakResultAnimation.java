@@ -95,7 +95,7 @@ public class MulatschakResultAnimation {
     //  startAnimation
     //
     public void startAnimation(GameController controller) {
-        controller.getView().enableUpdateCanvasThread();
+        //controller.getView().enableUpdateCanvasThread();
         startTime = System.currentTimeMillis();
         animating = true;
         background4Player0Animations.updateAlpha(0);
@@ -143,7 +143,7 @@ public class MulatschakResultAnimation {
 
 
 
-    public void draw(Canvas canvas, GameController controller) {
+    public synchronized void draw(Canvas canvas, GameController controller) {
         if (textField != null) {
                 background4Player0Animations.draw(canvas);
                 textField.draw(canvas);

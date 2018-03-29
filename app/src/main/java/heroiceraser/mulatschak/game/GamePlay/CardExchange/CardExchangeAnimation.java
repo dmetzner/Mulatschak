@@ -85,7 +85,7 @@ public class CardExchangeAnimation {
     //----------------------------------------------------------------------------------------------
     //  drawRotation
     //
-    void drawRotation(Canvas canvas) {
+    synchronized void drawRotation(Canvas canvas) {
 
         Matrix matrix = new Matrix();
         camera_.save();

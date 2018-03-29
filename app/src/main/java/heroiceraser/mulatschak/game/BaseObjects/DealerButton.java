@@ -36,7 +36,7 @@ public class DealerButton extends DrawableObject{
         start_position_ = new Point(getPosition());
         offset_ = new Point(end_position.x - getPosition().x, end_position.y - getPosition().y);
         animation_running_ = true;
-        controller.getView().enableUpdateCanvasThread();
+        //controller.getView().enableUpdateCanvasThread();
     }
 
     private void continueMoveAnimation(GameController controller) {
@@ -56,7 +56,7 @@ public class DealerButton extends DrawableObject{
 
     }
 
-    public void draw(Canvas canvas, GameController controller) {
+    public synchronized void draw(Canvas canvas, GameController controller) {
         if (isVisible()) {
             canvas.drawBitmap(getBitmap(), getPosition().x, getPosition().y, null);
 

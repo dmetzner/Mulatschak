@@ -123,7 +123,7 @@ public class DealingAnimation {
     //              -> continues Animation
     //              -> draws the deck and the actual card that moves to a player
     //
-    public void draw(Canvas canvas, GameController controller) {
+    public synchronized void draw(Canvas canvas, GameController controller) {
 
         if (!animation_running_) {
             return;

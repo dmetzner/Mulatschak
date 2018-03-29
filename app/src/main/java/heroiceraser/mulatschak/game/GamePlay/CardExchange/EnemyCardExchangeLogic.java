@@ -97,7 +97,7 @@ public class EnemyCardExchangeLogic {
         }
 
         // start animation -> enables canvas thread
-        controller.getView().enableUpdateCanvasThread();
+        //controller.getView().enableUpdateCanvasThread();
         card_exchange_animation_.startAnimation();
 
         // --> gets continued by draw method
@@ -128,7 +128,7 @@ public class EnemyCardExchangeLogic {
         }
 
         // start animation -> enables canvas thread
-        controller.getView().enableUpdateCanvasThread();
+        //controller.getView().enableUpdateCanvasThread();
         card_exchange_animation_.startAnimation();
 
         // --> gets continued by draw method
@@ -138,7 +138,7 @@ public class EnemyCardExchangeLogic {
     //  draw:
     //        draws the spinning animations, or the correct exchange button (with a helptext)
     //
-    public void draw(Canvas canvas, GameController controller) {
+    public synchronized void draw(Canvas canvas, GameController controller) {
 
         // spinning animation
         if (card_exchange_animation_.isAnimationRunning()) {

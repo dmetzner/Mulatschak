@@ -46,7 +46,7 @@ public class GameMenu extends ButtonBarWindow {
     //----------------------------------------------------------------------------------------------
     //  Touch Events
     //
-    public void touchEventDown(int X, int Y) {
+    public synchronized void touchEventDown(int X, int Y) {
         if (!isVisible()) {
             return;
         }
@@ -55,7 +55,7 @@ public class GameMenu extends ButtonBarWindow {
         animationSpeedGameMenu.touchEventDown(X, Y);
     }
 
-    public void touchEventMove(int X, int Y) {
+    public synchronized void touchEventMove(int X, int Y) {
         if (!isVisible()) {
             return;
         }
@@ -64,7 +64,7 @@ public class GameMenu extends ButtonBarWindow {
         animationSpeedGameMenu.touchEventMove(X, Y);
     }
 
-    public void touchEventUp(int X, int Y, GameController controller) {
+    public synchronized void touchEventUp(int X, int Y, GameController controller) {
         if (!isVisible()) {
             return;
         }
@@ -78,7 +78,7 @@ public class GameMenu extends ButtonBarWindow {
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas) {
+    public synchronized void draw(Canvas canvas) {
         if (isVisible()) {
 
             super.drawBackground(canvas);

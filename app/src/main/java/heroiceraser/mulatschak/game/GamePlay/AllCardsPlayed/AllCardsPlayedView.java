@@ -61,7 +61,7 @@ public class AllCardsPlayedView{
     //
     public void startAnimation(GameController controller) {
         init(controller.getView());
-        controller.getView().enableUpdateCanvasThread();
+        //controller.getView().enableUpdateCanvasThread();
         controller.getNonGamePlayUIContainer().closeAllButtonBarWindows();
         controller.getNonGamePlayUIContainer().getStatistics().setVisible(true);
         controller.getLogic().setMulatschakRound(false);
@@ -72,14 +72,14 @@ public class AllCardsPlayedView{
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas, GameController controller) {
+    public synchronized void draw(Canvas canvas, GameController controller) {
         if (next_round_button_.isVisible()) {
-            controller.getView().disableUpdateCanvasThread();
+            //controller.getView().disableUpdateCanvasThread();
             next_round_button_.draw(canvas);
         }
     }
 
-    public void waitOrStartNewRound(final GameController controller) {
+    private synchronized void waitOrStartNewRound(final GameController controller) {
 
         if (!controller.multiplayer_) {
             controller.prepareNewRound();
@@ -133,15 +133,15 @@ public class AllCardsPlayedView{
     // Touch Events
     //                  next round button
     //
-    public void touchEventDown(int X, int Y) {
+    public synchronized void touchEventDown(int X, int Y) {
         next_round_button_.touchEventDown(X, Y);
     }
 
-    public void touchEventMove(int X, int Y) {
+    public synchronized void touchEventMove(int X, int Y) {
         next_round_button_.touchEventMove(X, Y);
     }
 
-    public void touchEventUp(int X, int Y, GameController controller) {
+    public synchronized void touchEventUp(int X, int Y, GameController controller) {
         if (next_round_button_.touchEventUp(X, Y)) {
             next_round_button_.setVisible(false);
             controller.getNonGamePlayUIContainer().closeAllButtonBarWindows();

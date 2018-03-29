@@ -124,7 +124,7 @@ public class EnemyCardExchangeAnimation {
     //----------------------------------------------------------------------------------------------
     // draw
     //
-    public void draw(Canvas canvas, MyPlayer myPlayer) {
+    public synchronized void draw(Canvas canvas, MyPlayer myPlayer) {
 
         //  draw bitmap without 3d rotation
         if (moving_up_ || moving_down_) {
@@ -222,7 +222,7 @@ public class EnemyCardExchangeAnimation {
     //----------------------------------------------------------------------------------------------
     // recalculateParameter
     //
-    void recalculateParameters(GameController controller) {
+    synchronized void recalculateParameters(GameController controller) {
         double animation_factor = controller.getSettings().getAnimationSpeed().getSpeedFactor();
         double max_time_section_1 = 250 * animation_factor;
         double max_time_section_2 = 1750 * animation_factor;
@@ -347,7 +347,7 @@ public class EnemyCardExchangeAnimation {
     //----------------------------------------------------------------------------------------------
     //  drawNewCards
     //
-    private void drawNewCard(GameController controller) {
+    private synchronized void drawNewCard(GameController controller) {
         controller.getGamePlay().getDealCards().takeCardFromDeck(myPlayer_, controller.getDeck());
         Card card = myPlayer_.getHand().getCardAt(myPlayer_.getHand().getCardStack().size() - 1);
         card.setPosition(exchanged_cards_.get(index_).getFixedPosition());

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.opengl.Visibility;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -16,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -67,7 +65,8 @@ import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.Fragments.MultiPlayerSettingsFragment;
 import heroiceraser.mulatschak.Fragments.PrivacyPolicyFragment;
 import heroiceraser.mulatschak.Fragments.RulesFragment;
-import heroiceraser.mulatschak.Fragments.WebViewActivity;
+import heroiceraser.mulatschak.Fragments.WebViewActivityPrivacy;
+import heroiceraser.mulatschak.Fragments.WebViewActivityRules;
 import heroiceraser.mulatschak.game.GameView;
 import heroiceraser.mulatschak.Fragments.GameScreenFragment;
 import heroiceraser.mulatschak.Fragments.LoadingScreenFragment;
@@ -97,7 +96,7 @@ public class MainActivity extends FragmentActivity implements
     // tag for debug logging
     final String TAG = "MainActivity";
 
-    public final Boolean DEBUG = false;
+    public final Boolean DEBUG = true;
 
     // bool if an actual game is active
     private boolean gameRunning;
@@ -1470,9 +1469,9 @@ public class MainActivity extends FragmentActivity implements
     @Override
     public void onPolicyRequested() {
         try {
-            boolean internetConection = DetectConnection.checkInternetConnection(getApplicationContext());
-            if (internetConection) {
-                Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
+            boolean internetConnection = DetectConnection.checkInternetConnection(getApplicationContext());
+            if (internetConnection) {
+                Intent intent = new Intent(getApplicationContext(), WebViewActivityPrivacy.class);
                 startActivity(intent);
             }
             else {
@@ -1490,12 +1489,18 @@ public class MainActivity extends FragmentActivity implements
     @Override
     public void onRulesRequested() {
         try {
-            switchToFragment(mRulesFragment, "mRulesFragment");
+            boolean internetConnection = DetectConnection.checkInternetConnection(getApplicationContext());
+            if (internetConnection) {
+                Intent intent = new Intent(getApplicationContext(), WebViewActivityRules.class);
+                startActivity(intent);
+            }
+            else {
+                switchToFragment(mRulesFragment, "mRulesFragment");
+            }
         }
         catch (Exception e) {
             Log.e(TAG, "rules req exception:: " + e);
         }
-
     }
 
     //----------------------------------------------------------------------------------------------

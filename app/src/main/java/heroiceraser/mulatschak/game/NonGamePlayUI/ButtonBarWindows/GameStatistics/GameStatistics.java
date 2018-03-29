@@ -5,6 +5,8 @@ import android.graphics.Point;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,14 +95,14 @@ public class GameStatistics extends ButtonBarWindow {
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas, GameController controller) {
+    public synchronized void draw(Canvas canvas) {
         if (isVisible()) {
 
             super.drawBackground(canvas);
             super.drawTitle(canvas);
 
             // display names & lives
-            drawStateOfTheGame(canvas, players_, controller);
+            drawStateOfTheGame(canvas, players_);
         }
     }
 
@@ -113,17 +115,14 @@ public class GameStatistics extends ButtonBarWindow {
     //                                    name_3      *lives*
     //                                    ...
     //
-    private void drawStateOfTheGame(Canvas canvas, int players, GameController controller) {
+    private synchronized void drawStateOfTheGame(Canvas canvas, int players) {
 
 
         for (int i = 0; i < players; i++) {
             canvas.save();
             Point pos = new Point(display_name_text_pos_);
 
-            int offset = Integer.parseInt(String.valueOf(
-                    display_name_layouts_.get(i).getText().charAt(0))) - 1;
-
-            pos.y += (int) (text_paint_.getTextSize() * 2) * offset;
+            pos.y += (int) (text_paint_.getTextSize() * 2) * i;
 
             canvas.translate(pos.x, pos.y);
             if (display_name_layouts_.size() > i && display_name_layouts_.get(i) != null) {
@@ -141,21 +140,22 @@ public class GameStatistics extends ButtonBarWindow {
 
 
     private void setPlayerList(GameController controller) {
-
         playerList.clear();
 
         List<MyPlayer> unsorted = new ArrayList<>();
         unsorted.addAll(controller.getPlayerList());
 
         for (int i = 0; i < unsorted.size(); i++) {
-            int min = 0;
-            for (int j = i; j < unsorted.size(); j++) {
-                if (unsorted.get(j).getLives() < unsorted.get(i).getLives()) {
-                    min = j;
+            int min_pos = 0;
+            int min = Integer.MAX_VALUE;
+            for (int j = 0; j < unsorted.size(); j++) {
+                if (unsorted.get(j).getLives() < min) {
+                    min = unsorted.get(j).getLives();
+                    min_pos = j;
                 }
             }
-            playerList.add(unsorted.get(min));
-            unsorted.remove(min);
+            playerList.add(unsorted.get(min_pos));
+            unsorted.remove(min_pos);
             i--;
         }
     }
@@ -228,21 +228,21 @@ public class GameStatistics extends ButtonBarWindow {
     //  Touch Events
     //                 window close button
     //
-    public void touchEventDown(int X, int Y){
+    public synchronized void touchEventDown(int X, int Y){
         if (!isVisible()) {
             return;
         }
         getCloseButton().touchEventDown(X, Y);
     }
 
-    public void touchEventMove(int X, int Y) {
+    public synchronized void touchEventMove(int X, int Y) {
         if (!isVisible()) {
             return;
         }
         getCloseButton().touchEventMove(X, Y);
     }
 
-    public void touchEventUp(int X, int Y) {
+    public synchronized void touchEventUp(int X, int Y) {
         if (!isVisible()) {
             return;
         }

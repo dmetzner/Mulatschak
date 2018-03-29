@@ -100,7 +100,7 @@ public class ButtonBar extends DrawableObject {
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas) {
+    public synchronized void draw(Canvas canvas) {
         if (!isVisible()) {
             return;
         }
@@ -108,11 +108,11 @@ public class ButtonBar extends DrawableObject {
         drawButtons(canvas);
     }
 
-    private void drawBackground(Canvas canvas) {
+    private synchronized void drawBackground(Canvas canvas) {
         canvas.drawBitmap(getBitmap(), getPosition().x, getPosition().y, null);
     }
 
-    private void drawButtons(Canvas canvas) {
+    private synchronized void drawButtons(Canvas canvas) {
         menuButton.draw(canvas);
         tricksButton.draw(canvas);
         statisticsButton.draw(canvas);

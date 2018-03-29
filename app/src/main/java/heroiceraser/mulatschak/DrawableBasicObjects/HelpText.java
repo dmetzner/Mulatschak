@@ -80,7 +80,7 @@ public class HelpText extends DrawableObject{
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas, Point position) {
+    public synchronized void draw(Canvas canvas, Point position) {
         canvas.save();
         canvas.translate(position.x, position.y);
         canvas.drawRoundRect(background_rect_, rect_rx_, rect_ry_, bg_color_);

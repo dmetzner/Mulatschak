@@ -76,7 +76,7 @@ public class ButtonBarWindow {
     //----------------------------------------------------------------------------------------------
     //  drawBackground
     //
-    protected void drawBackground(Canvas canvas) {
+    protected synchronized void drawBackground(Canvas canvas) {
         canvas.drawRect(background_, background_paint_);
         closeButton.draw(canvas);
     }
@@ -85,7 +85,7 @@ public class ButtonBarWindow {
     //----------------------------------------------------------------------------------------------
     //  drawTitle
     //
-    protected void drawTitle(Canvas canvas) {
+    protected synchronized void drawTitle(Canvas canvas) {
         title_.draw(canvas);
     }
 

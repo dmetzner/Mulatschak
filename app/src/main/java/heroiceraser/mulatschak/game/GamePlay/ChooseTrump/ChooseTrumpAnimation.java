@@ -70,7 +70,7 @@ public class ChooseTrumpAnimation {
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas, GameController controller) {
+    public synchronized void draw(Canvas canvas, GameController controller) {
         if (!animatingTrumps) {
             return;
         }

@@ -96,7 +96,7 @@ class DecideMulatschakAnimation {
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas, GameController controller) {
+    public synchronized void draw(Canvas canvas, GameController controller) {
         if (animationRunning) {
             background.draw(canvas);
             controller.getPlayerHandsView().drawPlayer0Hand(canvas, controller);

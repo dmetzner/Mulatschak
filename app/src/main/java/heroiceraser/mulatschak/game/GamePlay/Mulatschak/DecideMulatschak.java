@@ -82,13 +82,13 @@ public class DecideMulatschak {
         // Player 0 -> Choose Animation Muli, (Yes or NO?)
         if (logic.getTurn() == 0) {
             decideMulatschakAnimation.turnOnAnimation();
-            controller.getView().disableUpdateCanvasThread();
+            //controller.getView().disableUpdateCanvasThread();
             //animation calls make makeMul again
         }
 
         // Enemies
         else if (logic.getTurn() != 0) {
-            controller.getView().enableUpdateCanvasThread();
+            //controller.getView().enableUpdateCanvasThread();
 
             // single player
             if (controller.getPlayerById(logic.getTurn()).isEnemyLogic()) {
@@ -181,7 +181,7 @@ public class DecideMulatschak {
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas, GameController controller) {
+    public synchronized void draw(Canvas canvas, GameController controller) {
         decideMulatschakAnimation.draw(canvas, controller);
         mulatschakRoundAnimation.draw(canvas, controller);
     }

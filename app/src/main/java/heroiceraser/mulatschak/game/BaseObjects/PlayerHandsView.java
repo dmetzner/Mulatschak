@@ -76,7 +76,7 @@ public class PlayerHandsView {
     //----------------------------------------------------------------------------------------------
     //  drawHandCards()
     //
-    public void drawHandCards(Canvas canvas, GameController controller) {
+    public synchronized void drawHandCards(Canvas canvas, GameController controller) {
         for (int i = 0; i < controller.getPlayerList().size(); i++) {
             MyPlayer player = controller.getPlayerById(i);
 
@@ -117,7 +117,7 @@ public class PlayerHandsView {
     //----------------------------------------------------------------------------------------------
     //  draw Player 0 Hand
     //
-    public void drawPlayer0Hand(Canvas canvas, GameController controller) {
+    public synchronized void drawPlayer0Hand(Canvas canvas, GameController controller) {
         for (Card card : controller.getPlayerById(0).getHand().getCardStack()) {
             canvas.drawBitmap(card.getBitmap(), card.getPosition().x, card.getPosition().y, null);
         }
@@ -127,7 +127,7 @@ public class PlayerHandsView {
     //----------------------------------------------------------------------------------------------
     //  draw miss a turn
     //
-    public void drawMissATurn(Canvas canvas) {
+    public synchronized void drawMissATurn(Canvas canvas) {
         missATurnTextField.draw(canvas);
     }
 

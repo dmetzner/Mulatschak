@@ -112,7 +112,7 @@ public class DiscardPile extends DrawableObject {
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas, GameController controller) {
+    public synchronized void draw(Canvas canvas, GameController controller) {
         if (isVisible()) {
             // draw discard pile
             for (int j = 0; j < positions_.size(); j++) {
@@ -139,7 +139,7 @@ public class DiscardPile extends DrawableObject {
     //----------------------------------------------------------------------------------------------
     //  draw Overlays
     //
-    public void drawOverlays(Canvas canvas, GameController controller) {
+    public synchronized void drawOverlays(Canvas canvas, GameController controller) {
         if (overlays_visible_) {
             // draw discard pile
             int roundWinnerPos = controller.getPlayerById(controller.getLogic()

@@ -63,11 +63,11 @@ public class ChooseTrump {
 
         if (logic.getTrumpPlayerId() == 0) {
             choose_trump_animation_.turnOnAnimationTrumps();
-            view.disableUpdateCanvasThread();
+            //view.disableUpdateCanvasThread();
             // touch event should call continueAfterTrumpWasChosen();
         }
         else if (logic.getTrumpPlayerId() != 0) {
-            view.enableUpdateCanvasThread();
+            //view.enableUpdateCanvasThread();
 
             // single player
             if (controller.getPlayerById(logic.getTurn()).isEnemyLogic()) {
@@ -107,7 +107,7 @@ public class ChooseTrump {
         setTrump(controller, trump);
     }
 
-    public void handleMainPlayersDecision(int trump, GameController controller) {
+    void handleMainPlayersDecision(int trump, GameController controller) {
 
         if (controller.multiplayer_) {
             // broadcast to all the decision
@@ -116,7 +116,7 @@ public class ChooseTrump {
             activity.broadcastMessage(Message.chooseTrump, gson.toJson(trump));
         }
 
-        Log.d("-------", "I've choosen the trump");
+        if (controller.DEBUG) { Log.d("-------", "I've choosen the trump"); }
 
         setTrump(controller, trump);
     }

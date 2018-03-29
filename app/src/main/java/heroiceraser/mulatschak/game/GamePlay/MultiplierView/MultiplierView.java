@@ -77,7 +77,7 @@ public class MultiplierView extends DrawableObject{
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas) {
+    public synchronized void draw(Canvas canvas) {
         if (isVisible() && !multi_text_.equals("")) {
             canvas.drawText(multi_text_, multi_pos_.x, multi_pos_.y, text_paint_);
         }

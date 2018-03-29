@@ -115,7 +115,7 @@ public class GameTricks extends ButtonBarWindow {
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas, GameController controller) {
+    public synchronized void draw(Canvas canvas, GameController controller) {
         if (isVisible()) {
 
             super.drawBackground(canvas);
@@ -152,7 +152,7 @@ public class GameTricks extends ButtonBarWindow {
     //                  -> not like the default discard pile draw!
     //                  -> just see the cards player 0 won the round!
     //
-    private void drawDiscardPile(Canvas canvas, DiscardPile dp, int winner_id, String winner_name) {
+    private synchronized void drawDiscardPile(Canvas canvas, DiscardPile dp, int winner_id, String winner_name) {
         // draw discard pile
         for (int j = 0; j < dp.getPositions().size(); j++) {
             if (dp.getCard(j) == null || dp.getCard(j).getBitmap() == null) {
@@ -267,7 +267,7 @@ public class GameTricks extends ButtonBarWindow {
     //                 window close button
     //                  go left/right arrow button (next tricks)
     //
-    public void touchEventDown(int X, int Y){
+    public synchronized void touchEventDown(int X, int Y){
         if (!isVisible()) {
             return;
         }
@@ -277,7 +277,7 @@ public class GameTricks extends ButtonBarWindow {
         arrow_right_.touchEventDown(X, Y);
     }
 
-    public void touchEventMove(int X, int Y) {
+    public synchronized void touchEventMove(int X, int Y) {
         if (!isVisible()) {
             return;
         }
@@ -287,7 +287,7 @@ public class GameTricks extends ButtonBarWindow {
         arrow_right_.touchEventMove(X, Y);
     }
 
-    public void touchEventUp(int X, int Y) {
+    public synchronized void touchEventUp(int X, int Y) {
         if (!isVisible()) {
             return;
         }

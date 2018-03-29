@@ -58,7 +58,7 @@ public class PlayACardLogic {
     //----------------------------------------------------------------------------------------------
     //  draw
     //
-    public void draw(Canvas canvas, GameController controller) {
+    public synchronized void draw(Canvas canvas, GameController controller) {
 
         if (move_card_idx_ != GameController.NOT_SET) {
             Card card = controller.getPlayerByPosition(0).getHand().getCardAt(move_card_idx_);
@@ -90,7 +90,7 @@ public class PlayACardLogic {
         if (invalid_symbol_alpha_ < 0) {
             invalid_symbol_alpha_ = 0;
             invalid_move_symbol_running_ = false;
-            controller.getView().disableUpdateCanvasThreadOnly4TouchEvents();
+            //controller.getView().disableUpdateCanvasThreadOnly4TouchEvents();
         }
         else {
             invalid_move_symbol_running_ = true;
@@ -119,7 +119,7 @@ public class PlayACardLogic {
     //  touchActionDOWN
     //                  checks if a hand card gets touched, saved index to move_card_idx
     //
-    void touchActionDown(GameController controller, int X, int Y) {
+    synchronized void touchActionDown(GameController controller, int X, int Y) {
 
         if (isCardMoveable() &&
              move_card_idx_ == GameController.NOT_SET) {
@@ -146,7 +146,7 @@ public class PlayACardLogic {
     //  touchActionMove:
     //                      move card according to the movement
     //
-    void touchActionMove(GameController controller, int X, int Y) {
+    synchronized void touchActionMove(GameController controller, int X, int Y) {
         if (move_card_idx_ >= 0) {
             controller.getPlayerByPosition(0).getHand().getCardAt(move_card_idx_).setPosition(
                 X -  controller.getLayout().getCardWidth() / 2,
@@ -158,7 +158,7 @@ public class PlayACardLogic {
     //----------------------------------------------------------------------------------------------
     //  touchActionUP
     //
-    void touchActionUp(GameController controller) {
+    synchronized void touchActionUp(GameController controller) {
         if (move_card_idx_ >= 0) {
             CardStack hand =  controller.getPlayerByPosition(0).getHand();
             int card_y = hand.getCardAt(move_card_idx_).getPosition().y;
@@ -214,7 +214,7 @@ public class PlayACardLogic {
         invalid_move_symbol_running_ = true;
         invalid_symbol_alpha_ = 255;
         invalid_time_start_ = System.currentTimeMillis();
-        controller.getView().enableUpdateCanvasThreadOnly4TouchEvents();
+        //controller.getView().enableUpdateCanvasThreadOnly4TouchEvents();
     }
 
 

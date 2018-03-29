@@ -62,17 +62,16 @@ public class DealCards {
     //                               -> player take a card from deck
     //                               -> return false if deck is empty (take card from deck)
     //
-    public boolean takeCardFromDeck(MyPlayer player, MulatschakDeck deck){
+    public void takeCardFromDeck(MyPlayer player, MulatschakDeck deck){
 
         if (deck.getCardStack().isEmpty()) {
-            return false;
+            throw new AssertionError();
         }
 
         // remove a card from the deck and push it to the players hand
         CardStack player_hand =  player.getHand();
         player_hand.addCard(deck.getCardAt(0));
         deck.getCardStack().remove(0);
-        return true;
     }
 
 

@@ -36,7 +36,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="heroiceraser.mulatschak.Fragments.WebViewActivity"
+            android:name="heroiceraser.mulatschak.Fragments.WebViewActivityPrivacy"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden">
+        </activity>
+        <activity
+            android:name="heroiceraser.mulatschak.Fragments.WebViewActivityRules"
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden">
         </activity>

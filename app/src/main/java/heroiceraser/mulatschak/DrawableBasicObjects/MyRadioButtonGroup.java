@@ -23,7 +23,7 @@ public class MyRadioButtonGroup {
     //  draw
     //              -> draws all radio buttons
     //
-    public void draw(Canvas canvas) {
+    public synchronized void draw(Canvas canvas) {
         for (MyRadioButton rb: radioButtons) {
             rb.draw(canvas);
         }
@@ -65,7 +65,7 @@ public class MyRadioButtonGroup {
 
     private static final int BR = 3;
 
-    public void touchEventDown(int X, int Y) {
+    public synchronized void touchEventDown(int X, int Y) {
         for (MyRadioButton button : getRadioButtons()) {
             if (button.isVisible() && button.isEnabled() &&
                     X >= button.getPosition().x - BR * button.getRadius() && X < button.getPosition().x + BR * button.getRadius() &&
@@ -75,7 +75,7 @@ public class MyRadioButtonGroup {
         }
     }
 
-    public void touchEventMove(int X, int Y) {
+    public synchronized void touchEventMove(int X, int Y) {
         for (MyRadioButton button : getRadioButtons()) {
             if (button.isVisible() && button.isEnabled() && button.isPressed()) {
                 if ( X >= button.getPosition().x - BR * button.getRadius() && X < button.getPosition().x + BR * button.getRadius() &&
@@ -89,7 +89,7 @@ public class MyRadioButtonGroup {
         }
     }
 
-    public boolean touchEventUp(int X, int Y) {
+    public synchronized boolean touchEventUp(int X, int Y) {
         int i = 0;
         for (MyRadioButton button : getRadioButtons()) {
             if (button.isVisible() && button.isEnabled() && button.isPressed()) {
