@@ -3,9 +3,10 @@
 buildscript {
     repositories {
         jcenter()
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.1.0'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -15,17 +16,18 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        google()
     }
 
     ext {
-        android_compile_version = 25
-        android_version = '25.0.1'
+        android_compile_version = 27
+        android_version = '27.0.3'
         // Google Play Services minimum requirements is 14
-        android_min_sdk_version = 16
+        android_min_sdk_version = 21
 
-        appcompat_library_version = '25.1.0'
-        support_library_version = '25.1.0'
-        gms_library_version = '10.0.1'
+        appcompat_library_version = '27.1.0'
+        support_library_version = '27.1.0'
+        gms_library_version = '11.8.0'
     }
 }
 
