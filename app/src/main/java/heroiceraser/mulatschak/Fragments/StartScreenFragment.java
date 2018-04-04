@@ -31,7 +31,6 @@ public class StartScreenFragment extends Fragment implements OnClickListener {
     public interface Listener {
         void onInvitationPopUpAccepted();
         void onInvitationPopUpDeclined();
-        void onErrorAccepted();
         void onSinglePlayerSettingsRequested();
         void onPolicyRequested();
         void onRulesRequested();
@@ -42,6 +41,7 @@ public class StartScreenFragment extends Fragment implements OnClickListener {
         void onMultiPlayerQuickGameRequested();
         void onMultiPlayerInvitePlayersRequested();
         void onMultiPlayerSeeInvitationsRequested();
+        void onSettingsRequested();
         void onChangeLanguage();
     }
 
@@ -54,7 +54,6 @@ public class StartScreenFragment extends Fragment implements OnClickListener {
 
     LinearLayout errorPopUp = null;
     TextView errorText = null;
-    Button errorAcceptedButton = null;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -70,9 +69,9 @@ public class StartScreenFragment extends Fragment implements OnClickListener {
                 R.id.multi_player_invitations_button,
                 R.id.button_accept_popup_invitation,
                 R.id.button_decline_popup_invitation,
-                // R.id.button_e
                 R.id.policy_button,
-                R.id.rules_button
+                R.id.rules_button,
+                R.id.settings_button
         };
         for (int i : CLICKABLES) {
             v.findViewById(i).setOnClickListener(this);
@@ -83,7 +82,6 @@ public class StartScreenFragment extends Fragment implements OnClickListener {
         acceptButton = v.findViewById(R.id.button_accept_popup_invitation);
 
         errorPopUp = v.findViewById(R.id.error_popup);
-        errorAcceptedButton = v.findViewById(R.id.button_accept_error);
         errorText = v.findViewById(R.id.error_text);
 
         mGreeting = getString(R.string.signed_out_greeting);
@@ -191,8 +189,8 @@ public class StartScreenFragment extends Fragment implements OnClickListener {
             case R.id.rules_button:
                 mListener.onRulesRequested();
                 break;
-            case R.id.button_accept_error:
-                mListener.onErrorAccepted();
+            case R.id.settings_button:
+                mListener.onSettingsRequested();
                 break;
         }
     }
@@ -246,7 +244,7 @@ public class StartScreenFragment extends Fragment implements OnClickListener {
             if (visible == View.GONE && errorPopUp != null) {
                 errorPopUp.setVisibility(View.GONE);
                 errorText.setText(text);
-                maxVisibleTime = System.currentTimeMillis() - 16000;
+                maxVisibleTime = System.currentTimeMillis() - 10000;
                 return;
             }
 
@@ -266,10 +264,10 @@ public class StartScreenFragment extends Fragment implements OnClickListener {
 
             errorPopUp.setVisibility(View.VISIBLE);
             errorText.setText(text);
-            maxVisibleTime = System.currentTimeMillis() + 15000;
+            maxVisibleTime = System.currentTimeMillis() + 9000;
 
             if (errorPopUp.getVisibility() == View.VISIBLE) {
-                maxVisibleTime = System.currentTimeMillis() + 15000;
+                maxVisibleTime = System.currentTimeMillis() + 9000;
                 handleAutoTurnOff(text);
             }
         }
@@ -278,7 +276,7 @@ public class StartScreenFragment extends Fragment implements OnClickListener {
         }
     }
 
-    // also handles to set evertyhing if the view gets created new after the calll
+    // also handles to set evertyhing if the view gets created new after the call
     private void handleAutoTurnOff(final String text) {
 
         try {

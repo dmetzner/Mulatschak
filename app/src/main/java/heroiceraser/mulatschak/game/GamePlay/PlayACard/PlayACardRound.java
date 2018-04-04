@@ -134,31 +134,33 @@ public class PlayACardRound {
 
 
     public void handleEnemyAction(final GameController controller) {
-        controller.getPlayerById(controller.getLogic().getTurn()).gameState = Message.gameStateWaitForNextRoundButton;
         enemy_play_a_card_logic_.playACard(controller,
                 controller.getPlayerById(controller.getLogic().getTurn()));
+        controller.getPlayerById(controller.getLogic().getTurn()).gameState++;
     }
 
 
     public void handleOnlineInteraction(int cardId, GameController controller) {
-        controller.getPlayerById(controller.getLogic().getTurn()).gameState = Message.gameStateWaitForNextRoundButton;
         controller.waitForOnlineInteraction = Message.noMessage;
 
         enemy_play_a_card_logic_.playACardOnline(controller,
                 controller.getPlayerById(controller.getLogic().getTurn()), cardId);
-
+        controller.getPlayerById(controller.getLogic().getTurn()).gameState++;
     }
 
     void handleMainPlayersDecision(GameController controller) {
-        controller.getPlayerById(controller.getLogic().getTurn()).gameState = Message.gameStateWaitForNextRoundButton;
         if (controller.multiplayer_) {
             // broadcast to all the decision
             MainActivity activity = (MainActivity) controller.getView().getContext();
             int cardId = controller.getDiscardPile().getCard(controller
                     .getPlayerById(controller.getLogic().getTurn()).getPosition()).getId();
+            ArrayList<Integer> data = new ArrayList<>();
+            data.add(cardId);
+            data.add(controller.playACardCounter);
             Gson gson = new Gson();
-            activity.broadcastMessage(Message.playACard, gson.toJson(cardId));
+            activity.broadcastMessage(Message.playACard, gson.toJson(data));
         }
+        controller.getPlayerById(controller.getLogic().getTurn()).gameState++;
         if (controller.DEBUG) { Log.d("-------", "I played a Card"); }
     }
 
@@ -241,8 +243,9 @@ public class PlayACardRound {
     //
     private void prepareNextCardRound(final GameController controller, boolean muli) {
         controller.mainActivity.gameState++;
+        if (controller.DEBUG) { Log.d("-----", "new STATE: " + controller.mainActivity.gameState);}
         for (MyPlayer player : controller.getPlayerList()) {
-            player.gameState = Message.gameStateWaitForPlayACard;
+            player.gameState = controller.mainActivity.gameState;
         }
         controller.playACardCounter++;
         roundEnded = false;

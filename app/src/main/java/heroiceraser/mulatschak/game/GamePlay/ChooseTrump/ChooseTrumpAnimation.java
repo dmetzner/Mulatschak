@@ -1,6 +1,7 @@
 package heroiceraser.mulatschak.game.GamePlay.ChooseTrump;
 
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GamePlay.Background4Player0Animations;
 import heroiceraser.mulatschak.game.GameView;
+import heroiceraser.mulatschak.helpers.BitmapMethodes;
 
 //----------------------------------------------------------------------------------------------
 //  Choose Trump Animation Class
@@ -44,13 +46,21 @@ public class ChooseTrumpAnimation {
 
         background.init(layout);
 
-        String image_name = "trick_bids_button_trump_";
+        String image_name = "button_blue_metallic_small";
 
         for (int id = 1; id < MulatschakDeck.CARD_SUITS; id++) { // start at 1, no Joker
             MyButton button = new MyButton();
             int width = layout.getTrickBidsTrumpButtonSize().x;
             int height = layout.getTrickBidsTrumpButtonSize().y;
-            button.init(view, new Point(), width, height, image_name + id, "");
+            if (view.getController().getDeck().getDesign() == MulatschakDeck.DD_DESIGN) {
+                button.init(view, new Point(), new Point(width, height), image_name,
+                        new Point((int) (width * 0.6), (int) (height * 0.6)), "trump_dd_" + id, "");
+            }
+            else {
+                button.init(view, new Point(), new Point(width, height), image_name,
+                        new Point((int) (width * 0.6), (int) (height * 0.6)), "trumps_basic_" + id, "");
+            }
+
             trumpButtons.add(button);
         }
 

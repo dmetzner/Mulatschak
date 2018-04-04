@@ -77,7 +77,7 @@ public class EnemyCardExchangeLogic {
                 controller.getLogic(), weak_border, randomness);
 
         // can't exchange 4 cards
-        handle4Cards(card_exchange_animation_.getExchangedCards(), myPlayer);
+        // handle4Cards(card_exchange_animation_.getExchangedCards(), myPlayer);
 
         // if deck has to less cards to draw
         //      -> give back the best cards from move cards to the players hand
@@ -222,8 +222,8 @@ public class EnemyCardExchangeLogic {
         int cards_to_give_back = cards_to_remove.size() - deck_size;
 
         for (int i = 0; i < cards_to_give_back; i++) {
-            int highest_id = -1;
-            int highest_val = -1;
+            int highest_id = 0;
+            int highest_val = Integer.MAX_VALUE;
             for (int j = 0; j < cards_to_remove.size(); j++) {
                 int card_value = GameLogic.getCardValue(cards_to_remove.get(j));
                 if (GameLogic.getCardValue(cards_to_remove.get(j)) < highest_val) {
@@ -231,10 +231,8 @@ public class EnemyCardExchangeLogic {
                     highest_val = card_value;
                 }
             }
-            if (highest_id != -1) {
-                myPlayer.getHand().addCard(cards_to_remove.get(highest_id));
-                cards_to_remove.remove(highest_id);
-            }
+            myPlayer.getHand().addCard(cards_to_remove.get(highest_id));
+            cards_to_remove.remove(highest_id);
         }
     }
 

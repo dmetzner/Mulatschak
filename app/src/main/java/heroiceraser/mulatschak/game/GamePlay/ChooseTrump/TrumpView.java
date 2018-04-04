@@ -88,7 +88,13 @@ public class TrumpView extends DrawableObject {
         if (active_symbol == MulatschakDeck.HEART) {
             controller.getLogic().raiseMultiplier(controller);
         }
-        active_id_ = "trumps_basic_" + active_symbol;
+        if (controller.getDeck().getDesign() == MulatschakDeck.DD_DESIGN) {
+            active_id_ = "trump_dd_" + active_symbol;
+        }
+        else {
+            active_id_ = "trumps_basic_" + active_symbol;
+        }
+
         start_time_ = System.currentTimeMillis();
         //controller.getView().enableUpdateCanvasThread();
         if (player_id >= 0 && player_id < controller.getAmountOfPlayers()) {

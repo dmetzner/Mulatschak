@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:background="@color/startScreenLight"
+    android:weightSum="1">
+
+    <!-- :::::::::::::::::::: Back Button :::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+    <Button
+        android:id="@+id/settings_back_button"
+        style="@style/BackButton"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="start|top"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp" />
+
+    <!-- :::::::::::::::::::: Settings ::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
+
+
+            <TextView
+                android:id="@+id/settings_title"
+                style="@style/SettingsTitleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="30dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/settings"
+                android:textColor="@color/my_dark_gray" />
+
+            <!-- . . . . . . . . Card Design . . . . . . . . . . . . . . . . . . . . . . . . . -->
+            <TextView
+                android:id="@+id/settings_card_design"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/settings_card_design_text"
+                android:textColor="@color/my_dark_gray"
+                android:textSize="16sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_marginRight="15dp"
+                    android:src="@drawable/card_design" />
+
+                <ImageView
+                    android:id="@+id/imageView3"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_marginLeft="15dp"
+                    android:src="@drawable/card_design_dd" />
+
+            </LinearLayout>
+
+
+            <RadioGroup
+                android:id="@+id/settings_card_design_radioGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-10dp"
+                android:gravity="start"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/settings_card_design_1_radioButton"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="0dp"
+                    android:buttonTint="@color/metallic_blue"
+                    android:text="" />
+
+                <RadioButton
+                    android:id="@+id/settings_card_design_2_radioButton"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="45dp"
+                    android:buttonTint="@color/metallic_blue"
+                    android:text="" />
+
+            </RadioGroup>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</RelativeLayout>

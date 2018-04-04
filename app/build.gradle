@@ -13,8 +13,8 @@ android {
 
         minSdkVersion android_min_sdk_version
         targetSdkVersion android_compile_version
-        versionCode 5
-        versionName "5.0"
+        versionCode 8
+        versionName "8.0"
     }
 
     buildTypes {
@@ -31,7 +31,7 @@ dependencies {
     implementation "com.google.android.gms:play-services-games:${gms_library_version}"
     implementation "com.google.android.gms:play-services-auth:${gms_library_version}"
 
-    compile 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.google.code.gson:gson:2.8.2'
 }
 
 buildscript {

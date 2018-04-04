@@ -88,8 +88,16 @@ public class GameOver {
         // disable things
 
         // show things
+
+        boolean mainPlayerWon = true;
+        for (MyPlayer p : controller.getPlayerList()) {
+            if (controller.getPlayerByPosition(0).getLives() > p.getLives()) {
+                mainPlayerWon = false;
+            }
+        }
+
         String text;
-        if (controller.getPlayerByPosition(0).getLives() <= 0) {
+        if (mainPlayerWon) {
             text = controller.getView().getResources().getString(R.string.game_over_won);
         }
         else {
@@ -122,7 +130,7 @@ public class GameOver {
     //
     public boolean isGameOver(GameController controller) {
         for (MyPlayer player : controller.getPlayerList()) {
-            if (player.getLives() <= 0)
+            if (player.getLives() <= 0 || player.getLives() > controller.getLogic().getMaxLives())
                 return true;
         }
         return false;

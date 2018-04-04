@@ -28,12 +28,17 @@ public class MulatschakDeck extends CardStack {
     public final static int CLUB     = 2;            // IMG_NAME207 - IMG_NAME215
     public final static int HEART    = 3;            // IMG_NAME307 - IMG_NAME315
     public final static int SPADE    = 4;            // IMG_NAME407 - IMG_NAME415
+
+    public final static int DD_DESIGN = 2;
     //
     public final static int CARDS_PER_DECK = 33;
     public final static int CARD_SUITS = 5;
     private final static int FIRST_CARD = 7;
     public final static int LAST_CARD = 15;
     private final static int BACKSIDE = -1;
+
+
+    private int design = 1;
 
     //----------------------------------------------------------------------------------------------
     // Member Variables
@@ -56,14 +61,20 @@ public class MulatschakDeck extends CardStack {
     //  initDeck
     //            initialises the mulatschak deck
     //
-    public void initDeck(GameView view) {
-        String IMG_PRE_NAME = "card";
+    public void initDeck(GameView view, int cardDesign) {
+
         setWidth(0);
         setHeight(0);
         setPosition(view.getController().getLayout().getDeckPosition());
+        String IMG_PRE_NAME = "card";
         backside_ = new Card(BACKSIDE);
         String img_name = IMG_PRE_NAME + "_back";
         backside_.initCard(view, img_name);
+
+        if (cardDesign == DD_DESIGN) {
+            IMG_PRE_NAME = "dd_" + IMG_PRE_NAME;
+            design = DD_DESIGN;
+        }
 
         for (int i = 0; i < CARD_SUITS; i++) {
             if (i == WELI) {
@@ -117,5 +128,9 @@ public class MulatschakDeck extends CardStack {
 
     public static int getCardValue(Card card) {
         return (card.getId() % 100);
+    }
+
+    public int getDesign() {
+        return design;
     }
 }

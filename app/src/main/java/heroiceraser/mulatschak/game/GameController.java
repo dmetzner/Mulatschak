@@ -154,9 +154,9 @@ public class GameController {
     //----------------------------------------------------------------------------------------------
     //  start
     //
-    public void init(final int start_lives, final int enemies, final int difficulty, final boolean multiplayer,
+    public void init(final int start_lives, int max_lives, final int enemies, final int difficulty, final boolean multiplayer,
                      final String myName, final String my_id, final ArrayList<Participant> participants,
-                     final String hostOnlineId, final ArrayList<String> sortedPlayerIds) {
+                     final String hostOnlineId, final ArrayList<String> sortedPlayerIds, final int cardDesign) {
 
         multiplayer_ = multiplayer;
         my_display_name_ = myName;
@@ -169,7 +169,7 @@ public class GameController {
 
         long start = System.currentTimeMillis();
         // essential inits
-        logic_.init(start_lives, difficulty);
+        logic_.init(start_lives, difficulty, max_lives);
         layout_.init(view_);
         settings_.init(view_);
         initPlayers(enemies, sortedPlayerIds);                                      // special multi
@@ -188,10 +188,10 @@ public class GameController {
                 long start = System.currentTimeMillis();
                 if (DEBUG) {Log.d("--", 6 + " - " + System.currentTimeMillis());}
                 discardPile_.init(view_);
+                if (DEBUG) {Log.d("--", 8 + " - " + System.currentTimeMillis());}
+                deck_.initDeck(view_, cardDesign);
                 if (DEBUG) {Log.d("--", 7 + " - " + System.currentTimeMillis());}
                 game_play_.init(view_);
-                if (DEBUG) {Log.d("--", 8 + " - " + System.currentTimeMillis());}
-                deck_.initDeck(view_);
                 if (DEBUG) {Log.d("--", 9 + " - " + System.currentTimeMillis());}
                 dealer_button_.init(view_);
                 if (DEBUG) {Log.d("--", 10 + " - " + System.currentTimeMillis());}
@@ -844,7 +844,7 @@ public class GameController {
         // something went wrong, generate a new deck -> better than a crash
         if (deck_.getCardStack().size() != MulatschakDeck.CARDS_PER_DECK) {
             deck_ = new MulatschakDeck();
-            deck_.initDeck(view_);
+            deck_.initDeck(view_, deck_.getDesign());
         }
 
     }
@@ -1025,6 +1025,11 @@ public class GameController {
             return;
         }
         synchronized (lock) {
+
+            if (DEBUG) {
+                Log.d("---", "received: " + message.type + "");
+            }
+
             switch (message.type) {
                 case Message.chatMessage:
                     non_game_play_ui_.getChatView().addMessage(getPlayerByOnlineId(message.senderId), message.data, this);
@@ -1179,7 +1184,7 @@ public class GameController {
                     Type listType = new TypeToken<ArrayList<String>>() {}.getType();
                     Gson gson = new Gson();
                     ArrayList<String> data = gson.fromJson(message.data, listType);
-                    if (getPlayerByOnlineId(data.get(0)).gameState <= Message.gameStateWaitForPlayACard + playACardCounter) {
+                    if (getPlayerByOnlineId(data.get(0)).gameState < Message.gameStateWaitForPlayACard + playACardCounter) {
                         return;
                     }
                     if (DEBUG) {Log.d("-------", "req by: " + getPlayerByOnlineId(message.senderId).getDisplayName() + " to send him PC");}
@@ -1289,16 +1294,20 @@ public class GameController {
         }
         int id = played_cards_.getCardAt(counter).getId();
         Gson gson = new Gson();
-        mainActivity.sendUnReliable(sendTo, Message.playACard, gson.toJson(id));
+        ArrayList<Integer> data = new ArrayList<>();
+        data.add(id);
+        data.add(counter);
+        mainActivity.sendUnReliable(sendTo, Message.playACard, gson.toJson(data));
     }
 
     private synchronized void receivePlayACard(final Message message) {
-        int code = waitForOnlineInteraction;
-        waitForOnlineInteraction = 0;
-        if (code == Message.playACard) {
+        if (waitForOnlineInteraction == Message.playACard) {
             Gson gson = new Gson();
-            int cardId = gson.fromJson(message.data, int.class);
-            if (5 - getPlayerById(logic_.getTurn()).getHand().getCardStack().size() != playACardCounter) {
+            Type listType = new TypeToken<ArrayList<Integer>>() {}.getType();
+            ArrayList<Integer> data = gson.fromJson(message.data, listType);
+            int cardId = data.get(0);
+            int counter = data.get(1);
+            if (5 - getPlayerById(logic_.getTurn()).getHand().getCardStack().size() != counter) {
                 return;
             }
             if (DEBUG) {Log.d("-------", "PC received by: " + getPlayerByOnlineId(message.senderId).getDisplayName());}

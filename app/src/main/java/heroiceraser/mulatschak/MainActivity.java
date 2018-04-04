@@ -51,6 +51,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 
+import java.nio.charset.IllegalCharsetNameException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -65,6 +66,7 @@ import at.heroiceraser.mulatschak.R;
 import heroiceraser.mulatschak.Fragments.MultiPlayerSettingsFragment;
 import heroiceraser.mulatschak.Fragments.PrivacyPolicyFragment;
 import heroiceraser.mulatschak.Fragments.RulesFragment;
+import heroiceraser.mulatschak.Fragments.SettingsFragment;
 import heroiceraser.mulatschak.Fragments.WebViewActivityPrivacy;
 import heroiceraser.mulatschak.Fragments.WebViewActivityRules;
 import heroiceraser.mulatschak.game.GameView;
@@ -74,13 +76,14 @@ import heroiceraser.mulatschak.Fragments.SinglePlayerFragment;
 import heroiceraser.mulatschak.Fragments.StartScreenFragment;
 import heroiceraser.mulatschak.helpers.DetectConnection;
 import heroiceraser.mulatschak.helpers.LocaleHelper;
+import heroiceraser.mulatschak.helpers.startGameParas;
 
 
 public class MainActivity extends FragmentActivity implements
         // StartScreen  -> Single/Multi MyPlayer, Sign in/out, Achievements, Leaderboards
         StartScreenFragment.Listener,
         SinglePlayerFragment.Listener,  MultiPlayerSettingsFragment.Listener,
-        PrivacyPolicyFragment.Listener, RulesFragment.Listener  {
+        PrivacyPolicyFragment.Listener, RulesFragment.Listener, SettingsFragment.Listener {
 
     // Fragments
     List<Fragment> fragList = new ArrayList<>();
@@ -91,12 +94,13 @@ public class MainActivity extends FragmentActivity implements
     GameScreenFragment mGameScreenFragment;
     PrivacyPolicyFragment mPrivacyPolicyFragment;
     RulesFragment mRulesFragment;
+    SettingsFragment mSettingsFragment;
     GameView mGameView;
 
     // tag for debug logging
     final String TAG = "MainActivity";
 
-    public final Boolean DEBUG = true;
+    public final Boolean DEBUG = false;
 
     // bool if an actual game is active
     private boolean gameRunning;
@@ -153,7 +157,8 @@ public class MainActivity extends FragmentActivity implements
     //byte[] mMsgBuf = new byte[2];
 
     // to save data local
-    SharedPreferences mySharedPreference;
+    public SharedPreferences mySharedPreference;
+    public final String cardDesignKey = "cardDesignKey";
 
 
 
@@ -238,12 +243,14 @@ public class MainActivity extends FragmentActivity implements
         mGameScreenFragment =           new GameScreenFragment();
         mPrivacyPolicyFragment =        new PrivacyPolicyFragment();
         mRulesFragment =                new RulesFragment();
+        mSettingsFragment =             new SettingsFragment();
 
         mStartScreenFragment.setListener(this);
         mSinglePlayerFragment.setListener(this);
         mMultiPlayerSettingsFragment.setListener(this);
         mPrivacyPolicyFragment.setListener(this);
         mRulesFragment.setListener(this);
+        mSettingsFragment.setListener(this);
 
         // add initial fragment (welcome fragment)
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container,
@@ -783,19 +790,12 @@ public class MainActivity extends FragmentActivity implements
 
     @Override
     public void onInvitationPopUpDeclined() {
-        // user wants to accept the invitation shown on the invitation popup
-        // (the one we got through the OnInvitationReceivedListener).
-        mIncomingInvitationId = null;
         mStartScreenFragment.setInvitationPopUpVisibility(View.GONE, "");
-        // can still be found in all invitations
     }
 
     @Override
-    public void onErrorAccepted() {
-        // user wants to accept the invitation shown on the invitation popup
-        // (the one we got through the OnInvitationReceivedListener).
-        mStartScreenFragment.setErrorPopUpVisibility(View.GONE, "");
-        // can still be found in all invitations
+    public void onSettingsRequested() {
+        switchToFragment(mSettingsFragment, "mSettingsFragment");
     }
 
     /*
@@ -1404,7 +1404,7 @@ public class MainActivity extends FragmentActivity implements
             mRealTimeMultiplayerClient.sendUnreliableMessage(msgBuf, mRoomId,
                     sendToId);
 
-           // if (DEBUG) {Log.d(TAG, "Message sent: " + message.type + "-- to: " + sendToId);
+           if (DEBUG) {Log.d(TAG, "Message sent: " + message.type + "-- to: " + sendToId);}
         }
         catch (Exception e) {
             if (DEBUG) {Log.e(TAG, "broadCastUnReliable exception: " + e);}
@@ -1495,7 +1495,8 @@ public class MainActivity extends FragmentActivity implements
                 startActivity(intent);
             }
             else {
-                switchToFragment(mRulesFragment, "mRulesFragment");
+                mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.no_internet_error));
+                //switchToFragment(mRulesFragment, "mRulesFragment");
             }
         }
         catch (Exception e) {
@@ -1665,6 +1666,11 @@ public class MainActivity extends FragmentActivity implements
     @Override
     public void onMultiPlayerQuickGameRequested() {
         try {
+            boolean internetConnection = DetectConnection.checkInternetConnection(getApplicationContext());
+            if (!internetConnection) {
+                mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.no_internet_error));
+                return;
+            }
             // user wants to play against a random opponent right now
             requestLoadingScreen();
             playedWithAFriend = false;
@@ -1687,6 +1693,11 @@ public class MainActivity extends FragmentActivity implements
     @Override
     public void onMultiPlayerInvitePlayersRequested() {
         try {
+            boolean internetConnection = DetectConnection.checkInternetConnection(getApplicationContext());
+            if (!internetConnection) {
+                mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.no_internet_error));
+                return;
+            }
             requestLoadingScreen();
             // show list of invitable players
             mRealTimeMultiplayerClient.getSelectOpponentsIntent(1, 3).addOnSuccessListener(
@@ -1709,6 +1720,11 @@ public class MainActivity extends FragmentActivity implements
     @Override
     public void onMultiPlayerSeeInvitationsRequested() {
         try {
+            boolean internetConnection = DetectConnection.checkInternetConnection(getApplicationContext());
+            if (!internetConnection) {
+                mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.no_internet_error));
+                return;
+            }
             // show list of pending invitations
             switchToFragment(mLoadingScreenFragment, "mLoadingScreenFragment");
             // show list of pending invitations
@@ -1973,9 +1989,9 @@ public class MainActivity extends FragmentActivity implements
                     tryWorkOnMessageAgainLater();
                     return;
                 }
-                int msgCode = Integer.parseInt(messageQueue.get(0).data);
+                startGameParas paras = gson.fromJson(messageQueue.get(0).data, startGameParas.class);
                 messageQueue.remove(0);
-                mMultiPlayerSettingsFragment.receiveMessage(msgCode);
+                mMultiPlayerSettingsFragment.setValues(paras.enemies, paras.difficulty, paras.playerLives, paras.maxLives);
                 return;
             }
 
@@ -1994,7 +2010,7 @@ public class MainActivity extends FragmentActivity implements
                 waitForOnlineInteraction = 0;
                 paras = gson.fromJson(messageQueue.get(0).data, startGameParas.class);
                 messageQueue.remove(0);
-                mMultiPlayerSettingsFragment.setValues(paras.enemies, paras.difficulty, paras.playerLives);
+                mMultiPlayerSettingsFragment.setValues(paras.enemies, paras.difficulty, paras.playerLives, paras.maxLives);
                 startGame(paras, mDisplayName);
                 return;
             }
@@ -2122,6 +2138,7 @@ public class MainActivity extends FragmentActivity implements
                 paras.enemies = mSinglePlayerFragment.getEnemies();
                 paras.difficulty = mSinglePlayerFragment.getDifficulty();
                 paras.playerLives = mSinglePlayerFragment.getPlayerLives();
+                paras.maxLives = mSinglePlayerFragment.getMaxLives();
                 startGame(paras, mDisplayName);
             }
         }
@@ -2164,12 +2181,14 @@ public class MainActivity extends FragmentActivity implements
         try {
             mMultiPlayerSettingsFragment.setMultiPlayerSettingsRequested();
             int player_lives = mMultiPlayerSettingsFragment.getPlayerLives();
+            int max_lives = mMultiPlayerSettingsFragment.getMaxLives();
             int difficulty = mMultiPlayerSettingsFragment.getDifficulty();
             int enemies = mMultiPlayerSettingsFragment.getEnemies();
             paras = new startGameParas();
             paras.enemies = enemies;
             paras.difficulty = difficulty;
             paras.playerLives = player_lives;
+            paras.maxLives = max_lives;
             if (myParticipantId.equals(gameHostId)) {
                 paras.playerPositions = new ArrayList<>();
                 for (Participant p : mParticipants) {
@@ -2194,18 +2213,16 @@ public class MainActivity extends FragmentActivity implements
     }
 
     @Override
-    public void onMultiPlayerSettingsChanged(int code) {
+    public synchronized void onMultiPlayerSettingsChanged() {
+        mMultiPlayerSettingsFragment.setMultiPlayerSettingsRequested();
+        startGameParas paras = new startGameParas();
+        paras.maxLives = mMultiPlayerSettingsFragment.getMaxLives();
+        paras.playerLives = mMultiPlayerSettingsFragment.getPlayerLives();
+        paras.difficulty = mMultiPlayerSettingsFragment.getDifficulty();
+        paras.enemies = mMultiPlayerSettingsFragment.getEnemies();
         if (myParticipantId.equals(gameHostId)) {
-            broadcastMessage(Message.prepareGame, "" + code);
+            broadcastMessage(Message.prepareGame, gson.toJson(paras));
         }
-    }
-
-    class startGameParas
-    {
-        int playerLives;
-        int enemies;
-        int difficulty;
-        ArrayList<String> playerPositions;
     }
 
     private void startGame(final startGameParas paras, final String my_name_final) {
@@ -2214,6 +2231,8 @@ public class MainActivity extends FragmentActivity implements
         gameState = Message.gameStateWaitForGameReady;
         mGameView = new GameView(this);
         mGameView.setKeepScreenOn(true);
+
+        final int cardDesign = mSettingsFragment.getCardDesign(this);
 
         Handler mHandler = new Handler();
         Runnable showGameScreenThenContinue = new Runnable() {
@@ -2225,6 +2244,7 @@ public class MainActivity extends FragmentActivity implements
                     switchToFragment(mGameScreenFragment, "mGameScreenFragment");
                     mGameView.getController().init(
                             paras.playerLives,
+                            paras.maxLives,
                             paras.enemies,
                             paras.difficulty,
                             mMultiplayer,
@@ -2232,7 +2252,8 @@ public class MainActivity extends FragmentActivity implements
                             myParticipantId,
                             mParticipants,
                             gameHostId,
-                            paras.playerPositions);
+                            paras.playerPositions,
+                            cardDesign);
                 }
                 catch (Exception e) {
                     mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_game_canceled));

@@ -74,13 +74,6 @@
                 android:text="@string/error_text"
                 android:textSize="15sp" />
 
-            <Button
-                android:id="@+id/button_accept_error"
-                style="@style/InvPopupButton"
-                android:layout_marginRight="15dp"
-                android:layout_marginLeft="5dp"
-                android:text="@string/decline_popup_invite" />
-
         </LinearLayout>
 
     </LinearLayout>
@@ -287,24 +280,31 @@
                         android:paddingRight="10dp"
                         android:paddingBottom="10dp">
 
+                        <Button
+                            android:id="@+id/settings_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="48"
+                            android:layout_marginTop="10dp"
+                            android:text="@string/settings"
+                            android:textSize="18sp" />
 
-                            <Button
-                                android:id="@+id/policy_button"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="48"
-                                android:layout_marginTop="10dp"
-                                android:text="@string/policy"
-                                android:textSize="18sp" />
+                        <Button
+                            android:id="@+id/policy_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="48"
+                            android:text="@string/policy"
+                            android:textSize="18sp" />
 
-                            <Button
-                                android:id="@+id/rules_button"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginBottom="7dp"
-                                android:layout_weight="48"
-                                android:text="@string/rules"
-                                android:textSize="18sp" />
+                        <Button
+                            android:id="@+id/rules_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="7dp"
+                            android:layout_weight="48"
+                            android:text="@string/rules"
+                            android:textSize="18sp" />
                     </LinearLayout>
 
                 </LinearLayout>

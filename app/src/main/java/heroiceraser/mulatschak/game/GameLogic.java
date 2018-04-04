@@ -28,6 +28,7 @@ public class GameLogic {
     //
 
     private int start_lives_;
+    private int max_lives_;
     private int difficulty_;
 
     private int multiplier_;
@@ -52,6 +53,7 @@ public class GameLogic {
     public GameLogic() {
         multiplier_ = GameController.NOT_SET;
         start_lives_ = GameController.NOT_SET;
+        max_lives_ = GameController.NOT_SET;
 
         game_over_ = false;
         mulatschak_round_ = false;
@@ -67,9 +69,10 @@ public class GameLogic {
 
     }
 
-    public void init(int lives, int difficulty) {
+    public void init(int lives, int difficulty, int maxLives) {
         multiplier_ = 1;
         start_lives_ = lives;
+        this.max_lives_ = maxLives;
         game_over_ = false;
         mulatschak_round_ = false;
         setDifficulty(difficulty);
@@ -365,6 +368,10 @@ public class GameLogic {
                 difficulty_ = DIFFICULTY_NORMAL;
                 break;
         }
+    }
+
+    public int getMaxLives() {
+        return max_lives_;
     }
 
 }

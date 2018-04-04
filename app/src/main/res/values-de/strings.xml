@@ -54,15 +54,7 @@
     <p>To Do</p>
 ]]></string>
 
-
-    Diese App wurde von Metzner Daniel entwickelt. Für mehr Informationen schreiben sie eine Email an heroiceraser@gmail.com
-
-    Diese App benötigt für den Multiplayer Modus eine Internetverbindung, über welche Kosten Anfallen können!
-
-    Diese App ermöglicht es sich über Google Play anzumelden. Wird dieser Service in Anspruch genommen, so werden dein Google Play Nickname, so wie das Profilbild mitsamt den Spielergebnissen öffentlich gemacht. Diese können von jedem anderen User über die Ranglisten bzw. während eines aktiven Spiels gesehen werden. Die Daten werden auf keinem nicht zu Google gehörigen Server gespeichert. Des Weiteren wird das Nutzungsverhalten von Usern NICHT ausgewertet.
-
-    Wenn Sie mit dieser Datenschutzerklärung nicht einverstanden sind, können Sie die App zumindest für den Einzelspieler Modus nutzen. Wichtig ist, dass Sie sich dann nicht über Google Play anmelden, bzw ihr Internet deaktivieren.
-
+    <string name="no_internet_error">Fehler: kein Internet!</string>
 
     <!-- :::::::::::::::: back button :::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="close">beenden?</string>
@@ -71,6 +63,8 @@
 
     <!-- :::::::::::::::: Loading ::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="loading">Es wird geladen…</string>
+    <string name="settings">Einstellungen</string>
+    <string name="settings_card_design_text">Wähle dein Lieblingskartendesign:</string>
 
     <!-- :::::::::::::::: Player Info Pop Up ::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="player_info_title_bar_name">Spieler Profil</string>
@@ -112,6 +106,9 @@
 
     <string name="single_player_settings_player_lives_text">Anzahl der Startleben:   </string>
     <string name="single_player_settings_player_lives_text_default">Anzahl der Startleben:\u0020\u0020\u0020 21</string>
+
+    <string name="single_player_settings_player_max_lives_text">Maximale Anzahl an Leben:   </string>
+    <string name="single_player_settings_player_max_lives_text_default">Amount of maximum lives:\u0020\u0020\u0020 100</string>
 
     <string name="single_player_settings_animation_default">Animations Geschwindigkeit: Normal</string>
     <string name="single_player_settings_animation_text">Animations Geschwindigkeit:</string>

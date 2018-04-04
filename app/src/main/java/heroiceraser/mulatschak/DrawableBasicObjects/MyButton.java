@@ -25,6 +25,8 @@ public class MyButton extends DrawableObject{
     private boolean enabled;
     private boolean pressed;
     private String text;
+    private Point symbolSize;
+    private Bitmap symbol;
     private Point textPosition;
     private TextPaint textPaint;
     private Bitmap bitmapOverlay;
@@ -38,9 +40,17 @@ public class MyButton extends DrawableObject{
     }
 
 
+
     //----------------------------------------------------------------------------------------------
     //  init
     //
+    public void init(GameView view, Point position, Point size, String imageName, Point symbolSize, String symbolName, String text) {
+        this.symbolSize = symbolSize;
+        this.symbol = BitmapMethodes.loadBitmap(view, symbolName, symbolSize.x, symbolSize.y);
+        init(view, position, size.x, size.y, imageName, text);
+    }
+
+
     public void init(GameView view, Point position, Point size, Bitmap image, String text) {
         setWidth(size.x);
         setHeight(size.y);
@@ -119,6 +129,12 @@ public class MyButton extends DrawableObject{
             canvas.drawBitmap(getBitmap(),
                     getPosition().x * pressed_scale_ - offset_x,
                     getPosition().y * pressed_scale_, null);
+        }
+
+        if (symbol != null) {
+            canvas.drawBitmap(symbol,
+                    getPosition().x * pressed_scale_ - offset_x + getWidth() / 2 - symbolSize.x / 2,
+                    getPosition().y * pressed_scale_ + getHeight() / 2 - symbolSize.y / 2, null);
         }
 
         // text

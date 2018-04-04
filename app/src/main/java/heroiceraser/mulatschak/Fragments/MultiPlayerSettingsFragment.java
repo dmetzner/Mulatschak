@@ -4,6 +4,7 @@ package heroiceraser.mulatschak.Fragments;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import at.heroiceraser.mulatschak.R;
+import heroiceraser.mulatschak.helpers.startGameParas;
 
 
 //--------------------------------------------------------------------------------------------------
@@ -36,7 +38,7 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
     public interface Listener {
         void onMultiPlayerSettingsStartGameRequested();
         void onMultiPlayerSettingsBackButtonRequested();
-        void onMultiPlayerSettingsChanged(int code);
+        void onMultiPlayerSettingsChanged();
     }
 
     MultiPlayerSettingsFragment.Listener mListener = null;
@@ -45,6 +47,7 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
     private int player_lives = NOT_SET;
     private int enemies = NOT_SET;
     private int difficulty = NOT_SET;
+    private int max_lives = NOT_SET;
 
     private RadioButton enemies_0_radioButton;
     private RadioButton enemies_1_radioButton;
@@ -53,13 +56,14 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
     private RadioButton difficulty_normal_radioButton;
     private RadioButton difficulty_hard_radioButton;
     private SeekBar player_lives_seekBar;
+    private TextView player_lives_textView;
+    private SeekBar max_player_lives_seekBar;
+    private TextView max_player_lives_textView;
     private TextView enemiesText;
     private TextView difficultyText;
-    private TextView player_lives_textView;
     private Button startGameButton;
     private TextView notHostText;
     private boolean notCreatedYet = false;
-    private boolean received = false;
     int players;
     boolean host;
 
@@ -90,13 +94,13 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
                     case R.id.multi_player_settings_enemies_0_radioButton:
-                        mListener.onMultiPlayerSettingsChanged(enemies0);
+                        mListener.onMultiPlayerSettingsChanged();
                         break;
                     case R.id.multi_player_settings_enemies_1_radioButton:
-                        mListener.onMultiPlayerSettingsChanged(enemies1);
+                        mListener.onMultiPlayerSettingsChanged();
                         break;
                     case R.id.multi_player_settings_enemies_2_radioButton:
-                        mListener.onMultiPlayerSettingsChanged(enemies2);
+                        mListener.onMultiPlayerSettingsChanged();
                         break;
                 }
             }
@@ -117,13 +121,13 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
                     case R.id.multi_player_settings_difficulty_easy_radioButton:
-                        mListener.onMultiPlayerSettingsChanged(difficulty0);
+                        mListener.onMultiPlayerSettingsChanged();
                         break;
                     case R.id.multi_player_settings_difficulty_normal_radioButton:
-                        mListener.onMultiPlayerSettingsChanged(difficulty1);
+                        mListener.onMultiPlayerSettingsChanged();
                         break;
                     case R.id.multi_player_settings_difficulty_hard_radioButton:
-                        mListener.onMultiPlayerSettingsChanged(difficulty2);
+                        mListener.onMultiPlayerSettingsChanged();
                         break;
                 }
             }
@@ -137,10 +141,19 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
             int progress_value = NOT_SET;
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                progress_value = progress + 1;
+                progress_value = progress;
                 String text = getString(R.string.single_player_settings_player_lives_text) +
-                        "   "  + progress_value;
+                        "   "  + (progress_value + 1);
                 player_lives_textView.setText(text);
+
+                setPlayerLives();
+                setMaxLives();
+                if (player_lives >= max_lives) {
+                    max_player_lives_seekBar.setProgress(player_lives);
+                    setMaxLives();
+                    max_player_lives_textView.setText(getString(R.string.single_player_settings_player_max_lives_text) +
+                            "   "  + (max_lives + 2));
+                }
             }
 
             @Override
@@ -151,9 +164,63 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 String text = getString(R.string.single_player_settings_player_lives_text) +
-                        "   "  + progress_value;
+                        "   "  + (progress_value + 1);
                 player_lives_textView.setText(text);
-                mListener.onMultiPlayerSettingsChanged(progress_value);
+
+                setPlayerLives();
+                setMaxLives();
+                if (player_lives >= max_lives) {
+                    max_player_lives_seekBar.setProgress(player_lives);
+                    setMaxLives();
+                    max_player_lives_textView.setText(getString(R.string.single_player_settings_player_max_lives_text) +
+                            "   "  + (max_lives + 2));
+                }
+                mListener.onMultiPlayerSettingsChanged();
+            }
+        });
+
+        max_player_lives_textView = v.findViewById(R.id.multi_player_settings_player_max_lives_text);
+        max_player_lives_seekBar = v.findViewById(R.id.multi_player_settings_player_max_lives_seekBar);
+
+        max_player_lives_seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            int progress_value = NOT_SET;
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                progress_value = progress;
+                String text = getString(R.string.single_player_settings_player_max_lives_text) +
+                        "   "  + (max_lives + 2);
+                max_player_lives_textView.setText(text);
+
+                setPlayerLives();
+                setMaxLives();
+                if (max_lives <= player_lives) {
+                    player_lives_seekBar.setProgress(max_lives);
+                    setPlayerLives();
+                    player_lives_textView.setText(getString(R.string.single_player_settings_player_lives_text) +
+                            "   "  + (player_lives + 1));
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                //
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                String text = getString(R.string.single_player_settings_player_max_lives_text) +
+                        "   "  + (max_lives + 2);
+                max_player_lives_textView.setText(text);
+
+                setPlayerLives();
+                setMaxLives();
+                if (max_lives <= player_lives) {
+                    player_lives_seekBar.setProgress(max_lives);
+                    setPlayerLives();
+                    player_lives_textView.setText(getString(R.string.single_player_settings_player_lives_text) +
+                            "   "  + (player_lives + 1));
+                }
+                mListener.onMultiPlayerSettingsChanged();
             }
         });
 
@@ -162,9 +229,8 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
         if (notCreatedYet) {
             prepareMultiPlayerSettingsRequested(players, host);
         }
-        if (received) {
-            handleMessageCode();
-        }
+
+        setMultiPlayerSettingsRequested();
 
         return v;
     }
@@ -224,6 +290,7 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
                 difficulty_normal_radioButton.setEnabled(false);
                 difficulty_hard_radioButton.setEnabled(false);
                 player_lives_seekBar.setEnabled(false);
+                max_player_lives_seekBar.setEnabled(false);
                 difficultyText.setText(getString(R.string.multi_player_settings_difficulty_text_no_host));
                 enemiesText.setText(getString(R.string.multi_player_settings_player_amount_text_no_host));
                 startGameButton.setVisibility(View.GONE);
@@ -246,6 +313,7 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
         difficulty_normal_radioButton.setEnabled(true);
         difficulty_hard_radioButton.setEnabled(true);
         player_lives_seekBar.setEnabled(true);
+        max_player_lives_seekBar.setEnabled(true);
         startGameButton.setEnabled(true);
         enemies_0_radioButton.setVisibility(View.VISIBLE);
         enemies_1_radioButton.setVisibility(View.VISIBLE);
@@ -254,59 +322,10 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
         difficulty_normal_radioButton.setVisibility(View.VISIBLE);
         difficulty_hard_radioButton.setVisibility(View.VISIBLE);
         player_lives_seekBar.setVisibility(View.VISIBLE);
+        max_player_lives_seekBar.setVisibility(View.VISIBLE);
         startGameButton.setVisibility(View.VISIBLE);
         player_lives_textView.setText( getString(R.string.single_player_settings_player_lives_text_default));
-    }
-
-
-    public void receiveMessage(int newMessageCode) {
-        messageQueue.add(newMessageCode);
-        handleMessageCode();
-    }
-
-    private ArrayList<Integer> messageQueue = new ArrayList<>();
-
-
-    private void handleMessageCode() {
-        try {
-            int messageCode = messageQueue.get(0);
-            switch (messageCode) {
-                case MultiPlayerSettingsFragment.backButton:
-
-                    break;
-                case MultiPlayerSettingsFragment.enemies0:
-                    enemies_0_radioButton.setChecked(true);
-                    break;
-                case MultiPlayerSettingsFragment.enemies1:
-                    enemies_1_radioButton.setChecked(true);
-                    break;
-                case MultiPlayerSettingsFragment.enemies2:
-                    enemies_2_radioButton.setChecked(true);
-                    break;
-                case MultiPlayerSettingsFragment.difficulty0:
-                    difficulty_easy_radioButton.setChecked(true);
-                    break;
-                case MultiPlayerSettingsFragment.difficulty1:
-                    difficulty_normal_radioButton.setChecked(true);
-                    break;
-                case MultiPlayerSettingsFragment.difficulty2:
-                    difficulty_hard_radioButton.setChecked(true);
-                    break;
-                default:
-                    String text = getString(R.string.single_player_settings_player_lives_text) +
-                            "   "  + messageCode;
-                    player_lives_textView.setText(text);
-                    player_lives_seekBar.setProgress(messageCode - 1);
-                    break;
-            }
-            messageQueue.remove(0);
-            if (!messageQueue.isEmpty()) {
-                handleMessageCode();
-            }
-        }
-        catch (Exception e) {
-            received = true;
-        }
+        max_player_lives_textView.setText( getString(R.string.single_player_settings_player_max_lives_text_default));
     }
 
 
@@ -331,11 +350,13 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
             difficulty = 3;
         }
 
-        player_lives = player_lives_seekBar.getProgress() + 1;
+        setPlayerLives();
+
+        setMaxLives();
     }
 
-    public int getPlayerLives() {
-        return player_lives;
+    private void setPlayerLives() {
+        player_lives = player_lives_seekBar.getProgress();
     }
 
     public int getDifficulty() {
@@ -346,34 +367,61 @@ public class MultiPlayerSettingsFragment extends Fragment implements View.OnClic
         return enemies;
     }
 
-    public void setValues(int enemies, int difficulty, int player_lives) {
-        switch (enemies) {
-            case 0:
-                enemies_0_radioButton.isChecked();
-                break;
+    private void setMaxLives() {
+        max_lives = max_player_lives_seekBar.getProgress();
+    }
 
-            case 1:
-                enemies_1_radioButton.isChecked();
-                break;
+    public int getPlayerLives() {
+        return player_lives + 1;
+    }
 
-            case 2:
-                enemies_2_radioButton.isChecked();
-                break;
+    public int getMaxLives() {
+        return max_lives + 2;
+    }
+
+    public synchronized void setValues(int enemies, int difficulty, int player_lives, int max_lives) {
+
+        try {
+            switch (enemies) {
+                case 0:
+                    enemies_0_radioButton.setChecked(true);
+                    break;
+
+                case 1:
+                    enemies_1_radioButton.setChecked(true);
+                    break;
+
+                case 2:
+                    enemies_2_radioButton.setChecked(true);
+                    break;
+            }
+            switch (difficulty) {
+                case 1:
+                    difficulty_easy_radioButton.setChecked(true);
+                    break;
+
+                case 2:
+                    difficulty_normal_radioButton.setChecked(true);
+                    break;
+
+                case 3:
+                    difficulty_hard_radioButton.setChecked(true);
+                    break;
+            }
+
+            this.player_lives = player_lives - 1;
+            player_lives_seekBar.setProgress(this.player_lives);
+            player_lives_textView.setText(getString(R.string.single_player_settings_player_lives_text) + "" + player_lives);
+
+            this.max_lives = max_lives - 2;
+            max_player_lives_seekBar.setProgress(this.max_lives);
+            max_player_lives_textView.setText(getString(R.string.single_player_settings_player_max_lives_text) + "" + max_lives);
         }
-        switch (difficulty) {
-            case 0:
-                difficulty_easy_radioButton.isChecked();
-                break;
-
-            case 1:
-                difficulty_normal_radioButton.isChecked();
-                break;
-
-            case 2:
-                difficulty_hard_radioButton.isChecked();
-                break;
+        catch (Exception e) {
+            // not created yet
+            setValues(enemies, difficulty, player_lives, max_lives);
         }
-        player_lives_seekBar.setProgress(player_lives - 1);
+
     }
 }
 

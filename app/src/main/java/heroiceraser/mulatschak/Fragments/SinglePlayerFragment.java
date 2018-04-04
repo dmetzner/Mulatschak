@@ -28,6 +28,7 @@ public class SinglePlayerFragment extends Fragment implements View.OnClickListen
 
     private final int NOT_SET = -1;
     private int player_lives = NOT_SET;
+    private int max_lives = NOT_SET;
     private int enemies = NOT_SET;
     private int difficulty = NOT_SET;
 
@@ -39,6 +40,8 @@ public class SinglePlayerFragment extends Fragment implements View.OnClickListen
     private RadioButton difficulty_hard_radioButton;
     private SeekBar player_lives_seekBar;
     private TextView player_lives_textView;
+    private SeekBar max_player_lives_seekBar;
+    private TextView max_player_lives_textView;
 
 
     @Override
@@ -76,10 +79,19 @@ public class SinglePlayerFragment extends Fragment implements View.OnClickListen
             int progress_value = NOT_SET;
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                progress_value = progress + 1;
+                progress_value = progress;
                 String text = getString(R.string.single_player_settings_player_lives_text) +
-                        "   "  + progress_value;
+                        "   "  + (progress_value + 1);
                 player_lives_textView.setText(text);
+
+                setPlayerLives();
+                setMaxLives();
+                if (player_lives >= max_lives) {
+                    max_player_lives_seekBar.setProgress(player_lives);
+                    setMaxLives();
+                    max_player_lives_textView.setText(getString(R.string.single_player_settings_player_max_lives_text) +
+                            "   "  + (max_lives + 2));
+                }
             }
 
             @Override
@@ -90,10 +102,67 @@ public class SinglePlayerFragment extends Fragment implements View.OnClickListen
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 String text = getString(R.string.single_player_settings_player_lives_text) +
-                        "   "  + progress_value;
+                        "   "  + (progress_value + 1);
                 player_lives_textView.setText(text);
+
+                setPlayerLives();
+                setMaxLives();
+                if (player_lives >= max_lives) {
+                    max_player_lives_seekBar.setProgress(player_lives);
+                    setMaxLives();
+                    max_player_lives_textView.setText(getString(R.string.single_player_settings_player_max_lives_text) +
+                            "   "  + (max_lives + 2));
+                }
             }
         });
+
+        max_player_lives_textView =
+                v.findViewById(R.id.single_player_settings_player_max_lives_text);
+        max_player_lives_seekBar =
+                v.findViewById(R.id.single_player_settings_player_max_lives_seekBar);
+
+        max_player_lives_seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            int progress_value = NOT_SET;
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                progress_value = progress;
+                String text = getString(R.string.single_player_settings_player_max_lives_text) +
+                        "   "  + (max_lives + 2);
+                max_player_lives_textView.setText(text);
+
+                setPlayerLives();
+                setMaxLives();
+                if (max_lives <= player_lives) {
+                    player_lives_seekBar.setProgress(max_lives);
+                    setPlayerLives();
+                    player_lives_textView.setText(getString(R.string.single_player_settings_player_lives_text) +
+                            "   "  + (player_lives + 1));
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                //
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                String text = getString(R.string.single_player_settings_player_max_lives_text) +
+                        "   "  + (max_lives + 2);
+                max_player_lives_textView.setText(text);
+
+                setPlayerLives();
+                setMaxLives();
+                if (max_lives <= player_lives) {
+                    player_lives_seekBar.setProgress(max_lives);
+                    setPlayerLives();
+                    player_lives_textView.setText(getString(R.string.single_player_settings_player_lives_text) +
+                            "   "  + (player_lives + 1));
+                }
+            }
+        });
+
+        prepareSinglePlayerRequested();
 
         return v;
     }
@@ -136,11 +205,13 @@ public class SinglePlayerFragment extends Fragment implements View.OnClickListen
             difficulty = 3;
         }
 
-        player_lives = player_lives_seekBar.getProgress() + 1;
+        setPlayerLives();
+
+        setMaxLives();
     }
 
-    public int getPlayerLives() {
-        return player_lives;
+    private void setPlayerLives() {
+        player_lives = player_lives_seekBar.getProgress();
     }
 
     public int getDifficulty() {
@@ -149,6 +220,18 @@ public class SinglePlayerFragment extends Fragment implements View.OnClickListen
 
     public int getEnemies() {
         return enemies;
+    }
+
+    private void setMaxLives() {
+        max_lives = max_player_lives_seekBar.getProgress();
+    }
+
+    public int getPlayerLives() {
+        return player_lives + 1;
+    }
+
+    public int getMaxLives() {
+        return max_lives + 2;
     }
 }
 

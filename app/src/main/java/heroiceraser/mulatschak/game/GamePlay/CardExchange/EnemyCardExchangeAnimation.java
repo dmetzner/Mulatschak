@@ -335,10 +335,11 @@ public class EnemyCardExchangeAnimation {
                     card.getFixedPosition().y + offset_.y - offset_y));
 
             if (percentage >= 1) {
-                drawNewCard(controller);
-                clean_hand = true;
+                if (drawNewCard(controller)) {
+                    clean_hand = true;
+                    start_time_ = System.currentTimeMillis();
+                }
                 index_++;
-                start_time_ = System.currentTimeMillis();
             }
         }
     }
@@ -347,8 +348,10 @@ public class EnemyCardExchangeAnimation {
     //----------------------------------------------------------------------------------------------
     //  drawNewCards
     //
-    private synchronized void drawNewCard(GameController controller) {
-        controller.getGamePlay().getDealCards().takeCardFromDeck(myPlayer_, controller.getDeck());
+    private synchronized boolean drawNewCard(GameController controller) {
+        if (!controller.getGamePlay().getDealCards().takeCardFromDeck(myPlayer_, controller.getDeck())) {
+            return false;
+        }
         Card card = myPlayer_.getHand().getCardAt(myPlayer_.getHand().getCardStack().size() - 1);
         card.setPosition(exchanged_cards_.get(index_).getFixedPosition());
         card.setFixedPosition(exchanged_cards_.get(index_).getFixedPosition());
@@ -360,7 +363,7 @@ public class EnemyCardExchangeAnimation {
 
         if (myPlayer_.getPosition() == 0) {
             // < x
-            for (int i = 0; i > myPlayer_.getHand().getCardStack().size(); i++) {
+            for (int i = 0; i < myPlayer_.getHand().getCardStack().size(); i++) {
                 if (myPlayer_.getHand().getCardAt(i).getPosition().x < card.getPosition().x) {
                     myPlayer_.getHand().getCardStack().add(i, card);
                     inserted = true;
@@ -401,6 +404,7 @@ public class EnemyCardExchangeAnimation {
         if (!inserted) {
             myPlayer_.getHand().addCard(card);
         }
+        return true;
     }
 
 
