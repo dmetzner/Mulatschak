@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.text.TextPaint;
-import android.util.Log;
 import android.view.Gravity;
 import android.widget.PopupWindow;
 
@@ -46,8 +45,7 @@ public class PlayerInfo extends DrawableObject implements
 
     // The player profile image buttonsDefault; onclick they open a information pop up
     // bottom position (player 0) has no such image button
-    private List<Rect> playersRectangles;
-    private Paint rectanglePaint;
+    private List<Rect> playersTurnRectangles;
     private MyButton buttonLeftDefault;
     private MyButton buttonTopDefault;
     private MyButton buttonRightDefault;
@@ -56,7 +54,6 @@ public class PlayerInfo extends DrawableObject implements
 
     // highlight the player who has the turn with a colored rectangle
     // player 0 has a text field instead, that tells the players it's his turn
-    private List<Rect> playersTurnRectangles;
     private Paint rectanglePaintHighlight;
     private MyTextField player0sTurnTextField;
     private int activePlayer;         // which player has the turn and should get highlighted
@@ -100,12 +97,10 @@ public class PlayerInfo extends DrawableObject implements
 
 
         // active player
-        playersTurnRectangles = new ArrayList<>();
         rectanglePaintHighlight = new Paint();
         player0sTurnTextField = new MyTextField();
 
-        playersRectangles = new ArrayList<>();
-        rectanglePaint = new Paint();
+        playersTurnRectangles = new ArrayList<>();
 
 
         presentation = new PlayerPresentation();
@@ -177,8 +172,7 @@ public class PlayerInfo extends DrawableObject implements
                             buttonsDefault.get(i).getPosition().y + layout.getPlayerInfoSize().y + paddingHighlight);
                 }
             }
-            playersTurnRectangles.add(rectHighlight);
-            playersRectangles.add(rect);
+            playersTurnRectangles.add(rect);
         }
 
         String text = view.getResources().getString(R.string.player_info_active_player_is_0);
@@ -197,9 +191,6 @@ public class PlayerInfo extends DrawableObject implements
 
         rectanglePaintHighlight.setStyle(Paint.Style.FILL);
         rectanglePaintHighlight.setColor(view.getResources().getColor(R.color.metallic_blue));
-
-        rectanglePaint.setStyle(Paint.Style.FILL);
-        rectanglePaint.setColor(view.getResources().getColor(R.color.white));
 
         presentation.init(view);
 
@@ -325,10 +316,6 @@ public class PlayerInfo extends DrawableObject implements
 
             if (activePlayer >= 0 && activePlayer < playersTurnRectangles.size()){
                 canvas.drawRect(playersTurnRectangles.get(activePlayer), rectanglePaintHighlight);
-            }
-
-            for (Rect r : playersRectangles) {
-                canvas.drawRect(r, rectanglePaint);
             }
 
             for (int i = 0; i < buttonsDefault.size(); i++) {

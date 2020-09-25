@@ -87,12 +87,13 @@ class UpdatePlayerLives {
 
         for (int i = 0; i < controller.getAmountOfPlayers(); i++) {
             if (i == trump_player_id) {
+                controller.getNonGamePlayUIContainer().getChatView().addMessage(controller.getPlayerById(i), "hehe :D", controller, false);
                 add_lives = (-1) * POINTS_MULI_ * multiplier;
             }
             else {
                 add_lives = POINTS_MULI_ * multiplier;
             }
-            setNewPlayerLives(controller.getPlayerById(i), add_lives);
+            setNewPlayerLives(controller, controller.getPlayerById(i), add_lives);
         }
     }
 
@@ -113,11 +114,12 @@ class UpdatePlayerLives {
         for (int i = 0; i < controller.getAmountOfPlayers(); i++) {
             if (i == trump_player_id) {
                 add_lives = POINTS_MULI_ * multiplier;
+                controller.getNonGamePlayUIContainer().getChatView().addMessage(controller.getPlayerById(i), "aaaahhhhhhh!! :(", controller, false);
             }
             else {
                 add_lives = (-1) * POINTS_MULI_ * multiplier;
             }
-            setNewPlayerLives(controller.getPlayerById(i), add_lives);
+            setNewPlayerLives(controller, controller.getPlayerById(i), add_lives);
         }
     }
 
@@ -147,6 +149,7 @@ class UpdatePlayerLives {
             // trump myPlayer failed his bids
             else if (i == trump_player_id && tricks < controller.getLogic().getTricksToMake()) {
                 add_lives = 2 * POINTS_LOST_ * multiplier;
+                controller.getNonGamePlayUIContainer().getChatView().addMessage(controller.getPlayerById(i), "maybe next time... :(", controller, false);
             }
             // no tricks were made
             else if (tricks <= 0) {
@@ -156,7 +159,7 @@ class UpdatePlayerLives {
             else {
                 add_lives = (-1) * tricks * multiplier;
             }
-            setNewPlayerLives(myPlayer, add_lives);
+            setNewPlayerLives(controller, myPlayer, add_lives);
         }
     }
 
@@ -165,11 +168,15 @@ class UpdatePlayerLives {
     //  set new MyPlayer lives
     //                       -> lives can't reach a value below 0!
     //
-    private void setNewPlayerLives(MyPlayer myPlayer, int additional_lives) {
+    private void setNewPlayerLives(GameController controller, MyPlayer myPlayer, int additional_lives) {
+        if (additional_lives == 0) {
+            return;
+        }
         int new_lives = myPlayer.getLives() + additional_lives;
         if (new_lives <= 0 ) {
             new_lives = 0;
         }
+
         myPlayer.setLives(new_lives);
     }
 

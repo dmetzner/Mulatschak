@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -793,10 +794,10 @@ public class MainActivity extends FragmentActivity implements
         mStartScreenFragment.setInvitationPopUpVisibility(View.GONE, "");
     }
 
-    @Override
-    public void onSettingsRequested() {
-        switchToFragment(mSettingsFragment, "mSettingsFragment");
-    }
+//    @Override
+//    public void onSettingsRequested() {
+//        switchToFragment(mSettingsFragment, "mSettingsFragment");
+//    }
 
     /*
      * CALLBACKS SECTION. This section shows how we implement the several games
@@ -1521,6 +1522,9 @@ public class MainActivity extends FragmentActivity implements
         if (isSignedIn()) {
             showAchievements();
         }
+        else {
+            mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.signin_first));
+        }
     }
 
     private void showAchievements() {
@@ -1541,6 +1545,9 @@ public class MainActivity extends FragmentActivity implements
     public void onShowLeaderboardsRequested() {
         if (isSignedIn()) {
             showLeaderboard();
+        }
+        else {
+            mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.signin_first));
         }
     }
 
@@ -1660,89 +1667,93 @@ public class MainActivity extends FragmentActivity implements
     }
 
 
-    //----------------------------------------------------------------------------------------------
-    // start Qick Game Mode
-    //
-    @Override
-    public void onMultiPlayerQuickGameRequested() {
-        try {
-            boolean internetConnection = DetectConnection.checkInternetConnection(getApplicationContext());
-            if (!internetConnection) {
-                mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.no_internet_error));
-                return;
-            }
-            // user wants to play against a random opponent right now
-            requestLoadingScreen();
-            playedWithAFriend = false;
-            Handler mHandler = new Handler();
-            Runnable showLoadingScreenThenContinue = new Runnable() {
-                @Override
-                public void run() {
-                    startQuickGame();
-                }
-            };
-            mHandler.postDelayed(showLoadingScreenThenContinue, 10);
-        }
-        catch (Exception e) {
-            onStartMenuRequested();
-            mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_text));
-            if (DEBUG) {Log.e(TAG, "onMultiPlayerQuickGameRequested exception: " + e);}
-        }
-    }
+//    //----------------------------------------------------------------------------------------------
+//    // start Quick Game Mode
+//    //
+//    @Override
+//    public void onMultiPlayerQuickGameRequested() {
+//        if (!isSignedIn()) {
+//            mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.signin_first));
+//            return;
+//        }
+//        try {
+//            boolean internetConnection = DetectConnection.checkInternetConnection(getApplicationContext());
+//            if (!internetConnection) {
+//                mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.no_internet_error));
+//                return;
+//            }
+//            // user wants to play against a random opponent right now
+//            requestLoadingScreen();
+//            playedWithAFriend = false;
+//            Handler mHandler = new Handler();
+//            Runnable showLoadingScreenThenContinue = new Runnable() {
+//                @Override
+//                public void run() {
+//                    startQuickGame();
+//                }
+//            };
+//            mHandler.postDelayed(showLoadingScreenThenContinue, 10);
+//        }
+//        catch (Exception e) {
+//            onStartMenuRequested();
+//            mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_text));
+//            if (DEBUG) {Log.e(TAG, "onMultiPlayerQuickGameRequested exception: " + e);}
+//        }
+//    }
 
-    @Override
-    public void onMultiPlayerInvitePlayersRequested() {
-        try {
-            boolean internetConnection = DetectConnection.checkInternetConnection(getApplicationContext());
-            if (!internetConnection) {
-                mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.no_internet_error));
-                return;
-            }
-            requestLoadingScreen();
-            // show list of invitable players
-            mRealTimeMultiplayerClient.getSelectOpponentsIntent(1, 3).addOnSuccessListener(
-                    new OnSuccessListener<Intent>() {
-                        @Override
-                        public void onSuccess(Intent intent) {
-                            startActivityForResult(intent, RC_SELECT_PLAYERS);
-                        }
-                    }
-            ).addOnFailureListener(createFailureListener("There was a problem selecting opponents."));
-        }
-        catch (Exception e) {
-            onStartMenuRequested();
-            mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_text));
-            if (DEBUG) {Log.e(TAG, "onMultiPlayerInvitePlayerRequested exception: " + e);}
-        }
-
-    }
-
-    @Override
-    public void onMultiPlayerSeeInvitationsRequested() {
-        try {
-            boolean internetConnection = DetectConnection.checkInternetConnection(getApplicationContext());
-            if (!internetConnection) {
-                mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.no_internet_error));
-                return;
-            }
-            // show list of pending invitations
-            switchToFragment(mLoadingScreenFragment, "mLoadingScreenFragment");
-            // show list of pending invitations
-            mInvitationsClient.getInvitationInboxIntent().addOnSuccessListener(
-                    new OnSuccessListener<Intent>() {
-                        @Override
-                        public void onSuccess(Intent intent) {
-                            startActivityForResult(intent, RC_INVITATION_INBOX);
-                        }
-                    }
-            ).addOnFailureListener(createFailureListener("There was a problem getting the inbox."));
-        }
-        catch (Exception e) {
-            onStartMenuRequested();
-            mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_text));
-            if (DEBUG) {Log.e(TAG, "onMultiPlayerSeeInvitationsRequested exception: " + e);}
-        }
-    }
+//    @Override
+//    public void onMultiPlayerInvitePlayersRequested() {
+//        try {
+//            boolean internetConnection = DetectConnection.checkInternetConnection(getApplicationContext());
+//            if (!internetConnection) {
+//                mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.no_internet_error));
+//                return;
+//            }
+//            requestLoadingScreen();
+//            // show list of invitable players
+//            mRealTimeMultiplayerClient.getSelectOpponentsIntent(1, 3).addOnSuccessListener(
+//                    new OnSuccessListener<Intent>() {
+//                        @Override
+//                        public void onSuccess(Intent intent) {
+//                            startActivityForResult(intent, RC_SELECT_PLAYERS);
+//                        }
+//                    }
+//            ).addOnFailureListener(createFailureListener("There was a problem selecting opponents."));
+//        }
+//        catch (Exception e) {
+//            onStartMenuRequested();
+//            mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_text));
+//            if (DEBUG) {Log.e(TAG, "onMultiPlayerInvitePlayerRequested exception: " + e);}
+//        }
+//
+//    }
+//
+//    @Override
+//    public void onMultiPlayerSeeInvitationsRequested() {
+//        try {
+//            boolean internetConnection = DetectConnection.checkInternetConnection(getApplicationContext());
+//            if (!internetConnection) {
+//                mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.no_internet_error));
+//                return;
+//            }
+//            // show list of pending invitations
+//            switchToFragment(mLoadingScreenFragment, "mLoadingScreenFragment");
+//            // show list of pending invitations
+//            mInvitationsClient.getInvitationInboxIntent().addOnSuccessListener(
+//                    new OnSuccessListener<Intent>() {
+//                        @Override
+//                        public void onSuccess(Intent intent) {
+//                            startActivityForResult(intent, RC_INVITATION_INBOX);
+//                        }
+//                    }
+//            ).addOnFailureListener(createFailureListener("There was a problem getting the inbox."));
+//        }
+//        catch (Exception e) {
+//            onStartMenuRequested();
+//            mStartScreenFragment.setErrorPopUpVisibility(View.VISIBLE, getString(R.string.error_text));
+//            if (DEBUG) {Log.e(TAG, "onMultiPlayerSeeInvitationsRequested exception: " + e);}
+//        }
+//    }
 
 
 

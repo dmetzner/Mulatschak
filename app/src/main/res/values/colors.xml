@@ -13,8 +13,11 @@
     <color name="my_dark_gray">#393939</color>
 
 
-    <color name="startScreenLight">#b0d2e4</color>
-    <color name="startScreenDark">#6082B6</color>
+    <color name="startScreenLight">#393939</color>
+    <color name="startScreenDark">#393939</color>
+    <color name="startScreenSecondary">#5D6FEA</color>
+
+    <color name="trans">#80000000</color>
 
 
     <color name="trans_black">#28000000</color>

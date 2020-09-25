@@ -152,8 +152,7 @@ public class PlayerPresentation {
         if (presentationId == 0) {
             if (timeSinceStart < maxTime / 2) {
                 presentationTextField.setText(controller.getView().getResources()
-                        .getString(R.string.player_presentation_greeting) + " " +
-                        controller.getPlayerById(0).getDisplayName());
+                        .getString(R.string.player_presentation_greeting));
             }
             else {
                 presentationTextField.setText(controller.getView().getResources()

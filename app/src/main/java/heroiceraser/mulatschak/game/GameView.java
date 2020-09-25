@@ -77,13 +77,14 @@ public class GameView extends View {
     protected synchronized void onDraw(Canvas canvas) {
         synchronized (drawLock) {
             super.onDraw(canvas);
-
             if (stopAll || controller_ == null) {
                 return;
             }
 
+//            canvas.drawARGB(255,57,57,57);
+            drawBackground(canvas);
+
             if (controller_.isPlayerPresentationRunning()) {
-                drawBackground(canvas);
                 drawPlayerInfoPresentation(canvas);
                 drawNonGamePlayUI(canvas); // order matters
                 return;
@@ -91,7 +92,6 @@ public class GameView extends View {
 
             if (!controller_.isDrawingEnabled()) {
                 try {
-                    drawBackground(canvas);
                     drawPlayerInfo(canvas);
                     drawNonGamePlayUI(canvas);
                 }
@@ -101,7 +101,6 @@ public class GameView extends View {
                 return;
             }
 
-            drawBackground(canvas);
             if (!controller_.getGameOver().isVisible()) {
                 drawDiscardPile(canvas);
                 drawMultiplier(canvas);

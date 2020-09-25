@@ -13,8 +13,8 @@ android {
 
         minSdkVersion android_min_sdk_version
         targetSdkVersion android_compile_version
-        versionCode 8
-        versionName "8.0"
+        versionCode 1000
+        versionName "0.1.0"
     }
 
     buildTypes {

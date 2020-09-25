@@ -71,6 +71,7 @@ public class ChatView extends DrawableObject {
 
         background = new Rect(0, 0, view.getController().getLayout().getScreenWidth(),
                 view.getController().getLayout().getSectors().get(2).y);
+
         backgroundPaint.setColor(Color.DKGRAY);
 
         position = new Point(boardToTextOffset);
@@ -91,18 +92,13 @@ public class ChatView extends DrawableObject {
     //----------------------------------------------------------------------------------------------
     //  add message
     //
-    private void addMessage(String player_name, String message, GameController controller) {
+    private void addMessage(String text, GameController controller) {
 
         final int MAX_MESSAGES = 5;
 
         MyTextField textField = new MyTextField();
         textField.setVisible(true);
 
-        String text = player_name + ": " + message;
-        // no name? only print message!
-        if (player_name.equals("")) {
-            text = message;
-        }
 
         textField.setText(text);
         textField.setTextPaint(textPaint);
@@ -119,7 +115,7 @@ public class ChatView extends DrawableObject {
     //----------------------------------------------------------------------------------------------
     //  add message
     //
-    public void addMessage(MyPlayer player, String message, GameController controller) {
+    public void addMessage(MyPlayer player, String message, GameController controller, boolean auto_message) {
 
         String player_name = "";
 
@@ -127,10 +123,16 @@ public class ChatView extends DrawableObject {
             player_name = player.getDisplayName();
         }
 
-        // make the player name fit a fixed size!
-        player_name = BitmapMethodes.getStringOfFixedLength(player_name, 9);
-
-        addMessage(player_name, message, controller);
+        player_name =  player_name.substring(0, Math.min(player_name.length(), 12));
+        String text = player_name;
+        if (!auto_message)
+        {
+            text += ": " + message;
+        }
+        else {
+            text += player_name + message;
+        }
+        addMessage(text, controller);
     }
 
 

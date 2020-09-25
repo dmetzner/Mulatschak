@@ -2,6 +2,7 @@
 
 <!-- MAIN MENU -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/start_screen"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -126,247 +127,230 @@
                     <ImageView
                         android:id="@+id/imageView"
                         android:layout_width="match_parent"
-                        android:layout_height="120dp"
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginTop="5dp"
+                        android:layout_height="80dp"
+                        android:layout_marginBottom="50dp"
+                        android:layout_marginTop="30dp"
                         android:gravity="center"
                         android:src="@drawable/title_graphic"
                         android:visibility="visible" />
 
 
-                    <TextView
-                        android:id="@+id/hello"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="20dp"
-                        android:layout_marginTop="10dp"
-                        android:text="Hallo"
-                        android:textColor="@color/white"
-                        android:textSize="20sp" />
+<!--                    <TextView-->
+<!--                        android:id="@+id/hello"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginBottom="30dp"-->
+<!--                        android:layout_marginTop="10dp"-->
+<!--                        android:text="Hallo"-->
+<!--                        android:textColor="@color/white"-->
+<!--                        android:textSize="20sp" />-->
 
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/startScreenLight"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:paddingBottom="25dp"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="10dp"
-                        android:paddingTop="25dp">
-
-                        <TextView
-                            android:id="@+id/singleview"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="10dp"
-                            android:text="@string/single_player_settings_title"
-                            android:textColor="@color/my_dark_gray"
-                            android:textSize="20sp" />
-
-                        <Button
-                            android:id="@+id/single_player_button"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/multi_player_settings_quick_game_button"
-                            android:textSize="25sp"/>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/startScreenDark"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:paddingBottom="25dp"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="10dp">
-
-                        <TextView
-                            android:id="@+id/multiview"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="10dp"
-                            android:layout_marginTop="25dp"
-                            android:text="@string/multi_player_settings_title"
-                            android:textColor="@color/white"
-                            android:textSize="20sp" />
-
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="0dp"
-                            android:orientation="horizontal">
-
-
-                            <Button
-                                android:id="@+id/multi_player_quick_game_button"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="0.48"
-                                android:text="@string/multi_player_settings_quick_game_button" />
-
-                            <Button
-                                android:id="@+id/multi_player_invite_button"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="0.48"
-                                android:text="@string/multi_player_settings_invite_button" />
-
-                        </LinearLayout>
-
-                        <Button
-                            android:id="@+id/multi_player_invitations_button"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/multi_player_settings_invitations_button" />
-
-                    </LinearLayout>
-
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/startScreenLight"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:paddingBottom="10dp"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="10dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="10dp"
-                            android:layout_marginTop="20dp"
-                            android:text="@string/see_your_progress"
-                            android:textColor="@color/my_dark_gray"
-                            android:textSize="16sp" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <Button
-                                android:id="@+id/show_achievements_button"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="48"
-                                android:text="@string/show_achievements"
-                                android:textSize="13sp" />
-
-                            <Button
-                                android:id="@+id/show_leaderboards_button"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginBottom="20dp"
-                                android:layout_weight="48"
-                                android:text="@string/show_leaderboards"
-                                android:textSize="13sp" />
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/startScreenDark"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:paddingTop="10dp"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="10dp"
-                        android:paddingBottom="10dp">
-
-                        <Button
-                            android:id="@+id/settings_button"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="48"
-                            android:layout_marginTop="10dp"
-                            android:text="@string/settings"
-                            android:textSize="18sp" />
-
-                        <Button
-                            android:id="@+id/policy_button"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="48"
-                            android:text="@string/policy"
-                            android:textSize="18sp" />
-
-                        <Button
-                            android:id="@+id/rules_button"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="7dp"
-                            android:layout_weight="48"
-                            android:text="@string/rules"
-                            android:textSize="18sp" />
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/sign_in_bar"
-                    android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    android:background="@color/my_dark_gray"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:padding="10dp">
-
-                    <com.google.android.gms.common.SignInButton
-                        android:id="@+id/sign_in_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="@string/sign_in_why"
-                        android:textColor="#ffffff" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/sign_out_bar"
-                    android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    android:background="@color/my_dark_gray"
-                    android:gravity="center|end"
-                    android:orientation="horizontal"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:id="@+id/textView"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:layout_weight="0.76"
-                        android:gravity="center"
-                        android:padding="10dp"
-                        android:text="@string/you_are_signed_in"
-                        android:textColor="#ffffff" />
+<!--                    <Button-->
+<!--                        android:id="@+id/single_player_button"-->
+<!--                        style="@android:style/Widget.Material.Button.Borderless"-->
+<!--                        android:layout_gravity="center"-->
+<!--                        android:layout_marginBottom="10dp"-->
+<!--                        android:drawableLeft="@drawable/play"-->
+<!--                        android:paddingTop="10dp"-->
+<!--                        android:paddingRight="40dp"-->
+<!--                        android:paddingBottom="10dp"-->
+<!--                        android:text="@string/multi_player_settings_quick_game_button"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="75dp"-->
+<!--                        android:layout_weight="48"-->
+<!--                        android:background="@color/metallic_blue"-->
+<!--                        android:textColor="@color/ButtonTextColor"-->
+<!--                        android:textSize="24sp" />-->
 
                     <Button
-                        android:id="@+id/sign_out_button"
+                        android:id="@+id/single_player_button"
+                        android:text="@string/single_player_play"
+                        style="@android:style/Widget.Material.Button.Borderless"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="20dp"
-                        android:gravity="center"
-                        android:text="@string/sign_out"
-                        android:textSize="12sp" />
+                        android:layout_height="75dp"
+                        android:layout_weight="48"
+                        android:drawableLeft="@drawable/play"
+                        android:paddingTop="20dp"
+                        android:paddingRight="40dp"
+                        android:paddingBottom="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="20dp"
+                        android:layout_marginLeft="20dp"
+                        android:textColor="@color/ButtonTextColor"
+                        android:textSize="24sp" />
+
+<!--                    <Button-->
+<!--                        android:id="@+id/multi_player_quick_game_button"-->
+<!--                        style="@android:style/Widget.Material.Button.Borderless"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="75dp"-->
+<!--                        android:layout_marginLeft="20dp"-->
+<!--                        android:layout_marginTop="10dp"-->
+<!--                        android:layout_marginRight="20dp"-->
+<!--                        android:layout_marginBottom="10dp"-->
+<!--                        android:layout_weight="48"-->
+<!--                        android:background="#5D6FEA"-->
+<!--                        android:text="@string/multi_player_play"-->
+<!--                        android:textColor="@color/ButtonTextColor"-->
+<!--                        android:textSize="24sp" />-->
+
+<!--                    <Button-->
+<!--                        android:id="@+id/multi_player_invite_button"-->
+<!--                        style="@android:style/Widget.Material.Button.Borderless"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="75dp"-->
+<!--                        android:layout_weight="48"-->
+<!--                        android:background="@color/metallic_blue"-->
+<!--                        android:textColor="@color/ButtonTextColor"-->
+<!--                        android:text="@string/multi_player_settings_invite_button"-->
+<!--                        android:textSize="18sp" />-->
+
+<!--                    <Button-->
+<!--                        android:id="@+id/multi_player_invitations_button"-->
+<!--                        style="@android:style/Widget.Material.Button.Borderless"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="75dp"-->
+<!--                        android:layout_weight="48"-->
+<!--                        android:background="@color/startScreenDark"-->
+<!--                        android:textColor="@color/ButtonTextColor"-->
+<!--                        android:text="@string/multi_player_settings_invitations_button"-->
+<!--                        android:textSize="18sp" />-->
+
+                    <Button
+                        android:id="@+id/leaderboards_button"
+                        style="@android:style/Widget.Material.Button.Borderless"
+                        android:layout_width="match_parent"
+                        android:layout_height="75dp"
+                        android:layout_weight="48"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginBottom="3dp"
+                        android:layout_marginLeft="20dp"
+                        android:background="@color/startScreenSecondary"
+                        android:text="@string/show_leaderboards"
+                        android:textColor="@color/ButtonTextColor"
+                        android:textSize="18sp" />
+
+                    <Button
+                        android:id="@+id/achievements_button"
+                        style="@android:style/Widget.Material.Button.Borderless"
+                        android:layout_width="match_parent"
+                        android:layout_height="75dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginBottom="3dp"
+                        android:layout_weight="48"
+                        android:background="@color/metallic_blue"
+                        android:text="@string/show_achievements"
+                        android:textColor="@color/ButtonTextColor"
+                        android:textSize="18sp" />
+
+<!--                    <Button-->
+<!--                        android:id="@+id/settings_button"-->
+<!--                        style="@android:style/Widget.Material.Button.Borderless"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="75dp"-->
+<!--                        android:layout_weight="48"-->
+<!--                        android:layout_marginRight="20dp"-->
+<!--                    android:layout_marginTop="3dp"-->
+<!--                    android:layout_marginBottom="3dp"-->
+<!--                        android:layout_marginLeft="20dp"-->
+<!--                        android:background="@color/startScreenSecondary"-->
+<!--                        android:text="@string/settings"-->
+<!--                        android:textColor="@color/ButtonTextColor"-->
+<!--                        android:textSize="18sp" />-->
+
+                    <Button
+                        android:id="@+id/rules_button"
+                        style="@android:style/Widget.Material.Button.Borderless"
+                        android:layout_width="match_parent"
+                        android:layout_height="75dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginBottom="3dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_weight="48"
+                        android:background="@color/startScreenSecondary"
+                        android:text="@string/rules"
+                        android:textColor="@color/ButtonTextColor"
+                        android:textSize="18sp" />
+
+                    <Button
+                        android:id="@+id/policy_button"
+                        style="@android:style/Widget.Material.Button.Borderless"
+                        android:layout_width="match_parent"
+                        android:layout_height="75dp"
+                        android:layout_weight="48"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginBottom="3dp"
+                        android:layout_marginLeft="20dp"
+                        android:background="@color/metallic_blue"
+                        android:text="@string/policy"
+                        android:textColor="@color/ButtonTextColor"
+                        android:textSize="18sp" />
+
                 </LinearLayout>
-
-
             </LinearLayout>
-        </LinearLayout>
-    </ScrollView>
 
+            <LinearLayout
+                android:id="@+id/sign_out_bar"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:background="@color/my_dark_gray"
+                android:gravity="center|end"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_weight="0.76"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="@string/you_are_signed_in"
+                    android:textColor="#ffffff" />
+
+                <Button
+                    android:id="@+id/sign_out_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:gravity="center"
+                    android:text="@string/sign_out"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/sign_in_bar"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:background="@color/my_dark_gray"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/sign_in_why"
+                    android:textColor="#ffffff" />
+
+                <com.google.android.gms.common.SignInButton
+                    android:id="@+id/sign_in_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
 </LinearLayout>

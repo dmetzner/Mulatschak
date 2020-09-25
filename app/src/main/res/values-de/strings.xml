@@ -18,6 +18,7 @@
     <string name="you_win">Du gewinnst!</string>
     <string name="sign_in_to_upload_this_score">Melde dich an um deine Erfolge hochzuladen</string>
     <string name="signin_other_error">Es gab einen Fehler bei deiner Anmeldung. Bitte versuch es später erneut.</string>
+    <string name="signin_first">Bitte melde dich zuerst an.</string>
 
     <string name="inv_popup_text">Du hast eine Einladung!</string>
     <string name="accept_popup_invite">Annehmen!</string>
@@ -78,7 +79,7 @@
     <!-- ::::::::::::::::::::::: Player Info ::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="player_info_active_player_is_0">Du bist am Zug</string>
     <string name="player_info_miss_a_turn">Du setzt diese Runde aus</string>
-    <string name="player_presentation_greeting">Hi</string>
+    <string name="player_presentation_greeting">Viel Spaß!</string>
     <string name="player_presentation_intro">Deine Gegner sind</string>
 
     <!-- :::::::::::::::: Mulatschak Round ::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
@@ -88,6 +89,7 @@
 
     <!-- :::::::::::::::::::: SinglePlayer Settings :::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="single_player_settings_title">Einzelspieler</string>
+    <string name="single_player_play">Play</string>
 
     <string name="single_player_settings_player_amount_text">Wähle die Anzahl deiner Gegner: </string>
     <string name="multi_player_settings_player_amount_text">Wähle die Anzahl zusätzlicher Gegner: </string>
@@ -118,6 +120,7 @@
 
     <!-- :::::::::::::::::::: MultiPlayer Settings ::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="multi_player_settings_title">Mehrspieler</string>
+    <string name="multi_player_play">Mehrspieler</string>
 
     <string name="multi_player_settings_quick_game_button">Schnelles Spiel</string>
     <string name="multi_player_settings_invite_button">Freunde einladen</string>

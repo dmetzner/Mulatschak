@@ -1032,7 +1032,7 @@ public class GameController {
 
             switch (message.type) {
                 case Message.chatMessage:
-                    non_game_play_ui_.getChatView().addMessage(getPlayerByOnlineId(message.senderId), message.data, this);
+                    non_game_play_ui_.getChatView().addMessage(getPlayerByOnlineId(message.senderId), message.data, this, false);
                     break;
 
                 case Message.gameReady:

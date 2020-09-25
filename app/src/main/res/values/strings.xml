@@ -18,6 +18,7 @@
     <string name="you_win">You win!</string>
     <string name="sign_in_to_upload_this_score">Sign in now to upload this score, save your achievements and share your progress with friends.</string>
     <string name="signin_other_error">There was an issue with sign in.  Please try again later.</string>
+    <string name="signin_first">Please sign in first.</string>
 
     <string name="inv_popup_text">Incoming invitation!</string>
     <string name="accept_popup_invite">Accept!</string>
@@ -49,7 +50,7 @@
     <!-- ::::::::::::::::::::::: Player Info ::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="player_info_active_player_is_0">It is your turn!</string>
     <string name="player_info_miss_a_turn">You pass this round</string>
-    <string name="player_presentation_greeting">Hi</string>
+    <string name="player_presentation_greeting">Have fun!</string>
     <string name="player_presentation_intro">Your enemies are:</string>
 
     <!-- :::::::::::::::: Mulatschak Round ::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
@@ -88,6 +89,7 @@
 
     <!-- :::::::::::::::::::: SinglePlayer Settings :::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="single_player_settings_title">SinglePlayer</string>
+    <string name="single_player_play">Play</string>
 
     <string name="single_player_settings_player_amount_text">Choose the amount of enemies: </string>
     <string name="multi_player_settings_player_amount_text">Choose the amount of additional enemies: </string>
@@ -117,6 +119,7 @@
 
     <!-- :::::::::::::::::::: MultiPlayer Settings ::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="multi_player_settings_title">MultiPlayer</string>
+    <string name="multi_player_play">MultiPlayer</string>
     <string name="multi_player_settings_no_host_text">Please wait while the host takes care of the settings:</string>
 
     <string name="multi_player_settings_quick_game_button">Quick Game</string>
