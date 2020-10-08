@@ -1,7 +1,6 @@
 package heroiceraser.mulatschak.game.NonGamePlayUI.PlayerInfo;
 
 import android.content.Context;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -21,6 +20,7 @@ public class LastPlayerLeftPopUpView extends RelativeLayout {
     //
     public interface Listener {
         void onYesButtonRequested();
+
         void onNoButtonRequested();
     }
 
@@ -48,17 +48,17 @@ public class LastPlayerLeftPopUpView extends RelativeLayout {
     public void init(String displayName) {
         findViewById(R.id.last_player_left_pop_up_yes)
                 .setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                mListener.onYesButtonRequested();
-            }
-        });
+                    public void onClick(View v) {
+                        mListener.onYesButtonRequested();
+                    }
+                });
 
         findViewById(R.id.last_player_left_pop_up_no)
-                 .setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                    mListener.onNoButtonRequested();
-            }
-        });
+                .setOnClickListener(new OnClickListener() {
+                    public void onClick(View v) {
+                        mListener.onNoButtonRequested();
+                    }
+                });
 
         ((TextView) (findViewById(R.id.last_player_left_pop_up_info))).setText(getResources()
                 .getString(R.string.last_player_left_info, displayName));

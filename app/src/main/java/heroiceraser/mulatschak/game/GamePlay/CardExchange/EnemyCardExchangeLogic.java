@@ -4,11 +4,12 @@ import android.graphics.Canvas;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import heroiceraser.mulatschak.game.BaseObjects.Card;
 import heroiceraser.mulatschak.game.BaseObjects.CardStack;
+import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
-import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 
 //----------------------------------------------------------------------------------------------
 //  EnemyCardExchangeLogic:
@@ -64,10 +65,6 @@ public class EnemyCardExchangeLogic {
                 break;
         }
 
-        if (controller.multiplayer_) {
-            randomness = -1;
-        }
-
         myPlayer_ = myPlayer;
         card_exchange_animation_.init(controller, myPlayer);
 
@@ -117,7 +114,7 @@ public class EnemyCardExchangeLogic {
         // minus i cause we removed some (only works if sorted!)
         for (int i = 0; i < handCardsToRemoveIds.size(); i++) {
             card_exchange_animation_.getExchangedCards().add(playerHand.getCardAt(
-                            handCardsToRemoveIds.get(i) - i));
+                    handCardsToRemoveIds.get(i) - i));
             playerHand.getCardStack().remove(handCardsToRemoveIds.get(i) - i);
         }
 

@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import at.heroiceraser.mulatschak.R;
-import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
-import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
-import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
+import heroiceraser.mulatschak.drawableBasicObjects.DrawableObject;
+import heroiceraser.mulatschak.drawableBasicObjects.MyButton;
+import heroiceraser.mulatschak.drawableBasicObjects.MyTextField;
 import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
@@ -159,8 +159,7 @@ public class PlayerInfo extends DrawableObject implements
                             buttonsDefault.get(2).getPosition().y - paddingHighlight,
                             buttonsDefault.get(2).getPosition().x + layout.getPlayerInfoSize().x + paddingHighlight,
                             buttonsDefault.get(2).getPosition().y + layout.getPlayerInfoSize().y + paddingHighlight);
-                }
-                else {
+                } else {
                     rect.set(buttonsDefault.get(i).getPosition().x - padding,
                             buttonsDefault.get(i).getPosition().y - padding,
                             buttonsDefault.get(i).getPosition().x + layout.getPlayerInfoSize().x + padding,
@@ -179,14 +178,14 @@ public class PlayerInfo extends DrawableObject implements
         player0sTurnTextField.setText(text);
         TextPaint tp = new TextPaint();
         tp.setAntiAlias(true);
-        tp.setTextSize(layout.getDealerButtonSize() * (2/3f));
+        tp.setTextSize(layout.getDealerButtonSize() * (2 / 3f));
         tp.setTextAlign(Paint.Align.CENTER);
         tp.setColor(Color.WHITE);
         player0sTurnTextField.setTextPaint(tp);
         player0sTurnTextField.setBorder(view.getResources().getColor(R.color.metallic_blue), 0.25f);
         player0sTurnTextField.setMaxWidth(layout.getScreenWidth() / 2);
         player0sTurnTextField.setPosition(new Point(layout.getScreenWidth() / 2,
-                (int) (layout.getDealerButtonPosition(0).y + layout.getDealerButtonSize() / 2.0) ));
+                (int) (layout.getDealerButtonPosition(0).y + layout.getDealerButtonSize() / 2.0)));
         player0sTurnTextField.setVisible(true);
 
         rectanglePaintHighlight.setStyle(Paint.Style.FILL);
@@ -226,8 +225,7 @@ public class PlayerInfo extends DrawableObject implements
             case 1:
                 if (buttons.get(1) != null && buttons.get(1).getBitmap() != null) {
                     bitmap = buttons.get(1).getBitmap();
-                }
-                else {
+                } else {
                     bitmap = buttonLeftDefault.getBitmap();
                     text = "Beep, beep.";
                 }
@@ -235,8 +233,7 @@ public class PlayerInfo extends DrawableObject implements
             case 2:
                 if (buttons.get(2) != null && buttons.get(2).getBitmap() != null) {
                     bitmap = buttons.get(2).getBitmap();
-                }
-                else {
+                } else {
                     bitmap = buttonTopDefault.getBitmap();
                     text = "Beep, beep, beep?";
 
@@ -245,8 +242,7 @@ public class PlayerInfo extends DrawableObject implements
             case 3:
                 if (buttons.get(3) != null && buttons.get(3).getBitmap() != null) {
                     bitmap = buttons.get(3).getBitmap();
-                }
-                else {
+                } else {
                     bitmap = buttonRightDefault.getBitmap();
                     text = "Beeeeeep!";
                 }
@@ -314,7 +310,7 @@ public class PlayerInfo extends DrawableObject implements
                 player0sTurnTextField.draw(canvas);
             }
 
-            if (activePlayer >= 0 && activePlayer < playersTurnRectangles.size()){
+            if (activePlayer >= 0 && activePlayer < playersTurnRectangles.size()) {
                 canvas.drawRect(playersTurnRectangles.get(activePlayer), rectanglePaintHighlight);
             }
 
@@ -322,8 +318,7 @@ public class PlayerInfo extends DrawableObject implements
 
                 if (buttons.get(i) != null && buttons.get(i).getBitmap() != null) {
                     buttons.get(i).draw(canvas);
-                }
-                else {
+                } else {
                     buttonsDefault.get(i).draw(canvas);
                 }
             }
@@ -378,11 +373,9 @@ public class PlayerInfo extends DrawableObject implements
         }
         if (buttonLeftDefault.touchEventDown(X, Y)) {
             popUpInfoLeft();
-        }
-        else if (buttonTopDefault.touchEventDown(X, Y)) {
+        } else if (buttonTopDefault.touchEventDown(X, Y)) {
             popUpInfoTop();
-        }
-        else if (buttonRightDefault.touchEventDown(X, Y)) {
+        } else if (buttonRightDefault.touchEventDown(X, Y)) {
             popUpInfoRight();
         }
 
@@ -411,7 +404,7 @@ public class PlayerInfo extends DrawableObject implements
         popUp = makePopupWindow(GameLayout.POSITION_RIGHT);
         Point pos = view_.getController().getLayout().getPlayerInfoRightPos();
         popUp.showAtLocation(view_, Gravity.NO_GRAVITY,
-                pos.x  - popUpWidth + getWidth(), pos.y);
+                pos.x - popUpWidth + getWidth(), pos.y);
     }
 
 
@@ -465,7 +458,6 @@ public class PlayerInfo extends DrawableObject implements
         if (popUpPlayerLeft != null) {
             popUpPlayerLeft.dismiss();
             popUpsBlocked = false;
-            view_.getController().playerLeftContinueWithAI(leftPlayer);
         }
     }
 
@@ -476,7 +468,6 @@ public class PlayerInfo extends DrawableObject implements
         if (popUpPlayerLeft != null) {
             popUpPlayerLeft.dismiss();
             popUpsBlocked = false;
-            view_.getController().playerLeftContinueWithAI(leftPlayer);
         }
     }
 

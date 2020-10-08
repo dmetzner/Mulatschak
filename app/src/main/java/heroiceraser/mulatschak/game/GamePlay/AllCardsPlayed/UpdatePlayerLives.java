@@ -1,8 +1,8 @@
 package heroiceraser.mulatschak.game.GamePlay.AllCardsPlayed;
 
+import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
-import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 
 
 //----------------------------------------------------------------------------------------------
@@ -24,7 +24,8 @@ class UpdatePlayerLives {
     //----------------------------------------------------------------------------------------------
     //  Constants
     //
-    UpdatePlayerLives() { }
+    UpdatePlayerLives() {
+    }
 
 
     //----------------------------------------------------------------------------------------------
@@ -46,8 +47,7 @@ class UpdatePlayerLives {
 
             if (muli_succeeded) {
                 successfulMuliRound(controller);
-            }
-            else  {
+            } else {
                 failedMuliRound(controller);
             }
         }
@@ -68,7 +68,7 @@ class UpdatePlayerLives {
         int muli_player_won_cards = muli_My_player.getTricks().getCardStack().size();
         int amount_of_players = controller.getAmountOfPlayers();
 
-        return  (muli_player_won_cards / amount_of_players) == GameLogic.MAX_CARDS_PER_HAND;
+        return (muli_player_won_cards / amount_of_players) == GameLogic.MAX_CARDS_PER_HAND;
     }
 
 
@@ -87,10 +87,8 @@ class UpdatePlayerLives {
 
         for (int i = 0; i < controller.getAmountOfPlayers(); i++) {
             if (i == trump_player_id) {
-                controller.getNonGamePlayUIContainer().getChatView().addMessage(controller.getPlayerById(i), "hehe :D", controller, false);
                 add_lives = (-1) * POINTS_MULI_ * multiplier;
-            }
-            else {
+            } else {
                 add_lives = POINTS_MULI_ * multiplier;
             }
             setNewPlayerLives(controller, controller.getPlayerById(i), add_lives);
@@ -114,9 +112,7 @@ class UpdatePlayerLives {
         for (int i = 0; i < controller.getAmountOfPlayers(); i++) {
             if (i == trump_player_id) {
                 add_lives = POINTS_MULI_ * multiplier;
-                controller.getNonGamePlayUIContainer().getChatView().addMessage(controller.getPlayerById(i), "aaaahhhhhhh!! :(", controller, false);
-            }
-            else {
+            } else {
                 add_lives = (-1) * POINTS_MULI_ * multiplier;
             }
             setNewPlayerLives(controller, controller.getPlayerById(i), add_lives);
@@ -137,7 +133,7 @@ class UpdatePlayerLives {
         int multiplier = controller.getLogic().getMultiplier();
         int trump_player_id = controller.getLogic().getTrumpPlayerId();
         int add_lives;
-        
+
         for (int i = 0; i < controller.getAmountOfPlayers(); i++) {
 
             MyPlayer myPlayer = controller.getPlayerById(i);
@@ -149,7 +145,6 @@ class UpdatePlayerLives {
             // trump myPlayer failed his bids
             else if (i == trump_player_id && tricks < controller.getLogic().getTricksToMake()) {
                 add_lives = 2 * POINTS_LOST_ * multiplier;
-                controller.getNonGamePlayUIContainer().getChatView().addMessage(controller.getPlayerById(i), "maybe next time... :(", controller, false);
             }
             // no tricks were made
             else if (tricks <= 0) {
@@ -173,7 +168,7 @@ class UpdatePlayerLives {
             return;
         }
         int new_lives = myPlayer.getLives() + additional_lives;
-        if (new_lives <= 0 ) {
+        if (new_lives <= 0) {
             new_lives = 0;
         }
 

@@ -7,11 +7,11 @@ import android.graphics.Point;
 import android.os.Handler;
 import android.text.TextPaint;
 
-import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
 import at.heroiceraser.mulatschak.R;
+import heroiceraser.mulatschak.drawableBasicObjects.MyTextField;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
-import heroiceraser.mulatschak.game.GamePlay.Background4Player0Animations;
+import heroiceraser.mulatschak.game.GamePlay.GameAreaOverlay;
 
 
 //--------------------------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ public class MulatschakResultAnimation {
     //----------------------------------------------------------------------------------------------
     //  Member Variables
     //
-    private Background4Player0Animations background4Player0Animations;
+    private GameAreaOverlay gameAreaOverlay;
     private boolean animating;
     private long startTime;
     private MyTextField textField;
@@ -33,7 +33,6 @@ public class MulatschakResultAnimation {
     //  Constructor
     //
     public MulatschakResultAnimation() {
-        background4Player0Animations = new Background4Player0Animations();
         textField = null;
         textField2 = null;
     }
@@ -45,8 +44,8 @@ public class MulatschakResultAnimation {
     public void init(GameController controller, boolean succeeded) {
         GameLayout layout = controller.getLayout();
 
-        background4Player0Animations.init(layout);
-        background4Player0Animations.updateAlpha(0);
+        gameAreaOverlay = new GameAreaOverlay(layout);
+        gameAreaOverlay.updateAlpha(0);
 
         textField = new MyTextField();
         textField2 = new MyTextField();
@@ -68,8 +67,7 @@ public class MulatschakResultAnimation {
             textField2.setTextPaint(tmp);
             textField2.setBorder(Color.GREEN, 0.2f);
             textField.setBorder(Color.GREEN, 0.2f);
-        }
-        else {
+        } else {
             textField2.setText(controller.getView().getResources().getString(R.string.mulatschak_failed_2));
             textField2.setTextPaint(tmp);
             textField2.setBorder(Color.RED, 0.2f);
@@ -98,7 +96,7 @@ public class MulatschakResultAnimation {
         //controller.getView().enableUpdateCanvasThread();
         startTime = System.currentTimeMillis();
         animating = true;
-        background4Player0Animations.updateAlpha(0);
+        gameAreaOverlay.updateAlpha(0);
         textField.updateAlpha(0);
         textField2.updateAlpha(0);
         textField.setVisible(true);
@@ -117,7 +115,7 @@ public class MulatschakResultAnimation {
             percentage = 1;
         }
         int alpha = (int) (255 * percentage);
-        background4Player0Animations.updateAlpha(alpha);
+        gameAreaOverlay.updateAlpha(alpha);
         textField.updateAlpha(alpha);
         textField2.updateAlpha(alpha);
 
@@ -138,18 +136,17 @@ public class MulatschakResultAnimation {
             }
         };
         handler.postDelayed(runnable,
-                (int) (2000 * controller.getSettings().getAnimationSpeed().getSpeedFactor()) );
+                (int) (2000 * controller.getSettings().getAnimationSpeed().getSpeedFactor()));
     }
-
 
 
     public synchronized void draw(Canvas canvas, GameController controller) {
         if (textField != null) {
-                background4Player0Animations.draw(canvas);
-                textField.draw(canvas);
-                textField2.draw(canvas);
+            gameAreaOverlay.draw(canvas);
+            textField.draw(canvas);
+            textField2.draw(canvas);
             if (animating) {
-                    continueAnimation(controller);
+                continueAnimation(controller);
             }
         }
     }

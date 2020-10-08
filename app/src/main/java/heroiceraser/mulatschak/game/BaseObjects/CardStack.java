@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
+import heroiceraser.mulatschak.drawableBasicObjects.DrawableObject;
 
 //----------------------------------------------------------------------------------------------
 //  A CardStack consists of an ArrayList of Cards
@@ -45,9 +45,9 @@ public class CardStack extends DrawableObject {
 
     static CardStack bubblesort(CardStack cs, Comparator<Card> comparator) {
         Card temp;
-        for(int i = 1; i < cs.getCardStack().size(); i++) {
-            for(int j = 0; j < cs.getCardStack().size() - i; j++) {
-                if(comparator.compare(cs.getCardStack().get(j), cs.getCardStack().get(j + 1)) > 0) {
+        for (int i = 1; i < cs.getCardStack().size(); i++) {
+            for (int j = 0; j < cs.getCardStack().size() - i; j++) {
+                if (comparator.compare(cs.getCardStack().get(j), cs.getCardStack().get(j + 1)) > 0) {
                     temp = cs.getCardAt(j);
                     cs.getCardStack().remove(j); // j+1 --> j
                     cs.getCardStack().add(j + 1, temp);
@@ -56,7 +56,7 @@ public class CardStack extends DrawableObject {
         }
         return cs;
     }
-    
+
 
     //----------------------------------------------------------------------------------------------
     //  addCardToStack:

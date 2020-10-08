@@ -2,17 +2,15 @@ package heroiceraser.mulatschak.game.GamePlay.ChooseTrump;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.os.Handler;
-import android.text.TextPaint;
 
-import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
+import heroiceraser.mulatschak.drawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.game.BaseObjects.MulatschakDeck;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.helpers.BitmapMethodes;
+import heroiceraser.mulatschak.utils.BitmapMethodes;
 
 //--------------------------------------------------------------------------------------------------
 //  Trump view
@@ -64,11 +62,11 @@ public class TrumpView extends DrawableObject {
         max_height_ = view.getController().getLayout().getCardHeight() * 3;
         end_position_ = new Point(
                 view.getController().getLayout().getScreenWidth() / 2 - max_width_ / 2,
-                (view.getController().getLayout().getSectors().get(3).y)
+                (view.getController().getLayout().getLengthOnVerticalGrid(250))
         );
-        game_position_ = new Point(view.getController().getLayout().getScreenWidth() / 45 ,
-                view.getController().getLayout().getSectors().get(2).y +
-                        (int) (view.getController().getLayout().getSectors().get(1).y * 0.1)
+        game_position_ = new Point(view.getController().getLayout().getScreenWidth() / 45,
+                view.getController().getLayout().getLengthOnVerticalGrid(0) +
+                        view.getController().getLayout().getLengthOnVerticalGrid(12)
         );
 
         game_size_ = new Point(view.getController().getLayout().getPlayerInfoSize());
@@ -90,8 +88,7 @@ public class TrumpView extends DrawableObject {
         }
         if (controller.getDeck().getDesign() == MulatschakDeck.DD_DESIGN) {
             active_id_ = "trump_dd_" + active_symbol;
-        }
-        else {
+        } else {
             active_id_ = "trumps_basic_" + active_symbol;
         }
 
@@ -101,8 +98,7 @@ public class TrumpView extends DrawableObject {
             start_position_ = new Point(controller.getLayout()
                     .getPlayerInfoPositions().get(
                             controller.getPlayerById(player_id).getPosition()));
-        }
-        else {
+        } else {
             start_position_.x = end_position_.x + max_width_ / 2;
             start_position_.y = end_position_.y + max_height_ / 2;
         }
@@ -198,19 +194,20 @@ public class TrumpView extends DrawableObject {
     //  draw
     //
     public synchronized void draw(Canvas canvas, GameController controller) {
-        if (isVisible()) {
+        if (!isVisible()) {
+            return;
+        }
 
-            if (active_bitmap_ != null) {
-                canvas.drawBitmap(active_bitmap_, getPosition().x, getPosition().y, paint_);
-            }
+        if (active_bitmap_ != null) {
+            canvas.drawBitmap(active_bitmap_, getPosition().x, getPosition().y, paint_);
+        }
 
-            if (animation_running_) {
-                continueAnimation(controller);
-            }
+        if (animation_running_) {
+            continueAnimation(controller);
+        }
 
-            if (ending_animation_running_) {
-                continueEndingAnimation(controller);
-            }
+        if (ending_animation_running_) {
+            continueEndingAnimation(controller);
         }
     }
 }

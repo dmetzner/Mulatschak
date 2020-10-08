@@ -4,6 +4,7 @@ package heroiceraser.mulatschak.game.GamePlay.Mulatschak;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.os.Handler;
+
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GamePlay.TrickBids.BidsField;
@@ -103,7 +104,7 @@ public class MulatschakActivateAnimation {
                                 controller.getPlayerById(controller.getLogic().getTrumpPlayerId())
                                         .getPosition()));
                 Point offset = new Point(bidsField.getPosition().x - bidsField.getStartPos().x,
-                    bidsField.getPosition().y - bidsField.getStartPos().y);
+                        bidsField.getPosition().y - bidsField.getStartPos().y);
                 bidsField.setOffset(offset);
                 startAnimation = false;
                 Handler myHandler = new Handler();
@@ -115,8 +116,7 @@ public class MulatschakActivateAnimation {
                     }
                 };
                 myHandler.postDelayed(myRunnable, (int) (500 * speed_factor));
-            }
-            else {
+            } else {
                 endAnimation = false;
                 bidsField.setAnimationRunning(false);
                 controller.getGamePlay().getDecideMulatschak().makeMulatschakDecision(false, controller);

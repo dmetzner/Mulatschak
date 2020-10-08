@@ -6,8 +6,9 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.text.TextPaint;
-import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
+
 import at.heroiceraser.mulatschak.R;
+import heroiceraser.mulatschak.drawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameView;
 
@@ -16,7 +17,7 @@ import heroiceraser.mulatschak.game.GameView;
 //  BidsField
 //              ToDo
 //
-public class BidsField extends DrawableObject{
+public class BidsField extends DrawableObject {
 
     //----------------------------------------------------------------------------------------------
     //  Member Variables
@@ -67,7 +68,7 @@ public class BidsField extends DrawableObject{
         //---- size
         // dealerButton <= radius <= min(cardWidth, cardHeight)
         max_radius_ = Math.min(view.getController().getLayout().getCardWidth(),
-        view.getController().getLayout().getCardHeight()) / 2.03f;
+                view.getController().getLayout().getCardHeight()) / 2.03f;
         min_radius_ = view.getController().getLayout().getDealerButtonSize() / 2;
         radius = min_radius_;
 
@@ -131,7 +132,7 @@ public class BidsField extends DrawableObject{
     //  calculatePositionOffset
     //
     private void calculatePositionOffset(Point startPos, Point endPos) {
-        this.offset = new Point (endPos.x - startPos.x, endPos.y - startPos.y);
+        this.offset = new Point(endPos.x - startPos.x, endPos.y - startPos.y);
     }
 
 
@@ -186,7 +187,6 @@ public class BidsField extends DrawableObject{
         }
         textPaint.setTextSize((radius));
     }
-
 
 
     //----------------------------------------------------------------------------------------------

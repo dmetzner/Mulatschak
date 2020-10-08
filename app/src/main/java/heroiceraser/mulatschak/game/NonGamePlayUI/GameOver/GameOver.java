@@ -7,16 +7,15 @@ import android.graphics.Point;
 import android.os.Handler;
 import android.text.TextPaint;
 
-import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
-import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
-import heroiceraser.mulatschak.MainActivity;
 import at.heroiceraser.mulatschak.R;
-import heroiceraser.mulatschak.Message;
+import heroiceraser.mulatschak.MainActivity;
+import heroiceraser.mulatschak.drawableBasicObjects.MyButton;
+import heroiceraser.mulatschak.drawableBasicObjects.MyTextField;
+import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
-import heroiceraser.mulatschak.game.GamePlay.Background4Player0Animations;
+import heroiceraser.mulatschak.game.GamePlay.GameAreaOverlay;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 
 
 //--------------------------------------------------------------------------------------------------
@@ -28,7 +27,7 @@ public class GameOver {
     //  Member Variables
     //
     private boolean visible;
-    private Background4Player0Animations background;
+    private GameAreaOverlay gameAreaOverlay;
     private MyTextField textField;
     private MyButton endGameButton;
 
@@ -38,7 +37,6 @@ public class GameOver {
     //
     public GameOver() {
         super();
-        background = new Background4Player0Animations();
         endGameButton = new MyButton();
         textField = new MyTextField();
         visible = false;
@@ -50,8 +48,7 @@ public class GameOver {
     public void init(GameView view) {
         GameLayout layout = view.getController().getLayout();
 
-        // background
-        background.init(layout);
+        gameAreaOverlay = new GameAreaOverlay(layout);
 
         textField.setPosition(new Point(layout.getScreenWidth() / 2, layout.getScreenHeight() / 2));
         textField.setText(view.getResources().getString(R.string.game_over_text));
@@ -59,18 +56,18 @@ public class GameOver {
         TextPaint textPaint = new TextPaint();
         textPaint.setColor(Color.WHITE);
         textPaint.setAntiAlias(true);
-        textPaint.setTextSize(layout.getSectors().get(1).y);
+        textPaint.setTextSize(layout.getLengthOnVerticalGrid(125));
         textPaint.setTextAlign(Paint.Align.CENTER);
         textField.setTextPaint(textPaint);
         textField.setBorder(view.getResources().getColor(R.color.metallic_blue), 0.2f);
         textField.setMaxWidth((int) layout.getOnePercentOfScreenWidth() * 80);
 
         // button
-        Point endGameButtonSize = new Point((int)(layout.getButtonBarBigButtonWidth() * 1.5),
-                layout.getButtonBarBigButtonHeight());
+        Point endGameButtonSize = new Point((int) (layout.getButtonBarButtonWidth() * 1.5),
+                layout.getButtonBarButtonHeight());
 
         Point endGameButtonPosition = new Point(layout.getScreenWidth() / 2 - endGameButtonSize.x / 2,
-                layout.getSectors().get(6).y);
+                layout.getLengthOnVerticalGrid(750));
 
         String text = view.getResources().getString(R.string.game_over_button);
         endGameButton.init(view, endGameButtonPosition,
@@ -99,8 +96,7 @@ public class GameOver {
         String text;
         if (mainPlayerWon) {
             text = controller.getView().getResources().getString(R.string.game_over_won);
-        }
-        else {
+        } else {
             text = controller.getView().getResources().getString(R.string.game_over_lost);
         }
         textField.setVisible(true);
@@ -116,8 +112,8 @@ public class GameOver {
     //
     public synchronized void draw(Canvas canvas) {
         if (isVisible()) {
-            background.draw(canvas);
-            background.draw(canvas);
+            gameAreaOverlay.draw(canvas);
+            gameAreaOverlay.draw(canvas);
             textField.draw(canvas);
             // button should get call on top of button bar windows!!
         }
@@ -142,7 +138,7 @@ public class GameOver {
     //
     public void touchEventDown(int X, int Y) {
         if (!isVisible()) {
-             return;
+            return;
         }
 
         endGameButton.touchEventDown(X, Y);
@@ -175,17 +171,16 @@ public class GameOver {
     private void backToMainMenu(final GameController controller) {
         controller.getView().stopAll = true;
         MainActivity mainActivity = (MainActivity) controller.getView().getContext();
-        mainActivity.requestLoadingScreen();
-        mainActivity.broadcastMessage(Message.leftGameAtEnd, "");
+        mainActivity.switchToLoadingScreen();
         Handler handler = new Handler();
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 MainActivity mainActivity = (MainActivity) controller.getView().getContext();
-                mainActivity.endGame(controller.getPlayerById(0).getLives() <= 0);
+                mainActivity.finishGame(controller.getPlayerById(0).getLives() <= 0);
             }
         };
-       handler.postDelayed(runnable, 100);
+        handler.postDelayed(runnable, 100);
     }
 
 

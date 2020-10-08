@@ -2,13 +2,13 @@ package heroiceraser.mulatschak.game.GamePlay;
 
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GamePlay.AllCardsPlayed.AllCardsPlayed;
-import heroiceraser.mulatschak.game.GamePlay.Mulatschak.MulatschakResultAnimation;
 import heroiceraser.mulatschak.game.GamePlay.CardExchange.CardExchange;
 import heroiceraser.mulatschak.game.GamePlay.ChooseTrump.ChooseTrump;
 import heroiceraser.mulatschak.game.GamePlay.DealCards.DealCards;
+import heroiceraser.mulatschak.game.GamePlay.Mulatschak.DecideMulatschak;
+import heroiceraser.mulatschak.game.GamePlay.Mulatschak.MulatschakResultAnimation;
 import heroiceraser.mulatschak.game.GamePlay.MultiplierView.MultiplierView;
 import heroiceraser.mulatschak.game.GamePlay.PlayACard.PlayACardRound;
-import heroiceraser.mulatschak.game.GamePlay.Mulatschak.DecideMulatschak;
 import heroiceraser.mulatschak.game.GamePlay.TrickBids.TrickBids;
 import heroiceraser.mulatschak.game.GameView;
 
@@ -34,16 +34,15 @@ public class GamePlay {
     private MulatschakResultAnimation mulatschakResultAnimation;
 
 
-
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
-    public GamePlay() {
+    public GamePlay(GameView view) {
         dealCards = new DealCards();
         decideMulatschak = new DecideMulatschak();
         trickBids = new TrickBids();
         chooseTrump = new ChooseTrump();
-        multiplierView = new MultiplierView();
+        multiplierView = new MultiplierView(view);
         cardExchange = new CardExchange();
         allCardsPlayed = new AllCardsPlayed();
         playACardRound = new PlayACardRound();
@@ -55,11 +54,9 @@ public class GamePlay {
     //  init
     //
     public void init(GameView view) {
-        //  dealCards.init(view);   NO init needed
         decideMulatschak.init(view);
         trickBids.init(view);
         chooseTrump.init(view);
-        multiplierView.init(view);
         cardExchange.init(view);
         playACardRound.init(view);
         // allCardsPlayed -> needed only once in a while, generate everything at call

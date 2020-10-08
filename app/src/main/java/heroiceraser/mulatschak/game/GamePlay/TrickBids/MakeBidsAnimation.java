@@ -2,16 +2,18 @@ package heroiceraser.mulatschak.game.GamePlay.TrickBids;
 
 import android.graphics.Canvas;
 import android.graphics.Point;
+
 import java.util.ArrayList;
 import java.util.List;
-import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
+
 import at.heroiceraser.mulatschak.R;
+import heroiceraser.mulatschak.drawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.game.BaseObjects.CardStack;
 import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameLogic;
-import heroiceraser.mulatschak.game.GamePlay.Background4Player0Animations;
+import heroiceraser.mulatschak.game.GamePlay.GameAreaOverlay;
 import heroiceraser.mulatschak.game.GameView;
 
 
@@ -30,7 +32,7 @@ public class MakeBidsAnimation {
     //----------------------------------------------------------------------------------------------
     //  Member Variables
     //
-    private Background4Player0Animations background;
+    private GameAreaOverlay gameAreaOverlay;
     private List<MyButton> numberButtons;
     private boolean animatingNumbers;
 
@@ -39,7 +41,6 @@ public class MakeBidsAnimation {
     //  Constructor
     //
     MakeBidsAnimation() {
-        background = new Background4Player0Animations();
         animatingNumbers = false;
         numberButtons = new ArrayList<>();
     }
@@ -50,11 +51,11 @@ public class MakeBidsAnimation {
     public void init(GameView view) {
         GameLayout layout = view.getController().getLayout();
 
-        background.init(layout);
+        gameAreaOverlay = new GameAreaOverlay(layout);
 
         int x = layout.getTrickBidsNumberButtonPosition().x;
         int y = layout.getTrickBidsNumberButtonPosition().y;
-        int width =  layout.getTrickBidsNumberButtonSize().x;
+        int width = layout.getTrickBidsNumberButtonSize().x;
         int height = layout.getTrickBidsNumberButtonSize().y;
 
         MyButton missATurnButton = new MyButton();
@@ -88,7 +89,7 @@ public class MakeBidsAnimation {
     //
     public synchronized void draw(Canvas canvas, GameController controller) {
         if (animatingNumbers) {
-            background.draw(canvas);
+            gameAreaOverlay.draw(canvas);
             controller.getPlayerHandsView().drawPlayer0Hand(canvas, controller);
 
             for (MyButton button : numberButtons) {
@@ -122,10 +123,9 @@ public class MakeBidsAnimation {
             // there have to be more than 2 players to pass this round
             // also it is not possible to miss a turn if the last round was missed
             if (i == 0 && (controller.getAmountOfPlayers() <= 2 ||
-                            controller.getPlayerByPosition(0).getMissATurn() ) ) {
+                    controller.getPlayerByPosition(0).getMissATurn())) {
                 numberButtons.get(i).setEnabled(false);
-            }
-            else {
+            } else {
                 numberButtons.get(i).setEnabled(true);
             }
         }

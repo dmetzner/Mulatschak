@@ -1,7 +1,7 @@
 package heroiceraser.mulatschak.game.GamePlay.TrickBids;
 
-import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
+import heroiceraser.mulatschak.game.GameController;
 
 
 //----------------------------------------------------------------------------------------------
@@ -12,7 +12,8 @@ class EnemyMakeBidsLogic {
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
-    EnemyMakeBidsLogic() { }
+    EnemyMakeBidsLogic() {
+    }
 
 
     //----------------------------------------------------------------------------------------------

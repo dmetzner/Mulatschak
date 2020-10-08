@@ -47,10 +47,10 @@ public class PlayerInfoPopUpView extends LinearLayout {
     public void init(String display_name, String text, Bitmap bitmap) {
         findViewById(R.id.player_info_pop_up_back_button)
                 .setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                mListener.onBackButtonRequested();
-            }
-        });
+                    public void onClick(View v) {
+                        mListener.onBackButtonRequested();
+                    }
+                });
 
         ((ImageView) findViewById(R.id.player_info_pop_up_image)).setImageBitmap(bitmap);
 

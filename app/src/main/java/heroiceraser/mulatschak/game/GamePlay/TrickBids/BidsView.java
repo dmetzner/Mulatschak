@@ -2,14 +2,16 @@ package heroiceraser.mulatschak.game.GamePlay.TrickBids;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.support.v4.graphics.ColorUtils;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.os.Handler;
 
+import androidx.core.graphics.ColorUtils;
+
+import java.util.Arrays;
+
 import at.heroiceraser.mulatschak.R;
-import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
-import heroiceraser.mulatschak.game.BaseObjects.Card;
+import heroiceraser.mulatschak.drawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 
@@ -17,7 +19,7 @@ import heroiceraser.mulatschak.game.GameLayout;
 //--------------------------------------------------------------------------------------------------
 //  ToDo describe me    DO only needed for visible^^
 //
-public class BidsView extends DrawableObject{
+public class BidsView extends DrawableObject {
 
     //----------------------------------------------------------------------------------------------
     //  Member Variables
@@ -30,9 +32,9 @@ public class BidsView extends DrawableObject{
     private boolean ending_animation_;
     private int winner_id_;           // needed to know which bid field stays visible for the round
     private long start_time_;
-    int color1;
-    int color2;
-    int color3;
+    private int color1;
+    private int color2;
+    private int color3;
 
 
     //----------------------------------------------------------------------------------------------
@@ -127,7 +129,6 @@ public class BidsView extends DrawableObject{
     }
 
 
-
     //----------------------------------------------------------------------------------------------
     //  startEndingAnimation
     //                          -> wait half a second
@@ -145,7 +146,7 @@ public class BidsView extends DrawableObject{
                 winner_id_ = winner_pos;
                 if (winner_pos >= 0 && winner_pos < bids_field_list_.length) {
                     Point end_position = layoutF.getTrickBidsGamePlayPositions().get(winner_pos);
-                    Point offset = new Point (end_position);
+                    Point offset = new Point(end_position);
                     offset.x -= bids_field_list_[winner_pos].getPosition().x;
                     offset.y -= bids_field_list_[winner_pos].getPosition().y;
                     bids_field_list_[winner_pos].setOffset(offset);
@@ -166,7 +167,7 @@ public class BidsView extends DrawableObject{
                         continue;
                     }
                     Point end_position = layoutF.getTrickBidsGamePlayPositions().get(i);
-                    Point offset = new Point (end_position);
+                    Point offset = new Point(end_position);
                     offset.x -= bids_field_list_[i].getPosition().x;
                     offset.y -= bids_field_list_[i].getPosition().y;
                     bids_field_list_[i].setOffset(offset);
@@ -209,8 +210,7 @@ public class BidsView extends DrawableObject{
                     (int) (bids_field_list_[i].getStartPos().x +
                             bids_field_list_[i].getOffset().x * percentage),
                     (int) (bids_field_list_[i].getStartPos().y +
-                            bids_field_list_[i].getOffset().y * percentage) );
-
+                            bids_field_list_[i].getOffset().y * percentage));
 
 
             if (i != winner_id_) {
@@ -226,26 +226,6 @@ public class BidsView extends DrawableObject{
                 bids_field_list_[i].setCirclePaintDefault(p);
             }
 
-            /*
-            if ( i == winner_id_ ) {
-                bids_field_list_[i].setPosition(
-                        (int) (bids_field_list_[i].getStartPos().x +
-                                bids_field_list_[i].getOffset().x * percentage),
-                        (int) (bids_field_list_[i].getStartPos().y +
-                                bids_field_list_[i].getOffset().y * percentage) );
-            }
-            // reduce alpha
-            else {
-                int MAX_ALPHA = 255;
-                int new_alpha = (int) (MAX_ALPHA - percentage * MAX_ALPHA);
-                if (new_alpha == 0) {
-                    bids_field_list_[i].setVisible(false);
-                    bids_field_list_[i].updateAlpha(MAX_ALPHA);
-                }
-                bids_field_list_[i].updateAlpha(new_alpha);
-            }
-
-*/
             // reduce size
             double size_percentage = 1 - percentage;
             bids_field_list_[i].changeSizeBasedOnPercentage(size_percentage);
@@ -261,19 +241,8 @@ public class BidsView extends DrawableObject{
         return (a + ((b - a) * percentage));
     }
 
-    /*
-    private int interpolateColor(int a, int b, float proportion) {
-        float[] hsva = new float[3];
-        float[] hsvb = new float[3];
-        Color.colorToHSV(a, hsva);
-        Color.colorToHSV(b, hsvb);
-        for (int i = 0; i < 3; i++) {
-            hsvb[i] = interpolate(hsva[i], hsvb[i], proportion);
-        }
-        return Color.HSVToColor(hsvb);
-    } */
 
-    public int interpolateColorInCIEL(int a, int b, double percentage) {
+    private int interpolateColorInCIEL(int a, int b, double percentage) {
         double[] ciel1 = new double[3];
         double[] ciel2 = new double[3];
         ColorUtils.colorToLAB(a, ciel1);
@@ -284,13 +253,9 @@ public class BidsView extends DrawableObject{
         return ColorUtils.LABToColor(ciel2[0], ciel2[1], ciel2[2]);
     }
 
-    //----------------------------------------------------------------------------------------------
-    //  reset
-    //
+
     public void reset() {
-        for (int i = 0; i < bids_field_list_.length; i++) {
-            bids_field_list_[i] = null;
-        }
+        Arrays.fill(bids_field_list_, null);
         winner_id_ = GameController.NOT_SET;
         ending_animation_ = false;
         setVisible(false);

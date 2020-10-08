@@ -46,10 +46,10 @@ public class PlayerLeftPopUpView extends RelativeLayout {
     public void init(String displayName) {
         findViewById(R.id.player_left_pop_up_ok)
                 .setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                mListener.onOkButtonRequested();
-            }
-        });
+                    public void onClick(View v) {
+                        mListener.onOkButtonRequested();
+                    }
+                });
 
 
         ((TextView) (findViewById(R.id.player_left_pop_up_info))).setText(getResources()

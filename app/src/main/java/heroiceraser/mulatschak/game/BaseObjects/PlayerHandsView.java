@@ -6,13 +6,14 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.text.TextPaint;
-import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
+
 import at.heroiceraser.mulatschak.R;
+import heroiceraser.mulatschak.drawableBasicObjects.MyTextField;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.helpers.BitmapMethodes;
+import heroiceraser.mulatschak.utils.BitmapMethodes;
 
 
 //--------------------------------------------------------------------------------------------------
@@ -62,7 +63,7 @@ public class PlayerHandsView {
             case 0:
                 for (int i = 0; i < player.getAmountOfCardsInHand(); i++) {
                     player.getHand().getCardAt(i).setFixedPosition(layout.getHandBottom().x +
-                                    layout.getCardWidth() * i +  (int) (layout.getCardWidth() *
+                                    layout.getCardWidth() * i + (int) (layout.getCardWidth() *
                                     ((GameLogic.MAX_CARDS_PER_HAND -
                                             player.getAmountOfCardsInHand()) / 2.0)),
                             layout.getHandBottom().y);

@@ -29,7 +29,7 @@
     <string name="error_game_canceled">Error: Game was canceled! Try again later.</string>
 
     <!-- :::::::::::::::: back button :::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
-    <string name="close">close</string>
+    <string name="close">Close %1$s?</string>
     <string name="are_you_sure_to_close_message">"Are you sure you want to end %1$s?"</string>
     <string name="this_game">"this game"</string>
 
@@ -67,18 +67,14 @@
         <p> For more information send an email to <a href="heroiceraser@gmail.com"> heroiceraser@gmail.com </a></p>
         <br/>
         <h2>Additional Costs</h2>
-        <p> This app needs an internet connection for multiplayer mode, which can lead to additional costs. </p>
+        <p> This app needs an internet connection, which can lead to additional costs. </p>
         <br/>
         <h2>Your private data</h2>
         <p>This app allows you to sign in via Google Play. If this service is used, your Google Play
         nickname, the profile picture and the game results will be made public.
-        Those can be seen by every user via the leaderboards or during an active game. The data is
-        not stored on any non-Google server. Furthermore, the usage behavior of users is NOT evaluated.
+        Those can be seen by every user via the leaderboards. No data is stored on any non-Google
+        server. Furthermore, the usage behavior of users is NOT evaluated.
         </p>
-       <br/>
-        <h2>Not happy?</h2>
-        <p> If you disagree with this privacy policy, you can use the app for at least the single player
-            mode, but it is important that you do not sign in through Google Play and keep your internet turned off.</p>
 ]]></string>
 
     <string name="rules_text"><![CDATA[

@@ -11,7 +11,8 @@ class TouchEvents {
     //----------------------------------------------------------------------------------------------
     // Constructor
     //
-    TouchEvents() { }
+    TouchEvents() {
+    }
 
     private final Object lock = new Object();
 
@@ -33,9 +34,6 @@ class TouchEvents {
             // ------------------ Menu Button Bar Window -----------------------------------------------
             controller.getNonGamePlayUIContainer().getMenu().touchEventDown(X, Y);
 
-            // ------------------ Chat Button Bar Window -----------------------------------------------
-            controller.getNonGamePlayUIContainer().getChat().touchEventDown(X, Y);
-
             // ------------------ Tricks Button Bar Window ---------------------------------------------
             controller.getNonGamePlayUIContainer().getTricks().touchEventDown(X, Y);
 
@@ -53,7 +51,9 @@ class TouchEvents {
             // X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X
             // touchBreak:
             //             elements under this line not touchable while ButtonBar window is active
-            if (controller.getNonGamePlayUIContainer().isAWindowActive()) { return; }
+            if (controller.getNonGamePlayUIContainer().isAWindowActive()) {
+                return;
+            }
             // X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X
 
             //------------------------
@@ -104,9 +104,6 @@ class TouchEvents {
 
             // ------------------ Menu ButtonBar Window ------------------------------------------------
             controller.getNonGamePlayUIContainer().getMenu().touchEventMove(X, Y);
-
-            // ------------------ Chat ButtonBar Window ------------------------------------------------
-            controller.getNonGamePlayUIContainer().getChat().touchEventMove(X, Y);
 
             // ------------------ Tricks ButtonBar Window ----------------------------------------------
             controller.getNonGamePlayUIContainer().getTricks().touchEventMove(X, Y);
@@ -177,9 +174,6 @@ class TouchEvents {
 
             // ------------------ Menu Button Bar Window -----------------------------------------------
             controller.getNonGamePlayUIContainer().getMenu().touchEventUp(X, Y, controller);
-
-            // ------------------ Chat -----------------------------------------------------------------
-            controller.getNonGamePlayUIContainer().getChat().touchEventUp(X, Y, controller);
 
             // ------------------ ButtonBar Tricks Window ----------------------------------------------
             controller.getNonGamePlayUIContainer().getTricks().touchEventUp(X, Y);

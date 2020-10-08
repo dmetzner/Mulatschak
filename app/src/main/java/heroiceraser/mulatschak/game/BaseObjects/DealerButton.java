@@ -3,14 +3,14 @@ package heroiceraser.mulatschak.game.BaseObjects;
 import android.graphics.Canvas;
 import android.graphics.Point;
 
-import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
+import heroiceraser.mulatschak.drawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.helpers.BitmapMethodes;
+import heroiceraser.mulatschak.utils.BitmapMethodes;
 
 
 // ToDo
-public class DealerButton extends DrawableObject{
+public class DealerButton extends DrawableObject {
 
     private long time_start_;
     private boolean animation_running_;
@@ -25,7 +25,7 @@ public class DealerButton extends DrawableObject{
         setPosition(view.getController().getLayout().getDeckPosition());
         setWidth(view.getController().getLayout().getDealerButtonSize());
         setHeight(getWidth());
-        setBitmap(BitmapMethodes.loadBitmap(view, "dealer_button" ,getWidth(), getHeight()));
+        setBitmap(BitmapMethodes.loadBitmap(view, "dealer_button", getWidth(), getHeight()));
         setVisible(false);
     }
 

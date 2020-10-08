@@ -6,8 +6,7 @@ import android.graphics.Point;
 import java.util.ArrayList;
 import java.util.List;
 
-import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
-
+import heroiceraser.mulatschak.drawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
 
@@ -49,7 +48,7 @@ public class MyKeyBoard extends DrawableObject {
         GameLayout layout = view.getController().getLayout();
 
         setPosition(new Point((int) (layout.getOnePercentOfScreenWidth() * 2),
-                (int) (layout.getOnePercentOfScreenHeight() * 55) ));
+                (int) (layout.getOnePercentOfScreenHeight() * 55)));
         setWidth(layout.getScreenWidth() - (int) (layout.getOnePercentOfScreenWidth() * 4));
         setHeight((int) (layout.getOnePercentOfScreenHeight() * 40));
 
@@ -93,7 +92,7 @@ public class MyKeyBoard extends DrawableObject {
                     width *= 2;
                 }
                 tmp.init(view, new Point(pos), width, buttonHeight,
-                        "" , "" + lower_buttons[row].charAt(col));
+                        "", "" + lower_buttons[row].charAt(col));
                 lowerKeyBoard.add(tmp);
                 if (row == 2 && col == 9) {
                     break;
@@ -115,7 +114,7 @@ public class MyKeyBoard extends DrawableObject {
                     width *= 2;
                 }
                 tmp.init(view, new Point(pos), width, buttonHeight,
-                        "" , "" + upper_buttons[row].charAt(col));
+                        "", "" + upper_buttons[row].charAt(col));
                 upperKeyBoard.add(tmp);
                 if (row == 2 && col == 9) {
                     break;
@@ -134,7 +133,7 @@ public class MyKeyBoard extends DrawableObject {
                 MyKeyBoardButton tmp = new MyKeyBoardButton();
 
                 tmp.init(view, new Point(pos), buttonWidth, buttonHeight,
-                        "" , "" + number_buttons[row].charAt(col));
+                        "", "" + number_buttons[row].charAt(col));
                 numberKeyBoard.add(tmp);
             }
         }
@@ -143,33 +142,32 @@ public class MyKeyBoard extends DrawableObject {
         MyKeyBoardButton tmp = new MyKeyBoardButton();
         Point pos = new Point(position);
         pos.y += buttonHeight * 3;
-        pos.x += 0;
         tmp.init(view, new Point(pos), buttonWidth * 2, buttonHeight,
-                "" , "" + lastRow.substring(0, 4));
+                "", "" + lastRow.substring(0, 4));
         lastRowKeyBoard.add(tmp);
 
         tmp = new MyKeyBoardButton();
         pos.x += buttonWidth * 2;
         tmp.init(view, new Point(pos), buttonWidth, buttonHeight,
-                "" , "" + lastRow.charAt(4));
+                "", "" + lastRow.charAt(4));
         lastRowKeyBoard.add(tmp);
 
         tmp = new MyKeyBoardButton();
         pos.x += buttonWidth;
         tmp.init(view, new Point(pos), buttonWidth * 4, buttonHeight,
-                "" , "" + lastRow.charAt(5));
+                "", "" + lastRow.charAt(5));
         lastRowKeyBoard.add(tmp);
 
         tmp = new MyKeyBoardButton();
         pos.x += buttonWidth * 4;
         tmp.init(view, new Point(pos), buttonWidth, buttonHeight,
-                "" , "" + lastRow.charAt(6));
+                "", "" + lastRow.charAt(6));
         lastRowKeyBoard.add(tmp);
 
         tmp = new MyKeyBoardButton();
         pos.x += buttonWidth;
         tmp.init(view, new Point(pos), buttonWidth * 3, buttonHeight,
-                "" , "SEND");
+                "", "SEND");
         lastRowKeyBoard.add(tmp);
 
         setVisible(true);
@@ -189,13 +187,11 @@ public class MyKeyBoard extends DrawableObject {
             for (MyKeyBoardButton button : lowerKeyBoard) {
                 button.draw(canvas);
             }
-        }
-        else if (upper) {
+        } else if (upper) {
             for (MyKeyBoardButton button : upperKeyBoard) {
                 button.draw(canvas);
             }
-        }
-        else if (number) {
+        } else if (number) {
             for (MyKeyBoardButton button : numberKeyBoard) {
                 button.draw(canvas);
             }
@@ -219,13 +215,11 @@ public class MyKeyBoard extends DrawableObject {
             for (MyKeyBoardButton button : lowerKeyBoard) {
                 button.touchEventDown(X, Y);
             }
-        }
-        else if (upper) {
+        } else if (upper) {
             for (MyKeyBoardButton button : upperKeyBoard) {
                 button.touchEventDown(X, Y);
             }
-        }
-        else if (number) {
+        } else if (number) {
             for (MyKeyBoardButton button : numberKeyBoard) {
                 button.touchEventDown(X, Y);
             }
@@ -245,13 +239,11 @@ public class MyKeyBoard extends DrawableObject {
             for (MyKeyBoardButton button : lowerKeyBoard) {
                 button.touchEventMove(X, Y);
             }
-        }
-        else if (upper) {
+        } else if (upper) {
             for (MyKeyBoardButton button : upperKeyBoard) {
                 button.touchEventMove(X, Y);
             }
-        }
-        else if (number) {
+        } else if (number) {
             for (MyKeyBoardButton button : numberKeyBoard) {
                 button.touchEventMove(X, Y);
             }
@@ -271,28 +263,26 @@ public class MyKeyBoard extends DrawableObject {
 
         if (lower) {
             for (MyKeyBoardButton button : lowerKeyBoard) {
-                if (button.touchEventUp(X, Y)){
+                if (button.touchEventUp(X, Y)) {
                     keys.add(button.getText());
                 }
             }
-        }
-        else if (upper) {
+        } else if (upper) {
             for (MyKeyBoardButton button : upperKeyBoard) {
-                if (button.touchEventUp(X, Y)){
+                if (button.touchEventUp(X, Y)) {
                     keys.add(button.getText());
                 }
             }
-        }
-        else if (number) {
+        } else if (number) {
             for (MyKeyBoardButton button : numberKeyBoard) {
-                if (button.touchEventUp(X, Y)){
+                if (button.touchEventUp(X, Y)) {
                     keys.add(button.getText());
                 }
             }
         }
 
         for (MyKeyBoardButton button : lastRowKeyBoard) {
-            if (button.touchEventUp(X, Y)){
+            if (button.touchEventUp(X, Y)) {
                 keys.add(button.getText());
             }
         }
@@ -320,8 +310,7 @@ public class MyKeyBoard extends DrawableObject {
                         lower = true;
                         upper = false;
                         number = false;
-                    }
-                    else {
+                    } else {
                         lower = false;
                         upper = false;
                         number = true;

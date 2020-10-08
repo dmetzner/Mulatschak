@@ -7,10 +7,10 @@ import android.graphics.Point;
 import java.util.ArrayList;
 import java.util.List;
 
-import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
+import heroiceraser.mulatschak.drawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.helpers.BitmapMethodes;
+import heroiceraser.mulatschak.utils.BitmapMethodes;
 
 
 //--------------------------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ public class DiscardPile extends DrawableObject {
     public void init(GameView view, Point size, List<Point> positions) {
         setWidth(size.x);
         setHeight(size.y);
-        this.positions_ = positions ;
+        this.positions_ = positions;
         finishInit(view);
     }
 
@@ -187,22 +187,34 @@ public class DiscardPile extends DrawableObject {
     public Card getCardBottom() {
         return card_bottom_;
     }
-    public void setCardBottom(Card card_bottom) { card_bottom_ = card_bottom; }
+
+    public void setCardBottom(Card card_bottom) {
+        card_bottom_ = card_bottom;
+    }
 
     public Card getCardLeft() {
         return card_left_;
     }
-    public void setCardLeft(Card card_left) { card_left_ = card_left; }
+
+    public void setCardLeft(Card card_left) {
+        card_left_ = card_left;
+    }
 
     public Card getCardTop() {
         return card_top_;
     }
-    public void setCardTop(Card card_up) { card_top_ = card_up; }
+
+    public void setCardTop(Card card_up) {
+        card_top_ = card_up;
+    }
 
     public Card getCardRight() {
         return card_right_;
     }
-    public void setCardRight(Card card_right) { card_right_ = card_right; }
+
+    public void setCardRight(Card card_right) {
+        card_right_ = card_right;
+    }
 
     public void setOverlaysVisible(boolean visible) {
         overlays_visible_ = visible;
@@ -211,6 +223,7 @@ public class DiscardPile extends DrawableObject {
     public Point getPoint(int pos) {
         return positions_.get(pos);
     }
+
     public List<Point> getPositions() {
         return positions_;
     }

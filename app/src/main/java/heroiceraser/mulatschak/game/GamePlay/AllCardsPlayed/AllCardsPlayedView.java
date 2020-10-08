@@ -2,14 +2,9 @@ package heroiceraser.mulatschak.game.GamePlay.AllCardsPlayed;
 
 import android.graphics.Canvas;
 import android.graphics.Point;
-import android.os.Handler;
-import android.util.Log;
 
-
-import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
 import at.heroiceraser.mulatschak.R;
-import heroiceraser.mulatschak.Message;
-import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
+import heroiceraser.mulatschak.drawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
@@ -19,7 +14,7 @@ import heroiceraser.mulatschak.game.GameView;
 //  AllCardsPlayedView
 //                      -> new round button
 //
-public class AllCardsPlayedView{
+public class AllCardsPlayedView {
 
 
     //----------------------------------------------------------------------------------------------
@@ -43,11 +38,11 @@ public class AllCardsPlayedView{
 
         GameLayout layout = view.getController().getLayout();
 
-        Point next_round_button_size = new Point((int)(layout.getButtonBarBigButtonWidth() * 1.5),
-                layout.getButtonBarBigButtonHeight());
+        Point next_round_button_size = new Point((int) (layout.getButtonBarButtonWidth() * 1.5),
+                layout.getButtonBarButtonHeight());
 
         Point next_round_button_position = new Point(layout.getScreenWidth() / 2 - next_round_button_size.x / 2,
-                layout.getSectors().get(6).y);
+                layout.getLengthOnVerticalGrid(750));
 
         String text = view.getResources().getString(R.string.next_round_button);
         next_round_button_.init(view, next_round_button_position,
@@ -80,52 +75,8 @@ public class AllCardsPlayedView{
     }
 
     private synchronized void waitOrStartNewRound(final GameController controller) {
-
-        if (!controller.multiplayer_) {
-            controller.prepareNewRound();
-            controller.startRound();
-            return;
-        }
-
-        try {
-            controller.waitForOnlineInteraction = Message.waitForNewRound;
-            if (controller.mainActivity.gameState == Message.gameStateWaitForNewRound) {
-                boolean wait = false;
-                for (MyPlayer p : controller.getPlayerList()) {
-                    if (p.gameState != Message.gameStateWaitForNewRound &&
-                            !p.getOnlineId().equals("") &&
-                            !p.getOnlineId().equals(controller.myPlayerId)) {
-                        controller.mainActivity.sendUnReliable(p.getOnlineId(), Message.requestWaitForNewRound, "");
-                        wait = true;
-                    }
-                }
-                if (wait) {
-                    Handler h = new Handler();
-                    Runnable r = new Runnable() {
-                        @Override
-                        public void run() {
-                            waitOrStartNewRound(controller);
-                        }
-                    };
-                    h.postDelayed(r, 150);
-                }
-                else {
-                    controller.mainActivity.gameState = Message.gameStateWaitForShuffleDeck;
-                    for (MyPlayer p : controller.getPlayerList()) {
-                        p.gameState = Message.gameStateWaitForShuffleDeck;
-                        p.exchanged_cards_.getCardStack().clear();
-                        p.played_cards_.getCardStack().clear();
-                    }
-                    controller.waitForOnlineInteraction = 0;
-                    controller.prepareNewRound();
-                    controller.startRound();
-                }
-            }
-        }
-        catch (Exception e) {
-            if (controller.DEBUG){ Log.e("All cards played", "exception" + e); }
-        }
-
+        controller.prepareNewRound();
+        controller.startRound();
     }
 
 
@@ -147,8 +98,6 @@ public class AllCardsPlayedView{
             controller.getNonGamePlayUIContainer().closeAllButtonBarWindows();
             controller.getDiscardPile().setVisible(false);
             controller.getView().postInvalidateOnAnimation();
-            controller.mainActivity.gameState = Message.gameStateWaitForNewRound;
-            controller.getPlayerByPosition(0).gameState = Message.gameStateWaitForNewRound;
             waitOrStartNewRound(controller);
         }
     }

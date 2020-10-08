@@ -8,10 +8,10 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.text.TextPaint;
 
-import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
 import at.heroiceraser.mulatschak.R;
+import heroiceraser.mulatschak.drawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.helpers.BitmapMethodes;
+import heroiceraser.mulatschak.utils.BitmapMethodes;
 
 
 //----------------------------------------------------------------------------------------------
@@ -19,7 +19,7 @@ import heroiceraser.mulatschak.helpers.BitmapMethodes;
 //      2 more states ->  enabled, pressed
 //      for both exist different bitmaps
 //
-public class MyKeyBoardButton extends DrawableObject{
+public class MyKeyBoardButton extends DrawableObject {
 
     //----------------------------------------------------------------------------------------------
     //  Member Variables
@@ -81,7 +81,7 @@ public class MyKeyBoardButton extends DrawableObject{
         bgPaintPressed.setStyle(Paint.Style.FILL);
         bgPaintPressed.setColor(view.getResources().getColor(R.color.metallic_blue));
 
-        pressed= false;
+        pressed = false;
         setVisible(true);
     }
 
@@ -114,7 +114,7 @@ public class MyKeyBoardButton extends DrawableObject{
             rect.set((int) (background.left * pressed_scale_ - offset_x),
                     (int) (background.top * pressed_scale_),
                     (int) (background.right * pressed_scale_),
-                    (int) (background.bottom * pressed_scale_) );
+                    (int) (background.bottom * pressed_scale_));
         }
 
         // background bitmap
@@ -122,8 +122,7 @@ public class MyKeyBoardButton extends DrawableObject{
             canvas.drawBitmap(bitmap,
                     getPosition().x * pressed_scale_ - offset_x,
                     getPosition().y * pressed_scale_, null);
-        }
-        else {
+        } else {
             canvas.drawRect(rect, paint);
         }
 
@@ -152,12 +151,11 @@ public class MyKeyBoardButton extends DrawableObject{
 
     public boolean touchEventMove(int X, int Y) {
         if (isVisible() && isPressed()) {
-            if ( X >= getPosition().x && X < getPosition().x + getWidth() &&
+            if (X >= getPosition().x && X < getPosition().x + getWidth() &&
                     Y >= getPosition().y && Y < getPosition().y + getHeight()) {
                 setPressed(true);
                 return true;
-            }
-            else {
+            } else {
                 if (isPressed()) {
                     setPressed(false);
                     return true;
@@ -177,8 +175,6 @@ public class MyKeyBoardButton extends DrawableObject{
         }
         return false;
     }
-
-
 
 
     //----------------------------------------------------------------------------------------------

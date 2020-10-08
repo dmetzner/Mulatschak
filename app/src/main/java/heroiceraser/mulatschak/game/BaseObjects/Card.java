@@ -2,9 +2,9 @@ package heroiceraser.mulatschak.game.BaseObjects;
 
 import android.graphics.Point;
 
-import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
+import heroiceraser.mulatschak.drawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.helpers.BitmapMethodes;
+import heroiceraser.mulatschak.utils.BitmapMethodes;
 
 
 //----------------------------------------------------------------------------------------------
@@ -30,6 +30,7 @@ public class Card extends DrawableObject {
         id_ = -1;
         fixed_position = null;
     }
+
     public Card(int id) {
         super();
         id_ = id;
@@ -71,6 +72,7 @@ public class Card extends DrawableObject {
     public int getId() {
         return id_;
     }
+
     public void setId(int id) {
         id_ = id;
     }
@@ -78,9 +80,11 @@ public class Card extends DrawableObject {
     public Point getFixedPosition() {
         return fixed_position;
     }
+
     public void setFixedPosition(Point coordinate) {
         fixed_position = new Point(coordinate);
     }
+
     public void setFixedPosition(int x, int y) {
         fixed_position = new Point(x, y);
     }
