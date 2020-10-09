@@ -6,13 +6,11 @@ android {
     buildToolsVersion android_version
 
     defaultConfig {
-        /*
-          REPLACE THIS VALUE WITH YOUR APPLICATION ID
-        */
         applicationId "at.heroiceraser.mulatschak"
 
         minSdkVersion android_min_sdk_version
         targetSdkVersion android_compile_version
+
         versionCode 1000
         versionName "0.1.0"
     }
@@ -26,16 +24,11 @@ android {
 }
 
 dependencies {
-    implementation "com.android.support:appcompat-v7:${appcompat_library_version}"
-    implementation "com.android.support:support-v4:${support_library_version}"
-    implementation "com.google.android.gms:play-services-games:${gms_library_version}"
-    implementation "com.google.android.gms:play-services-auth:${gms_library_version}"
-
-    implementation 'com.google.code.gson:gson:2.8.2'
-}
-
-buildscript {
-    repositories {
-        jcenter()
-    }
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation "com.google.android.gms:play-services-games:20.0.1"
+    implementation "com.google.android.gms:play-services-auth:18.1.0"
+    implementation "com.google.android.material:material:1.2.1"
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'org.jetbrains:annotations-java5:15.0'
 }

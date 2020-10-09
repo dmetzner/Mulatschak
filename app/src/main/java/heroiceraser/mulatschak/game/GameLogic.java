@@ -79,7 +79,6 @@ public class GameLogic {
     }
 
 
-
     void moveDealer(int players) {
         dealer_++;
         if (dealer_ >= players) {
@@ -179,7 +178,7 @@ public class GameLogic {
     public boolean isDiscardPileEmpty(DiscardPile discard_pile) {
         for (int i = 0; i < 4; i++) {
             if (discard_pile.getCard(i) != null) {
-             return false;
+                return false;
             }
         }
         return true;
@@ -207,10 +206,9 @@ public class GameLogic {
             }
             if (dp_card_sym == trump_) {
                 if (highest_card_sym == trump_ && dp_card_value > highest_card_value) {
-                        highest_card_sym = dp_card_sym;
-                        highest_card_value = dp_card_value;
-                }
-                else if(highest_card_sym != trump_) {
+                    highest_card_sym = dp_card_sym;
+                    highest_card_value = dp_card_value;
+                } else if (highest_card_sym != trump_) {
                     highest_card_sym = dp_card_sym;
                     highest_card_value = dp_card_value;
                 }
@@ -273,19 +271,33 @@ public class GameLogic {
     //----------------------------------------------------------------------------------------------
     //  Getter & Setter
     //
-    public int getDealer() { return dealer_; }
+    public int getDealer() {
+        return dealer_;
+    }
 
-    void setDealer(int dealer) { dealer_ = dealer; }
+    void setDealer(int dealer) {
+        dealer_ = dealer;
+    }
 
-    public void setTurn(int turn) { turn_ = turn; }
+    public void setTurn(int turn) {
+        turn_ = turn;
+    }
 
-    public int getTurn() { return turn_; }
+    public int getTurn() {
+        return turn_;
+    }
 
-    public int getTrump() { return trump_; }
+    public int getTrump() {
+        return trump_;
+    }
 
-    public int getTrumpPlayerId() { return  trump_player_id_; }
+    public int getTrumpPlayerId() {
+        return trump_player_id_;
+    }
 
-    public void setTrumpPlayerId(int trumph_player_id) { trump_player_id_ = trumph_player_id; }
+    public void setTrumpPlayerId(int trumph_player_id) {
+        trump_player_id_ = trumph_player_id;
+    }
 
     public void setTricksToMake(int tricks) {
         tricks_to_make_ = tricks;
@@ -299,9 +311,11 @@ public class GameLogic {
         return starting_card_symbol_;
     }
 
-    public int getTricksToMake() { return tricks_to_make_; }
+    public int getTricksToMake() {
+        return tricks_to_make_;
+    }
 
-    public void setTrump(int trump){
+    public void setTrump(int trump) {
         trump_ = trump;
     }
 

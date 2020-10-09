@@ -33,31 +33,31 @@ class EnemyDecideMulatschakLogic {
         int spades = 0;
         int clubs = 0;
         for (Card card : player.getHand().getCardStack()) {
-           int cardValue = MulatschakDeck.getCardValue(card);
-           if (cardValue > MulatschakDeck.LAST_CARD - 2) {
-               highCards++;
-           }
-           int cardSuit = MulatschakDeck.getCardSuit(card);
-           switch (cardSuit) {
-               case MulatschakDeck.HEART:
-                   hearts++;
-                   break;
-               case MulatschakDeck.DIAMOND:
-                   diamonds++;
-                   break;
-               case MulatschakDeck.SPADE:
-                   spades++;
-                   break;
-               case MulatschakDeck.CLUB:
-                   clubs++;
-                   break;
-               case MulatschakDeck.WELI:
-                   hearts++;
-                   diamonds++;
-                   clubs++;
-                   spades++;
-                   break;
-           }
+            int cardValue = MulatschakDeck.getCardValue(card);
+            if (cardValue > MulatschakDeck.LAST_CARD - 2) {
+                highCards++;
+            }
+            int cardSuit = MulatschakDeck.getCardSuit(card);
+            switch (cardSuit) {
+                case MulatschakDeck.HEART:
+                    hearts++;
+                    break;
+                case MulatschakDeck.DIAMOND:
+                    diamonds++;
+                    break;
+                case MulatschakDeck.SPADE:
+                    spades++;
+                    break;
+                case MulatschakDeck.CLUB:
+                    clubs++;
+                    break;
+                case MulatschakDeck.WELI:
+                    hearts++;
+                    diamonds++;
+                    clubs++;
+                    spades++;
+                    break;
+            }
         }
 
         // to less good cards

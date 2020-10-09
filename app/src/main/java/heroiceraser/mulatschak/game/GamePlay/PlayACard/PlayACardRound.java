@@ -4,13 +4,7 @@ import android.graphics.Canvas;
 import android.os.Handler;
 import android.util.Log;
 
-import com.google.gson.Gson;
-
-import java.util.ArrayList;
-
 import at.heroiceraser.mulatschak.R;
-import heroiceraser.mulatschak.Message;
-import heroiceraser.mulatschak.MainActivity;
 import heroiceraser.mulatschak.game.BaseObjects.Card;
 import heroiceraser.mulatschak.game.BaseObjects.DiscardPile;
 import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
@@ -65,29 +59,38 @@ public class PlayACardRound {
     //  Constructor
     //
     public void playACard(final boolean first_call, final GameController controller) {
-        if (controller.DEBUG) {Log.d("_", "PLAY A CARD"); }
+        if (controller.DEBUG) {
+            Log.d("_", "PLAY A CARD");
+        }
         GameLogic logic = controller.getLogic();
 
         if (first_call) {
-            if (controller.DEBUG){ Log.d("starting with", " : " + controller.getLogic().getTurn()); }
-        }
-        else {
+            if (controller.DEBUG) {
+                Log.d("starting with", " : " + controller.getLogic().getTurn());
+            }
+        } else {
             controller.getPlayerById(controller.getLogic().getTurn()).played_cards_.addCard(
                     controller.getDiscardPile().getCard(
                             controller.getPlayerById(controller.getLogic().getTurn()).getPosition())
             );
             controller.getPlayerById(logic.getTurn()).gameState++;
             controller.turnToNextPlayer(true);
-            if (controller.DEBUG){Log.d("turn is", " : " + controller.getLogic().getTurn());}
+            if (controller.DEBUG) {
+                Log.d("turn is", " : " + controller.getLogic().getTurn());
+            }
         }
 
         // only allowed if turn is player 0
-        if (controller.DEBUG){Log.d("AUS", "-");}
+        if (controller.DEBUG) {
+            Log.d("AUS", "-");
+        }
         controller.getGamePlay().getPlayACardRound().setCardMovable(false);
 
         // every player played played a card
         if (!first_call && logic.getTurn() == logic.getStartingPlayer()) {
-            if (controller.DEBUG){Log.d("ENDE", "-------------");}
+            if (controller.DEBUG) {
+                Log.d("ENDE", "-------------");
+            }
             endCardRound(controller);
             return;
         }
@@ -100,7 +103,9 @@ public class PlayACardRound {
 
         // player 0 -> allow card movement
         if (logic.getTurn() == 0) {
-            if (controller.DEBUG){Log.d("EIN", "_");}
+            if (controller.DEBUG) {
+                Log.d("EIN", "_");
+            }
             controller.getGamePlay().getPlayACardRound().setCardMovable(true);
             //controller.getView().disableUpdateCanvasThread();
             // touch event calls playACard
@@ -113,55 +118,14 @@ public class PlayACardRound {
             if (controller.getPlayerById(logic.getTurn()).isEnemyLogic()) {
                 handleEnemyAction(controller);
             }
-            // multiplayer
-            else {
-                controller.waitForOnlineInteraction = Message.playACard;
-                ArrayList<String> sa = new ArrayList<>();
-                sa.add(controller.getPlayerById(logic.getTurn()).getOnlineId());
-                sa.add(controller.playACardCounter + "");
-                Gson gson = new Gson();
-                if (controller.DEBUG) {Log.d("-------", "wait for " +
-                        controller.getPlayerById(controller.getLogic().getTurn()).getDisplayName()
-                        + " to play a card"); }
-                controller.requestMissedMessagePlayerCheck(controller.fillGameStates(),
-                        controller.getPlayerById(controller.getLogic().getTurn()).getOnlineId(),
-                        controller.mainActivity.gameState, Message.requestPlayACard, gson.toJson(sa));
-
-                // wait 4 online interaction
-            }
         }
     }
 
 
-    public void handleEnemyAction(final GameController controller) {
+    private void handleEnemyAction(final GameController controller) {
         enemy_play_a_card_logic_.playACard(controller,
                 controller.getPlayerById(controller.getLogic().getTurn()));
         controller.getPlayerById(controller.getLogic().getTurn()).gameState++;
-    }
-
-
-    public void handleOnlineInteraction(int cardId, GameController controller) {
-        controller.waitForOnlineInteraction = Message.noMessage;
-
-        enemy_play_a_card_logic_.playACardOnline(controller,
-                controller.getPlayerById(controller.getLogic().getTurn()), cardId);
-        controller.getPlayerById(controller.getLogic().getTurn()).gameState++;
-    }
-
-    void handleMainPlayersDecision(GameController controller) {
-        if (controller.multiplayer_) {
-            // broadcast to all the decision
-            MainActivity activity = (MainActivity) controller.getView().getContext();
-            int cardId = controller.getDiscardPile().getCard(controller
-                    .getPlayerById(controller.getLogic().getTurn()).getPosition()).getId();
-            ArrayList<Integer> data = new ArrayList<>();
-            data.add(cardId);
-            data.add(controller.playACardCounter);
-            Gson gson = new Gson();
-            activity.broadcastMessage(Message.playACard, gson.toJson(data));
-        }
-        controller.getPlayerById(controller.getLogic().getTurn()).gameState++;
-        if (controller.DEBUG) { Log.d("-------", "I played a Card"); }
     }
 
     //----------------------------------------------------------------------------------------------
@@ -242,11 +206,9 @@ public class PlayACardRound {
     //                              -> clear discard pile & call next round
     //
     private void prepareNextCardRound(final GameController controller, boolean muli) {
-        controller.mainActivity.gameState++;
-        if (controller.DEBUG) { Log.d("-----", "new STATE: " + controller.mainActivity.gameState);}
-        for (MyPlayer player : controller.getPlayerList()) {
-            player.gameState = controller.mainActivity.gameState;
-        }
+//        for (MyPlayer player : controller.getPlayerList()) {
+//            player.gameState = controller.mainActivity.gameState;
+//        }
         controller.playACardCounter++;
         roundEnded = false;
         controller.getDiscardPile().setOverlaysVisible(false);
@@ -259,12 +221,10 @@ public class PlayACardRound {
                 }
             }
             controller.getGamePlay().getMulatschakResultAnimation().startAnimation(controller);
-        }
-        else {
+        } else {
             controller.nextCardRound();
         }
     }
-
 
 
     //----------------------------------------------------------------------------------------------
@@ -353,8 +313,6 @@ public class PlayACardRound {
         }
         return false;
     }
-
-
 
 
     //----------------------------------------------------------------------------------------------

@@ -9,7 +9,7 @@ import heroiceraser.mulatschak.game.BaseObjects.Card;
 import heroiceraser.mulatschak.game.BaseObjects.CardStack;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.helpers.BitmapMethodes;
+import heroiceraser.mulatschak.utils.BitmapMethodes;
 
 
 //----------------------------------------------------------------------------------------------
@@ -33,7 +33,8 @@ public class PlayACardLogic {
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
-    PlayACardLogic() { }
+    PlayACardLogic() {
+    }
 
 
     //----------------------------------------------------------------------------------------------
@@ -91,8 +92,7 @@ public class PlayACardLogic {
             invalid_symbol_alpha_ = 0;
             invalid_move_symbol_running_ = false;
             //controller.getView().disableUpdateCanvasThreadOnly4TouchEvents();
-        }
-        else {
+        } else {
             invalid_move_symbol_running_ = true;
         }
     }
@@ -110,7 +110,7 @@ public class PlayACardLogic {
             return 0;
         }
 
-        double percentage  = ((double)time_since_start / max_time);
+        double percentage = ((double) time_since_start / max_time);
         return max_value - ((int) (percentage * max_value));
     }
 
@@ -122,7 +122,7 @@ public class PlayACardLogic {
     synchronized void touchActionDown(GameController controller, int X, int Y) {
 
         if (isCardMoveable() &&
-             move_card_idx_ == GameController.NOT_SET) {
+                move_card_idx_ == GameController.NOT_SET) {
 
             for (int i = 0; i < controller.getPlayerByPosition(0).getAmountOfCardsInHand(); i++) {
                 Card card = controller.getPlayerByPosition(0).getHand().getCardAt(i);
@@ -149,8 +149,8 @@ public class PlayACardLogic {
     synchronized void touchActionMove(GameController controller, int X, int Y) {
         if (move_card_idx_ >= 0) {
             controller.getPlayerByPosition(0).getHand().getCardAt(move_card_idx_).setPosition(
-                X -  controller.getLayout().getCardWidth() / 2,
-                Y -  controller.getLayout().getCardHeight() / 2);
+                    X - controller.getLayout().getCardWidth() / 2,
+                    Y - controller.getLayout().getCardHeight() / 2);
         }
     }
 
@@ -160,7 +160,7 @@ public class PlayACardLogic {
     //
     synchronized void touchActionUp(GameController controller) {
         if (move_card_idx_ >= 0) {
-            CardStack hand =  controller.getPlayerByPosition(0).getHand();
+            CardStack hand = controller.getPlayerByPosition(0).getHand();
             int card_y = hand.getCardAt(move_card_idx_).getPosition().y;
             int fixed_y = hand.getCardAt(move_card_idx_).getFixedPosition().y;
 
@@ -183,7 +183,7 @@ public class PlayACardLogic {
                     hand, controller.getDiscardPile());
 
             // invalid card play -> return card to hand + INVALID SYMBOL
-            if (!valid ) {
+            if (!valid) {
                 showInvalidSymbol(controller);
                 returnCardToHand(controller.getPlayerById(0).getHand().getCardAt(move_card_idx_));
                 return;
@@ -192,7 +192,7 @@ public class PlayACardLogic {
             // valid card play -> move card to discard pile call playACard again
             moveCardFromHandToDiscardPile(controller);
 
-            controller.getGamePlay().getPlayACardRound().handleMainPlayersDecision(controller);
+//            controller.getGamePlay().getPlayACardRound().handleMainPlayersDecision(controller);
 
             // recalculate hand positions!
             controller.getPlayerHandsView().redrawHands(controller.getLayout(), controller.getPlayerById(0));
@@ -234,7 +234,7 @@ public class PlayACardLogic {
         CardStack hand = controller.getPlayerById(0).getHand();
 
         hand.getCardAt(move_card_idx_).setPosition(
-                new Point(controller.getDiscardPile().getPoint(0)) );
+                new Point(controller.getDiscardPile().getPoint(0)));
 
         controller.getDiscardPile().setCardBottom(hand.getCardAt(move_card_idx_));
 

@@ -1,21 +1,23 @@
 package heroiceraser.mulatschak.game.GamePlay.CardExchange;
+
 import android.graphics.Canvas;
 import android.graphics.Point;
-import android.support.annotation.StringRes;
-import android.util.Log;
+
+import androidx.annotation.StringRes;
 
 import java.util.ArrayList;
 import java.util.List;
-import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
-import heroiceraser.mulatschak.DrawableBasicObjects.HelpText;
+
 import at.heroiceraser.mulatschak.R;
+import heroiceraser.mulatschak.drawableBasicObjects.HelpText;
+import heroiceraser.mulatschak.drawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.game.BaseObjects.Card;
 import heroiceraser.mulatschak.game.BaseObjects.CardStack;
+import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 
 
 //----------------------------------------------------------------------------------------------
@@ -34,7 +36,7 @@ public class CardExchangeLogic {
     //
     private boolean animationRunning; // should be true while the card exchange process is active
     private boolean preparationRunning;
-    
+
     private List<MyButton> exchangeButtons; // container for all card exchange buttons
     private int activeButton; // keeps track of which button should be displayed
 
@@ -316,7 +318,7 @@ public class CardExchangeLogic {
 
         // taking four cards is not allowed
         // if (activeButton == 4) {
-           // exchangeButtons.get(activeButton).setEnabled(false);
+        // exchangeButtons.get(activeButton).setEnabled(false);
         //}
 
         return exchangeButtons.get(activeButton);

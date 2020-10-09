@@ -4,11 +4,13 @@ import android.graphics.Bitmap;
 import android.graphics.Camera;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import heroiceraser.mulatschak.game.BaseObjects.Card;
 import heroiceraser.mulatschak.game.GameController;
-import heroiceraser.mulatschak.helpers.BitmapMethodes;
+import heroiceraser.mulatschak.utils.BitmapMethodes;
 
 
 //--------------------------------------------------------------------------------------------------
@@ -52,7 +54,8 @@ public class CardExchangeAnimation {
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
-    CardExchangeAnimation() { }
+    CardExchangeAnimation() {
+    }
 
 
     //----------------------------------------------------------------------------------------------
@@ -149,7 +152,7 @@ public class CardExchangeAnimation {
         double animation_factor = controller.getSettings().getAnimationSpeed().getSpeedFactor();
         double max_time = 2000 * animation_factor;
         long time_now = System.currentTimeMillis();
-        long time_since_start = time_now -time_start_;
+        long time_since_start = time_now - time_start_;
         double percentage = time_since_start / max_time;
         if (percentage > 1) {
             percentage = 1;
@@ -163,25 +166,22 @@ public class CardExchangeAnimation {
 
         // first spin
         if (percentage <= t1) {
-            degree_ = (int) (180 * ((percentage ) / (t1)));
-        }
-        else if (percentage <= t2) {
-            degree_ = 180 + (int) (180 * ((percentage - t1 ) / (t2 - t1)));
+            degree_ = (int) (180 * ((percentage) / (t1)));
+        } else if (percentage <= t2) {
+            degree_ = 180 + (int) (180 * ((percentage - t1) / (t2 - t1)));
         }
 
         // second spin
         else if (percentage <= t3) {
-            degree_ = (int) (360 * ((percentage - t2 ) / (t3 - t2)));
+            degree_ = (int) (360 * ((percentage - t2) / (t3 - t2)));
         }
 
         // third spin
         else if (percentage <= t4) {
-            degree_ = (int) (180 * ((percentage - t3 ) / (t4 - t3)));
-        }
-        else if (percentage <= t5) {
-            degree_ =  180 + (int) (180 * ((percentage - t4 ) / (t5 - t4)));
-        }
-        else {
+            degree_ = (int) (180 * ((percentage - t3) / (t4 - t3)));
+        } else if (percentage <= t5) {
+            degree_ = 180 + (int) (180 * ((percentage - t4) / (t5 - t4)));
+        } else {
             degree_ = 0;
         }
 

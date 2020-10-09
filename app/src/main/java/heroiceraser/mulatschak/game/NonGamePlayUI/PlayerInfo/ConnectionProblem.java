@@ -5,11 +5,10 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 
 import at.heroiceraser.mulatschak.R;
-import heroiceraser.mulatschak.DrawableBasicObjects.DrawableObject;
+import heroiceraser.mulatschak.drawableBasicObjects.DrawableObject;
 import heroiceraser.mulatschak.game.GameController;
-import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.helpers.BitmapMethodes;
+import heroiceraser.mulatschak.utils.BitmapMethodes;
 
 
 public class ConnectionProblem extends DrawableObject {
@@ -26,7 +25,7 @@ public class ConnectionProblem extends DrawableObject {
         setHeight(getWidth());
         setPosition(view.getController().getLayout().getCenter().x - getWidth() / 2,
                 view.getController().getLayout().getCenter().y - getHeight() / 2);
-        setBitmap(BitmapMethodes.loadBitmap(view, "wlan" ,getWidth(), getHeight()));
+        setBitmap(BitmapMethodes.loadBitmap(view, "wlan", getWidth(), getHeight()));
 
         circlePaint = new Paint();
         circlePaint.setColor(view.getResources().getColor(R.color.my_dark_gray));
@@ -40,7 +39,7 @@ public class ConnectionProblem extends DrawableObject {
 
             long time = System.currentTimeMillis();
 
-            int alphaTime =  (int) (time % 2048);
+            int alphaTime = (int) (time % 2048);
 
             double percentage = (alphaTime * 100.0) / 2048;
 

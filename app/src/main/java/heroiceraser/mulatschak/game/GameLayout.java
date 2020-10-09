@@ -7,39 +7,32 @@ import java.util.List;
 
 import heroiceraser.mulatschak.game.GamePlay.ChooseTrump.ChooseTrumpAnimation;
 import heroiceraser.mulatschak.game.GamePlay.TrickBids.MakeBidsAnimation;
-import heroiceraser.mulatschak.helpers.DisplayDimension;
+import heroiceraser.mulatschak.utils.DisplayDimension;
 
 
 // -----------------------------------------------------------------
-//-----------Round Info Box ------------|  -  -  -  -  -  -  -  -  -
-//                                      |                              Sector 0
-//                                      |  -  2/8 size -  -  -  -  -
-//                                      |                              Sector 1
-// - - - - - - - - - - - - - - - - - - -|  -  -  -  -  -  -  -  -  -
-//               MyPlayer 2               |                              Sector 2
-// MyPlayer 1                             |  -  -  -  -  -  -  -  -  -
-//               DP0                    |                              Sector 3
-//           Dp3 Deck Dp1               |  -  4/8 size -  -  -  -  -
-//               Dp2                    |                              Sector 4
-//                             MyPlayer 3 |  -  -  -  -  -  -  -  -  -
-//                                      |                              Sector 5
+//               MyPlayer 2             |
+//                                      |
+// MyPlayer 1                           |  -  -  -  -  -  -  -  -  -
+//               DP0                    |
+//           Dp3 Deck Dp1               |  -  6/8 size -  -  -  -  -
+//               Dp2                    |
+//                           MyPlayer 3 |  -  -  -  -  -  -  -  -  -
+//                                      |
 //--      CARD 0-5 from player 0       -|  -  -  -  -  -  -  -  -  -
-//---  |  C ||  C ||  C ||  C ||  C | --|     1/8 size                 Sector 6
+//---  |  C ||  C ||  C ||  C ||  C | --|     1/8 size
 //---------------ButtonBar--------------|  -  -  -  -  -  -  -  -  -
-//-----MENU---TRICKS---GAMESTATUS-------|     1/8 size                 Sector 7
+//-----MENU---TRICKS---GAMESTATUS-------|     1/8 size
 //--------------------------------------|---------------------------
 
 public class GameLayout {
 
-    //-- Screen Dimension
-    private Point screen_size_;
+    private Point screen_dimensions;
 
-    // subdivide layout in 8 sector
-    private final int SECTORS = 8;
-    private List<Point> sectors_;
+    private final int VERTICAL_GRID_SIZE = 1000;
 
     //-- Card Size
-    private Point card_size_;
+    private Point cardSize;
 
 
     //---- GamePlay -> Sector 0,1,2,3,6 ---------
@@ -81,16 +74,10 @@ public class GameLayout {
     private Point player_info_size_;
 
 
-    //---- RoundInfoOld -> Sector 0,1 --------------
-    private Point round_info_size_;
-    private Point round_info_position_;
-
-
     //---- ButtonBar  -> Sector 7 ---------------
     private Point button_bar_size_;
     private Point button_bar_position_;
-    private Point button_bar_big_button_size_;
-    private Point button_bar_small_button_size_;
+    private Point button_bar_button_size_;
     private Point button_bar_button_position_;
 
     //---- ButtonBar Windows
@@ -123,75 +110,36 @@ public class GameLayout {
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
-    public GameLayout() {
-        sectors_ = new ArrayList<>();
-    }
-
-    //----------------------------------------------------------------------------------------------
-    //  Init
-    //
-    public void init(GameView view) {
-        calculateDimensions(view);
-        calculateSectors();
+    public GameLayout(GameView view) {
+        calculateDisplayDimensions(view);
         calculateCardSize();
         initGamePlayLayout();
-        initRoundInfoLayout();
         initPlayerInfoLayout();
         initButtonBarLayout();
         initAnimationLayout();
     }
 
-    //----------------------------------------------------------------------------------------------
-    //  calculateDimensions()
-    //
-    private void calculateDimensions(GameView view) {
-        screen_size_ = new Point();
-        screen_size_.x = DisplayDimension.getWidth(view);
-        screen_size_.y = DisplayDimension.getHeight(view);
+    private void calculateDisplayDimensions(GameView view) {
+        screen_dimensions = new Point();
+        screen_dimensions.x = DisplayDimension.getWidth(view);
+        screen_dimensions.y = DisplayDimension.getHeight(view);
     }
 
-    //----------------------------------------------------------------------------------------------
-    //  calculateSectors
-    //
-    private void calculateSectors() {
-        for (int i = 0; i < SECTORS; i++) {
-            int y = (int) ((screen_size_.y / (double) (SECTORS)) * i);
-            Point sector = new Point(0, y);
-            sectors_.add(sector);
-        }
+    public int getGridPosition(int gridOffset) {
+        return (int) ((screen_dimensions.y / (double) (VERTICAL_GRID_SIZE)) * gridOffset);
     }
 
-    //----------------------------------------------------------------------------------------------
-    //  calculate Card size
-    //
+    public int getLengthOnVerticalGrid(int gridOffset) {
+        return getGridPosition(gridOffset);
+    }
+
     private void calculateCardSize() {
-        card_size_ = new Point();
-        //final double HEIGHT_FACTOR = 1.28;
+        cardSize = new Point();
         double max_cards_per_hand = GameLogic.MAX_CARDS_PER_HAND;
-        card_size_.x = (int) (screen_size_.x / (max_cards_per_hand + 1));
-        card_size_.y = (int) ((screen_size_.y) / (double) (SECTORS + 1));
-        // card_size_.y = (int) (card_size_.x * HEIGHT_FACTOR);
+        cardSize.x = (int) (screen_dimensions.x / (max_cards_per_hand + 1));
+        cardSize.y = getLengthOnVerticalGrid(125);
     }
 
-    //----------------------------------------------------------------------------------------------
-    // Round Info
-    //
-    private void initRoundInfoLayout() {
-        calculateRoundInfoSize();
-        calculateRoundInfoPosition();
-    }
-
-    private void calculateRoundInfoSize() {
-        round_info_size_ = new Point();
-        round_info_size_.x = screen_size_.x;
-        round_info_size_.y = (int) (screen_size_.y * (2.0 / SECTORS));
-    }
-
-    private void calculateRoundInfoPosition() {
-        round_info_position_ = new Point(sectors_.get(0));
-    }
-
-    //-----------------------
 
     //----------------------------------------------------------------------------------------------
     //  Button Bar
@@ -201,8 +149,7 @@ public class GameLayout {
         calculateButtonBarSize();
         calculateButtonBarPosition();
         // Button Bar Buttons
-        calculateButtonBarSmallButtonSize();
-        calculateButtonBarBigButtonSize();
+        calculateButtonBarButtonSize();
         initButtonBarButtonPosition();
         //Button Bar Windows
         calculateButtonBarWindowPosition();
@@ -220,94 +167,86 @@ public class GameLayout {
 
     private void calculateButtonBarSize() {
         button_bar_size_ = new Point();
-        button_bar_size_.x = screen_size_.x;
-        button_bar_size_.y = (int) (screen_size_.y / (double) SECTORS);
+        button_bar_size_.x = screen_dimensions.x;
+        button_bar_size_.y = getLengthOnVerticalGrid(101);
     }
 
     private void calculateButtonBarPosition() {
-        button_bar_position_ = new Point(sectors_.get(7));
+        button_bar_position_ = new Point(0, getLengthOnVerticalGrid(VERTICAL_GRID_SIZE) - button_bar_size_.y);
     }
 
-    private void calculateButtonBarBigButtonSize() {
-        button_bar_big_button_size_ = new Point();
-        button_bar_big_button_size_.x = (int) (button_bar_size_.x / 3.0);
-        button_bar_big_button_size_.y = (int) (button_bar_size_.y * (7.0 / 9.0));
-    }
-
-    private void calculateButtonBarSmallButtonSize() {
-        button_bar_small_button_size_ = new Point();
-        button_bar_small_button_size_.x = (int) (button_bar_size_.x / 5.0);
-        button_bar_small_button_size_.y = (int) (button_bar_size_.y * (7.0 / 9.0));
+    private void calculateButtonBarButtonSize() {
+        button_bar_button_size_ = new Point();
+        button_bar_button_size_.x = (int) (button_bar_size_.x / 3.0);
+        button_bar_button_size_.y = button_bar_size_.y;
     }
 
     private void initButtonBarButtonPosition() {
         button_bar_button_position_ = new Point();
         button_bar_button_position_.x = button_bar_position_.x;
-        button_bar_button_position_.y = (int)
-                (button_bar_position_.y + (button_bar_size_.y * (1 / 9.0)));
+        button_bar_button_position_.y = button_bar_position_.y;
     }
 
     private void calculateButtonBarWindowPosition() {
         button_bar_window_position_ = new Point();
         button_bar_window_position_.x = 0;
-        button_bar_window_position_.y = getRoundInfoSize().y;
+        button_bar_window_position_.y = 0;
     }
 
     private void calculateButtonBarWindowSize() {
         button_bar_window_size_ = new Point();
         button_bar_window_size_.x = getScreenWidth();
-        button_bar_window_size_.y = getScreenHeight() - getButtonBarHeight() - getRoundInfoSize().y;
+        button_bar_window_size_.y = getScreenHeight() - getButtonBarHeight();
     }
 
     private void calculateButtonBarWindowTitleSize() {
         button_bar_window_title_size_ = new Point();
         button_bar_window_title_size_.x = (int) (button_bar_window_size_.x * (8.0 / 10.0));
-        button_bar_window_title_size_.y = (int) (sectors_.get(1).y * 0.8);
+        button_bar_window_title_size_.y = getLengthOnVerticalGrid(100);
     }
 
     private void calculateButtonBarWindowTitlePosition() {
         button_bar_window_title_position_ = new Point();
         button_bar_window_title_position_.x = getScreenWidth() / 2;
-        button_bar_window_title_position_.y = (int)
-                (sectors_.get(1).y * 3.15);
+        button_bar_window_title_position_.y = getLengthOnVerticalGrid(225);
     }
 
     private void calculateButtonBarWindowTricksArrowSize() {
         button_bar_window_tricks_arrow_size_ = new Point();
         button_bar_window_tricks_arrow_size_.x = (int) (getScreenWidth() / 13.0);
-        button_bar_window_tricks_arrow_size_.y = (int) (sectors_.get(1).y * 0.65);
+        button_bar_window_tricks_arrow_size_.y = getLengthOnVerticalGrid(80);
     }
 
     private void calculateButtonBarWindowTricksArrowLeftPosition() {
         button_bar_window_tricks_left_arrow_position_ = new Point();
         button_bar_window_tricks_left_arrow_position_.x = (int) (getScreenWidth() / 10.0);
-        button_bar_window_tricks_left_arrow_position_.y = (int) (sectors_.get(1).y * 4.6);
+        button_bar_window_tricks_left_arrow_position_.y = getLengthOnVerticalGrid(495);
     }
 
     private void calculateButtonBarWindowTricksArrowRightPosition() {
         button_bar_window_tricks_right_arrow_position_ = new Point();
-        button_bar_window_tricks_right_arrow_position_.x = (int) (getScreenWidth() * (9.0 / 10.0) -
-                button_bar_window_tricks_arrow_size_.x);
-        button_bar_window_tricks_right_arrow_position_.y = (int) (sectors_.get(1).y * 4.6);
+        button_bar_window_tricks_right_arrow_position_.x =
+                (int) (getScreenWidth() * (9.0 / 10.0) - button_bar_window_tricks_arrow_size_.x);
+        button_bar_window_tricks_right_arrow_position_.y = getLengthOnVerticalGrid(495);
     }
 
     private void calculateButtonBarWindowTricksSubtitlePosition() {
         button_bar_window_tricks_subtitle_pos_ = new Point();
         button_bar_window_tricks_subtitle_pos_.x = 0;
-        button_bar_window_tricks_subtitle_pos_.y = (int) (sectors_.get(1).y * 3.3);
+        button_bar_window_tricks_subtitle_pos_.y = getLengthOnVerticalGrid(300);
     }
 
     private void calculateButtonBarWindowTricksSubtitleMaxSize() {
         button_bar_window_tricks_subtitle_max_size_ = new Point();
-        button_bar_window_tricks_subtitle_max_size_.x = (int) (getScreenWidth() * (8.0/10.0));
-        button_bar_window_tricks_subtitle_max_size_.y = sectors_.get(1).y;
+        button_bar_window_tricks_subtitle_max_size_.x = (int) (getScreenWidth() * (8.0 / 10.0));
+        button_bar_window_tricks_subtitle_max_size_.y = getLengthOnVerticalGrid(125);
     }
 
     private void calculateButtonBarWindowTricksDiscardPilePositions() {
         button_bar_window_tricks_discard_pile_positions_ = new ArrayList<>();
         for (int i = 0; i < discard_pile_positions_.size(); i++) {
             Point tmp = new Point(discard_pile_positions_.get(i));
-            tmp.y += sectors_.get(1).y * 0.7;
+            tmp.y += getLengthOnVerticalGrid(125);
             button_bar_window_tricks_discard_pile_positions_.add(tmp);
         }
     }
@@ -331,39 +270,39 @@ public class GameLayout {
     //----  calculateDeckPosition() -------------
     //
     private void initDeckPosition() {
-        deck_position_ = new Point((int) ((screen_size_.x / 2.0) - (card_size_.x / 2.0)),
-                (int) ((sectors_.get(4).y) - (card_size_.y / 4.0)));
+        deck_position_ = new Point((int) ((screen_dimensions.x / 2.0) - (cardSize.x / 2.0)),
+                (int) (getLengthOnVerticalGrid(375) - (cardSize.y / 4.0)));
     }
 
     //
     //----  calculateDiscardPile ----------------
     //
     private void calculateDiscardPileSize() {
-        discard_pile_size_ = new Point(card_size_);
+        discard_pile_size_ = new Point(cardSize);
     }
 
     private void initDiscardPilePositions() {
         discard_pile_positions_ = new ArrayList<>();
-        int midpoint_x = (int) (deck_position_.x + card_size_.x / 2.0);
-        int midpoint_y = (int) (deck_position_.y + card_size_.y / 2.0);
+        int midpoint_x = (int) (deck_position_.x + cardSize.x / 2.0);
+        int midpoint_y = (int) (deck_position_.y + cardSize.y / 2.0);
 
         int offset = (int) (((getOnePercentOfScreenWidth() + getCardHeight()) / 2) / 10);
 
         // down
-        discard_pile_positions_.add(new Point(midpoint_x - (card_size_.x / 2),
+        discard_pile_positions_.add(new Point(midpoint_x - (cardSize.x / 2),
                 (midpoint_y + offset / 2)));
 
         // left
-        discard_pile_positions_.add(new Point((int) (midpoint_x - (card_size_.x * 1.50) - offset),
-                midpoint_y - (card_size_.y / 2)));
+        discard_pile_positions_.add(new Point((int) (midpoint_x - (cardSize.x * 1.50) - offset),
+                midpoint_y - (cardSize.y / 2)));
 
         // top
-        discard_pile_positions_.add(new Point(midpoint_x - (card_size_.x / 2),
-                (midpoint_y - (card_size_.y) - offset / 2)));
+        discard_pile_positions_.add(new Point(midpoint_x - (cardSize.x / 2),
+                (midpoint_y - (cardSize.y) - offset / 2)));
 
         // right
-        discard_pile_positions_.add(new Point(midpoint_x + (card_size_.x / 2) + offset,
-                midpoint_y - (card_size_.y / 2)));
+        discard_pile_positions_.add(new Point(midpoint_x + (cardSize.x / 2) + offset,
+                midpoint_y - (cardSize.y / 2)));
     }
 
     //
@@ -372,17 +311,17 @@ public class GameLayout {
     private void initHandPositions() {
         hand_positions_ = new ArrayList<>();
 
-        hand_bottom_ = new Point((int) ((screen_size_.x - card_size_.x * 5) / 2.0),
-                sectors_.get(6).y);
+        hand_bottom_ = new Point((int) ((screen_dimensions.x - cardSize.x * 5) / 2.0),
+                getLengthOnVerticalGrid(720));
 
-        hand_left_ = new Point((int) (card_size_.x * -0.6),
-                (int) (deck_position_.y - card_size_.y / 3.2));
+        hand_left_ = new Point((int) (cardSize.x * -0.6),
+                (int) (deck_position_.y - cardSize.y / 3.2));
 
-        hand_top_ = new Point((screen_size_.x - (int) (card_size_.x * 2.8)),
-                (int) (sectors_.get(2).y + card_size_.y * (-0.6)));
+        hand_top_ = new Point((screen_dimensions.x - (int) (cardSize.x * 2.8)),
+                (int) (cardSize.y * (-0.6)));
 
-        hand_right_ = new Point((int) (screen_size_.x - (card_size_.x * 0.6)),
-                (int) (deck_position_.y + card_size_.y / 3.0));
+        hand_right_ = new Point((int) (screen_dimensions.x - (cardSize.x * 0.6)),
+                (int) (deck_position_.y + cardSize.y / 3.0));
 
         hand_positions_.add(hand_bottom_);
         hand_positions_.add(hand_left_);
@@ -396,14 +335,12 @@ public class GameLayout {
     //
     public double getOverlapFactor(int pos) {
         switch (pos) {
-            case 0:
-                return 1;
             case 1:
+            case 3:
                 return 9.5;
             case 2:
                 return 7.0;
-            case 3:
-                return 9.5;
+            case 0:
             default:
                 return 1;
         }
@@ -415,14 +352,12 @@ public class GameLayout {
     private void calculateDealerButtonSize() {
         dealer_button_size_ = new Point();
         dealer_button_size_.x = getCardWidth() / 2;
-        //dealer_button_size_.x = (int) (card_size_.x / 3.0 * 2.0);
-        //noinspection SuspiciousNameCombination
-        dealer_button_size_.y = dealer_button_size_.x;
+        dealer_button_size_.y = getCardWidth() / 2;
     }
 
 
     private int smallPadding() {
-        return (int)(getCardHeight() * 0.1);
+        return (int) (getCardHeight() * 0.1);
     }
 
     private void initDealerButtonPositions() {
@@ -468,21 +403,21 @@ public class GameLayout {
 
 
     private void initPlayerInfoLayout() {
-        int size = (int) (card_size_.y * (5.0 / 6.0));
+        int size = (int) (cardSize.y * (5.0 / 6.0));
         player_info_size_ = new Point(size, size);
 
-        int offset = (int) (card_size_.y / 5.0);
+        int offset = (int) (cardSize.y / 5.0);
 
-        player_info_bottom_position_ = new Point(screen_size_.x / 2 - player_info_size_.x / 2,
-                sectors_.get(sectors_.size() - 2).y - player_info_size_.y - offset);
+        player_info_bottom_position_ = new Point(screen_dimensions.x / 2 - player_info_size_.x / 2,
+                getLengthOnVerticalGrid(750) - player_info_size_.y - offset);
 
         player_info_left_position_ = new Point(offset,
                 hand_left_.y + (int) (1.25 * player_info_size_.y));
 
         player_info_top_position_ = new Point(hand_top_.x - (int) (player_info_size_.x * 1.2),
-                sectors_.get(2).y + (int) (offset * (2.0 / 3.0)));
+                (int) (offset * (2.0 / 3.0)));
 
-        player_info_right_position_ = new Point(screen_size_.x - (player_info_size_.x + offset),
+        player_info_right_position_ = new Point(screen_dimensions.x - (player_info_size_.x + offset),
                 hand_right_.y - (int) (player_info_size_.y * 1.2));
 
         player_info_positions_ = new ArrayList<>();
@@ -514,32 +449,32 @@ public class GameLayout {
     //
     private void calculateTrickBidsNumberButtonSize() {
         trick_bids_number_button_size_ = new Point();
-        int size_x = (int) ((screen_size_.x * 8.0 / 10.0) / MakeBidsAnimation.MAX_BID_COLS);
-        int size_y = sectors_.get(1).y;
+        int size_x = (int) ((screen_dimensions.x * 8.0 / 10.0) / MakeBidsAnimation.MAX_BID_COLS);
+        int size_y = getLengthOnVerticalGrid(125);
         trick_bids_number_button_size_.x = size_x;
         trick_bids_number_button_size_.y = size_y;
     }
 
     private void calculateTrickBidsNumberButtonPosition() {
         trick_bids_number_button_position_ = new Point();
-        trick_bids_number_button_position_.x = (int) ((screen_size_.x -
+        trick_bids_number_button_position_.x = (int) ((screen_dimensions.x -
                 MakeBidsAnimation.MAX_BID_COLS * trick_bids_number_button_size_.x) / 2.0);
-        trick_bids_number_button_position_.y = (int) (sectors_.get(1).y * 2.8);
+        trick_bids_number_button_position_.y = getLengthOnVerticalGrid(250);
     }
 
     private void calculateTrickBidsTrumpButtonSize() {
         trick_bids_trump_button_size = new Point();
-        int size_x = (int) ((screen_size_.x * 8.0 / 10.0) / (ChooseTrumpAnimation.MAX_TRUMP_COLS + 0.5));
-        int size_y = (int) (sectors_.get(1).y * 1.5);
+        int size_x = (int) ((screen_dimensions.x * 8.0 / 10.0) / (ChooseTrumpAnimation.MAX_TRUMP_COLS + 0.5));
+        int size_y = getLengthOnVerticalGrid(190);
         trick_bids_trump_button_size.x = size_x;
         trick_bids_trump_button_size.y = size_y;
     }
 
     private void calculateTrickBidsTrumpButtonPosition() {
         trick_bids_trump_button_position_ = new Point();
-        trick_bids_trump_button_position_.x = (int) ((screen_size_.x -
+        trick_bids_trump_button_position_.x = (int) ((screen_dimensions.x -
                 ChooseTrumpAnimation.MAX_TRUMP_COLS * trick_bids_trump_button_size.x) / 2.0);
-        trick_bids_trump_button_position_.y = (int) (sectors_.get(1).y * 2.8);
+        trick_bids_trump_button_position_.y = getLengthOnVerticalGrid(250);
     }
 
     //
@@ -547,51 +482,46 @@ public class GameLayout {
     //
     private void calculateCardExchangeSizes() {
         card_exchange_text_size_ = new Point();
-        card_exchange_text_size_.x = (int) ((screen_size_.x / 8.0 * 6.0));
+        card_exchange_text_size_.x = (int) ((screen_dimensions.x / 8.0 * 6.0));
         card_exchange_text_size_.y = 0;
     }
 
     private void calculateCardExchangeButtonSize() {
         card_exchange_button_size_ = new Point();
-        card_exchange_button_size_.x = (int) ((screen_size_.x / 8.0 * 6.0));
-        card_exchange_button_size_.y = button_bar_big_button_size_.y;
+        card_exchange_button_size_.x = (int) ((screen_dimensions.x / 8.0 * 6.0));
+        card_exchange_button_size_.y = button_bar_button_size_.y;
     }
 
     private void initCardExchangePositions() {
         card_exchange_text_position_ = new Point();
-        card_exchange_text_position_.x = (int) ((screen_size_.x - card_exchange_text_size_.x) / 2.0);
-        card_exchange_text_position_.y = sectors_.get(2).y + sectors_.get(1).y / 2;
+        card_exchange_text_position_.x = (int) ((screen_dimensions.x - card_exchange_text_size_.x) / 2.0);
+        card_exchange_text_position_.y = getLengthOnVerticalGrid(315);
     }
 
     private void initCardExchangeButtonPosition() {
         card_exchange_button_position_ = new Point();
         card_exchange_button_position_.x = (int)
-                ((screen_size_.x - card_exchange_button_size_.x) / 2.0);
-        card_exchange_button_position_.y = (sectors_.get(4).y + sectors_.get(1).y / 2);
+                ((screen_dimensions.x - card_exchange_button_size_.x) / 2.0);
+        card_exchange_button_position_.y = getLengthOnVerticalGrid(540);
     }
 
-    //-----------------------
-
-
-    //----------------------------------------------------------------------------------------------
-    //  Getter & Setter
-    //
+    //----------------------
 
     //---------------------- Sizes -----------------------------------------------------------------
     public int getScreenWidth() {
-        return screen_size_.x;
+        return screen_dimensions.x;
     }
 
     public int getScreenHeight() {
-        return screen_size_.y;
+        return screen_dimensions.y;
     }
 
     public int getCardWidth() {
-        return card_size_.x;
+        return cardSize.x;
     }
 
     public int getCardHeight() {
-        return card_size_.y;
+        return cardSize.y;
     }
 
     public Point getDiscardPileSize() {
@@ -659,26 +589,17 @@ public class GameLayout {
         return button_bar_position_;
     }
 
-    public int getButtonBarBigButtonWidth() {
-        return button_bar_big_button_size_.x;
+    public int getButtonBarButtonWidth() {
+        return button_bar_button_size_.x;
     }
 
-    public int getButtonBarBigButtonHeight() {
-        return button_bar_big_button_size_.y;
+    public int getButtonBarButtonHeight() {
+        return button_bar_button_size_.y;
     }
 
     public Point getButtonBarButtonPosition() {
         return button_bar_button_position_;
     }
-
-    public int getButtonBarSmallButtonWidth() {
-        return button_bar_small_button_size_.x;
-    }
-
-    public int getButtonBarSmallButtonHeight() {
-        return button_bar_small_button_size_.y;
-    }
-
 
     public Point getButtonBarWindowTitlePosition() {
         return button_bar_window_title_position_;
@@ -708,11 +629,12 @@ public class GameLayout {
         return button_bar_window_tricks_arrow_size_;
     }
 
-    public Point getButtonBarWindowTricksSubtitlePosition(){
-            return button_bar_window_tricks_subtitle_pos_;
+    public Point getButtonBarWindowTricksSubtitlePosition() {
+        return button_bar_window_tricks_subtitle_pos_;
     }
-    public Point getButtonBarWindowTricksSubtitleMaxSize(){
-            return button_bar_window_tricks_subtitle_max_size_;
+
+    public Point getButtonBarWindowTricksSubtitleMaxSize() {
+        return button_bar_window_tricks_subtitle_max_size_;
     }
 
     public List<Point> getButtonBarWindowTricksDiscardPilePositions() {
@@ -752,18 +674,6 @@ public class GameLayout {
 
     public Point getCardExchangeButtonPosition() {
         return card_exchange_button_position_;
-    }
-
-    public Point getRoundInfoSize() {
-        return round_info_size_;
-    }
-
-    public Point getRoundInfoPositon() {
-        return round_info_position_;
-    }
-
-    public List<Point> getSectors() {
-        return sectors_;
     }
 
     public Point getPlayerInfoSize() {

@@ -1,83 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- MAIN MENU -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/start_screen"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/startScreenDark">
-
-    <!-- INVITATION POPUP -->
-    <LinearLayout
-        android:id="@+id/invitation_popup"
-        style="@style/InvPopup">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/metallic_blue"
-            android:padding="20dp"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:id="@+id/incoming_invitation_text"
-                    style="@style/InvPopupText"
-                    android:layout_width="247dp" />
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:gravity="center">
-                <Button
-                    android:id="@+id/button_accept_popup_invitation"
-                    style="@style/InvPopupButton"
-                    android:text="@string/accept_popup_invite"
-                    android:layout_marginRight="15dp"/>
-
-                <Button
-                    android:id="@+id/button_decline_popup_invitation"
-                    style="@style/InvPopupButton"
-                    android:text="@string/decline_popup_invite"
-                    android:layout_marginLeft="15dp"/>
-            </LinearLayout>
-
-        </LinearLayout>
-
-    </LinearLayout>
-        <!-- Error POPUP -->
-    <LinearLayout
-        android:id="@+id/error_popup"
-        style="@style/InvPopup"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/my_red"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:padding="8dp"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp">
-
-            <TextView
-                android:id="@+id/error_text"
-                style="@style/InvPopupText"
-                android:layout_height="wrap_content"
-                android:text="@string/error_text"
-                android:textSize="15sp" />
-
-        </LinearLayout>
-
-    </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -90,12 +18,10 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="right">
-
+                android:gravity="end">
                 <ImageButton
                     style="?android:attr/borderlessButtonStyle"
                     android:id="@+id/change_language_button"
@@ -104,195 +30,108 @@
                     android:padding="5dp"
                     android:scaleType="fitXY"
                     android:src="@android:drawable/ic_menu_preferences"
-                    />
+                    android:contentDescription="@string/settings"/>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 android:orientation="vertical"
-                android:layout_marginTop="-25dp"
-                >
+                android:padding="0dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp">
 
-                <LinearLayout
+                <ImageView
+                    android:id="@+id/imageView"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="80dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginBottom="50dp"
+                    android:contentDescription="@string/mulatschak"
                     android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="0dp"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp">
+                    android:src="@drawable/title_graphic"
+                    android:visibility="visible" />
 
+                <Button
+                    android:id="@+id/single_player_button"
+                    android:text="@string/single_player_play"
+                    style="@android:style/Widget.Material.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="75dp"
+                    android:layout_weight="48"
+                    android:drawableStart="@drawable/play"
+                    android:paddingTop="20dp"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="40dp"
+                    android:paddingBottom="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginLeft="20dp"
+                    android:textColor="@color/ButtonTextColor"
+                    android:textSize="24sp" />
 
-                    <ImageView
-                        android:id="@+id/imageView"
-                        android:layout_width="match_parent"
-                        android:layout_height="80dp"
-                        android:layout_marginBottom="50dp"
-                        android:layout_marginTop="30dp"
-                        android:gravity="center"
-                        android:src="@drawable/title_graphic"
-                        android:visibility="visible" />
+                <Button
+                    android:id="@+id/leaderboards_button"
+                    style="@android:style/Widget.Material.Button.Borderless"
+                    android:layout_width="match_parent"
+                    android:layout_height="75dp"
+                    android:layout_weight="48"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="3dp"
+                    android:layout_marginLeft="20dp"
+                    android:background="@color/startScreenSecondary"
+                    android:text="@string/show_leaderboards"
+                    android:textColor="@color/ButtonTextColor"
+                    android:textSize="18sp" />
 
+                <Button
+                    android:id="@+id/achievements_button"
+                    style="@android:style/Widget.Material.Button.Borderless"
+                    android:layout_width="match_parent"
+                    android:layout_height="75dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="3dp"
+                    android:layout_weight="48"
+                    android:background="@color/metallic_blue"
+                    android:text="@string/show_achievements"
+                    android:textColor="@color/ButtonTextColor"
+                    android:textSize="18sp" />
 
-<!--                    <TextView-->
-<!--                        android:id="@+id/hello"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_marginBottom="30dp"-->
-<!--                        android:layout_marginTop="10dp"-->
-<!--                        android:text="Hallo"-->
-<!--                        android:textColor="@color/white"-->
-<!--                        android:textSize="20sp" />-->
+                <Button
+                    android:id="@+id/rules_button"
+                    style="@android:style/Widget.Material.Button.Borderless"
+                    android:layout_width="match_parent"
+                    android:layout_height="75dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="3dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_weight="48"
+                    android:background="@color/startScreenSecondary"
+                    android:text="@string/rules"
+                    android:textColor="@color/ButtonTextColor"
+                    android:textSize="18sp" />
 
-<!--                    <Button-->
-<!--                        android:id="@+id/single_player_button"-->
-<!--                        style="@android:style/Widget.Material.Button.Borderless"-->
-<!--                        android:layout_gravity="center"-->
-<!--                        android:layout_marginBottom="10dp"-->
-<!--                        android:drawableLeft="@drawable/play"-->
-<!--                        android:paddingTop="10dp"-->
-<!--                        android:paddingRight="40dp"-->
-<!--                        android:paddingBottom="10dp"-->
-<!--                        android:text="@string/multi_player_settings_quick_game_button"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="75dp"-->
-<!--                        android:layout_weight="48"-->
-<!--                        android:background="@color/metallic_blue"-->
-<!--                        android:textColor="@color/ButtonTextColor"-->
-<!--                        android:textSize="24sp" />-->
+                <Button
+                    android:id="@+id/policy_button"
+                    style="@android:style/Widget.Material.Button.Borderless"
+                    android:layout_width="match_parent"
+                    android:layout_height="75dp"
+                    android:layout_weight="48"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="3dp"
+                    android:layout_marginLeft="20dp"
+                    android:background="@color/metallic_blue"
+                    android:text="@string/policy"
+                    android:textColor="@color/ButtonTextColor"
+                    android:textSize="18sp" />
 
-                    <Button
-                        android:id="@+id/single_player_button"
-                        android:text="@string/single_player_play"
-                        style="@android:style/Widget.Material.Button.Borderless"
-                        android:layout_width="wrap_content"
-                        android:layout_height="75dp"
-                        android:layout_weight="48"
-                        android:drawableLeft="@drawable/play"
-                        android:paddingTop="20dp"
-                        android:paddingRight="40dp"
-                        android:paddingBottom="20dp"
-                        android:layout_marginRight="20dp"
-                        android:layout_marginTop="2dp"
-                        android:layout_marginBottom="20dp"
-                        android:layout_marginLeft="20dp"
-                        android:textColor="@color/ButtonTextColor"
-                        android:textSize="24sp" />
-
-<!--                    <Button-->
-<!--                        android:id="@+id/multi_player_quick_game_button"-->
-<!--                        style="@android:style/Widget.Material.Button.Borderless"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="75dp"-->
-<!--                        android:layout_marginLeft="20dp"-->
-<!--                        android:layout_marginTop="10dp"-->
-<!--                        android:layout_marginRight="20dp"-->
-<!--                        android:layout_marginBottom="10dp"-->
-<!--                        android:layout_weight="48"-->
-<!--                        android:background="#5D6FEA"-->
-<!--                        android:text="@string/multi_player_play"-->
-<!--                        android:textColor="@color/ButtonTextColor"-->
-<!--                        android:textSize="24sp" />-->
-
-<!--                    <Button-->
-<!--                        android:id="@+id/multi_player_invite_button"-->
-<!--                        style="@android:style/Widget.Material.Button.Borderless"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="75dp"-->
-<!--                        android:layout_weight="48"-->
-<!--                        android:background="@color/metallic_blue"-->
-<!--                        android:textColor="@color/ButtonTextColor"-->
-<!--                        android:text="@string/multi_player_settings_invite_button"-->
-<!--                        android:textSize="18sp" />-->
-
-<!--                    <Button-->
-<!--                        android:id="@+id/multi_player_invitations_button"-->
-<!--                        style="@android:style/Widget.Material.Button.Borderless"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="75dp"-->
-<!--                        android:layout_weight="48"-->
-<!--                        android:background="@color/startScreenDark"-->
-<!--                        android:textColor="@color/ButtonTextColor"-->
-<!--                        android:text="@string/multi_player_settings_invitations_button"-->
-<!--                        android:textSize="18sp" />-->
-
-                    <Button
-                        android:id="@+id/leaderboards_button"
-                        style="@android:style/Widget.Material.Button.Borderless"
-                        android:layout_width="match_parent"
-                        android:layout_height="75dp"
-                        android:layout_weight="48"
-                        android:layout_marginRight="20dp"
-                        android:layout_marginTop="3dp"
-                        android:layout_marginBottom="3dp"
-                        android:layout_marginLeft="20dp"
-                        android:background="@color/startScreenSecondary"
-                        android:text="@string/show_leaderboards"
-                        android:textColor="@color/ButtonTextColor"
-                        android:textSize="18sp" />
-
-                    <Button
-                        android:id="@+id/achievements_button"
-                        style="@android:style/Widget.Material.Button.Borderless"
-                        android:layout_width="match_parent"
-                        android:layout_height="75dp"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginRight="20dp"
-                        android:layout_marginTop="3dp"
-                        android:layout_marginBottom="3dp"
-                        android:layout_weight="48"
-                        android:background="@color/metallic_blue"
-                        android:text="@string/show_achievements"
-                        android:textColor="@color/ButtonTextColor"
-                        android:textSize="18sp" />
-
-<!--                    <Button-->
-<!--                        android:id="@+id/settings_button"-->
-<!--                        style="@android:style/Widget.Material.Button.Borderless"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="75dp"-->
-<!--                        android:layout_weight="48"-->
-<!--                        android:layout_marginRight="20dp"-->
-<!--                    android:layout_marginTop="3dp"-->
-<!--                    android:layout_marginBottom="3dp"-->
-<!--                        android:layout_marginLeft="20dp"-->
-<!--                        android:background="@color/startScreenSecondary"-->
-<!--                        android:text="@string/settings"-->
-<!--                        android:textColor="@color/ButtonTextColor"-->
-<!--                        android:textSize="18sp" />-->
-
-                    <Button
-                        android:id="@+id/rules_button"
-                        style="@android:style/Widget.Material.Button.Borderless"
-                        android:layout_width="match_parent"
-                        android:layout_height="75dp"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginTop="3dp"
-                        android:layout_marginBottom="3dp"
-                        android:layout_marginRight="20dp"
-                        android:layout_weight="48"
-                        android:background="@color/startScreenSecondary"
-                        android:text="@string/rules"
-                        android:textColor="@color/ButtonTextColor"
-                        android:textSize="18sp" />
-
-                    <Button
-                        android:id="@+id/policy_button"
-                        style="@android:style/Widget.Material.Button.Borderless"
-                        android:layout_width="match_parent"
-                        android:layout_height="75dp"
-                        android:layout_weight="48"
-                        android:layout_marginRight="20dp"
-                        android:layout_marginTop="3dp"
-                        android:layout_marginBottom="3dp"
-                        android:layout_marginLeft="20dp"
-                        android:background="@color/metallic_blue"
-                        android:text="@string/policy"
-                        android:textColor="@color/ButtonTextColor"
-                        android:textSize="18sp" />
-
-                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -335,7 +174,7 @@
                 android:padding="20dp">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"

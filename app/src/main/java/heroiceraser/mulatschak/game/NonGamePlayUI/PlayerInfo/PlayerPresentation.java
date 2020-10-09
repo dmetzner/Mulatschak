@@ -7,14 +7,12 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.text.TextPaint;
-import android.util.Log;
 
 import java.util.List;
+
 import at.heroiceraser.mulatschak.R;
-import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
-import heroiceraser.mulatschak.DrawableBasicObjects.MyTextField;
-import heroiceraser.mulatschak.MainActivity;
-import heroiceraser.mulatschak.Message;
+import heroiceraser.mulatschak.drawableBasicObjects.MyButton;
+import heroiceraser.mulatschak.drawableBasicObjects.MyTextField;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameView;
@@ -65,13 +63,13 @@ public class PlayerPresentation {
                 .getColor(R.color.metallic_blue), 0.15f);
         presentationTextField.setMaxWidth(layout.getScreenWidth() / 2);
         presentationTextField.setPosition(new Point((int) (layout.getScreenWidth() / 2.0),
-                (int) (layout.getScreenHeight() / 2.0)) );
+                (int) (layout.getScreenHeight() / 2.0)));
         presentationTextField.setVisible(true);
 
         animationRunning = false;
 
-        touchAbleArea.set(0, layout.getRoundInfoSize().y, layout.getScreenWidth(),
-                layout.getButtonBarButtonPosition().y);
+//        touchAbleArea.set(0, layout.getRoundInfoSize().y, layout.getScreenWidth(),
+//                layout.getButtonBarButtonPosition().y);
     }
 
 
@@ -134,8 +132,7 @@ public class PlayerPresentation {
         int playerPos = controller.getPlayerById(presentationId).getPosition();
         if (buttons != null && playerPos < buttons.size()) {
             endPos = new Point(buttons.get(playerPos).getPosition());
-        }
-        else {
+        } else {
             endPos = new Point(0, 0);
         }
     }
@@ -153,25 +150,20 @@ public class PlayerPresentation {
             if (timeSinceStart < maxTime / 2) {
                 presentationTextField.setText(controller.getView().getResources()
                         .getString(R.string.player_presentation_greeting));
-            }
-            else {
+            } else {
                 presentationTextField.setText(controller.getView().getResources()
                         .getString(R.string.player_presentation_intro));
             }
-        }
-
-        else {
+        } else {
             presentationTextField.setText(
                     controller.getPlayerById(presentationId).getDisplayName());
             double percentage = timeSinceStart / (maxTime / 4.0);
 
             if (percentage > 3) {
                 percentage = 0;
-            }
-            else if (percentage > 2) {
+            } else if (percentage > 2) {
                 percentage = 3 - percentage;
-            }
-            else if (percentage > 1) {
+            } else if (percentage > 1) {
                 percentage = 1;
             }
             int alpha = (int) (255 * percentage);

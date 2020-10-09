@@ -13,22 +13,24 @@ public class GameThread extends Thread {
 
     //Measure frames per second.
     public long now;
-    public int framesCount=0;
-    public int framesCountAvg=0;
-    public long framesTimer=0;
+    public int framesCount = 0;
+    public int framesCountAvg = 0;
+    public long framesTimer = 0;
 
     //Frame speed
     public long timeNow;
     public long timePrev = 0;
     public long timePrevFrame = 0;
-    public  long timeDelta;
+    public long timeDelta;
 
     public GameThread(View gameView) {
         this.gameView = gameView;
         keep_ui_active_ = false;
     }
 
-    public void setRun(boolean run) { this.run = run; }
+    public void setRun(boolean run) {
+        this.run = run;
+    }
 
     public void setRunning(boolean run) {
         this.run = run;
@@ -57,8 +59,7 @@ public class GameThread extends Thread {
             if (timeDelta < 38) {
                 try {
                     Thread.sleep(38 - timeDelta);
-                }
-                catch(InterruptedException ignored) {
+                } catch (InterruptedException ignored) {
 
                 }
             }

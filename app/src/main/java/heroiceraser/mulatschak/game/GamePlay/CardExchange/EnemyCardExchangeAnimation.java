@@ -5,12 +5,14 @@ import android.graphics.Camera;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Point;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import heroiceraser.mulatschak.game.BaseObjects.Card;
-import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
-import heroiceraser.mulatschak.helpers.BitmapMethodes;
+import heroiceraser.mulatschak.game.GameController;
+import heroiceraser.mulatschak.utils.BitmapMethodes;
 
 //--------------------------------------------------------------------------------------------------
 //What does this animation?
@@ -168,14 +170,13 @@ public class EnemyCardExchangeAnimation {
                 // float y = (bitmap.getHeight() / 2);
                 matrix.preTranslate(-x, 0);
                 matrix.postTranslate(x, 0);
-            }
-            else {
+            } else {
                 camera_.rotateX(0);
                 camera_.rotateY(degree_);
                 camera_.getMatrix(matrix);
                 float x = (backside_bitmap_.getWidth() / 2);
                 float y = (bitmap.getHeight() / 2);
-                matrix.preTranslate( -x, -y);
+                matrix.preTranslate(-x, -y);
                 matrix.postTranslate(x, y);
             }
 
@@ -240,7 +241,7 @@ public class EnemyCardExchangeAnimation {
                 return;
             }
             Card card = exchanged_cards_.get(index_);
-            double percentage  = ((double)time_since_start / max_time_section_1);
+            double percentage = ((double) time_since_start / max_time_section_1);
             if (percentage >= 1) {
                 percentage = 1;
                 start_time_ = System.currentTimeMillis();
@@ -250,7 +251,7 @@ public class EnemyCardExchangeAnimation {
             int offset_x = (int) (offset_.x * percentage);
             int offset_y = (int) (offset_.y * percentage);
 
-            card.setPosition(new Point( card.getFixedPosition().x + offset_x,
+            card.setPosition(new Point(card.getFixedPosition().x + offset_x,
                     card.getFixedPosition().y + offset_y));
         }
 
@@ -271,25 +272,22 @@ public class EnemyCardExchangeAnimation {
 
             // first spin
             if (percentage <= t1) {
-                degree_ = (int) (180 * ((percentage ) / (t1)));
-            }
-            else if (percentage <= t2) {
-                degree_ = 180 + (int) (180 * ((percentage - t1 ) / (t2 - t1)));
+                degree_ = (int) (180 * ((percentage) / (t1)));
+            } else if (percentage <= t2) {
+                degree_ = 180 + (int) (180 * ((percentage - t1) / (t2 - t1)));
             }
 
             // second spin
             else if (percentage <= t3) {
-                degree_ = (int) (360 * ((percentage - t2 ) / (t3 - t2)));
+                degree_ = (int) (360 * ((percentage - t2) / (t3 - t2)));
             }
 
             // third spin
             else if (percentage <= t4) {
-                degree_ = (int) (180 * ((percentage - t3 ) / (t4 - t3)));
-            }
-            else if (percentage <= t5) {
-                degree_ =  180 + (int) (180 * ((percentage - t4 ) / (t5 - t4)));
-            }
-            else {
+                degree_ = (int) (180 * ((percentage - t3) / (t4 - t3)));
+            } else if (percentage <= t5) {
+                degree_ = 180 + (int) (180 * ((percentage - t4) / (t5 - t4)));
+            } else {
                 degree_ = 0;
             }
 
@@ -321,7 +319,7 @@ public class EnemyCardExchangeAnimation {
                 oldCardsToTrash(controller);
                 return;
             }
-            Card card =  exchanged_cards_.get(index_);
+            Card card = exchanged_cards_.get(index_);
             double percentage = ((double) time_since_start / max_time_section_1);
             if (percentage >= 1) {
                 percentage = 1;
@@ -370,8 +368,7 @@ public class EnemyCardExchangeAnimation {
                     break;
                 }
             }
-        }
-        else if (myPlayer_.getPosition() == 1) {
+        } else if (myPlayer_.getPosition() == 1) {
             // < y
             for (int i = 0; i < myPlayer_.getHand().getCardStack().size(); i++) {
                 if (myPlayer_.getHand().getCardAt(i).getPosition().y < card.getPosition().y) {
@@ -380,8 +377,7 @@ public class EnemyCardExchangeAnimation {
                     break;
                 }
             }
-        }
-        else if (myPlayer_.getPosition() == 2) {
+        } else if (myPlayer_.getPosition() == 2) {
             // > x
             for (int i = 0; i < myPlayer_.getHand().getCardStack().size(); i++) {
                 if (myPlayer_.getHand().getCardAt(i).getPosition().x > card.getPosition().x) {
@@ -390,8 +386,7 @@ public class EnemyCardExchangeAnimation {
                     break;
                 }
             }
-        }
-        else if (myPlayer_.getPosition() == 3) {
+        } else if (myPlayer_.getPosition() == 3) {
             // > y
             for (int i = 0; i < myPlayer_.getHand().getCardStack().size(); i++) {
                 if (myPlayer_.getHand().getCardAt(i).getPosition().y > card.getPosition().y) {

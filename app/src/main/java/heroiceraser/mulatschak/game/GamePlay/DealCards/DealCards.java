@@ -2,9 +2,9 @@ package heroiceraser.mulatschak.game.GamePlay.DealCards;
 
 import heroiceraser.mulatschak.game.BaseObjects.CardStack;
 import heroiceraser.mulatschak.game.BaseObjects.MulatschakDeck;
+import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
-import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 
 
 //----------------------------------------------------------------------------------------------
@@ -45,7 +45,7 @@ public class DealCards {
     private void deal(GameController controller) {
         for (int hand_card = 0; hand_card < GameLogic.MAX_CARDS_PER_HAND; hand_card++) {
             //for (MyPlayer player : controller.getPlayerList()) {
-              //  takeCardFromDeck(player, controller.getDeck());
+            //  takeCardFromDeck(player, controller.getDeck());
             //}
             for (int i = controller.getLogic().getDealer() + 1; i < controller.getAmountOfPlayers(); i++) {
                 takeCardFromDeck(controller.getPlayerById(i), controller.getDeck());
@@ -62,14 +62,14 @@ public class DealCards {
     //                               -> player take a card from deck
     //                               -> return false if deck is empty (take card from deck)
     //
-    public boolean takeCardFromDeck(MyPlayer player, MulatschakDeck deck){
+    public boolean takeCardFromDeck(MyPlayer player, MulatschakDeck deck) {
 
         if (deck.getCardStack().isEmpty()) {
             return false;
         }
 
         // remove a card from the deck and push it to the players hand
-        CardStack player_hand =  player.getHand();
+        CardStack player_hand = player.getHand();
         player_hand.addCard(deck.getCardAt(0));
         deck.getCardStack().remove(0);
         return true;

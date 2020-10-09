@@ -58,9 +58,9 @@
     <string name="no_internet_error">Fehler: kein Internet!</string>
 
     <!-- :::::::::::::::: back button :::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
-    <string name="close">beenden?</string>
+    <string name="close">%1$s beenden?</string>
     <string name="are_you_sure_to_close_message">"Bist du sicher dass du %1$s beenden möchtest?"</string>
-    <string name="this_game">"dieses Spiel"</string>
+    <string name="this_game">"Dieses Spiel"</string>
 
     <!-- :::::::::::::::: Loading ::::::::::::::::::::::::::::::::::::::::::::::::::: -->
     <string name="loading">Es wird geladen…</string>

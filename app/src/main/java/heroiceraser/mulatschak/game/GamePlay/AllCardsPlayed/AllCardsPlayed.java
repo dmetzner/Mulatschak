@@ -1,8 +1,8 @@
 package heroiceraser.mulatschak.game.GamePlay.AllCardsPlayed;
 
+import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
-import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 import heroiceraser.mulatschak.game.NonGamePlayUI.GameOver.GameOver;
 import heroiceraser.mulatschak.game.NonGamePlayUI.NonGamePlayUIContainer;
 
@@ -20,7 +20,8 @@ public class AllCardsPlayed {
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
-    public AllCardsPlayed() {  }
+    public AllCardsPlayed() {
+    }
 
 
     //----------------------------------------------------------------------------------------------

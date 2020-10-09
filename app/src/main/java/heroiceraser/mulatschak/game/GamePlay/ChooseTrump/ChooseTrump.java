@@ -3,10 +3,6 @@ package heroiceraser.mulatschak.game.GamePlay.ChooseTrump;
 import android.os.Handler;
 import android.util.Log;
 
-import com.google.gson.Gson;
-
-import heroiceraser.mulatschak.Message;
-import heroiceraser.mulatschak.MainActivity;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GameView;
@@ -29,7 +25,6 @@ public class ChooseTrump {
     //  Constructor
     //
     public ChooseTrump() {
-        choose_trump_animation_ = new ChooseTrumpAnimation();
         enemyChooseTrumpLogic = new EnemyChooseTrumpLogic();
         trump_view_ = new TrumpView();
     }
@@ -39,8 +34,8 @@ public class ChooseTrump {
     //  init
     //
     public void init(GameView view) {
-        choose_trump_animation_.init(view);
-        // enemy logic no init needed
+
+        choose_trump_animation_ = new ChooseTrumpAnimation(view);
         trump_view_.init(view);
     }
 
@@ -58,31 +53,13 @@ public class ChooseTrump {
     //  letHighestBidderChooseTrump
     //
     public void letHighestBidderChooseTrump(final GameController controller) {
-        final GameView view = controller.getView();
         final GameLogic logic = controller.getLogic();
 
         if (logic.getTrumpPlayerId() == 0) {
             choose_trump_animation_.turnOnAnimationTrumps();
-            //view.disableUpdateCanvasThread();
             // touch event should call continueAfterTrumpWasChosen();
-        }
-        else if (logic.getTrumpPlayerId() != 0) {
-            //view.enableUpdateCanvasThread();
-
-            // single player
-            if (controller.getPlayerById(logic.getTurn()).isEnemyLogic()) {
-                handleEnemyAction(controller);
-            }
-            else {
-                controller.waitForOnlineInteraction = Message.chooseTrump;
-                String oId = controller.getPlayerById(logic.getTurn()).getOnlineId();
-                Log.d("-------", "wait for " +
-                        controller.getPlayerById(controller.getLogic().getTurn()).getDisplayName()
-                        + " to choose trump");
-                controller.requestMissedMessagePlayerCheck(controller.fillGameStates(),
-                        controller.getPlayerById(controller.getLogic().getTurn()).getOnlineId(),
-                        controller.mainActivity.gameState, Message.requestChooseTrump, oId);
-            }
+        } else if (logic.getTrumpPlayerId() != 0) {
+            handleEnemyAction(controller);
         }
     }
 
@@ -102,21 +79,12 @@ public class ChooseTrump {
         mhandler.postDelayed(codeToRun, 500);
     }
 
-    public void handleOnlineInteraction(int trump, GameController controller) {
-        controller.waitForOnlineInteraction = Message.noMessage;
-        setTrump(controller, trump);
-    }
 
     void handleMainPlayersDecision(int trump, GameController controller) {
 
-        if (controller.multiplayer_) {
-            // broadcast to all the decision
-            MainActivity activity = (MainActivity) controller.getView().getContext();
-            Gson gson = new Gson();
-            activity.broadcastMessage(Message.chooseTrump, gson.toJson(trump));
+        if (controller.DEBUG) {
+            Log.d("-------", "I've choosen the trump");
         }
-
-        if (controller.DEBUG) { Log.d("-------", "I've choosen the trump"); }
 
         setTrump(controller, trump);
     }

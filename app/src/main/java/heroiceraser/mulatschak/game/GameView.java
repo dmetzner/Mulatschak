@@ -19,41 +19,35 @@ import android.view.View;
 //
 public class GameView extends View {
 
-    //----------------------------------------------------------------------------------------------
-    //  Member Variables
-    //
     private GameController controller_;
+
     private GameThread thread_;
-    public boolean stopAll;                         // if true, no more actions are allowed to
-    //                                                  allow a safe deletion of the game view
+
+    // if true, no more actions are allowed to allow a safe deletion of the game view
+    public boolean stopAll = false;
+
     private SparseArray<PointF> mActivePointers;    // multiTouch
 
-
-    //----------------------------------------------------------------------------------------------
-    //  Constructor
-    //
     public GameView(Context context) {
         super(context);
         controller_ = new GameController(this);
         thread_ = new GameThread(this);
         thread_.setRunning(true);
         thread_.start();
-        stopAll = false;
         mActivePointers = new SparseArray<>();
     }
 
 
-    //----------------------------------------------------------------------------------------------
-    //  clear
-    //
     public void clear() {
+        stopAll = true;
         if (thread_ != null) {
             getThread().setRunning(false);
             try {
                 thread_.join();
-            }
-            catch (Exception e) {
-                if (controller_.DEBUG) { Log.w("GameThread", "Join Excpetion" + e); }
+            } catch (Exception e) {
+                if (controller_.DEBUG) {
+                    Log.w("GameThread", "Join Excpetion" + e);
+                }
             }
         }
         controller_.clear();
@@ -70,9 +64,6 @@ public class GameView extends View {
 
     private final Object drawLock = new Object();
 
-    //----------------------------------------------------------------------------------------------
-    //  onDraw()
-    //
     @Override
     protected synchronized void onDraw(Canvas canvas) {
         synchronized (drawLock) {
@@ -81,7 +72,6 @@ public class GameView extends View {
                 return;
             }
 
-//            canvas.drawARGB(255,57,57,57);
             drawBackground(canvas);
 
             if (controller_.isPlayerPresentationRunning()) {
@@ -94,8 +84,7 @@ public class GameView extends View {
                 try {
                     drawPlayerInfo(canvas);
                     drawNonGamePlayUI(canvas);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     return;
                 }
                 return;
@@ -126,7 +115,6 @@ public class GameView extends View {
             if (thread_.now - thread_.framesTimer > 1000) {
                 thread_.framesTimer = thread_.now;
                 thread_.framesCountAvg = thread_.framesCount;
-                thread_.framesCount = 0;
                 thread_.framesCount = 0;
             }
         }
@@ -287,46 +275,6 @@ public class GameView extends View {
     //
     public GameThread getThread() {
         return thread_;
-    }
-
-    public void setThread(GameThread thread) {
-        this.thread_ = thread;
-    }
-
-    private synchronized void enableUpdateCanvasThread() {
-        disableUpdateCanvasThread();
-        setThread(new GameThread(this));
-        getThread().setRunning(true);
-        getThread().start();
-    }
-
-    private synchronized void enableUpdateCanvasThreadOnly4TouchEvents() {
-        if (getThread() == null || !getThread().isRunning()) {
-            setThread(new GameThread(this));
-            getThread().setRun(true);
-            getThread().start();
-            getThread().setKeepUiActive(true);
-        }
-    }
-
-    private synchronized void disableUpdateCanvasThread() {
-        if (thread_ == null) {
-            return;
-        }
-
-        /* getThread().setRunning(false);
-        try {
-            thread_.join();
-        }
-        catch (Exception e) {
-            if (controller_.DEBUG) { Log.w("GameThread", "Join Excpetion"); }
-        } */
-    }
-
-    private synchronized void disableUpdateCanvasThreadOnly4TouchEvents() {
-        if (getThread().isKeepUiActive()) {
-            disableUpdateCanvasThread();
-        }
     }
 }
 

@@ -6,11 +6,11 @@ import android.graphics.Point;
 import android.util.Log;
 
 import heroiceraser.mulatschak.game.BaseObjects.Card;
+import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
 import heroiceraser.mulatschak.game.GameLogic;
-import heroiceraser.mulatschak.game.BaseObjects.MyPlayer;
-import heroiceraser.mulatschak.helpers.BitmapMethodes;
+import heroiceraser.mulatschak.utils.BitmapMethodes;
 
 //----------------------------------------------------------------------------------------------
 //  Dealing Animation Class
@@ -54,7 +54,7 @@ public class DealingAnimation {
     public void start(GameController controller) {
         start_pos_ = controller.getDeck().getPosition();
         drawn_cards_ = 0;
-        cards_to_draw_ =  GameLogic.MAX_CARDS_PER_HAND * controller.getAmountOfPlayers();
+        cards_to_draw_ = GameLogic.MAX_CARDS_PER_HAND * controller.getAmountOfPlayers();
         player_id_ = controller.getLogic().getDealer();
         nextPlayer(controller.getAmountOfPlayers());
         MyPlayer player = controller.getPlayerById(player_id_);
@@ -101,8 +101,7 @@ public class DealingAnimation {
                 if (drawn_cards_ == cards_to_draw_) {
                     animation_running_ = false;
                     controller.continueAfterDealingAnimation();
-                }
-                else {
+                } else {
                     MyPlayer player = controller.getPlayerById(player_id_);
                     card_ = player.getHand().getCardAt(drawn_cards_ / controller.getAmountOfPlayers());
                     calculateEndPositions(controller.getPlayerById(player_id_), controller);
@@ -111,9 +110,10 @@ public class DealingAnimation {
                     start_time_ = System.currentTimeMillis();
                 }
             }
-        }
-        catch (Exception e) {
-            if (controller.DEBUG) { Log.e("dealing cards ",  "exception" + e); }
+        } catch (Exception e) {
+            if (controller.DEBUG) {
+                Log.e("dealing cards ", "exception" + e);
+            }
         }
 
     }
@@ -144,9 +144,10 @@ public class DealingAnimation {
 
         try {
             canvas.drawBitmap(bitmap, card_.getPosition().x, card_.getPosition().y, null);
-        }
-        catch (Exception e) {
-            if (controller.DEBUG) { Log.e("---", "draw dealing cards exception" + e); }
+        } catch (Exception e) {
+            if (controller.DEBUG) {
+                Log.e("---", "draw dealing cards exception" + e);
+            }
         }
 
         continueAnimation(controller);
@@ -181,13 +182,11 @@ public class DealingAnimation {
     private void calculateRotation(int player_pos) {
         switch (player_pos) {
             case 0:
+            case 2:
                 max_rotation_ = 0;
                 break;
             case 1:
                 max_rotation_ = 90;
-                break;
-            case 2:
-                max_rotation_ = 0;
                 break;
             case 3:
                 max_rotation_ = -90;
@@ -208,24 +207,24 @@ public class DealingAnimation {
 
         switch (player.getPosition()) {
             case 0:
-                end_pos_.x = (int) ( layout.getHandBottom().x +
-                        ( layout.getCardWidth() * card_number) / layout.getOverlapFactor(player.getPosition()) );
-                end_pos_.y =  layout.getHandBottom().y;
+                end_pos_.x = (int) (layout.getHandBottom().x +
+                        (layout.getCardWidth() * card_number) / layout.getOverlapFactor(player.getPosition()));
+                end_pos_.y = layout.getHandBottom().y;
                 break;
             case 1:
                 end_pos_.x = layout.getHandLeft().x;
-                end_pos_.y = (int) ( layout.getHandLeft().y -
-                        (layout.getCardHeight() * card_number) / layout.getOverlapFactor(player.getPosition()) );
+                end_pos_.y = (int) (layout.getHandLeft().y -
+                        (layout.getCardHeight() * card_number) / layout.getOverlapFactor(player.getPosition()));
                 break;
             case 2:
-                end_pos_.x = (int) ( layout.getHandTop().x +
-                        (layout.getCardWidth() * card_number) / layout.getOverlapFactor(player.getPosition()) );
-                end_pos_.y =  layout.getHandTop().y;
+                end_pos_.x = (int) (layout.getHandTop().x +
+                        (layout.getCardWidth() * card_number) / layout.getOverlapFactor(player.getPosition()));
+                end_pos_.y = layout.getHandTop().y;
                 break;
             case 3:
                 end_pos_.x = layout.getHandRight().x;
-                end_pos_.y = (int) ( layout.getHandRight().y +
-                        (layout.getCardHeight() * card_number) / layout.getOverlapFactor(player.getPosition()) );
+                end_pos_.y = (int) (layout.getHandRight().y +
+                        (layout.getCardHeight() * card_number) / layout.getOverlapFactor(player.getPosition()));
                 break;
         }
     }

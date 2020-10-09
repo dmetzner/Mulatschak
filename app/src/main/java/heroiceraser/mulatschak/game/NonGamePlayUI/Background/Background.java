@@ -9,63 +9,23 @@ import android.graphics.Rect;
 import heroiceraser.mulatschak.game.GameLayout;
 
 
-//----------------------------------------------------------------------------------------------
-//  Background 4 Player_0 Animations
-//
 public class Background {
 
-
-    //----------------------------------------------------------------------------------------------
-    //  Member Variables
-    //
     private Rect background;
-    private Paint backgroundPaint;
-    private final int ALPHA_MAX = 20;
+    private Paint paint;
 
-
-    //----------------------------------------------------------------------------------------------
-    //  Constructor
-    //
     public Background() {
         background = new Rect();
-        backgroundPaint = new Paint();
+        paint = new Paint();
+        paint.setColor(Color.BLACK);
+        paint.setAlpha(20);
     }
 
-
-    //----------------------------------------------------------------------------------------------
-    //  init
-    //
     public void init(GameLayout layout) {
-        background.set(0, layout.getSectors().get(2).y, layout.getScreenWidth(),
-                layout.getSectors().get(7).y);
-        backgroundPaint.setColor(Color.BLACK);
-        backgroundPaint.setAlpha(ALPHA_MAX);
+        background.set(0, 0, layout.getScreenWidth(), layout.getLengthOnVerticalGrid(900));
     }
 
-
-    //----------------------------------------------------------------------------------------------
-    //  updateAlpha
-    //
-    public void updateAlpha(int alpha) {
-        if (alpha > ALPHA_MAX) {
-            alpha = ALPHA_MAX;
-        }
-        backgroundPaint.setAlpha(alpha);
-    }
-
-
-    //----------------------------------------------------------------------------------------------
-    //  draw
-    //
     public synchronized void draw(Canvas canvas) {
-        canvas.drawRect(background, backgroundPaint);
-    }
-
-
-    //----------------------------------------------------------------------------------------------
-    //  Getter
-    //
-    public Rect getBackground() {
-        return background;
+        canvas.drawRect(background, paint);
     }
 }

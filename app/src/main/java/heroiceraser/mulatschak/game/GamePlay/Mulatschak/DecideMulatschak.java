@@ -4,10 +4,6 @@ import android.graphics.Canvas;
 import android.os.Handler;
 import android.util.Log;
 
-import com.google.gson.Gson;
-
-import heroiceraser.mulatschak.Message;
-import heroiceraser.mulatschak.MainActivity;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLogic;
 import heroiceraser.mulatschak.game.GamePlay.TrickBids.MakeBidsAnimation;
@@ -59,10 +55,6 @@ public class DecideMulatschak {
     void makeMulatschakDecision(boolean first_call, final GameController controller) {
         GameLogic logic = controller.getLogic();
 
-        if (!first_call) {
-            controller.getPlayerById(logic.getTurn()).gameState = Message.gameStateWaitForTrickBids;
-        }
-
         // if someone tries a Mulatschak skip choose Tricks
         if (logic.getTricksToMake() == MakeBidsAnimation.MULATSCHAK) {
             controller.continueAfterTrickBids();
@@ -79,37 +71,16 @@ public class DecideMulatschak {
             return;
         }
 
-        // Player 0 -> Choose Animation Muli, (Yes or NO?)
         if (logic.getTurn() == 0) {
+            // Player 0 -> Choose Animation Muli, (Yes or NO?)
             decideMulatschakAnimation.turnOnAnimation();
-            //controller.getView().disableUpdateCanvasThread();
-            //animation calls make makeMul again
-        }
-
-        // Enemies
-        else if (logic.getTurn() != 0) {
-            //controller.getView().enableUpdateCanvasThread();
-
-            // single player
-            if (controller.getPlayerById(logic.getTurn()).isEnemyLogic()) {
-                handleEnemyAction(controller);
-            }
-            // multiplayer
-            else {
-                controller.waitForOnlineInteraction = Message.mulatschakDecision;
-                Gson gson = new Gson();
-                String oId = controller.getPlayerById(logic.getTurn()).getOnlineId();
-                if (controller.DEBUG) { Log.d("-------", "wait for " +
-                        controller.getPlayerById(controller.getLogic().getTurn()).getDisplayName()
-                        + " muli decision"); }
-                controller.requestMissedMessagePlayerCheck(controller.fillGameStates(),
-                        controller.getPlayerById(controller.getLogic().getTurn()).getOnlineId(),
-                        controller.mainActivity.gameState, Message.requestMulatschakDecision, oId);
-            }
+            // animation calls make `makeMulatschakDecision` again
+        } else {
+            handleEnemyAction(controller);
         }
     }
 
-    public void handleEnemyAction(final GameController controller) {
+    private void handleEnemyAction(final GameController controller) {
         if (enemyDecideMulatschakLogic.decideMulatschak(controller)) {
             setMulatschakUp(controller);
             return;
@@ -122,36 +93,20 @@ public class DecideMulatschak {
                 makeMulatschakDecision(false, controller);
             }
         };
-        double animation_factor =  controller.getSettings().getAnimationSpeed().getSpeedFactor();
+        double animation_factor = controller.getSettings().getAnimationSpeed().getSpeedFactor();
         myHandler.postDelayed(runnable, (int) (500 * animation_factor));
-    }
-
-    public void handleOnlineInteraction(boolean muli, GameController controller) {
-        controller.waitForOnlineInteraction = Message.noMessage;
-        if (muli) {
-            setMulatschakUp(controller);
-        }
-        else {
-            makeMulatschakDecision(false, controller);
-        }
     }
 
     void handleMainPlayersDecision(boolean muli, GameController controller) {
 
-        if (controller.multiplayer_) {
-            // broadcast to all the decision
-            MainActivity activity = (MainActivity) controller.getView().getContext();
-            Gson gson = new Gson();
-            activity.broadcastMessage(Message.mulatschakDecision, gson.toJson(muli));
+        if (controller.DEBUG) {
+            Log.d("-------", "I made my Muli decision");
         }
-
-        if (controller.DEBUG) { Log.d("-------", "I made my Muli decision"); }
 
         if (muli) {
             controller.getGamePlay().getDecideMulatschak().setMulatschakUp(controller);
             // makeMulatschakDecision(false, controller) gets called after animation
-        }
-        else {
+        } else {
             controller.getGamePlay().getDecideMulatschak().makeMulatschakDecision(false, controller);
         }
     }
@@ -185,7 +140,6 @@ public class DecideMulatschak {
         decideMulatschakAnimation.draw(canvas, controller);
         mulatschakRoundAnimation.draw(canvas, controller);
     }
-
 
 
     //----------------------------------------------------------------------------------------------

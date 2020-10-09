@@ -1,18 +1,18 @@
 package heroiceraser.mulatschak.game.GamePlay.ChooseTrump;
 
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Point;
+
 import java.util.ArrayList;
 import java.util.List;
-import heroiceraser.mulatschak.DrawableBasicObjects.MyButton;
+
+import heroiceraser.mulatschak.drawableBasicObjects.MyButton;
 import heroiceraser.mulatschak.game.BaseObjects.MulatschakDeck;
 import heroiceraser.mulatschak.game.GameController;
 import heroiceraser.mulatschak.game.GameLayout;
-import heroiceraser.mulatschak.game.GamePlay.Background4Player0Animations;
+import heroiceraser.mulatschak.game.GamePlay.GameAreaOverlay;
 import heroiceraser.mulatschak.game.GameView;
-import heroiceraser.mulatschak.helpers.BitmapMethodes;
 
 //----------------------------------------------------------------------------------------------
 //  Choose Trump Animation Class
@@ -23,7 +23,7 @@ public class ChooseTrumpAnimation {
     //  MemberVariables
     //
     public static int MAX_TRUMP_COLS = 2;
-    private Background4Player0Animations background;
+    private GameAreaOverlay gameAreaOverlay;
     private boolean animatingTrumps;
     private List<MyButton> trumpButtons;
 
@@ -31,20 +31,13 @@ public class ChooseTrumpAnimation {
     //----------------------------------------------------------------------------------------------
     //  Constructor
     //
-    ChooseTrumpAnimation() {
-        background = new Background4Player0Animations();
+    ChooseTrumpAnimation(GameView view) {
         trumpButtons = new ArrayList<>();
-    }
 
-
-    //----------------------------------------------------------------------------------------------
-    //  init
-    //
-    public void init(GameView view) {
         GameLayout layout = view.getController().getLayout();
         animatingTrumps = false;
 
-        background.init(layout);
+        gameAreaOverlay = new GameAreaOverlay(layout);
 
         String image_name = "button_blue_metallic_small";
 
@@ -52,11 +45,10 @@ public class ChooseTrumpAnimation {
             MyButton button = new MyButton();
             int width = layout.getTrickBidsTrumpButtonSize().x;
             int height = layout.getTrickBidsTrumpButtonSize().y;
-            if (view.getController().getDeck().getDesign() == MulatschakDeck.DD_DESIGN) {
+            if (view.getController().getDeck().getDesign().equals(MulatschakDeck.DD_DESIGN)) {
                 button.init(view, new Point(), new Point(width, height), image_name,
                         new Point((int) (width * 0.6), (int) (height * 0.6)), "trump_dd_" + id, "");
-            }
-            else {
+            } else {
                 button.init(view, new Point(), new Point(width, height), image_name,
                         new Point((int) (width * 0.6), (int) (height * 0.6)), "trumps_basic_" + id, "");
             }
@@ -85,7 +77,7 @@ public class ChooseTrumpAnimation {
             return;
         }
 
-        background.draw(canvas);
+        gameAreaOverlay.draw(canvas);
         controller.getPlayerHandsView().drawPlayer0Hand(canvas, controller);
 
         for (MyButton button : trumpButtons) {
@@ -109,6 +101,8 @@ public class ChooseTrumpAnimation {
     // Touch Events
     //                  trump buttons
     //
+
+
     synchronized public void touchEventDown(int X, int Y) {
         if (!animatingTrumps) {
             return;

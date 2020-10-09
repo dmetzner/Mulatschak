@@ -5,14 +5,9 @@ import android.graphics.Bitmap;
 
 import com.google.android.gms.games.multiplayer.Participant;
 
-import heroiceraser.mulatschak.Message;
 import heroiceraser.mulatschak.game.GameController;
 
 
-
-//----------------------------------------------------------------------------------------------
-//  Player Class
-//
 public class MyPlayer {
 
     //----------------------------------------------------------------------------------------------
@@ -117,7 +112,7 @@ public class MyPlayer {
         position_ = position;
     }
 
-    public CardStack getHand(){
+    public CardStack getHand() {
         return hand_;
     }
 
@@ -125,13 +120,21 @@ public class MyPlayer {
         return hand_.getCardStack().size();
     }
 
-    public int getLives() { return lives_; }
+    public int getLives() {
+        return lives_;
+    }
 
-    public void setLives(int lives) { lives_ = lives; }
+    public void setLives(int lives) {
+        lives_ = lives;
+    }
 
-    public int getTricksToMake() { return tricks_to_make_; }
+    public int getTricksToMake() {
+        return tricks_to_make_;
+    }
 
-    public void setTricksToMake(int trumphs_to_make) { tricks_to_make_ = trumphs_to_make; }
+    public void setTricksToMake(int trumphs_to_make) {
+        tricks_to_make_ = trumphs_to_make;
+    }
 
     public CardStack getTricks() {
         return tricks_;
